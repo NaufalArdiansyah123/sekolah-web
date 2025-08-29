@@ -265,7 +265,7 @@
         <div class="container-fluid">
             <a class="navbar-brand" href="{{ route('home') }}">
                 <i class="fas fa-graduation-cap me-2"></i>
-                <span class="d-none d-sm-inline">SMA Negeri 1 Balong</span>
+                <span class="d-none d-sm-inline">SMA Negeri 99 Balong</span>
                 <span class="d-inline d-sm-none">SMAN1</span>
             </a>
             
