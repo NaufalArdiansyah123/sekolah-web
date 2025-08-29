@@ -301,7 +301,7 @@
                             <i class="fas fa-book d-lg-none me-2"></i>Akademik
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="academicDropdown">
-                            <li><a class="dropdown-item" href="{{ route('academic.programs') }}">
+                            <li><a class="dropdown-item" href="{{ route('public.academic.programs') }}">
                                 <i class="fas fa-graduation-cap me-2"></i>Program Studi
                             </a></li>
                             <li><a class="dropdown-item" href="{{ route('academic.calendar') }}">
@@ -423,7 +423,7 @@
                 <div class="col-lg-2 col-md-6 mb-4 mb-lg-0">
                     <h6 class="fw-bold mb-3">Akademik</h6>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="{{ route('academic.programs') }}" class="text-white-50 text-decoration-none">Program Studi</a></li>
+                        <li class="mb-2"><a href="{{ route('public.academic.programs') }}" class="text-white-50 text-decoration-none">Program Studi</a></li>
                         <li class="mb-2"><a href="{{ route('academic.calendar') }}" class="text-white-50 text-decoration-none">Kalender</a></li>
                         <li class="mb-2"><a href="{{ route('downloads.index') }}" class="text-white-50 text-decoration-none">Download</a></li>
                         <li class="mb-2"><a href="{{ route('gallery.photos') }}" class="text-white-50 text-decoration-none">Galeri</a></li>

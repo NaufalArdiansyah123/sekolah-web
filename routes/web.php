@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Teacher\DashboardController as TeacherDashboardController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\PublicController;
+use App\Http\Controllers\AcademicController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,6 +22,7 @@ Route::get('/facilities', [PublicController::class, 'facilities'])->name('facili
 Route::get('/achievements', [PublicController::class, 'achievements'])->name('achievements.index');
 Route::get('/extracurriculars', [PublicController::class, 'extracurriculars'])->name('extracurriculars.index');
 Route::get('/academic/programs', [PublicController::class, 'academicPrograms'])->name('academic.programs');
+Route::get('/academic/programs', [AcademicController::class, 'index'])->name('public.academic.programs');
 Route::get('/academic/calendar', [PublicController::class, 'academicCalendar'])->name('academic.calendar');
 Route::get('/news', [PublicController::class, 'news'])->name('news.index');
 Route::get('/news/{slug}', [PublicController::class, 'newsDetail'])->name('news.show');
