@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [PublicController::class, 'home'])->name('home');
 Route::get('/about/profile', [PublicController::class, 'aboutProfile'])->name('about.profile');
 Route::get('/about/vision', [PublicController::class, 'aboutVision'])->name('about.vision');
+Route::get('/about/sejarah', [PublicController::class, 'sejarah'])->name('about.sejarah');
 Route::get('/facilities', [PublicController::class, 'facilities'])->name('facilities.index');
 Route::get('/achievements', [PublicController::class, 'achievements'])->name('achievements.index');
 Route::get('/extracurriculars', [PublicController::class, 'extracurriculars'])->name('extracurriculars.index');
@@ -30,6 +31,7 @@ Route::get('/announcements', [PublicController::class, 'announcements'])->name('
 Route::get('/agenda', [PublicController::class, 'agenda'])->name('agenda.index');
 Route::get('/gallery/photos', [PublicController::class, 'galleryPhotos'])->name('gallery.photos');
 Route::get('/gallery/videos', [PublicController::class, 'galleryVideos'])->name('gallery.videos');
+Route::get('/gallery/index', [PublicController::class, 'galleryVideos'])->name('gallery.index');
 Route::get('/downloads', [PublicController::class, 'downloads'])->name('downloads.index');
 Route::get('/contact', [PublicController::class, 'contact'])->name('contact');
 

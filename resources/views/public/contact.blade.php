@@ -1,3 +1,6 @@
+@extends('layouts.public')
+
+@section('content')
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -233,132 +236,6 @@
 <body>
     
 
-<!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark sticky-top" style="background-color: var(--primary-color);">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{{ route('home') }}">
-                <i class="fas fa-graduation-cap me-2"></i>
-                <span class="d-none d-sm-inline">SMA Negeri 99 Balong</span>
-                <span class="d-inline d-sm-none">SMAN1</span>
-            </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">
-                            <i class="fas fa-home d-lg-none me-2"></i>Beranda
-                        </a>
-                    </li>
-                    
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="aboutDropdown" role="button" 
-                           data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-info-circle d-lg-none me-2"></i>Profil
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="aboutDropdown">
-                            <li><a class="dropdown-item" href="{{ route('about.profile') }}">
-                                <i class="fas fa-school me-2"></i>Profil Sekolah
-                            </a></li>
-                            <li><a class="dropdown-item" href="{{ route('about.vision') }}">
-                                <i class="fas fa-eye me-2"></i>Visi & Misi
-                            </a></li>
-                        </ul>
-                    </li>
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="academicDropdown" role="button" 
-                           data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-book d-lg-none me-2"></i>Akademik
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="academicDropdown">
-                            <li><a class="dropdown-item" href="{{ route('public.academic.programs') }}">
-                                <i class="fas fa-graduation-cap me-2"></i>Program Studi
-                            </a></li>
-                            <li><a class="dropdown-item" href="{{ route('academic.calendar') }}">
-                                <i class="fas fa-calendar me-2"></i>Kalender Akademik
-                            </a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown d-lg-none">
-                        <a class="nav-link dropdown-toggle" href="#" id="moreDropdown" role="button" 
-                           data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-ellipsis-h me-2"></i>Lainnya
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="moreDropdown">
-                            <li><a class="dropdown-item" href="{{ route('facilities.index') }}">
-                                <i class="fas fa-building me-2"></i>Fasilitas
-                            </a></li>
-                            <li><a class="dropdown-item" href="{{ route('achievements.index') }}">
-                                <i class="fas fa-trophy me-2"></i>Prestasi
-                            </a></li>
-                            <li><a class="dropdown-item" href="{{ route('extracurriculars.index') }}">
-                                <i class="fas fa-users me-2"></i>Ekstrakurikuler
-                            </a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ route('gallery.photos') }}">
-                                <i class="fas fa-images me-2"></i>Galeri
-                            </a></li>
-                            <li><a class="dropdown-item" href="{{ route('downloads.index') }}">
-                                <i class="fas fa-download me-2"></i>Download
-                            </a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item d-none d-lg-block">
-                        <a class="nav-link {{ request()->routeIs('news.*') ? 'active' : '' }}" href="{{ route('news.index') }}">
-                            Berita
-                        </a>
-                    </li>
-                    <li class="nav-item d-none d-lg-block">
-                        <a class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }}" href="{{ route('contact') }}">
-                            Kontak
-                        </a>
-                    </li>
-                </ul>
-                
-                <ul class="navbar-nav">
-                    @auth
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" 
-                               data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user-circle me-1"></i>
-                                <span class="d-none d-md-inline">{{ auth()->user()->name }}</span>
-                                <span class="d-inline d-md-none">Profile</span>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                <li><a class="dropdown-item" href="{{ route('dashboard') }}">
-                                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-                                </a></li>
-                                <li><a class="dropdown-item" href="{{ route('profile.edit') }}">
-                                    <i class="fas fa-cog me-2"></i>Pengaturan
-                                </a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <form method="POST" action="{{ route('logout') }}" class="d-inline">
-                                        @csrf
-                                        <button type="submit" class="dropdown-item">
-                                            <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                        </button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </li>
-                    @else
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('login') }}">
-                                <i class="fas fa-sign-in-alt me-1"></i>Login
-                            </a>
-                        </li>
-                    @endauth
-                </ul>
-            </div>
-        </div>
-    </nav>
-
 
 
     <!-- Hero Section -->
@@ -429,13 +306,13 @@
                 <div class="whatsapp-section">
                     <h3>Kontak WhatsApp</h3>
                     <div class="whatsapp-buttons">
-                        <a href="https://wa.me/628123456789?text=Halo,%20saya%20ingin%20bertanya%20tentang%20SMA%20Negeri%201%20Balong" 
+                        <a href="https://wa.me/6285755216048?text=Halo,%20saya%20ingin%20bertanya%20tentang%20SMA%20Negeri%201%20Balong" 
                            target="_blank" 
                            class="whatsapp-btn">
                             <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893A11.821 11.821 0 0020.893 3.488"/>
                             </svg>
-                            Admin Sekolah (+62 812-3456-789)
+                            Admin Sekolah (+62 857-5521-6048)
                         </a>
                         
                         <a href="https://wa.me/628987654321?text=Halo,%20saya%20ingin%20bertanya%20tentang%20pendaftaran%20siswa%20baru" 

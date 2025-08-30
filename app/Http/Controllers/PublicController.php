@@ -28,6 +28,12 @@ class PublicController extends Controller
             'title' => 'Visi & Misi'
         ]);
     }
+    public function sejarah()
+    {
+        return view('public.about.sejarah', [
+            'title' => 'Sejarah Sekolah'
+        ]);
+    }
 
     public function facilities()
     {
@@ -103,6 +109,12 @@ class PublicController extends Controller
     {
         return view('public.gallery.videos', [
             'title' => 'Galeri Video'
+        ]);
+    }
+    public function galleryIndex()
+    {
+        return view('public.gallery.index', [
+            'title' => 'Galeri Video dan Video'
         ]);
     }
 
