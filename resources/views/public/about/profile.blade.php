@@ -983,29 +983,6 @@
     </div>
 </section>
 
-<!-- Footer -->
-<footer class="bg-dark text-white py-4">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6 fade-in-left">
-                <h5>SMA Negeri 1 Balong</h5>
-                <p>Jl. Pendidikan No. 123, Balong<br>
-                    Telp: (021) 4567890<br>
-                    Email: info@sman1balong.sch.id</p>
-            </div>
-            <div class="col-md-6 text-md-end fade-in-right">
-                <p class="mb-0">&copy; 2024 SMA Negeri 1 Balong. All rights reserved.</p>
-                <div class="mt-2">
-                    <a href="#" class="text-white me-2 scale-in" style="animation-delay: 0.2s;"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="text-white me-2 scale-in" style="animation-delay: 0.4s;"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="text-white me-2 scale-in" style="animation-delay: 0.6s;"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="text-white scale-in" style="animation-delay: 0.8s;"><i class="fab fa-youtube"></i></a>
-                </div>
-            </div>
-        </div>
-    </div>
-</footer>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
