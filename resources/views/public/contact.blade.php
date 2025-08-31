@@ -360,77 +360,7 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
-                    <h5><i class="fas fa-graduation-cap me-2"></i>SMA Negeri 1</h5>
-                    <p class="mb-3">Excellence in Education - Membentuk generasi yang berkarakter dan berprestasi untuk masa depan Indonesia yang gemilang.</p>
-                    <div class="social-links">
-                        <a href="#" class="text-white me-3" aria-label="Facebook">
-                            <i class="fab fa-facebook fa-lg"></i>
-                        </a>
-                        <a href="#" class="text-white me-3" aria-label="Instagram">
-                            <i class="fab fa-instagram fa-lg"></i>
-                        </a>
-                        <a href="#" class="text-white me-3" aria-label="YouTube">
-                            <i class="fab fa-youtube fa-lg"></i>
-                        </a>
-                        <a href="#" class="text-white" aria-label="Twitter">
-                            <i class="fab fa-twitter fa-lg"></i>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
-                    <h6 class="fw-bold mb-3">Quick Links</h6>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="{{ route('about.profile') }}" class="text-white-50 text-decoration-none">Profil Sekolah</a></li>
-                        <li class="mb-2"><a href="{{ route('facilities.index') }}" class="text-white-50 text-decoration-none">Fasilitas</a></li>
-                        <li class="mb-2"><a href="{{ route('achievements.index') }}" class="text-white-50 text-decoration-none">Prestasi</a></li>
-                        <li class="mb-2"><a href="{{ route('extracurriculars.index') }}" class="text-white-50 text-decoration-none">Ekstrakurikuler</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-2 col-md-6 mb-4 mb-lg-0">
-                    <h6 class="fw-bold mb-3">Akademik</h6>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="{{ route('public.academic.programs') }}" class="text-white-50 text-decoration-none">Program Studi</a></li>
-                        <li class="mb-2"><a href="{{ route('academic.calendar') }}" class="text-white-50 text-decoration-none">Kalender</a></li>
-                        <li class="mb-2"><a href="{{ route('downloads.index') }}" class="text-white-50 text-decoration-none">Download</a></li>
-                        <li class="mb-2"><a href="{{ route('gallery.photos') }}" class="text-white-50 text-decoration-none">Galeri</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <h6 class="fw-bold mb-3">Kontak Kami</h6>
-                    <p class="mb-2">
-                        <i class="fas fa-map-marker-alt me-2"></i>
-                        <small>Jl. Pendidikan No. 123<br>Semarang, Jawa Tengah 50123</small>
-                    </p>
-                    <p class="mb-2">
-                        <i class="fas fa-phone me-2"></i>
-                        <small>(024) 123-4567</small>
-                    </p>
-                    <p class="mb-0">
-                        <i class="fas fa-envelope me-2"></i>
-                        <small>info@sman1.sch.id</small>
-                    </p>
-                </div>
-            </div>
-            <hr style="border-color: rgba(255,255,255,0.2); margin: 2rem 0 1rem 0;">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <p class="mb-0">&copy; {{ date('Y') }} SMA Negeri 1. All rights reserved.</p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <p class="mb-0">
-                        <small>Powered by <span class="text-info">Laravel</span></small>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-
+  
 <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @stack('scripts')
