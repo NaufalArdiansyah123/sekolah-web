@@ -21,7 +21,7 @@
         line-height: 1.6;
     }
     
-    /* Enhanced Hero Section matching profile page */
+    /* Enhanced Hero Section matching home page */
     .hero-section {
         background: linear-gradient(
             135deg, 
@@ -202,8 +202,9 @@
 
     /* Vision Card Specific Styling */
     .vision-card {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
+        background: white;
+        color: var(--primary-color);
+        border: 1px solid rgba(0,0,0,0.05);
     }
     
     .vision-quote {
@@ -211,12 +212,13 @@
         font-weight: 300;
         line-height: 1.6;
         text-align: center;
-        padding: 20px;
-        background: rgba(255,255,255,0.1);
+        padding: 30px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         border-radius: 15px;
         margin: 20px 0;
-        border-left: 4px solid rgba(255,255,255,0.5);
+        border-left: 4px solid var(--secondary-color);
         position: relative;
+        color: var(--primary-color);
     }
     
     .vision-quote::before {
@@ -225,14 +227,16 @@
         top: -10px;
         left: 20px;
         font-size: 4rem;
-        opacity: 0.3;
+        opacity: 0.2;
         font-family: serif;
+        color: var(--secondary-color);
     }
 
     /* Mission Card Specific Styling */
     .mission-card {
-        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-        color: white;
+        background: white;
+        color: var(--primary-color);
+        border: 1px solid rgba(0,0,0,0.05);
     }
     
     .mission-list {
@@ -242,42 +246,46 @@
     }
     
     .mission-item {
-        background: rgba(255,255,255,0.1);
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         margin: 15px 0;
         padding: 20px;
         border-radius: 12px;
-        border-left: 4px solid rgba(255,255,255,0.5);
+        border-left: 4px solid #198754;
         transition: all 0.3s ease;
         position: relative;
+        padding-left: 50px;
+        color: var(--primary-color);
     }
     
     .mission-item:hover {
-        background: rgba(255,255,255,0.15);
+        background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
         transform: translateX(10px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
     
     .mission-number {
         position: absolute;
-        left: -15px;
+        left: 15px;
         top: 50%;
-        transform: translateY(-50%;
+        transform: translateY(-50%);
         width: 30px;
         height: 30px;
-        background: rgba(255,255,255,0.9);
-        color: #11998e;
+        background: #198754;
+        color: white;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: bold;
         font-size: 0.9rem;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        box-shadow: 0 4px 12px rgba(25, 135, 84, 0.3);
     }
 
     /* Goals Card Specific Styling */
     .goals-card {
-        background: linear-gradient(135deg, #fc466b 0%, #3f5efb 100%);
-        color: white;
+        background: white;
+        color: var(--primary-color);
+        border: 1px solid rgba(0,0,0,0.05);
     }
     
     .goals-grid {
@@ -288,35 +296,39 @@
     }
     
     .goal-item {
-        background: rgba(255,255,255,0.1);
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         padding: 25px;
         border-radius: 15px;
         text-align: center;
         transition: all 0.3s ease;
-        border: 1px solid rgba(255,255,255,0.2);
+        border: 1px solid rgba(0,0,0,0.05);
+        color: var(--primary-color);
     }
     
     .goal-item:hover {
-        background: rgba(255,255,255,0.15);
+        background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
         transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
     }
     
     .goal-icon {
         font-size: 2.5rem;
         margin-bottom: 15px;
-        opacity: 0.9;
+        opacity: 0.8;
     }
     
     .goal-title {
         font-size: 1.1rem;
         font-weight: 600;
         margin-bottom: 10px;
+        color: var(--primary-color);
     }
     
     .goal-description {
         font-size: 0.9rem;
-        opacity: 0.9;
+        opacity: 0.8;
         line-height: 1.5;
+        color: var(--dark-gray);
     }
 
     /* Values Section */
@@ -432,6 +444,46 @@
         background: linear-gradient(135deg, #2d3748, #2b6cb0);
     }
 
+    /* Hero Buttons */
+    .btn-hero {
+        padding: 15px 30px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 50px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        border: none;
+        backdrop-filter: blur(10px);
+    }
+    
+    .btn-hero-primary {
+        background: rgba(255,255,255,0.95);
+        color: var(--primary-color);
+    }
+    
+    .btn-hero-primary:hover {
+        background: white;
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        color: var(--primary-color);
+    }
+    
+    .btn-hero-outline {
+        background: rgba(255,255,255,0.1);
+        color: white;
+        border: 2px solid rgba(255,255,255,0.8);
+    }
+    
+    .btn-hero-outline:hover {
+        background: rgba(255,255,255,0.2);
+        border-color: white;
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(255,255,255,0.2);
+    }
+
     /* Motto Section */
     .motto-section {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -492,6 +544,11 @@
         .goals-grid {
             grid-template-columns: 1fr;
         }
+        
+        .btn-hero {
+            width: 100%;
+            margin-bottom: 15px;
+        }
     }
     
     @media (max-width: 576px) {
@@ -524,51 +581,159 @@
 <!-- Enhanced Hero Section -->
 <section class="hero-section">
     <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="fade-in-up">Visi & Misi</h1>
+                <p class="lead fade-in-up">Komitmen kami untuk menciptakan pendidikan berkualitas dan membentuk generasi yang berkarakter, berprestasi, dan siap menghadapi tantangan masa depan.</p>
+                <div class="fade-in-up">
+                    <a href="{{ route('about.profile') }}" class="btn btn-hero btn-hero-primary me-3">
+                        <i class="fas fa-info-circle me-2"></i>Profil Sekolah
+                    </a>
+                    <a href="#vision-mission" class="btn btn-hero btn-hero-outline">
+                        <i class="fas fa-eye me-2"></i>Lihat Detail
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <i class="fas fa-eye hero-icon"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Vision, Mission & Goals Section -->
+<section id="vision-mission" class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Vision Card -->
+            <div class="col-lg-12 mb-4">
+                <div class="vision-mission-card vision-card fade-in-up">
+                    <div class="card-header-enhanced">
+                        <h3 class="mb-0">
+                            <i class="fas fa-eye me-3"></i>VISI
+                        </h3>
+                    </div>
+                    <div class="card-body-enhanced">
+                        <div class="vision-quote">
+                            Terwujudnya sekolah yang unggul, berkarakter, dan berwawasan lingkungan dalam menghasilkan lulusan yang cerdas, kreatif, mandiri, dan berakhlak mulia
+                        </div>
+                        <p class="text-center mt-3 opacity-75">
+                            Visi ini mencerminkan komitmen kami untuk menjadi institusi pendidikan yang tidak hanya fokus pada pencapaian akademik, 
+                            tetapi juga pembentukan karakter dan kepedulian terhadap lingkungan.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mission Card -->
+            <div class="col-lg-12 mb-4">
+                <div class="vision-mission-card mission-card fade-in-up">
+                    <div class="card-header-enhanced">
+                        <h3 class="mb-0">
+                            <i class="fas fa-bullseye me-3"></i>MISI
+                        </h3>
+                    </div>
+                    <div class="card-body-enhanced">
+                        <ul class="mission-list">
+                            <li class="mission-item">
+                                <div class="mission-number">1</div>
+                                <strong>Menyelenggarakan pendidikan berkualitas</strong> dengan mengintegrasikan kurikulum nasional dan teknologi pembelajaran modern
+                            </li>
+                            <li class="mission-item">
+                                <div class="mission-number">2</div>
+                                <strong>Mengembangkan karakter siswa</strong> melalui program pendidikan nilai-nilai keagamaan, nasionalisme, dan kepemimpinan
+                            </li>
+                            <li class="mission-item">
+                                <div class="mission-number">3</div>
+                                <strong>Memfasilitasi pengembangan bakat dan minat</strong> siswa melalui kegiatan ekstrakurikuler dan program unggulan
+                            </li>
+                            <li class="mission-item">
+                                <div class="mission-number">4</div>
+                                <strong>Membangun budaya sekolah</strong> yang kondusif, aman, nyaman, dan berwawasan lingkungan
+                            </li>
+                            <li class="mission-item">
+                                <div class="mission-number">5</div>
+                                <strong>Menjalin kemitraan strategis</strong> dengan stakeholder untuk mendukung program pendidikan dan pengembangan sekolah
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Goals Card -->
+            <div class="col-lg-12 mb-4">
+                <div class="vision-mission-card goals-card fade-in-up">
+                    <div class="card-header-enhanced">
+                        <h3 class="mb-0">
+                            <i class="fas fa-target me-3"></i>TUJUAN STRATEGIS
+                        </h3>
+                    </div>
+                    <div class="card-body-enhanced">
+                        <div class="goals-grid">
+                            <div class="goal-item">
+                                <div class="goal-icon">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </div>
+                                <div class="goal-title">Kualitas Akademik</div>
+                                <div class="goal-description">
+                                    Meningkatkan prestasi akademik dan daya saing lulusan di tingkat nasional
+                                </div>
+                            </div>
+                            
+                            <div class="goal-item">
+                                <div class="goal-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="goal-title">Pembentukan Karakter</div>
+                                <div class="goal-description">
+                                    Menghasilkan lulusan yang berakhlak mulia dan berkarakter kuat
+                                </div>
+                            </div>
+                            
+                            <div class="goal-item">
+                                <div class="goal-icon">
+                                    <i class="fas fa-leaf"></i>
+                                </div>
+                                <div class="goal-title">Peduli Lingkungan</div>
+                                <div class="goal-description">
+                                    Mewujudkan sekolah hijau dan berkelanjutan untuk masa depan
+                                </div>
+                            </div>
+                            
+                            <div class="goal-item">
+                                <div class="goal-icon">
+                                    <i class="fas fa-globe"></i>
+                                </div>
+                                <div class="goal-title">Wawasan Global</div>
+                                <div class="goal-description">
+                                    Mempersiapkan siswa dengan kompetensi global dan daya saing internasional
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Values Section -->
+<section class="values-section">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-md-8 mx-auto text-center">
+                <h2 class="section-heading fade-in-up">Nilai-Nilai Sekolah</h2>
+                <p class="text-muted fade-in-up" style="animation-delay: 0.2s;">
+                    Nilai-nilai fundamental yang menjadi landasan dalam setiap kegiatan pendidikan di SMA Negeri 1 Balong
+                </p>
+            </div>
+        </div>
+        
         <div class="row g-4">
             <div class="col-md-4">
                 <div class="value-card fade-in-up" style="animation-delay: 0.1s;">
                     <div class="value-icon bg-primary text-white">
                         <i class="fas fa-heart"></i>
-                    </div>
-                    <h5 class="fw-bold mb-3">INTEGRITAS</h5>
-                    <p class="text-muted">Kejujuran, transparansi, dan konsistensi dalam setiap tindakan sebagai dasar kepercayaan</p>
-                </div>
-            </div>
-            
-            <div class="col-md-4">
-                <div class="value-card fade-in-up" style="animation-delay: 0.2s;">
-                    <div class="value-icon bg-success text-white">
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <h5 class="fw-bold mb-3">KEUNGGULAN</h5>
-                    <p class="text-muted">Komitmen untuk selalu memberikan yang terbaik dan berusaha mencapai standar tertinggi</p>
-                </div>
-            </div>
-            
-            <div class="col-md-4">
-                <div class="value-card fade-in-up" style="animation-delay: 0.3s;">
-                    <div class="value-icon bg-warning text-white">
-                        <i class="fas fa-handshake"></i>
-                    </div>
-                    <h5 class="fw-bold mb-3">KOLABORASI</h5>
-                    <p class="text-muted">Kerjasama yang sinergis antara guru, siswa, orang tua, dan masyarakat</p>
-                </div>
-            </div>
-            
-            <div class="col-md-4">
-                <div class="value-card fade-in-up" style="animation-delay: 0.4s;">
-                    <div class="value-icon bg-info text-white">
-                        <i class="fas fa-lightbulb"></i>
-                    </div>
-                    <h5 class="fw-bold mb-3">INOVASI</h5>
-                    <p class="text-muted">Kreativitas dan pembaruan berkelanjutan dalam metode dan pendekatan pendidikan</p>
-                </div>
-            </div>
-            
-            <div class="col-md-4">
-                <div class="value-card fade-in-up" style="animation-delay: 0.5s;">
-                    <div class="value-icon bg-purple text-white" style="background: #6f42c1 !important;">
-                        <i class="fas fa-balance-scale"></i>
                     </div>
                     <h5 class="fw-bold mb-3">KEADILAN</h5>
                     <p class="text-muted">Perlakuan yang adil dan merata untuk seluruh warga sekolah tanpa diskriminasi</p>
@@ -582,6 +747,24 @@
                     </div>
                     <h5 class="fw-bold mb-3">PEDULI LINGKUNGAN</h5>
                     <p class="text-muted">Kepedulian terhadap kelestarian lingkungan dan pembangunan berkelanjutan</p>
+                </div>
+            </div>
+            <!-- <div class="col-md-4">
+                <div class="value-card fade-in-up" style="animation-delay: 0.6s;">
+                    <div class="value-icon bg-danger text-white">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">INOVASI</h5>
+                    <p class="text-muted"></p>
+                </div>
+            </div> -->
+            <div class="col-md-4">
+                <div class="value-card fade-in-up" style="animation-delay: 0.4s;">
+                    <div class="value-icon bg-info text-white">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">INOVASI</h5>
+                    <p class="text-muted">Kreativitas dan pembaruan berkelanjutan dalam metode dan pendekatan pendidikan</p>
                 </div>
             </div>
         </div>
@@ -757,7 +940,7 @@
                 </p>
             </div>
             <div class="col-lg-4 text-center">
-                <a href="#" class="btn btn-light btn-lg px-4 py-2 btn-enhanced scale-in me-3" style="animation-delay: 0.4s;">
+                <a href="{{ route('about.profile') }}" class="btn btn-light btn-lg px-4 py-2 btn-enhanced scale-in me-3" style="animation-delay: 0.4s;">
                     <i class="fas fa-info-circle me-2"></i>Pelajari Lebih Lanjut
                 </a>
                 <a href="https://wa.me/6285755216048?text=Halo,%20saya%20ingin%20bertanya%20tentang%20SMA%20Negeri%201%20Balong" 
@@ -826,12 +1009,16 @@ document.addEventListener('DOMContentLoaded', function () {
     goalItems.forEach(item => {
         item.addEventListener('mouseenter', function() {
             const icon = this.querySelector('.goal-icon i');
-            icon.style.transform = 'scale(1.2) rotateY(180deg)';
+            if (icon) {
+                icon.style.transform = 'scale(1.2) rotateY(180deg)';
+            }
         });
         
         item.addEventListener('mouseleave', function() {
             const icon = this.querySelector('.goal-icon i');
-            icon.style.transform = 'scale(1) rotateY(0deg)';
+            if (icon) {
+                icon.style.transform = 'scale(1) rotateY(0deg)';
+            }
         });
     });
     
@@ -839,14 +1026,11 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             if (this.href && !this.href.includes('#')) {
-                e.preventDefault();
                 const originalText = this.innerHTML;
                 this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
                 
                 setTimeout(() => {
                     this.innerHTML = originalText;
-                    // Simulate navigation
-                    console.log('Navigation to:', this.href);
                 }, 2000);
             }
         });
@@ -939,4 +1123,4 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('Enhanced vision mission page loaded successfully!');
 });
 </script>
-@endsection
+@endsection 

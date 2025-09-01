@@ -459,7 +459,6 @@
                                 'title' => 'Content Management',
                                 'icon' => 'document-text',
                                 'permission' => 'posts.read',
-                                'badge' => '5',
                                 'children' => [
                                     ['title' => 'Slideshow', 'route' => 'admin.posts.slideshow'],
                                     ['title' => 'Agenda', 'route' => 'admin.posts.agenda'],
@@ -496,7 +495,6 @@
                                 'title' => 'Learning',
                                 'icon' => 'book-open',
                                 'permission' => 'materials.manage',
-                                'badge' => '2',
                                 'children' => [
                                     ['title' => 'Materials', 'route' => 'admin.materials.index'],
                                     ['title' => 'Assignments', 'route' => 'admin.assignments.index'],
@@ -512,8 +510,8 @@
                                 'children' => [
                                     ['title' => 'Users', 'route' => 'admin.users.index'],
                                     ['title' => 'Roles & Permissions', 'route' => 'admin.roles.index'],
-                                    ['title' => 'System Settings', 'route' => 'admin.settings.index'],
-                                    ['title' => 'Backup & Restore', 'route' => 'admin.backup.index'],
+                                    ['title' => 'System Settings', 'route' => 'admin.settings'],
+                                    ['title' => 'Profile', 'route' => 'admin.profile'],
                                 ]
                             ]
                         ];
@@ -566,7 +564,12 @@
                                              x-transition:leave-start="opacity-100 transform translate-y-0" 
                                              x-transition:leave-end="opacity-0 transform -translate-y-2" 
                                              class="nav-dropdown-content">
-                                          
+                                            @foreach($menu['children'] as $child)
+                                                <a href="{{ route($child['route']) }}" 
+                                                   class="nav-dropdown-item {{ request()->routeIs($child['route'].'*') ? 'active' : '' }}">
+                                                    {{ $child['title'] }}
+                                                </a>
+                                            @endforeach
                                         </div>
                                     @else
                                         <!-- Enhanced Single Menu Item -->
@@ -686,25 +689,71 @@
                                         @if(isset($menu['badge']))
                                             <span class="nav-badge">{{ $menu['badge'] }}</span>
                                         @endif
-                                    </a>
-                                @endif
-                            </div>
-                        @endif
-                    @endforeach
-                </div>
+                                    </div>
+                                    <div class="flex items-center">
+                                        @if(isset($menu['badge']))
+                                            <span class="nav-badge">{{ $menu['badge'] }}</span>
+                                        @endif
+                                        <svg class="nav-dropdown-icon w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </div>
+                                </button>
+                                
+                                <!-- Enhanced Children Menu -->
+                                <div x-show="open" 
+                                     x-transition:enter="transition ease-out duration-200" 
+                                     x-transition:enter-start="opacity-0 transform -translate-y-2" 
+                                     x-transition:enter-end="opacity-100 transform translate-y-0" 
+                                     x-transition:leave="transition ease-in duration-150" 
+                                     x-transition:leave-start="opacity-100 transform translate-y-0" 
+                                     x-transition:leave-end="opacity-0 transform -translate-y-2" 
+                                     class="nav-dropdown-content">
+                                    @foreach($menu['children'] as $child)
+                                        <a href="{{ route($child['route']) }}" 
+                                           class="nav-dropdown-item {{ request()->routeIs($child['route'].'*') ? 'active' : '' }}"
+                                           @click="sidebarOpen = false">
+                                            {{ $child['title'] }}
+                                        </a>
+                                    @endforeach
+                                </div>
+                            @else
+                                <!-- Enhanced Single Menu Item -->
+                                <a href="{{ route($menu['route']) }}" 
+                                   class="nav-link {{ request()->routeIs($menu['route'].'*') ? 'active' : '' }}"
+                                   @click="sidebarOpen = false">
+                                    @php
+                                        $iconName = $menu['icon'];
+                                        $iconSvg = match($iconName) {
+                                            'home' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>',
+                                            default => '<circle cx="12" cy="12" r="10"></circle>'
+                                        };
+                                    @endphp
+                                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        {!! $iconSvg !!}
+                                    </svg>
+                                    <span>{{ $menu['title'] }}</span>
+                                    @if(isset($menu['badge']))
+                                        <span class="nav-badge">{{ $menu['badge'] }}</span>
+                                    @endif
+                                </a>
+                            @endif
+                        </div>
+                    @endif
+                @endforeach
+            </div>
 
-                <!-- Mobile User Profile Section -->
-                <div class="user-profile-section">
-                    <div class="user-profile-card" @click="$dispatch('open-modal', 'user-profile')">
-                        <div class="user-avatar-large">
-                            {{ strtoupper(substr(auth()->user()->name ?? 'Admin', 0, 2)) }}
-                        </div>
-                        <div class="user-info">
-                            <div class="user-name">{{ auth()->user()->name ?? 'Administrator' }}</div>
-                            <div class="user-role">{{ auth()->user()->role ?? 'Super Admin' }}</div>
-                        </div>
-                        <div class="user-status"></div>
+            <!-- Mobile User Profile Section -->
+            <div class="user-profile-section">
+                <div class="user-profile-card" @click="$dispatch('open-modal', 'user-profile')">
+                    <div class="user-avatar-large">
+                        {{ strtoupper(substr(auth()->user()->name ?? 'Admin', 0, 2)) }}
                     </div>
+                    <div class="user-info">
+                        <div class="user-name">{{ auth()->user()->name ?? 'Administrator' }}</div>
+                        <div class="user-role">{{ auth()->user()->role ?? 'Super Admin' }}</div>
+                    </div>
+                    <div class="user-status"></div>
                 </div>
             </div>
         </div>
