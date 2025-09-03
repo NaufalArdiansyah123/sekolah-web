@@ -1029,7 +1029,6 @@
                         <h5 class="mb-0"><i class="fas fa-calendar me-2"></i>Agenda Kegiatan</h5>
                     </div>
                     <div class="card-body">
-<<<<<<< HEAD
                         <div class="agenda-item mb-3 pb-3 border-bottom">
                             <div class="d-flex align-items-center">
                                 <div class="agenda-date me-3 text-center">
@@ -1065,7 +1064,6 @@
                                     <small class="text-muted">09:00 - 11:00 WIB</small>
                                 </div>
                             </div>
-=======
                         <ul class="list-unstyled mb-0">
                             <li class="mb-3 p-3 bg-light rounded">
                                 <strong>25 Oktober 2024</strong><br>
@@ -1113,7 +1111,6 @@
                                     <i class="fas fa-tachometer-alt me-2"></i>Dashboard
                                 </a>
                             @endauth
->>>>>>> 1037e3706509bc67ac35ec5c31f86eca2003ade0
                         </div>
                     </div>
                 </div>

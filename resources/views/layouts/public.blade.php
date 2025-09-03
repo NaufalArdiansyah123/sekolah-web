@@ -579,7 +579,10 @@
                             <li><hr class="dropdown-divider"></li>
 
                             <li><a class="dropdown-item" href="{{ route('gallery.photos.index') }}">
-                            <i class="fas fa-images me-3"></i>Galeri
+                            <i class="fas fa-images me-3"></i>Galeri Foto
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ route('gallery.videos') }}">
+                            <i class="fas fa-images me-3"></i>Galeri Video
                             </a></li>
 
                                 

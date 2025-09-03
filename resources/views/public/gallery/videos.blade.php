@@ -1,3 +1,8 @@
+@extends('layouts.public')
+
+@section('title', 'Video Gallery')
+
+@section('content')
 <!DOCTYPE html>
 <html lang="id">
 <head>
