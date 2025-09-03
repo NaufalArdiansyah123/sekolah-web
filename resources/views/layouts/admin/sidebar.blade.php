@@ -472,7 +472,8 @@
                                 'permission' => 'posts.create',
                                 'children' => [
                                     ['title' => 'Downloads', 'route' => 'admin.downloads.index'],
-                                    ['title' => 'Gallery', 'route' => 'admin.gallery.index'],
+                                    ['title' => 'Gallery Manager', 'route' => 'admin.gallery.index'],
+                                    ['title' => 'Upload Photos', 'route' => 'admin.gallery.upload'], // New upload link
                                 ]
                             ],
                             [

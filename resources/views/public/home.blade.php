@@ -1029,6 +1029,7 @@
                         <h5 class="mb-0"><i class="fas fa-calendar me-2"></i>Agenda Kegiatan</h5>
                     </div>
                     <div class="card-body">
+<<<<<<< HEAD
                         <div class="agenda-item mb-3 pb-3 border-bottom">
                             <div class="d-flex align-items-center">
                                 <div class="agenda-date me-3 text-center">
@@ -1064,6 +1065,55 @@
                                     <small class="text-muted">09:00 - 11:00 WIB</small>
                                 </div>
                             </div>
+=======
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-3 p-3 bg-light rounded">
+                                <strong>25 Oktober 2024</strong><br>
+                                <small>Peringatan Hari Sumpah Pemuda</small>
+                            </li>
+                            <li class="mb-3 p-3 bg-light rounded">
+                                <strong>31 Oktober 2024</strong><br>
+                                <small>Workshop Teknologi Pendidikan</small>
+                            </li>
+                            <li class="p-3 bg-light rounded">
+                                <strong>5 November 2024</strong><br>
+                                <small>Festival Seni dan Budaya</small>
+                            </li>
+                        </ul>
+                        <a href="{{ route('agenda.index') }}" class="btn btn-outline-info btn-enhanced mt-3">
+                            <i class="fas fa-calendar-check me-2"></i>Lihat Agenda
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="sidebar-card">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0"><i class="fas fa-link me-2"></i>Quick Links</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-3">
+                            <a href="{{ route('downloads.index') }}" class="btn btn-outline-secondary btn-enhanced">
+                                <i class="fas fa-download me-2"></i>Download
+                            </a>
+
+                           <a href="{{ route('gallery.photos.index') }}" class="btn btn-outline-secondary btn-enhanced">
+    <i class="fas fa-images me-2"></i>Galeri
+</a>
+
+
+
+
+                            </a>
+                            <a href="{{ route('extracurriculars.index') }}" class="btn btn-outline-secondary btn-enhanced">
+                                <i class="fas fa-users me-2"></i>Ekstrakurikuler
+                            </a>
+                            @auth
+                                <a href="{{ route('dashboard') }}" class="btn btn-primary-enhanced btn-enhanced">
+                                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                                </a>
+                            @endauth
+>>>>>>> 1037e3706509bc67ac35ec5c31f86eca2003ade0
                         </div>
                     </div>
                 </div>
