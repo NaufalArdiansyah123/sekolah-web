@@ -11,7 +11,7 @@ class GalleryController extends Controller
     public function index()
     {
         $albums = $this->getGalleryAlbums();
-        return view('gallery.index', compact('albums'));
+        return view('public.gallery.index', compact('albums'));
     }
 
     public function photos($slug)
@@ -23,7 +23,7 @@ class GalleryController extends Controller
             abort(404, 'Album tidak ditemukan');
         }
 
-        return view('gallery.photos', compact('album'));
+        return view('public.gallery.photos', compact('album'));
     }
 
     private function getGalleryAlbums()

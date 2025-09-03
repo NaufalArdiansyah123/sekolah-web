@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', $album['title'] . ' - Galeri Foto - SMA Negeri 1 Balong')
 
