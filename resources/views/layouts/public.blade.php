@@ -577,9 +577,12 @@
                                 <i class="fas fa-users me-3"></i>Ekstrakurikuler
                             </a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ route('gallery.photos') }}">
-                                <i class="fas fa-images me-3"></i>Galeri
+
+                            <li><a class="dropdown-item" href="{{ route('gallery.photos.index') }}">
+                            <i class="fas fa-images me-3"></i>Galeri
                             </a></li>
+
+                                
                             <li><a class="dropdown-item" href="{{ route('downloads.index') }}">
                                 <i class="fas fa-download me-3"></i>Download
                             </a></li>
@@ -679,7 +682,8 @@
                         <li class="mb-2"><a href="{{ route('public.academic.programs') }}" class="text-white-50 text-decoration-none">Program Studi</a></li>
                         <li class="mb-2"><a href="{{ route('academic.calendar') }}" class="text-white-50 text-decoration-none">Kalender</a></li>
                         <li class="mb-2"><a href="{{ route('downloads.index') }}" class="text-white-50 text-decoration-none">Download</a></li>
-                        <li class="mb-2"><a href="{{ route('gallery.photos') }}" class="text-white-50 text-decoration-none">Galeri</a></li>
+                        <li class="mb-2"><a href="{{ route('gallery.photos.index') }}" class="text-white-50 text-decoration-none">Galeri</a></li>
+
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-6">

@@ -35,11 +35,11 @@
 
         <!-- Page Content -->
         <main>
-            {{ $slot }}
+           @yield('content')
         </main>
 
         <!-- Footer -->
-        @include('layouts.footer')
+       
     </div>
 
     @stack('scripts')

@@ -682,8 +682,14 @@
                             <a href="{{ route('downloads.index') }}" class="btn btn-outline-secondary btn-enhanced">
                                 <i class="fas fa-download me-2"></i>Download
                             </a>
-                            <a href="{{ route('gallery.photos') }}" class="btn btn-outline-secondary btn-enhanced">
-                                <i class="fas fa-images me-2"></i>Galeri
+
+                           <a href="{{ route('gallery.photos.index') }}" class="btn btn-outline-secondary btn-enhanced">
+    <i class="fas fa-images me-2"></i>Galeri
+</a>
+
+
+
+
                             </a>
                             <a href="{{ route('extracurriculars.index') }}" class="btn btn-outline-secondary btn-enhanced">
                                 <i class="fas fa-users me-2"></i>Ekstrakurikuler
