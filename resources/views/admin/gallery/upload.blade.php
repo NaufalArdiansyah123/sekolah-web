@@ -1,7 +1,7 @@
 <?php
 // resources/views/admin/gallery/upload.blade.php
 ?>
-@extends('layouts.admin.app')
+@extends('layouts.admin')
 
 @section('title', 'Upload Gallery Photos')
 

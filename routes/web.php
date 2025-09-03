@@ -8,11 +8,8 @@ use App\Http\Controllers\Student\DashboardController as StudentDashboardControll
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\AcademicController;
 use Illuminate\Support\Facades\Route;
-<<<<<<< HEAD
 use App\Http\Controllers\Admin\AnnouncementController;
-=======
 use App\Http\Controllers\GalleryController;
->>>>>>> 1037e3706509bc67ac35ec5c31f86eca2003ade0
 
 
 // 
@@ -20,7 +17,6 @@ use App\Http\Controllers\Admin\{
     DashboardController,
     PostController,
     DownloadController,
-    GalleryController,
     ExtracurricularController,
     AchievementController,
     TeacherController,
@@ -158,7 +154,6 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
 
 
 
-<<<<<<< HEAD
 /*
 |--------------------------------------------------------------------------
 | Upload berbagai macam
@@ -250,7 +245,6 @@ Route::group(['prefix' => 'announcements'], function () {
     Route::get('/', [AnnouncementController::class, 'publicIndex'])->name('announcements.index');
     Route::get('/{id}', [AnnouncementController::class, 'publicShow'])->name('announcements.show');
 });
-=======
 
 /*
 |--------------------------------------------------------------------------
@@ -278,15 +272,15 @@ Route::prefix('gallery')->name('gallery.')->group(function () {
 
 
 // Photos management
-    Route::prefix('galleries/{gallery}')->name('galleries.')->group(function () {
-        Route::get('/photos', [AdminPhotoController::class, 'index'])->name('photos.index');
-        Route::get('/photos/create', [AdminPhotoController::class, 'create'])->name('photos.create');
-        Route::post('/photos', [AdminPhotoController::class, 'store'])->name('photos.store');
-        Route::get('/photos/{photo}', [AdminPhotoController::class, 'show'])->name('photos.show');
-        Route::get('/photos/{photo}/edit', [AdminPhotoController::class, 'edit'])->name('photos.edit');
-        Route::put('/photos/{photo}', [AdminPhotoController::class, 'update'])->name('photos.update');
-        Route::delete('/photos/{photo}', [AdminPhotoController::class, 'destroy'])->name('photos.destroy');
-    });
+    // Route::prefix('galleries/{gallery}')->name('galleries.')->group(function () {
+    //     Route::get('/photos', [AdminPhotoController::class, 'index'])->name('photos.index');
+    //     Route::get('/photos/create', [AdminPhotoController::class, 'create'])->name('photos.create');
+    //     Route::post('/photos', [AdminPhotoController::class, 'store'])->name('photos.store');
+    //     Route::get('/photos/{photo}', [AdminPhotoController::class, 'show'])->name('photos.show');
+    //     Route::get('/photos/{photo}/edit', [AdminPhotoController::class, 'edit'])->name('photos.edit');
+    //     Route::put('/photos/{photo}', [AdminPhotoController::class, 'update'])->name('photos.update');
+    //     Route::delete('/photos/{photo}', [AdminPhotoController::class, 'destroy'])->name('photos.destroy');
+    // });
 
 
 // Halaman daftar galeri
@@ -299,4 +293,3 @@ Route::get('/gallery/photos/{slug}', [App\Http\Controllers\GalleryController::cl
 
 
 ?>
->>>>>>> 1037e3706509bc67ac35ec5c31f86eca2003ade0

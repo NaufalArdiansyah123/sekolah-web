@@ -36,19 +36,16 @@
 
         <!-- Page Content -->
         <main>
-<<<<<<< HEAD
             @yield('content')
         </main>
 
         <!-- Footer -->
         
-=======
            @yield('content')
         </main>
 
         <!-- Footer -->
        
->>>>>>> 1037e3706509bc67ac35ec5c31f86eca2003ade0
     </div>
 
     @stack('scripts')
