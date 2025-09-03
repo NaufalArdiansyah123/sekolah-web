@@ -442,280 +442,187 @@
         </div>
     </section>
 
-    <!-- Filter Section -->
-    <section class="filter-section">
-        <div class="container">
+   <!-- Filter Section -->
+<section class="filter-section">
+    <div class="container">
+        <form method="GET" action="{{ route('announcements.index') }}" id="filterForm">
             <div class="row align-items-center">
                 <div class="col-md-6">
                     <div class="input-group">
-                        <input type="text" class="form-control search-box" placeholder="Cari pengumuman..." id="searchInput">
-                        <button class="btn filter-btn" type="button">
+                        <input type="text" class="form-control search-box" name="search" 
+                               placeholder="Cari announcements..." id="searchInput" 
+                               value="{{ request('search') }}">
+                        <button class="btn filter-btn" type="submit">
                             <i class="fas fa-search"></i>
                         </button>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="filter-tabs">
-                        <button class="filter-tab active" data-category="all">
+                        <button type="button" class="filter-tab {{ request('category', 'all') == 'all' ? 'active' : '' }}" 
+                                onclick="setCategory('all')">
                             <i class="fas fa-list me-2"></i>Semua
                         </button>
-                        <button class="filter-tab" data-category="akademik">
+                        <button type="button" class="filter-tab {{ request('category') == 'akademik' ? 'active' : '' }}" 
+                                onclick="setCategory('akademik')">
                             <i class="fas fa-graduation-cap me-2"></i>Akademik
                         </button>
-                        <button class="filter-tab" data-category="kegiatan">
+                        <button type="button" class="filter-tab {{ request('category') == 'kegiatan' ? 'active' : '' }}" 
+                                onclick="setCategory('kegiatan')">
                             <i class="fas fa-calendar-alt me-2"></i>Kegiatan
                         </button>
-                        <button class="filter-tab" data-category="administrasi">
+                        <button type="button" class="filter-tab {{ request('category') == 'administrasi' ? 'active' : '' }}" 
+                                onclick="setCategory('administrasi')">
                             <i class="fas fa-file-alt me-2"></i>Administrasi
                         </button>
                     </div>
+                    <input type="hidden" name="category" id="categoryInput" value="{{ request('category', 'all') }}">
                 </div>
             </div>
-        </div>
-    </section>
+        </form>
+    </div>
+</section>
 
-    <!-- Announcements Section -->
-    <section class="announcements-section">
-        <div class="container">
-            <div class="row">
-                <!-- Main Content -->
-                <div class="col-lg-8">
-                    <!-- Announcement Card 1 -->
-                    <div class="announcement-card fade-in-up" data-category="akademik">
-                        <div class="announcement-header">
-                            <span class="announcement-category priority-high">Penting</span>
-                            <div class="announcement-date">
-                                <i class="fas fa-clock me-1"></i>25 Oktober 2024
-                            </div>
-                        </div>
-                        <div class="announcement-body">
-                            <h3 class="announcement-title">Pengumuman Jadwal Ujian Tengah Semester Ganjil 2024/2025</h3>
-                            <div class="announcement-content">
-                                Kepada seluruh siswa SMA Negeri 1 Balong, dengan ini diinformasikan bahwa Ujian Tengah Semester (UTS) Ganjil tahun pelajaran 2024/2025 akan dilaksanakan pada tanggal 1-8 November 2024. Siswa diharapkan mempersiapkan diri dengan baik dan mengikuti seluruh rangkaian ujian sesuai jadwal yang telah ditentukan.
-                            </div>
-                            <div class="announcement-meta">
-                                <div class="announcement-author">
-                                    <i class="fas fa-user"></i>
-                                    Wakil Kepala Sekolah Bidang Kurikulum
-                                </div>
-                                <div class="announcement-actions">
-                                    <a href="#" class="btn-action btn-read">
-                                        <i class="fas fa-eye"></i>Baca Selengkapnya
-                                    </a>
-                                    <a href="#" class="btn-action btn-share">
-                                        <i class="fas fa-share"></i>Bagikan
-                                    </a>
+<!-- Announcements Section -->
+<section class="announcements-section">
+    <div class="container">
+        <div class="row">
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                @if($announcements->count() > 0)
+                    @foreach($announcements as $index => $announcement)
+                        <div class="announcement-card fade-in-up" data-category="{{ $announcement->kategori }}">
+                            <div class="announcement-header">
+                                <span class="announcement-category {{ $announcement->prioritas == 'tinggi' ? 'priority-high' : ($announcement->prioritas == 'sedang' ? 'priority-medium' : 'priority-normal') }}">
+                                    {{ ucfirst($announcement->prioritas == 'tinggi' ? 'Penting' : ($announcement->prioritas == 'sedang' ? ucfirst($announcement->kategori) : 'Normal')) }}
+                                </span>
+                                <div class="announcement-date">
+                                    <i class="fas fa-clock me-1"></i>{{ \Carbon\Carbon::parse($announcement->created_at)->format('d F Y') }}
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Announcement Card 2 -->
-                    <div class="announcement-card fade-in-up" data-category="kegiatan">
-                        <div class="announcement-header">
-                            <span class="announcement-category priority-medium">Kegiatan</span>
-                            <div class="announcement-date">
-                                <i class="fas fa-clock me-1"></i>24 Oktober 2024
-                            </div>
-                        </div>
-                        <div class="announcement-body">
-                            <h3 class="announcement-title">Peringatan Hari Sumpah Pemuda ke-96</h3>
-                            <div class="announcement-content">
-                                Dalam rangka memperingati Hari Sumpah Pemuda ke-96, SMA Negeri 1 Balong akan mengadakan serangkaian kegiatan mulai tanggal 25-28 Oktober 2024. Kegiatan meliputi upacara bendera, lomba kreativitas siswa, dan pertunjukan seni budaya. Seluruh siswa wajib mengikuti kegiatan ini.
-                            </div>
-                            <div class="announcement-meta">
-                                <div class="announcement-author">
-                                    <i class="fas fa-user"></i>
-                                    Wakil Kepala Sekolah Bidang Kesiswaan
+                            <div class="announcement-body">
+                                <h3 class="announcement-title">{{ $announcement->judul }}</h3>
+                                <div class="announcement-content">
+                                    {{ Str::limit(strip_tags($announcement->isi), 200) }}
                                 </div>
-                                <div class="announcement-actions">
-                                    <a href="#" class="btn-action btn-read">
-                                        <i class="fas fa-eye"></i>Baca Selengkapnya
-                                    </a>
-                                    <a href="#" class="btn-action btn-share">
-                                        <i class="fas fa-share"></i>Bagikan
-                                    </a>
+                                <div class="announcement-meta">
+                                    <div class="announcement-author">
+                                        <i class="fas fa-user"></i>
+                                        {{ $announcement->penulis ?? 'Administrator' }}
+                                    </div>
+                                    <div class="announcement-actions">
+                                        <a href="{{ route('announcements.show', $announcement->id) }}" class="btn-action btn-read">
+                                            <i class="fas fa-eye"></i>Baca Selengkapnya
+                                        </a>
+                                        <a href="#" class="btn-action btn-share" 
+                                           data-title="{{ $announcement->judul }}" 
+                                           data-url="{{ route('announcements.show', $announcement->id) }}">
+                                            <i class="fas fa-share"></i>Bagikan
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Announcement Card 3 -->
-                    <div class="announcement-card fade-in-up" data-category="administrasi">
-                        <div class="announcement-header">
-                            <span class="announcement-category priority-normal">Administrasi</span>
-                            <div class="announcement-date">
-                                <i class="fas fa-clock me-1"></i>23 Oktober 2024
-                            </div>
-                        </div>
-                        <div class="announcement-body">
-                            <h3 class="announcement-title">Pembayaran SPP Bulan November 2024</h3>
-                            <div class="announcement-content">
-                                Kepada orang tua/wali siswa, pembayaran SPP bulan November 2024 dapat dilakukan mulai tanggal 1 November 2024 melalui bank yang telah ditunjuk atau sistem pembayaran online. Batas akhir pembayaran adalah tanggal 15 November 2024. Terima kasih atas perhatian dan kerjasamanya.
-                            </div>
-                            <div class="announcement-meta">
-                                <div class="announcement-author">
-                                    <i class="fas fa-user"></i>
-                                    Bagian Tata Usaha
-                                </div>
-                                <div class="announcement-actions">
-                                    <a href="#" class="btn-action btn-read">
-                                        <i class="fas fa-eye"></i>Baca Selengkapnya
-                                    </a>
-                                    <a href="#" class="btn-action btn-share">
-                                        <i class="fas fa-share"></i>Bagikan
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Announcement Card 4 -->
-                    <div class="announcement-card fade-in-up" data-category="akademik">
-                        <div class="announcement-header">
-                            <span class="announcement-category priority-medium">Akademik</span>
-                            <div class="announcement-date">
-                                <i class="fas fa-clock me-1"></i>22 Oktober 2024
-                            </div>
-                        </div>
-                        <div class="announcement-body">
-                            <h3 class="announcement-title">Workshop Teknologi Pendidikan untuk Guru</h3>
-                            <div class="announcement-content">
-                                Akan dilaksanakan workshop teknologi pendidikan untuk seluruh guru SMA Negeri 1 Balong pada tanggal 31 Oktober 2024 pukul 08.00-15.00 WIB. Workshop ini bertujuan untuk meningkatkan kemampuan guru dalam menggunakan teknologi untuk mendukung proses pembelajaran.
-                            </div>
-                            <div class="announcement-meta">
-                                <div class="announcement-author">
-                                    <i class="fas fa-user"></i>
-                                    Kepala Sekolah
-                                </div>
-                                <div class="announcement-actions">
-                                    <a href="#" class="btn-action btn-read">
-                                        <i class="fas fa-eye"></i>Baca Selengkapnya
-                                    </a>
-                                    <a href="#" class="btn-action btn-share">
-                                        <i class="fas fa-share"></i>Bagikan
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    @endforeach
 
                     <!-- Pagination -->
                     <div class="pagination-wrapper">
-                        <nav aria-label="Page navigation">
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item disabled">
-                                    <a class="page-link" href="#" aria-label="Previous">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </a>
-                                </li>
-                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Next">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
+                        {{ $announcements->appends(request()->query())->links('pagination::bootstrap-4') }}
+                    </div>
+                @else
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Tidak ada announcements yang ditemukan.
+                    </div>
+                @endif
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Announcements Terpopuler -->
+                <div class="sidebar-card">
+                    <div class="card-header" style="background: var(--gradient-primary); color: white;">
+                        <h5 class="mb-0"><i class="fas fa-fire me-2"></i>Announcements Terpopuler</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group list-group-flush">
+                            @foreach($popularAnnouncements as $popular)
+                                <a href="{{ route('announcements.show', $popular->id) }}" 
+                                   class="list-group-item list-group-item-action border-0 px-0">
+                                    <small class="text-muted">{{ \Carbon\Carbon::parse($popular->created_at)->format('d F Y') }}</small>
+                                    <h6 class="mb-1">{{ Str::limit($popular->judul, 50) }}</h6>
+                                </a>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
 
-                <!-- Sidebar -->
-                <div class="col-lg-4">
-                    <!-- Pengumuman Terpopuler -->
-                    <div class="sidebar-card">
-                        <div class="card-header" style="background: var(--gradient-primary); color: white;">
-                            <h5 class="mb-0"><i class="fas fa-fire me-2"></i>Pengumuman Terpopuler</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="list-group list-group-flush">
-                                <a href="#" class="list-group-item list-group-item-action border-0 px-0">
-                                    <small class="text-muted">20 Oktober 2024</small>
-                                    <h6 class="mb-1">Penerimaan Siswa Baru 2025/2026</h6>
-                                </a>
-                                <a href="#" class="list-group-item list-group-item-action border-0 px-0">
-                                    <small class="text-muted">18 Oktober 2024</small>
-                                    <h6 class="mb-1">Libur Semester Ganjil 2024</h6>
-                                </a>
-                                <a href="#" class="list-group-item list-group-item-action border-0 px-0">
-                                    <small class="text-muted">15 Oktober 2024</small>
-                                    <h6 class="mb-1">Rapat Komite Sekolah</h6>
-                                </a>
-                            </div>
-                        </div>
+                <!-- Kategori Announcements -->
+                <div class="sidebar-card">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-tags me-2"></i>Kategori</h5>
                     </div>
-
-                    <!-- Kategori Pengumuman -->
-                    <div class="sidebar-card">
-                        <div class="card-header bg-info text-white">
-                            <h5 class="mb-0"><i class="fas fa-tags me-2"></i>Kategori</h5>
-                        </div>
-                        <div class="card-body">
+                    <div class="card-body">
+                        @foreach($kategoriCounts as $kategori => $count)
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span>Akademik</span>
-                                <span class="badge bg-primary rounded-pill">12</span>
+                                <a href="{{ route('announcements.index', ['category' => $kategori]) }}" 
+                                   class="text-decoration-none">
+                                    <span>{{ ucfirst($kategori) }}</span>
+                                </a>
+                                <span class="badge bg-primary rounded-pill">{{ $count }}</span>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span>Kegiatan</span>
-                                <span class="badge bg-success rounded-pill">8</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span>Administrasi</span>
-                                <span class="badge bg-warning rounded-pill">5</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span>Umum</span>
-                                <span class="badge bg-secondary rounded-pill">3</span>
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
+                </div>
 
-                    <!-- Arsip Pengumuman -->
-                    <div class="sidebar-card">
-                        <div class="card-header bg-secondary text-white">
-                            <h5 class="mb-0"><i class="fas fa-archive me-2"></i>Arsip</h5>
-                        </div>
-                        <div class="card-body">
-                            <select class="form-select mb-3">
-                                <option selected>Oktober 2024</option>
-                                <option>September 2024</option>
-                                <option>Agustus 2024</option>
-                                <option>Juli 2024</option>
-                            </select>
-                            <a href="#" class="btn btn-outline-secondary w-100">
-                                <i class="fas fa-search me-2"></i>Lihat Arsip
+                <!-- Arsip Announcements -->
+                <div class="sidebar-card">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0"><i class="fas fa-archive me-2"></i>Arsip</h5>
+                    </div>
+                    <div class="card-body">
+                        <select class="form-select mb-3" onchange="filterByMonth(this.value)">
+                            <option value="">Pilih Bulan</option>
+                            @foreach($availableMonths as $month)
+                                <option value="{{ $month['value'] }}" 
+                                        {{ request('month') == $month['value'] ? 'selected' : '' }}>
+                                    {{ $month['text'] }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <a href="{{ route('announcements.index') }}" class="btn btn-outline-secondary w-100">
+                            <i class="fas fa-list me-2"></i>Lihat Semua
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="sidebar-card">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="fas fa-link me-2"></i>Quick Links</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <a href="{{ url('/') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-home me-2"></i>Beranda
                             </a>
-                        </div>
-                    </div>
-
-                    <!-- Quick Links -->
-                    <div class="sidebar-card">
-                        <div class="card-header bg-dark text-white">
-                            <h5 class="mb-0"><i class="fas fa-link me-2"></i>Quick Links</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="d-grid gap-2">
-                                <a href="#" class="btn btn-outline-primary">
-                                    <i class="fas fa-home me-2"></i>Beranda
-                                </a>
-                                <a href="#" class="btn btn-outline-success">
-                                    <i class="fas fa-newspaper me-2"></i>Berita
-                                </a>
-                                <a href="#" class="btn btn-outline-info">
-                                    <i class="fas fa-calendar me-2"></i>Agenda
-                                </a>
-                                <a href="#" class="btn btn-outline-warning">
-                                    <i class="fas fa-download me-2"></i>Download
-                                </a>
-                            </div>
+                            <a href="{{ url('/berita') }}" class="btn btn-outline-success">
+                                <i class="fas fa-newspaper me-2"></i>Berita
+                            </a>
+                            <a href="{{ url('/agenda') }}" class="btn btn-outline-info">
+                                <i class="fas fa-calendar me-2"></i>Agenda
+                            </a>
+                            <a href="{{ url('/download') }}" class="btn btn-outline-warning">
+                                <i class="fas fa-download me-2"></i>Download
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
+
     @endsection
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
@@ -816,6 +723,56 @@
                     } else {
                         // Fallback untuk browser yang tidak support Web Share API
                         const shareText = `${title} - ${url}`;
+                        navigator.clipboard.writeText(shareText).then(() => {
+                            // Show temporary notification
+                            const originalText = this.innerHTML;
+                            this.innerHTML = '<i class="fas fa-check"></i>Tersalin';
+                            this.style.background = '#10b981';
+                            this.style.color = 'white';
+                            
+                            setTimeout(() => {
+                                this.innerHTML = originalText;
+                                this.style.background = '';
+                                this.style.color = '';
+                            }, 2000);
+                        });
+                    }
+                });
+            });
+            
+            // Pengumuman
+                        function setCategory(category) {
+                document.getElementById('categoryInput').value = category;
+                document.getElementById('filterForm').submit();
+            }
+
+            function filterByMonth(month) {
+                const form = document.getElementById('filterForm');
+                const monthInput = document.createElement('input');
+                monthInput.type = 'hidden';
+                monthInput.name = 'month';
+                monthInput.value = month;
+                form.appendChild(monthInput);
+                form.submit();
+            }
+
+            // Update share functionality
+            document.querySelectorAll('.btn-share').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const title = this.dataset.title;
+                    const url = this.dataset.url;
+                    
+                    if (navigator.share) {
+                        navigator.share({
+                            title: title,
+                            text: 'Announcements dari SMA Negeri 1 Balong',
+                            url: url
+                        });
+                    } else {
+                        // Fallback untuk browser yang tidak support Web Share API
+                        const shareText = `${title} - ${window.location.origin}${url}`;
                         navigator.clipboard.writeText(shareText).then(() => {
                             // Show temporary notification
                             const originalText = this.innerHTML;

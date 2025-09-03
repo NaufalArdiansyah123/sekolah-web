@@ -612,7 +612,7 @@
                                 <span class="d-inline d-md-none">Profile</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="{{ route('dashboard') }}">
+                                <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}">
                                     <i class="fas fa-tachometer-alt me-3"></i>Dashboard
                                 </a></li>
                                 <li><a class="dropdown-item" href="{{ route('profile.edit') }}">

@@ -1,80 +1,53 @@
 <?php
+
+// app/Models/Post.php
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Post extends Model implements HasMedia
+class Post extends Model
 {
-    use HasFactory, InteractsWithMedia;
+    use HasFactory;
 
     protected $fillable = [
-        'title', 'slug', 'excerpt', 'content', 'type', 'status',
-        'featured_image', 'gallery', 'meta_data', 'published_at',
-        'category_id', 'created_by'
+        'title',
+        'slug',
+        'content',
+        'excerpt',
+        'type',
+        'image',
+        'featured_image',
+        'tags',
+        'status',
+        'priority',
+        'event_date',
+        'location',
+        'user_id',
     ];
 
     protected $casts = [
-        'gallery' => 'array',
-        'meta_data' => 'array',
+        'event_date' => 'datetime',
         'published_at' => 'datetime',
     ];
 
-    // Relationships
-    public function category(): BelongsTo
+    public function user()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(User::class);
     }
 
-    public function tags(): BelongsToMany
+    public function scopeActive($query)
     {
-        return $this->belongsToMany(Tag::class);
+        return $query->where('status', 'active');
     }
 
-    public function author(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'created_by');
-    }
-
-    // Scopes
     public function scopePublished($query)
     {
-        return $query->where('status', 'published')
-                    ->where('published_at', '<=', now());
+        return $query->where('status', 'published');
     }
 
-    public function scopeByType($query, $type)
+    public function scopeOfType($query, $type)
     {
         return $query->where('type', $type);
-    }
-
-    // Media Collections
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('featured')
-              ->singleFile()
-              ->acceptsMimeTypes(['image/jpeg', 'image/png']);
-
-        $this->addMediaCollection('gallery')
-              ->acceptsMimeTypes(['image/jpeg', 'image/png']);
-    }
-
-    public function registerMediaConversions(Media $media = null): void
-    {
-        $this->addMediaConversion('thumb')
-              ->width(300)
-              ->height(200)
-              ->sharpen(10);
-
-        $this->addMediaConversion('large')
-              ->width(1200)
-              ->height(800)
-              ->optimize()
-              ->nonQueued();
     }
 }

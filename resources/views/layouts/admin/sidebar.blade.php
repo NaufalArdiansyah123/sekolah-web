@@ -463,8 +463,7 @@
                                     ['title' => 'Slideshow', 'route' => 'admin.posts.slideshow'],
                                     ['title' => 'Agenda', 'route' => 'admin.posts.agenda'],
                                     ['title' => 'Pengumuman', 'route' => 'admin.posts.announcement'],
-                                    ['title' => 'Editorial & Blog', 'route' => 'admin.posts.blog'],
-                                    ['title' => 'Quotes', 'route' => 'admin.posts.quote'],
+                                    ['title' => 'Berita & Blog', 'route' => 'admin.posts.blog'],
                                 ]
                             ],
                             [
@@ -484,20 +483,10 @@
                                 'icon' => 'academic-cap',
                                 'permission' => 'academic.manage',
                                 'children' => [
-                                    ['title' => 'Fasilitas', 'route' => 'admin.facilities.index'],
                                     ['title' => 'Ekstrakurikuler', 'route' => 'admin.extracurriculars.index'],
                                     ['title' => 'Prestasi', 'route' => 'admin.achievements.index'],
                                     ['title' => 'Guru & Staff', 'route' => 'admin.teachers.index'],
                                     ['title' => 'Siswa', 'route' => 'admin.students.index'],
-                                ]
-                            ],
-                            [
-                                'title' => 'Learning',
-                                'icon' => 'book-open',
-                                'permission' => 'materials.manage',
-                                'children' => [
-                                    ['title' => 'Materials', 'route' => 'admin.materials.index'],
-                                    ['title' => 'Assignments', 'route' => 'admin.assignments.index'],
                                 ]
                             ],
                             [

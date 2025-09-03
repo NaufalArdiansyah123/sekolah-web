@@ -46,7 +46,9 @@
                     @endif
 
                     <!-- Main Content -->
-                    {{ $slot }}
+                     
+                   @yield('content')
+
                 </div>
             </main>
         </div>

@@ -1,0 +1,135 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Slideshow;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+
+class SlideshowController extends Controller
+{
+    public function index()
+    {
+        $slideshows = Slideshow::latest()->paginate(10);
+        return view('admin.posts.slideshow.index', compact('slideshows'));
+    }
+
+    public function create()
+    {
+        return view('admin.posts.slideshow.create');
+    }
+
+    public function store(Request $request)
+    {
+        // Debug: Log semua data yang masuk
+        Log::info('Slideshow store request:', $request->all());
+        
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'image' => 'required|image|mimes:jpg,jpeg,png,gif|max:2048',
+            'status' => 'nullable|in:active,inactive',
+        ]);
+
+        Log::info('Validation passed:', $validated);
+
+        try {
+            $imagePath = null;
+            
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                
+                // Simpan file ke storage/app/public/slideshows
+                $imagePath = $file->storeAs('slideshows', $fileName, 'public');
+                
+                Log::info('Image uploaded:', ['path' => $imagePath, 'filename' => $fileName]);
+            }
+
+            // Buat record di database
+            $slideshow = Slideshow::create([
+                'title' => $request->title,
+                'description' => $request->description,
+                'image' => $imagePath,
+                'status' => $request->status ?? 'active',
+                'order' => 0, // default order
+            ]);
+
+            Log::info('Slideshow created:', $slideshow->toArray());
+
+            return redirect()
+                ->route('admin.posts.slideshow')
+                ->with('success', 'Slideshow berhasil ditambahkan!');
+            
+        } catch (\Exception $e) {
+            Log::error('Error creating slideshow:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Gagal menambahkan slideshow: ' . $e->getMessage());
+        }
+    }
+
+    public function edit(Slideshow $slideshow)
+    {
+        return view('admin.slideshows.edit', compact('slideshow'));
+    }
+
+    public function update(Request $request, Slideshow $slideshow)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+            'status' => 'nullable|in:active,inactive',
+        ]);
+
+        try {
+            $updateData = [
+                'title' => $request->title,
+                'description' => $request->description,
+                'status' => $request->status ?? 'active',
+            ];
+
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $imagePath = $file->storeAs('slideshows', $fileName, 'public');
+                $updateData['image'] = $imagePath;
+            }
+
+            $slideshow->update($updateData);
+
+            return redirect()
+                ->route('admin.posts.slideshow')
+                ->with('success', 'Slideshow berhasil diupdate!');
+            
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Gagal mengupdate slideshow: ' . $e->getMessage());
+        }
+    }
+
+    public function destroy(Slideshow $slideshow)
+    {
+        try {
+            $slideshow->delete();
+            
+            return redirect()
+                ->route('admin.posts.slideshow')
+                ->with('success', 'Slideshow berhasil dihapus!');
+            
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Gagal menghapus slideshow: ' . $e->getMessage());
+        }
+    }
+}

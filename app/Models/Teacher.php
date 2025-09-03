@@ -1,52 +1,47 @@
 <?php
+// app/Models/Teacher.php
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Teacher extends Model implements HasMedia
+class Teacher extends Model
 {
-    use InteractsWithMedia;
+    use HasFactory;
 
     protected $fillable = [
-        'employee_id', 'name', 'email', 'phone', 'address',
-        'position', 'specialization', 'education_level',
-        'experience_years', 'join_date', 'status', 'bio',
-        'user_id'
+        'name',
+        'nip',
+        'email',
+        'phone',
+        'address',
+        'subject',
+        'position',
+        'education',
+        'photo',
+        'status',
+        'user_id',
     ];
 
-    protected $casts = [
-        'join_date' => 'date',
-    ];
-
-    public function user(): BelongsTo
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function subjects(): BelongsToMany
+    public function scopeActive($query)
     {
-        return $this->belongsToMany(Subject::class, 'teacher_subjects');
+        return $query->where('status', 'active');
     }
 
-    public function classes(): BelongsToMany
+    public function getInitialsAttribute()
     {
-        return $this->belongsToMany(ClassRoom::class, 'teacher_classes');
-    }
-
-    public function posts(): HasMany
-    {
-        return $this->hasMany(Post::class, 'created_by', 'user_id');
-    }
-
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('profile')
-              ->singleFile()
-              ->acceptsMimeTypes(['image/jpeg', 'image/png']);
+        $names = explode(' ', $this->name);
+        $initials = '';
+        
+        foreach ($names as $name) {
+            $initials .= substr($name, 0, 1);
+        }
+        
+        return strtoupper(substr($initials, 0, 2));
     }
 }

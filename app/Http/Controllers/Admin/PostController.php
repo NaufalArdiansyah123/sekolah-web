@@ -1,114 +1,329 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Post;
-use App\Models\Category;
-use App\Models\Tag;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use App\Models\Post;
 
 class PostController extends Controller
 {
-    public function index(Request $request)
+    // Slideshow Methods
+    public function slideshow()
     {
-        $query = Post::with(['category', 'author', 'tags'])
-                    ->latest();
-
-        if ($request->type) {
-            $query->byType($request->type);
-        }
-
-        if ($request->status) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->search) {
-            $query->where('title', 'like', '%' . $request->search . '%');
-        }
-
-        $posts = $query->paginate(20);
-
-        return view('admin.posts.index', compact('posts'));
-    }
-
-    public function create()
-    {
-        $categories = Category::where('is_active', true)->get();
-        $tags = Tag::all();
+        $slideshows = Post::where('type', 'slideshow')
+                         ->latest()
+                         ->paginate(10);
         
-        return view('admin.posts.create', compact('categories', 'tags'));
+        return view('admin.posts.slideshow.index', compact('slideshows'));
     }
 
-    public function store(Request $request)
+    public function createSlideshow()
+    {
+        return view('admin.posts.slideshow.create');
+    }
+
+    public function storeSlideshow(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|max:255',
+            'content' => 'nullable',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'status' => 'required|in:active,inactive'
+        ]);
+
+        $imagePath = $request->file('image')->store('slideshows', 'public');
+
+        Post::create([
+            'title' => $request->title,
+            'type' => 'slideshow',
+            'image' => $imagePath,
+            'status' => $request->status,
+            'user_id' => auth()->id(),
+        ]);
+
+        return redirect()->route('admin.posts.slideshow')
+                        ->with('success', 'Slideshow berhasil ditambahkan!');
+    }
+
+    public function editSlideshow($id)
+    {
+        $slideshow = Post::where('type', 'slideshow')->findOrFail($id);
+        return view('admin.posts.slideshow.edit', compact('slideshow'));
+    }
+
+    public function updateSlideshow(Request $request, $id)
+    {
+        $slideshow = Post::where('type', 'slideshow')->findOrFail($id);
+        
+        $request->validate([
+            'title' => 'required|max:255',
+            'content' => 'nullable',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'status' => 'required|in:active,inactive'
+        ]);
+
+        $data = [
+            'title' => $request->title,
+            'status' => $request->status,
+        ];
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('slideshows', 'public');
+        }
+
+        $slideshow->update($data);
+
+        return redirect()->route('admin.posts.slideshow')
+                        ->with('success', 'Slideshow berhasil diperbarui!');
+    }
+
+    public function destroySlideshow($id)
+    {
+        $slideshow = Post::where('type', 'slideshow')->findOrFail($id);
+        $slideshow->delete();
+
+        return redirect()->route('admin.posts.slideshow')
+                        ->with('success', 'Slideshow berhasil dihapus!');
+    }
+
+    // Agenda Methods
+    public function agenda()
+    {
+        $agendas = Post::where('type', 'agenda')
+                      ->latest()
+                      ->paginate(10);
+        
+        return view('admin.posts.agenda.index', compact('agendas'));
+    }
+
+    public function createAgenda()
+    {
+        return view('admin.posts.agenda.create');
+    }
+
+    public function storeAgenda(Request $request)
     {
         $request->validate([
             'title' => 'required|max:255',
             'content' => 'required',
-            'type' => 'required|in:slideshow,agenda,announcement,editorial,blog,quotes,facility,extracurricular,achievement,staff',
-            'status' => 'required|in:draft,published,archived',
-            'category_id' => 'nullable|exists:categories,id',
-            'featured_image' => 'nullable|image|max:2048',
+            'event_date' => 'required|date',
+            'location' => 'nullable|max:255',
+            'status' => 'required|in:active,inactive'
         ]);
 
-        $post = Post::create([
+        Post::create([
             'title' => $request->title,
-            'slug' => Str::slug($request->title),
-            'excerpt' => $request->excerpt,
-            // 'content' => $request->content,
-            'type' => $request->type,
+            'type' => 'agenda',
+            'event_date' => $request->event_date,
+            'location' => $request->location,
             'status' => $request->status,
-            'category_id' => $request->category_id,
-            'published_at' => $request->status === 'published' ? now() : null,
-            'created_by' => auth()->id(),
-            'meta_data' => $this->processMetaData($request),
+            'user_id' => auth()->id(),
         ]);
 
-        // Handle featured image
-        if ($request->hasFile('featured_image')) {
-            $post->addMediaFromRequest('featured_image')
-                 ->toMediaCollection('featured');
-        }
-
-        // Handle tags
-        if ($request->tags) {
-            $post->tags()->sync($request->tags);
-        }
-
-        return redirect()->route('admin.posts.index')
-                        ->with('success', 'Post berhasil dibuat.');
+        return redirect()->route('admin.posts.agenda')
+                        ->with('success', 'Agenda berhasil ditambahkan!');
     }
 
-    private function processMetaData(Request $request): array
+    public function editAgenda($id)
     {
-        $metaData = [];
+        $agenda = Post::where('type', 'agenda')->findOrFail($id);
+        return view('admin.posts.agenda.edit', compact('agenda'));
+    }
 
-        switch ($request->type) {
-            case 'agenda':
-                $metaData = [
-                    'event_date' => $request->event_date,
-                    'event_time' => $request->event_time,
-                    'location' => $request->location,
-                    'organizer' => $request->organizer,
-                ];
-                break;
-            
-            case 'announcement':
-                $metaData = [
-                    'priority' => $request->priority ?? 'normal',
-                    'expires_at' => $request->expires_at,
-                    'send_notification' => $request->boolean('send_notification'),
-                ];
-                break;
+    public function updateAgenda(Request $request, $id)
+    {
+        $agenda = Post::where('type', 'agenda')->findOrFail($id);
+        
+        $request->validate([
+            'title' => 'required|max:255',
+            'content' => 'required',
+            'event_date' => 'required|date',
+            'location' => 'nullable|max:255',
+            'status' => 'required|in:active,inactive'
+        ]);
 
-            case 'quotes':
-                $metaData = [
-                    'author' => $request->quote_author,
-                    'display_duration' => $request->display_duration ?? 7,
-                ];
-                break;
+        $agenda->update([
+            'title' => $request->title,
+            'event_date' => $request->event_date,
+            'location' => $request->location,
+            'status' => $request->status,
+        ]);
+
+        return redirect()->route('admin.posts.agenda')
+                        ->with('success', 'Agenda berhasil diperbarui!');
+    }
+
+    public function destroyAgenda($id)
+    {
+        $agenda = Post::where('type', 'agenda')->findOrFail($id);
+        $agenda->delete();
+
+        return redirect()->route('admin.posts.agenda')
+                        ->with('success', 'Agenda berhasil dihapus!');
+    }
+
+    // Announcement Methods
+    public function announcement()
+    {
+        $announcements = Post::where('type', 'announcement')
+                            ->latest()
+                            ->paginate(10);
+        
+        return view('admin.posts.announcement.index', compact('announcements'));
+    }
+
+    public function createAnnouncement()
+    {
+        return view('admin.posts.announcement.create');
+    }
+
+    public function storeAnnouncement(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|max:255',
+            'content' => 'required',
+            'priority' => 'required|in:low,medium,high',
+            'status' => 'required|in:active,inactive'
+        ]);
+
+        Post::create([
+            'title' => $request->title,
+            'type' => 'announcement',
+            'priority' => $request->priority,
+            'status' => $request->status,
+            'user_id' => auth()->id(),
+        ]);
+
+        return redirect()->route('admin.posts.announcement')
+                        ->with('success', 'Pengumuman berhasil ditambahkan!');
+    }
+
+    public function editAnnouncement($id)
+    {
+        $announcement = Post::where('type', 'announcement')->findOrFail($id);
+        return view('admin.posts.announcement.edit', compact('announcement'));
+    }
+
+    public function updateAnnouncement(Request $request, $id)
+    {
+        $announcement = Post::where('type', 'announcement')->findOrFail($id);
+        
+        $request->validate([
+            'title' => 'required|max:255',
+            'content' => 'required',
+            'priority' => 'required|in:low,medium,high',
+            'status' => 'required|in:active,inactive'
+        ]);
+
+        $announcement->update([
+            'title' => $request->title,
+            'priority' => $request->priority,
+            'status' => $request->status,
+        ]);
+
+        return redirect()->route('admin.posts.announcement')
+                        ->with('success', 'Pengumuman berhasil diperbarui!');
+    }
+
+    public function destroyAnnouncement($id)
+    {
+        $announcement = Post::where('type', 'announcement')->findOrFail($id);
+        $announcement->delete();
+
+        return redirect()->route('admin.posts.announcement')
+                        ->with('success', 'Pengumuman berhasil dihapus!');
+    }
+
+    // Blog Methods
+    public function blog()
+    {
+        $blogs = Post::where('type', 'blog')
+                    ->latest()
+                    ->paginate(10);
+        
+        return view('admin.posts.blog.index', compact('blogs'));
+    }
+
+    public function createBlog()
+    {
+        return view('admin.posts.blog.create');
+    }
+
+    public function storeBlog(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|max:255',
+            'content' => 'required',
+            'excerpt' => 'nullable|max:500',
+            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'tags' => 'nullable|string',
+            'status' => 'required|in:draft,published,archived'
+        ]);
+
+        $data = [
+            'title' => $request->title,
+            'slug' => \Str::slug($request->title),
+            'excerpt' => $request->excerpt,
+            'type' => 'blog',
+            'tags' => $request->tags,
+            'status' => $request->status,
+            'user_id' => auth()->id(),
+        ];
+
+        if ($request->hasFile('featured_image')) {
+            $data['featured_image'] = $request->file('featured_image')->store('blogs', 'public');
         }
 
-        return $metaData;
+        Post::create($data);
+
+        return redirect()->route('admin.posts.blog')
+                        ->with('success', 'Blog berhasil ditambahkan!');
+    }
+
+    public function editBlog($id)
+    {
+        $blog = Post::where('type', 'blog')->findOrFail($id);
+        return view('admin.posts.blog.edit', compact('blog'));
+    }
+
+    public function updateBlog(Request $request, $id)
+    {
+        $blog = Post::where('type', 'blog')->findOrFail($id);
+        
+        $request->validate([
+            'title' => 'required|max:255',
+            'content' => 'required',
+            'excerpt' => 'nullable|max:500',
+            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'tags' => 'nullable|string',
+            'status' => 'required|in:draft,published,archived'
+        ]);
+
+        $data = [
+            'title' => $request->title,
+            'slug' => \Str::slug($request->title),
+            'excerpt' => $request->excerpt,
+            'tags' => $request->tags,
+            'status' => $request->status,
+        ];
+
+        if ($request->hasFile('featured_image')) {
+            $data['featured_image'] = $request->file('featured_image')->store('blogs', 'public');
+        }
+
+        $blog->update($data);
+
+        return redirect()->route('admin.posts.blog')
+                        ->with('success', 'Blog berhasil diperbarui!');
+    }
+
+    public function destroyBlog($id)
+    {
+        $blog = Post::where('type', 'blog')->findOrFail($id);
+        $blog->delete();
+
+        return redirect()->route('admin.posts.blog')
+                        ->with('success', 'Blog berhasil dihapus!');
     }
 }

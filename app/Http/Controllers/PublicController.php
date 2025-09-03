@@ -4,16 +4,27 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Slideshow; // Tambahkan ini untuk menggunakan model Slideshow
 
 class PublicController extends Controller
 {
+  public function index()
+{
+    $slideshows = Slideshow::all(); // ambil semua data dari tabel slideshow
+    return view('home', compact('slideshows'));
+}
     public function home()
-    {
-        return view('public.home', [
-            'title' => 'Beranda',
-            'description' => 'Website resmi SMA Negeri 1 - Excellence in Education'
-        ]);
-    }
+{
+    $slideshows = Slideshow::where('status', 'active')
+                          ->orderBy('order', 'asc')
+                          ->get();
+    
+    return view('public.home', [
+        'title' => 'Beranda',
+        'description' => 'Website resmi SMA Negeri 1 - Excellence in Education',
+        'slideshows' => $slideshows // Kirim data slideshow ke view
+    ]);
+}
 
     public function aboutProfile()
     {
@@ -28,6 +39,7 @@ class PublicController extends Controller
             'title' => 'Visi & Misi'
         ]);
     }
+    
     public function sejarah()
     {
         return view('public.about.sejarah', [
@@ -111,6 +123,7 @@ class PublicController extends Controller
             'title' => 'Galeri Video'
         ]);
     }
+    
     public function galleryIndex()
     {
         return view('public.gallery.index', [
