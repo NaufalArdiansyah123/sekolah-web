@@ -753,12 +753,6 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="text-center mt-5">
-                <a href="#" class="btn btn-primary-enhanced btn-enhanced">
-                    <i class="fas fa-video me-2"></i>Lihat Lebih Banyak Video
-                </a>
-            </div>
         </div>
     </section>
 

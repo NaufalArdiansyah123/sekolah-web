@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 {{-- resources/views/layouts/admin/app.blade.php --}}
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-data="{ darkMode: false }" :class="{ 'dark': darkMode }">
@@ -238,7 +237,6 @@
     </script>
 </body>
 </html>
-=======
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -260,4 +258,3 @@
     </div>
 </body>
 </html>
->>>>>>> 1037e3706509bc67ac35ec5c31f86eca2003ade0

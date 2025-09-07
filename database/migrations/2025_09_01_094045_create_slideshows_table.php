@@ -1,5 +1,4 @@
 <?php
-// database/migrations/[timestamp]_create_slideshows_table.php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -18,9 +17,14 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('image');
             $table->enum('status', ['active', 'inactive'])->default('active');
-            $table->integer('order')->default(0);
-            $table->string('link')->nullable();
+            $table->integer('order')->default(0)->index();
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
             $table->timestamps();
+            $table->softDeletes();
+
+            // Add indexes for performance
+            $table->index(['status', 'order']);
+            $table->index(['created_at']);
         });
     }
 
