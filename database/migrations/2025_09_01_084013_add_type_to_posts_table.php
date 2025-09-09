@@ -6,12 +6,15 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
-    {
-        Schema::table('posts', function (Blueprint $table) {
-            $table->string('type')->nullable()->after('id'); // Tambahkan kolom type
-        });
-    }
+  public function up()
+{
+    Schema::table('posts', function (Blueprint $table) {
+        if (!Schema::hasColumn('posts', 'type')) {
+            $table->string('type')->nullable()->after('id');
+        }
+    });
+}
+
 
     public function down()
     {

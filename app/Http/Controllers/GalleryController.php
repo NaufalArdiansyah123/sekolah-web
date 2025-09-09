@@ -55,5 +55,7 @@ class GalleryController extends Controller
     return back()->with('success', 'Foto berhasil diupload ke: ' . $path);
 }
 
+
+
 }
 ?>

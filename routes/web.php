@@ -10,6 +10,7 @@ use App\Http\Controllers\AcademicController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\Admin\AgendaController;
 
 
 // 
@@ -293,4 +294,96 @@ Route::get('/gallery/photos/{slug}', [App\Http\Controllers\GalleryController::cl
     ->name('gallery.photos');
 
 
+
+
+
+
+
+
+
+
+
+//agenda
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    
+    // Dashboard Agenda (List semua agenda)
+    Route::get('/agenda', [AgendaController::class, 'index'])->name('agenda.index');
+    
+    // Form Tambah Agenda
+    Route::get('/agenda/create', [AgendaController::class, 'create'])->name('agenda.create');
+    
+    // Simpan Agenda Baru
+    Route::post('/agenda', [AgendaController::class, 'store'])->name('agenda.store');
+    
+    // Detail Agenda
+    Route::get('/agenda/{id}', [AgendaController::class, 'show'])->name('agenda.show');
+    
+    // Form Edit Agenda
+    Route::get('/agenda/{id}/edit', [AgendaController::class, 'edit'])->name('agenda.edit');
+    
+    // Update Agenda
+    Route::put('/agenda/{id}', [AgendaController::class, 'update'])->name('agenda.update');
+    
+    // Hapus Agenda
+    Route::delete('/agenda/{id}', [AgendaController::class, 'destroy'])->name('agenda.destroy');
+    
+    // Routes tambahan untuk fitur khusus agenda
+    Route::prefix('agenda')->name('agenda.')->group(function () {
+        
+        // Toggle status agenda (aktif/nonaktif)
+        Route::post('/{id}/toggle-status', [AgendaController::class, 'toggleStatus'])->name('toggle-status');
+        
+        // Duplicate agenda
+        Route::post('/{id}/duplicate', [AgendaController::class, 'duplicate'])->name('duplicate');
+        
+        // Bulk actions
+        Route::post('/bulk-delete', [AgendaController::class, 'bulkDelete'])->name('bulk-delete');
+        Route::post('/bulk-status', [AgendaController::class, 'bulkStatus'])->name('bulk-status');
+        
+        // Export agenda
+        Route::get('/export', [AgendaController::class, 'export'])->name('export');
+        
+        // Filter agenda berdasarkan kategori, tanggal, dll
+        Route::get('/filter', [AgendaController::class, 'filter'])->name('filter');
+        Route::get('/calendar-view', [AgendaController::class, 'calendarView'])->name('calendar');
+        
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
+| PUBLIC AGENDA ROUTES (Tanpa Authentication)
+|--------------------------------------------------------------------------
+| Routes untuk menampilkan agenda ke publik
+*/
+
+// Halaman daftar agenda publik
+Route::get('/agenda', [AgendaController::class, 'publicIndex'])->name('public.agenda.index');
+
+// Detail agenda publik
+Route::get('/agenda/{slug}', [AgendaController::class, 'publicShow'])->name('public.agenda.show');
+
+// Agenda berdasarkan kategori
+Route::get('/agenda/kategori/{kategori}', [AgendaController::class, 'publicByCategory'])->name('public.agenda.category');
+
+// Agenda berdasarkan bulan
+Route::get('/agenda/bulan/{year}/{month}', [AgendaController::class, 'publicByMonth'])->name('public.agenda.month');
+
+// API Routes untuk AJAX calls
+Route::prefix('api/agenda')->name('api.agenda.')->group(function () {
+    
+    // Get agenda untuk calendar widget
+    Route::get('/calendar-data', [AgendaController::class, 'calendarData'])->name('calendar-data');
+    
+    // Search agenda
+    Route::get('/search', [AgendaController::class, 'search'])->name('search');
+    
+    // Get agenda upcoming (untuk widget)
+    Route::get('/upcoming', [AgendaController::class, 'upcoming'])->name('upcoming');
+    
+});
+        
+
 ?>
+
+

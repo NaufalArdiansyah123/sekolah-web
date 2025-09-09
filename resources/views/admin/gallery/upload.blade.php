@@ -336,7 +336,12 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 7a2 2 0 002-2h10a2 2 0 002 2v2M5 7V5a2 2 0 012-2h6a2 2 0 012 2v2"/>
                 </svg>
             </div>
-            <div class="stat-value">{{ count($photos) }}</div>
+            
+            <div class="stat-value">
+                {{ is_array($photos) ? array_sum(array_column($photos, 'photo_count')) : 0 }}
+            </div>
+
+
             <div class="stat-title">Total Albums</div>
         </div>
 
