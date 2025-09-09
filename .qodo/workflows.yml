@@ -1,0 +1,64 @@
+name: Qodo Workflows
+description: Automated code analysis and review workflows for sekolah-web
+
+workflows:
+  code_analysis:
+    name: Code Analysis
+    description: Analyze code quality, security, and performance
+    trigger:
+      - on_commit
+      - manual
+    steps:
+      - name: Security Analysis
+        action: analyze
+        config:
+          type: security
+          severity: medium
+      - name: Performance Analysis
+        action: analyze
+        config:
+          type: performance
+          severity: low
+      - name: Code Quality
+        action: analyze
+        config:
+          type: quality
+          severity: medium
+
+  pre_commit_review:
+    name: Pre-commit Review
+    description: Quick review before committing changes
+    trigger:
+      - pre_commit
+    steps:
+      - name: Lint Check
+        action: lint
+        config:
+          languages: [php, javascript]
+      - name: Basic Security Scan
+        action: analyze
+        config:
+          type: security
+          severity: high
+          quick: true
+
+  pull_request_review:
+    name: Pull Request Review
+    description: Comprehensive review for pull requests
+    trigger:
+      - pull_request
+    steps:
+      - name: Full Code Analysis
+        action: analyze
+        config:
+          type: all
+          severity: low
+      - name: Test Coverage Check
+        action: test
+        config:
+          coverage: true
+      - name: Generate Review Report
+        action: report
+        config:
+          format: markdown
+          include_suggestions: true

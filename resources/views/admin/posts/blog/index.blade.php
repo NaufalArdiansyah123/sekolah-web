@@ -1,340 +1,497 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Berita Terbaru</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .news-card {
-            transition: transform 0.3s;
-            margin-bottom: 20px;
-        }
-        .news-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        .action-buttons .btn {
-            margin-right: 5px;
-        }
-        .navbar-brand {
-            font-weight: bold;
-        }
-        .page-title {
-            border-left: 5px solid #0d6efd;
-            padding-left: 15px;
-            margin: 20px 0;
-        }
-    </style>
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <i class="fas fa-newspaper me-2"></i>Portal Berita
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#">Beranda</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Tentang</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Kontak</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+@extends('layouts.admin')
 
-    <div class="container mt-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="page-title">Daftar Berita Terbaru</h2>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahBeritaModal">
-                <i class="fas fa-plus me-1"></i> Tambah Berita
-            </button>
-        </div>
+@section('title', 'Manajemen Blog/Berita')
 
-        <div class="row" id="berita-list">
-            <!-- Daftar berita akan ditampilkan di sini -->
+@section('content')
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="header-content">
+            <h1 class="header-title"><i class="fas fa-newspaper me-2"></i>Manajemen Blog & Berita</h1>
+            <p class="header-subtitle">Kelola semua artikel dan berita dengan mudah dan efisien</p>
+            <a href="{{ route('admin.posts.blog.create') }}" class="btn btn-primary"><i class="fas fa-plus-circle me-2"></i>Buat Artikel Baru</a>
         </div>
     </div>
 
-    <!-- Modal Tambah Berita -->
-    <div class="modal fade" id="tambahBeritaModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Tambah Berita Baru</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <!-- Filter Section -->
+    <div class="filter-section">
+        <h2 class="filter-title"><i class="fas fa-filter me-2"></i>Filter & Pencarian</h2>
+        <div class="filter-grid">
+            <div class="filter-group">
+                <label class="filter-label">Pencarian</label>
+                <div style="position: relative;">
+                    <i class="fas fa-search" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--gray);"></i>
+                    <input type="text" class="filter-input" placeholder="Cari judul atau konten..." style="padding-left: 40px;">
                 </div>
-                <div class="modal-body">
-                    <form id="formTambahBerita">
-                        <div class="mb-3">
-                            <label for="judul" class="form-label">Judul Berita</label>
-                            <input type="text" class="form-control" id="judul" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="kategori" class="form-label">Kategori</label>
-                            <select class="form-select" id="kategori" required>
-                                <option value="">Pilih Kategori</option>
-                                <option value="Politik">Politik</option>
-                                <option value="Ekonomi">Ekonomi</option>
-                                <option value="Olahraga">Olahraga</option>
-                                <option value="Teknologi">Teknologi</option>
-                                <option value="Hiburan">Hiburan</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="tanggal" class="form-label">Tanggal</label>
-                            <input type="date" class="form-control" id="tanggal" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="isi" class="form-label">Isi Berita</label>
-                            <textarea class="form-control" id="isi" rows="5" required></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary" id="simpanBerita">Simpan</button>
-                </div>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Status Publikasi</label>
+                <select class="filter-input">
+                    <option value="">Semua Status</option>
+                    <option value="published">📢 Published</option>
+                    <option value="draft">📝 Draft</option>
+                    <option value="archived">📁 Archived</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Kategori</label>
+                <select class="filter-input">
+                    <option value="">Semua Kategori</option>
+                    <option value="berita">📰 Berita</option>
+                    <option value="pengumuman">📣 Pengumuman</option>
+                    <option value="kegiatan">🎯 Kegiatan</option>
+                    <option value="prestasi">🏆 Prestasi</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <button class="btn btn-filter"><i class="fas fa-search me-2"></i>Terapkan Filter</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal Edit Berita -->
-    <div class="modal fade" id="editBeritaModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Berita</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="formEditBerita">
-                        <input type="hidden" id="editId">
-                        <div class="mb-3">
-                            <label for="editJudul" class="form-label">Judul Berita</label>
-                            <input type="text" class="form-control" id="editJudul" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editKategori" class="form-label">Kategori</label>
-                            <select class="form-select" id="editKategori" required>
-                                <option value="Politik">Politik</option>
-                                <option value="Ekonomi">Ekonomi</option>
-                                <option value="Olahraga">Olahraga</option>
-                                <option value="Teknologi">Teknologi</option>
-                                <option value="Hiburan">Hiburan</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editTanggal" class="form-label">Tanggal</label>
-                            <input type="date" class="form-control" id="editTanggal" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editIsi" class="form-label">Isi Berita</label>
-                            <textarea class="form-control" id="editIsi" rows="5" required></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary" id="updateBerita">Update</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Data contoh berita
-        let beritaList = [
-            {
-                id: 1,
-                judul: "Pertumbuhan Ekonomi Indonesia Meningkat di Tahun 2023",
-                kategori: "Ekonomi",
-                tanggal: "2023-10-15",
-                isi: "Pertumbuhan ekonomi Indonesia menunjukkan peningkatan signifikan pada kuartal ketiga tahun 2023, didorong oleh peningkatan konsumsi domestik dan ekspor."
-            },
-            {
-                id: 2,
-                judul: "Timnas Indonesia Sukses Kalahkan Vietnam dalam Laga Persahabatan",
-                kategori: "Olahraga",
-                tanggal: "2023-10-12",
-                isi: "Timnas Indonesia berhasil mengalahkan Vietnam dengan skor 3-1 dalam pertandingan persahabatan yang digelar di Stadion Utama Gelora Bung Karno."
-            }
-        ];
-
-        // Fungsi untuk menampilkan berita
-        function tampilkanBerita() {
-            const beritaContainer = document.getElementById('berita-list');
-            beritaContainer.innerHTML = '';
-
-            if (beritaList.length === 0) {
-                beritaContainer.innerHTML = `
-                    <div class="col-12 text-center py-5">
-                        <i class="fas fa-newspaper fa-3x text-muted mb-3"></i>
-                        <p class="text-muted">Belum ada berita. Silakan tambah berita baru.</p>
+    <!-- Blog Grid -->
+    <div class="blog-grid">
+        @if($blogs->count() > 0)
+            @foreach($blogs as $blog)
+            <div class="blog-card">
+                <div class="card-image">
+                    @if($blog->featured_image)
+                    <img src="{{ asset('storage/' . $blog->featured_image) }}" alt="{{ $blog->title }}">
+                    @else
+                    <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">
+                        <i class="fas fa-image"></i>
                     </div>
-                `;
-                return;
-            }
-
-            beritaList.forEach(berita => {
-                const formattedDate = new Date(berita.tanggal).toLocaleDateString('id-ID', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                });
-
-                const beritaCard = document.createElement('div');
-                beritaCard.className = 'col-md-6 col-lg-4';
-                beritaCard.innerHTML = `
-                    <div class="card news-card h-100">
-                        <div class="card-body">
-                            <span class="badge bg-primary mb-2">${berita.kategori}</span>
-                            <h5 class="card-title">${berita.judul}</h5>
-                            <p class="card-text text-muted small">${formattedDate}</p>
-                            <p class="card-text">${berita.isi.substring(0, 100)}...</p>
-                        </div>
-                        <div class="card-footer bg-transparent action-buttons">
-                            <button class="btn btn-sm btn-outline-primary btn-edit" data-id="${berita.id}">
-                                <i class="fas fa-edit me-1"></i> Edit
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger btn-hapus" data-id="${berita.id}">
-                                <i class="fas fa-trash me-1"></i> Hapus
-                            </button>
-                        </div>
+                    @endif
+                    <div class="card-badges">
+                        <span class="card-badge badge-category">{{ $blog->category }}</span>
+                        <span class="card-badge {{ $blog->status == 'published' ? 'badge-status' : 'badge-draft' }}">{{ $blog->status == 'published' ? 'Published' : 'Draft' }}</span>
                     </div>
-                `;
-                beritaContainer.appendChild(beritaCard);
-            });
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">{{ $blog->title }}</h3>
+                    <p class="card-description">{{ Str::limit($blog->content, 150) }}</p>
+                    <div class="card-meta">
+                        <div><i class="fas fa-user-circle me-2"></i>{{ $blog->author }}</div>
+                        <div><i class="fas fa-calendar me-2"></i>{{ $blog->created_at->format('d M Y') }}</div>
+                    </div>
+                    <div class="card-actions">
+                        <a href="{{ route('admin.posts.blog.edit', $blog->id) }}" class="action-btn btn-edit"><i class="fas fa-edit"></i></a>
+                      
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        @else
+            <div class="empty-state">
+                <i class="fas fa-newspaper empty-icon"></i>
+                <h3 class="empty-title">Belum ada artikel</h3>
+                <p class="empty-description">Mulai dengan membuat artikel pertama Anda</p>
+                <a href="{{ route('admin.blogs.create') }}" class="btn btn-primary"><i class="fas fa-plus-circle me-2"></i>Buat Artikel Baru</a>
+            </div>
+        @endif
+    </div>
 
-            // Tambahkan event listener untuk tombol edit dan hapus
-            document.querySelectorAll('.btn-edit').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const id = parseInt(this.getAttribute('data-id'));
-                    editBerita(id);
-                });
-            });
+    <!-- Pagination -->
+    @if($blogs->count() > 0)
+    <div class="pagination">
+        {{ $blogs->links() }}
+    </div>
+    @endif
+</div>
 
-            document.querySelectorAll('.btn-hapus').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const id = parseInt(this.getAttribute('data-id'));
-                    hapusBerita(id);
-                });
+<style>
+    :root {
+        --primary: #4361ee;
+        --primary-dark: #3a56d4;
+        --secondary: #7209b7;
+        --success: #06d6a0;
+        --danger: #ef476f;
+        --warning: #ffd166;
+        --info: #118ab2;
+        --light: #f8f9fa;
+        --dark: #212529;
+        --gray: #6c757d;
+        --light-gray: #e9ecef;
+        --border-radius: 12px;
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        --transition: all 0.3s ease;
+    }
+
+    /* Header Styles */
+    .page-header {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        color: white;
+        border-radius: var(--border-radius);
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: var(--shadow);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 100%;
+        height: 200%;
+        background: rgba(255, 255, 255, 0.1);
+        transform: rotate(-15deg);
+    }
+
+    .header-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+    }
+
+    .header-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .header-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        margin-bottom: 25px;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 12px 24px;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: var(--transition);
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+
+    .btn-primary {
+        background: white;
+        color: var(--primary);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Filter Section */
+    .filter-section {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: var(--shadow);
+    }
+
+    .filter-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    .filter-group {
+        margin-bottom: 15px;
+    }
+
+    .filter-label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: var(--dark);
+    }
+
+    .filter-input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid var(--light-gray);
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: var(--transition);
+    }
+
+    .filter-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+    }
+
+    .btn-filter {
+        background: var(--success);
+        color: white;
+        justify-content: center;
+        width: 100%;
+        margin-top: 28px;
+    }
+
+    .btn-filter:hover {
+        background: #05c28f;
+        transform: translateY(-2px);
+    }
+
+    /* Blog Grid */
+    .blog-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+
+    .blog-card {
+        background: white;
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        transition: var(--transition);
+        box-shadow: var(--shadow);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .blog-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-image {
+        height: 200px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .card-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: var(--transition);
+    }
+
+    .blog-card:hover .card-image img {
+        transform: scale(1.05);
+    }
+
+    .card-badges {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        display: flex;
+        gap: 8px;
+    }
+
+    .card-badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: white;
+    }
+
+    .badge-category {
+        background: var(--primary);
+    }
+
+    .badge-status {
+        background: var(--success);
+    }
+
+    .badge-draft {
+        background: var(--warning);
+        color: var(--dark);
+    }
+
+    .badge-archived {
+        background: var(--gray);
+    }
+
+    .card-content {
+        padding: 20px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 12px;
+        color: var(--dark);
+        line-height: 1.4;
+    }
+
+    .card-description {
+        color: var(--gray);
+        margin-bottom: 20px;
+        flex-grow: 1;
+    }
+
+    .card-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto;
+        font-size: 0.9rem;
+        color: var(--gray);
+    }
+
+    .card-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .action-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        transition: var(--transition);
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .btn-edit {
+        background: var(--primary);
+    }
+
+    .btn-view {
+        background: var(--info);
+    }
+
+    .btn-delete {
+        background: var(--danger);
+    }
+
+    .action-btn:hover {
+        transform: scale(1.1);
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        grid-column: 1 / -1;
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        color: var(--light-gray);
+        margin-bottom: 20px;
+    }
+
+    .empty-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: var(--dark);
+    }
+
+    .empty-description {
+        color: var(--gray);
+        margin-bottom: 30px;
+    }
+
+    /* Pagination */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+    }
+
+    .pagination nav {
+        display: flex;
+        gap: 5px;
+    }
+
+    .pagination .page-item {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: white;
+        color: var(--dark);
+        font-weight: 600;
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+    }
+
+    .pagination .page-item.active,
+    .pagination .page-item:hover {
+        background: var(--primary);
+        color: white;
+    }
+
+    .pagination .page-link {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 992px) {
+        .blog-grid {
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        }
+    }
+
+    @media (max-width: 768px) {
+        .header-title {
+            font-size: 2rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .blog-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .filter-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<script>
+    // Script untuk halaman index
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("Halaman Index Blog");
+        
+        // Filter functionality
+        const filterBtn = document.querySelector('.btn-filter');
+        if (filterBtn) {
+            filterBtn.addEventListener('click', function() {
+                // Implement filter logic here
+                alert('Filter akan diterapkan');
             });
         }
-
-        // Fungsi untuk menambah berita
-        document.getElementById('simpanBerita').addEventListener('click', function() {
-            const judul = document.getElementById('judul').value;
-            const kategori = document.getElementById('kategori').value;
-            const tanggal = document.getElementById('tanggal').value;
-            const isi = document.getElementById('isi').value;
-
-            if (!judul || !kategori || !tanggal || !isi) {
-                alert('Semua field harus diisi!');
-                return;
-            }
-
-            const newId = beritaList.length > 0 ? Math.max(...beritaList.map(b => b.id)) + 1 : 1;
-            
-            beritaList.push({
-                id: newId,
-                judul,
-                kategori,
-                tanggal,
-                isi
-            });
-
-            // Tutup modal dan reset form
-            const modal = bootstrap.Modal.getInstance(document.getElementById('tambahBeritaModal'));
-            modal.hide();
-            document.getElementById('formTambahBerita').reset();
-
-            // Tampilkan ulang daftar berita
-            tampilkanBerita();
-            
-            alert('Berita berhasil ditambahkan!');
-        });
-
-        // Fungsi untuk mengedit berita
-        function editBerita(id) {
-            const berita = beritaList.find(b => b.id === id);
-            
-            if (berita) {
-                document.getElementById('editId').value = berita.id;
-                document.getElementById('editJudul').value = berita.judul;
-                document.getElementById('editKategori').value = berita.kategori;
-                document.getElementById('editTanggal').value = berita.tanggal;
-                document.getElementById('editIsi').value = berita.isi;
-                
-                const modal = new bootstrap.Modal(document.getElementById('editBeritaModal'));
-                modal.show();
-            }
-        }
-
-        // Fungsi untuk update berita
-        document.getElementById('updateBerita').addEventListener('click', function() {
-            const id = parseInt(document.getElementById('editId').value);
-            const judul = document.getElementById('editJudul').value;
-            const kategori = document.getElementById('editKategori').value;
-            const tanggal = document.getElementById('editTanggal').value;
-            const isi = document.getElementById('editIsi').value;
-
-            if (!judul || !kategori || !tanggal || !isi) {
-                alert('Semua field harus diisi!');
-                return;
-            }
-
-            const index = beritaList.findIndex(b => b.id === id);
-            
-            if (index !== -1) {
-                beritaList[index] = {
-                    id,
-                    judul,
-                    kategori,
-                    tanggal,
-                    isi
-                };
-
-                // Tutup modal
-                const modal = bootstrap.Modal.getInstance(document.getElementById('editBeritaModal'));
-                modal.hide();
-
-                // Tampilkan ulang daftar berita
-                tampilkanBerita();
-                
-                alert('Berita berhasil diupdate!');
-            }
-        });
-
-        // Fungsi untuk menghapus berita
-        function hapusBerita(id) {
-            if (confirm('Apakah Anda yakin ingin menghapus berita ini?')) {
-                beritaList = beritaList.filter(b => b.id !== id);
-                tampilkanBerita();
-                alert('Berita berhasil dihapus!');
-            }
-        }
-
-        // Inisialisasi tampilan saat halaman dimuat
-        document.addEventListener('DOMContentLoaded', function() {
-            tampilkanBerita();
-            
-            // Set tanggal default untuk form tambah ke hari ini
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('tanggal').value = today;
-        });
-    </script>
-</body>
-</html>
+    });
+</script>
+@endsection

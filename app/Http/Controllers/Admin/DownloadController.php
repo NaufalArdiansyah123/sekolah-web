@@ -8,9 +8,50 @@ use App\Models\Download;
 
 class DownloadController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $downloads = Download::latest()->paginate(10);
+        $query = Download::with('user');
+
+        // Search filter
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhere('file_name', 'like', "%{$search}%");
+            });
+        }
+
+        // Category filter
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+
+        // Status filter
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Sorting
+        switch ($request->get('sort', 'latest')) {
+            case 'oldest':
+                $query->oldest();
+                break;
+            case 'name':
+                $query->orderBy('title');
+                break;
+            case 'downloads':
+                $query->orderBy('download_count', 'desc');
+                break;
+            case 'size':
+                $query->orderBy('file_size', 'desc');
+                break;
+            default:
+                $query->latest();
+        }
+
+        $downloads = $query->paginate(12);
+        
         return view('admin.downloads.index', compact('downloads'));
     }
 
@@ -98,5 +139,15 @@ class DownloadController extends Controller
 
         return redirect()->route('admin.downloads.index')
                         ->with('success', 'File download berhasil dihapus!');
+    }
+
+    public function incrementDownload(Download $download)
+    {
+        $download->incrementDownloadCount();
+        
+        return response()->json([
+            'success' => true,
+            'download_count' => $download->download_count
+        ]);
     }
 }

@@ -1,978 +1,624 @@
-<?php
-// resources/views/admin/dashboard.blade.php
-?>
-<x-admin-layout>
-    <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ $pageTitle }}
-            </h2>
-            <div class="text-sm text-gray-500">
-                {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}
-            </div>
-        </div>
-    </x-slot>
+@extends('layouts.admin')
 
-    <style>
-        :root {
-            --primary-color: #1a202c;
-            --secondary-color: #3182ce;
-            --accent-color: #4299e1;
-            --light-gray: #f7fafc;
-            --dark-gray: #718096;
-            --glass-bg: rgba(26, 32, 44, 0.95);
-            --gradient-primary: linear-gradient(135deg, #1a202c, #3182ce);
-            --gradient-light: linear-gradient(135deg, rgba(49, 130, 206, 0.1), rgba(66, 153, 225, 0.05));
+@section('content')
+<style>
+    /* Enhanced Dashboard Styles */
+    .dashboard-container {
+        background: var(--bg-secondary);
+        min-height: calc(100vh - 200px);
+        transition: all 0.3s ease;
+    }
+    
+    /* Welcome Section */
+    .welcome-section {
+        background: linear-gradient(135deg, var(--bg-primary) 0%, rgba(59, 130, 246, 0.05) 100%);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    .dark .welcome-section {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .welcome-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+        transform: translate(50%, -50%);
+    }
+    
+    .welcome-content {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .welcome-title {
+        font-size: 2rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--text-primary), var(--accent-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+    
+    .welcome-subtitle {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .welcome-time {
+        display: inline-flex;
+        align-items: center;
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--accent-color);
+        padding: 0.5rem 1rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.875rem;
+    }
+    
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 1.5rem;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .dark .stat-card {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        border-color: var(--accent-color);
+    }
+    
+    .dark .stat-card:hover {
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+    
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--accent-color), #8b5cf6);
+        border-radius: 16px 16px 0 0;
+    }
+    
+    .stat-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    }
+    
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover .stat-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+    
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+        line-height: 1;
+    }
+    
+    .stat-label {
+        color: var(--text-secondary);
+        font-weight: 600;
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-change {
+        display: flex;
+        align-items: center;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .stat-change.positive {
+        color: #10b981;
+    }
+    
+    .stat-change.negative {
+        color: #ef4444;
+    }
+    
+    /* Chart Cards */
+    .chart-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    @media (max-width: 1024px) {
+        .chart-grid {
+            grid-template-columns: 1fr;
         }
-
-        /* Enhanced Stats Cards */
-        .stats-card-enhanced {
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(255,255,255,0.8);
-            position: relative;
-            height: 100%;
-        }
-        
-        .stats-card-enhanced::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #3b82f6, #10b981, #f59e0b, #8b5cf6);
-            transform: scaleX(0);
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .stats-card-enhanced:hover::before {
-            transform: scaleX(1);
-        }
-        
-        .stats-card-enhanced:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 25px 60px rgba(0,0,0,0.15);
-        }
-        
-        .stats-icon-wrapper {
-            position: relative;
-            margin-bottom: 1.5rem;
-        }
-        
-        .stats-icon {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            padding: 20px;
-            border-radius: 16px;
-            background: var(--gradient-light);
-            display: inline-block;
-        }
-        
-        .stats-card-enhanced:hover .stats-icon {
-            transform: scale(1.15) rotate(5deg);
-        }
-        
-        .stats-number {
-            font-family: 'Arial', monospace;
-            font-weight: 900 !important;
-            letter-spacing: -2px;
-            line-height: 1;
-            transition: all 0.3s ease;
-            font-size: 2.5rem !important;
-        }
-        
-        .stats-label {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-            color: var(--dark-gray);
-        }
-        
-        .stats-percentage {
-            font-size: 0.75rem;
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-weight: 600;
-            margin-top: 10px;
-            display: inline-block;
-        }
-
-        /* Enhanced Chart Cards */
-        .chart-card {
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(255,255,255,0.8);
-        }
-        
-        .chart-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.12);
-        }
-        
-        .chart-card .card-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            background: linear-gradient(135deg, rgba(49, 130, 206, 0.02), rgba(66, 153, 225, 0.01));
-        }
-
-        /* Enhanced Activity Cards */
-        .activity-card {
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(255,255,255,0.8);
-        }
-        
-        .activity-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.12);
-        }
-        
-        .activity-item {
-            padding: 1rem;
-            border-radius: 12px;
-            background: rgba(249, 250, 251, 0.5);
-            margin-bottom: 1rem;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(0,0,0,0.02);
-        }
-        
-        .activity-item:hover {
-            background: rgba(249, 250, 251, 0.8);
-            transform: translateX(5px);
-        }
-        
-        .user-avatar {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-right: 1rem;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .user-avatar::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
-            transform: translateX(-100%);
-            transition: transform 0.6s ease;
-        }
-        
-        .activity-item:hover .user-avatar::before {
-            transform: translateX(100%);
-        }
-
-        /* Enhanced Quick Actions */
-        .quick-action-btn {
-            background: white;
-            border-radius: 16px;
-            padding: 1.5rem;
-            text-align: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 2px solid rgba(0,0,0,0.05);
-            text-decoration: none;
-            color: inherit;
-            display: block;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .quick-action-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transition: left 0.5s ease;
-        }
-        
-        .quick-action-btn:hover::before {
-            left: 100%;
-        }
-        
-        .quick-action-btn:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
-            border-color: rgba(0,0,0,0.1);
-            color: inherit;
-            text-decoration: none;
-        }
-        
-        .quick-action-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
+    }
+    
+    .chart-card {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+    }
+    
+    .dark .chart-card {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .chart-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .dark .chart-card:hover {
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+    
+    .chart-header {
+        display: flex;
+        align-items: center;
+        justify-content: between;
+        margin-bottom: 1.5rem;
+    }
+    
+    .chart-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+    
+    .chart-subtitle {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+    
+    /* Activity Feed */
+    .activity-item {
+        display: flex;
+        align-items: flex-start;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+    }
+    
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+    
+    .activity-item:hover {
+        background: rgba(59, 130, 246, 0.02);
+        border-radius: 8px;
+        margin: 0 -0.5rem;
+        padding: 1rem 0.5rem;
+    }
+    
+    .activity-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+    
+    .activity-content {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .activity-title {
+        font-weight: 600;
+        color: var(--text-primary);
+        font-size: 0.875rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .activity-description {
+        color: var(--text-secondary);
+        font-size: 0.75rem;
+        line-height: 1.4;
+    }
+    
+    .activity-time {
+        color: var(--text-tertiary);
+        font-size: 0.75rem;
+        margin-left: 1rem;
+        flex-shrink: 0;
+    }
+    
+    /* Quick Actions */
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .quick-action {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .quick-action::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .quick-action:hover::before {
+        left: 100%;
+    }
+    
+    .quick-action:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+        border-color: var(--accent-color);
+        text-decoration: none;
+    }
+    
+    .quick-action-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .quick-action:hover .quick-action-icon {
+        transform: scale(1.1);
+    }
+    
+    .quick-action-title {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+    
+    .quick-action-description {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .welcome-title {
             font-size: 1.5rem;
-            color: white;
-            transition: all 0.3s ease;
         }
         
-        .quick-action-btn:hover .quick-action-icon {
-            transform: scale(1.1) rotate(5deg);
-        }
-
-        /* Enhanced Events/Upcoming Section */
-        .event-item {
-            background: rgba(249, 250, 251, 0.7);
-            border-radius: 12px;
-            padding: 1.2rem;
-            margin-bottom: 1rem;
-            transition: all 0.3s ease;
-            border-left: 4px solid transparent;
-            position: relative;
+        .stats-grid {
+            grid-template-columns: 1fr;
         }
         
-        .event-item:hover {
-            background: rgba(249, 250, 251, 1);
-            transform: translateX(5px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        .quick-actions {
+            grid-template-columns: repeat(2, 1fr);
         }
-        
-        .event-academic { border-left-color: #3b82f6; }
-        .event-general { border-left-color: #10b981; }
-        .event-meeting { border-left-color: #f59e0b; }
-        
-        .event-tag {
-            font-size: 0.7rem;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+    }
+    
+    @media (max-width: 480px) {
+        .quick-actions {
+            grid-template-columns: 1fr;
         }
+    }
+</style>
 
-        /* Counter Animation */
-        @keyframes countUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .stats-number.counting {
-            animation: countUp 0.6s ease-out;
-        }
-
-        /* Fade in animations */
-        .fade-in-up {
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeInUp 0.8s ease forwards;
-        }
-        
-        .fade-in-up:nth-child(2) { animation-delay: 0.1s; }
-        .fade-in-up:nth-child(3) { animation-delay: 0.2s; }
-        .fade-in-up:nth-child(4) { animation-delay: 0.3s; }
-        .fade-in-up:nth-child(5) { animation-delay: 0.4s; }
-        
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .stats-card-enhanced {
-                margin-bottom: 1.5rem;
-            }
-            
-            .quick-action-btn {
-                margin-bottom: 1rem;
-            }
-        }
-    </style>
-
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Enhanced Stats Cards with Animation -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <!-- Total Siswa -->
-                <div class="stats-card-enhanced fade-in-up">
-                    <div class="p-6 text-center">
-                        <div class="stats-icon-wrapper">
-                            <div class="stats-icon bg-gradient-to-r from-blue-500 to-blue-600">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                                </svg>
-                            </div>
-                        </div>
-                        <h2 class="stats-number text-blue-600 mb-2" data-target="1247">0</h2>
-                        <p class="stats-label mb-3">TOTAL SISWA</p>
-                        <span class="stats-percentage bg-blue-100 text-blue-800">+2.5%</span>
-                    </div>
-                </div>
-
-                <!-- Total Guru -->
-                <div class="stats-card-enhanced fade-in-up">
-                    <div class="p-6 text-center">
-                        <div class="stats-icon-wrapper">
-                            <div class="stats-icon bg-gradient-to-r from-green-500 to-green-600">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
-                                </svg>
-                            </div>
-                        </div>
-                        <h2 class="stats-number text-green-600 mb-2" data-target="67">0</h2>
-                        <p class="stats-label mb-3">TOTAL GURU</p>
-                        <span class="stats-percentage bg-green-100 text-green-800">+1.2%</span>
-                    </div>
-                </div>
-
-                <!-- Total Kelas -->
-                <div class="stats-card-enhanced fade-in-up">
-                    <div class="p-6 text-center">
-                        <div class="stats-icon-wrapper">
-                            <div class="stats-icon bg-gradient-to-r from-amber-500 to-amber-600">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                                </svg>
-                            </div>
-                        </div>
-                        <h2 class="stats-number text-amber-600 mb-2" data-target="36">0</h2>
-                        <p class="stats-label mb-3">TOTAL KELAS</p>
-                        <span class="stats-percentage bg-amber-100 text-amber-800">+5.7%</span>
-                    </div>
-                </div>
-
-                <!-- Total Posts -->
-                <div class="stats-card-enhanced fade-in-up">
-                    <div class="p-6 text-center">
-                        <div class="stats-icon-wrapper">
-                            <div class="stats-icon bg-gradient-to-r from-purple-500 to-purple-600">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                </svg>
-                            </div>
-                        </div>
-                        <h2 class="stats-number text-purple-600 mb-2" data-target="156">0</h2>
-                        <p class="stats-label mb-3">TOTAL POSTS</p>
-                        <span class="stats-percentage bg-purple-100 text-purple-800">+12.3%</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Charts & Activity Section -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-                <!-- Student Distribution Chart -->
-                <div class="lg:col-span-2 chart-card">
-                    <div class="card-header">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">
-                            <i class="fas fa-chart-bar text-blue-500 mr-3"></i>Distribusi Siswa per Kelas
-                        </h3>
-                        <p class="text-gray-600 text-sm">Analisis sebaran siswa berdasarkan tingkat kelas</p>
-                    </div>
-                    <div class="p-6">
-                        <canvas id="studentChart" height="280"></canvas>
-                    </div>
-                </div>
-
-                <!-- Recent Activity -->
-                <div class="activity-card">
-                    <div class="card-header">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">
-                            <i class="fas fa-clock text-green-500 mr-3"></i>Aktivitas Terbaru
-                        </h3>
-                        <p class="text-gray-600 text-sm">Update terkini dari sistem</p>
-                    </div>
-                    <div class="p-6">
-                        <div class="space-y-4">
-                            <div class="activity-item">
-                                <div class="flex items-start">
-                                    <div class="user-avatar bg-blue-100 text-blue-600">
-                                        JD
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="font-semibold text-gray-900 text-sm">John Doe</p>
-                                        <p class="text-gray-600 text-sm">Menambahkan pengumuman baru</p>
-                                        <p class="text-gray-400 text-xs mt-1">2 menit lalu</p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="activity-item">
-                                <div class="flex items-start">
-                                    <div class="user-avatar bg-green-100 text-green-600">
-                                        JS
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="font-semibold text-gray-900 text-sm">Jane Smith</p>
-                                        <p class="text-gray-600 text-sm">Mengupload materi Matematika</p>
-                                        <p class="text-gray-400 text-xs mt-1">15 menit lalu</p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="activity-item">
-                                <div class="flex items-start">
-                                    <div class="user-avatar bg-purple-100 text-purple-600">
-                                        A
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="font-semibold text-gray-900 text-sm">Admin</p>
-                                        <p class="text-gray-600 text-sm">Memperbarui data siswa</p>
-                                        <p class="text-gray-400 text-xs mt-1">1 jam lalu</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="activity-item">
-                                <div class="flex items-start">
-                                    <div class="user-avatar bg-amber-100 text-amber-600">
-                                        RS
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="font-semibold text-gray-900 text-sm">Robert Smith</p>
-                                        <p class="text-gray-600 text-sm">Mengirim pesan kepada orang tua</p>
-                                        <p class="text-gray-400 text-xs mt-1">3 jam lalu</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-6">
-                            <a href="#" class="w-full text-center py-3 px-4 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors duration-300 text-sm font-medium">
-                                <i class="fas fa-eye mr-2"></i>Lihat Semua Aktivitas
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Enhanced Additional Info Section -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Upcoming Events -->
-                <div class="chart-card">
-                    <div class="card-header">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">
-                            <i class="fas fa-calendar-alt text-indigo-500 mr-3"></i>Acara Mendatang
-                        </h3>
-                        <p class="text-gray-600 text-sm">Jadwal kegiatan dan acara penting</p>
-                    </div>
-                    <div class="p-6">
-                        <div class="space-y-4">
-                            <div class="event-item event-academic">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex-1">
-                                        <p class="font-semibold text-gray-800 mb-1">Ujian Tengah Semester</p>
-                                        <p class="text-sm text-gray-600">15 Okt 2023 - 20 Okt 2023</p>
-                                    </div>
-                                    <span class="event-tag bg-blue-100 text-blue-800">Academic</span>
-                                </div>
-                            </div>
-                            
-                            <div class="event-item event-general">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex-1">
-                                        <p class="font-semibold text-gray-800 mb-1">Seminar Pendidikan</p>
-                                        <p class="text-sm text-gray-600">25 Okt 2023, 09:00 WIB</p>
-                                    </div>
-                                    <span class="event-tag bg-green-100 text-green-800">Event</span>
-                                </div>
-                            </div>
-                            
-                            <div class="event-item event-meeting">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex-1">
-                                        <p class="font-semibold text-gray-800 mb-1">Rapat Orang Tua</p>
-                                        <p class="text-sm text-gray-600">5 Nov 2023, 13:00 WIB</p>
-                                    </div>
-                                    <span class="event-tag bg-amber-100 text-amber-800">Meeting</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-6">
-                            <a href="#" class="w-full text-center py-3 px-4 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 transition-colors duration-300 text-sm font-medium">
-                                <i class="fas fa-calendar-plus mr-2"></i>Kelola Acara
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Enhanced Quick Actions -->
-                <div class="chart-card">
-                    <div class="card-header">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">
-                            <i class="fas fa-bolt text-yellow-500 mr-3"></i>Aksi Cepat
-                        </h3>
-                        <p class="text-gray-600 text-sm">Shortcut untuk tugas administrasi umum</p>
-                    </div>
-                    <div class="p-6">
-                        <div class="grid grid-cols-2 gap-4">
-                            <a href="#" class="quick-action-btn">
-                                <div class="quick-action-icon bg-gradient-to-r from-blue-500 to-blue-600">
-                                    <i class="fas fa-user-plus"></i>
-                                </div>
-                                <p class="text-sm font-semibold text-gray-700">Tambah Siswa</p>
-                            </a>
-                            
-                            <a href="#" class="quick-action-btn">
-                                <div class="quick-action-icon bg-gradient-to-r from-green-500 to-green-600">
-                                    <i class="fas fa-file-alt"></i>
-                                </div>
-                                <p class="text-sm font-semibold text-gray-700">Buat Laporan</p>
-                            </a>
-                            
-                            <a href="#" class="quick-action-btn">
-                                <div class="quick-action-icon bg-gradient-to-r from-amber-500 to-amber-600">
-                                    <i class="fas fa-bell"></i>
-                                </div>
-                                <p class="text-sm font-semibold text-gray-700">Pengumuman</p>
-                            </a>
-                            
-                            <a href="#" class="quick-action-btn">
-                                <div class="quick-action-icon bg-gradient-to-r from-purple-500 to-purple-600">
-                                    <i class="fas fa-cog"></i>
-                                </div>
-                                <p class="text-sm font-semibold text-gray-700">Pengaturan</p>
-                            </a>
-                        </div>
-                        
-                        <!-- Additional Quick Actions -->
-                        <div class="mt-6 pt-6 border-t border-gray-100">
-                            <div class="grid grid-cols-1 gap-3">
-                                <a href="#" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-300">
-                                    <div class="flex items-center">
-                                        <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
-                                            <i class="fas fa-chart-line text-white text-sm"></i>
-                                        </div>
-                                        <span class="font-medium text-gray-700">Analytics</span>
-                                    </div>
-                                    <i class="fas fa-arrow-right text-gray-400"></i>
-                                </a>
-                                
-                                <a href="#" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-300">
-                                    <div class="flex items-center">
-                                        <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center mr-3">
-                                            <i class="fas fa-envelope text-white text-sm"></i>
-                                        </div>
-                                        <span class="font-medium text-gray-700">Kirim Pesan</span>
-                                    </div>
-                                    <i class="fas fa-arrow-right text-gray-400"></i>
-                                </a>
-                                
-                                <a href="#" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-300">
-                                    <div class="flex items-center">
-                                        <div class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center mr-3">
-                                            <i class="fas fa-database text-white text-sm"></i>
-                                        </div>
-                                        <span class="font-medium text-gray-700">Backup Data</span>
-                                    </div>
-                                    <i class="fas fa-arrow-right text-gray-400"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Additional Dashboard Sections -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- System Performance -->
-                <div class="chart-card">
-                    <div class="card-header">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">
-                            <i class="fas fa-server text-red-500 mr-3"></i>Performa Sistem
-                        </h3>
-                        <p class="text-gray-600 text-sm">Status kesehatan dan performa aplikasi</p>
-                    </div>
-                    <div class="p-6">
-                        <div class="space-y-4">
-                            <div class="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
-                                <div class="flex items-center">
-                                    <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center mr-3">
-                                        <i class="fas fa-check text-white"></i>
-                                    </div>
-                                    <div>
-                                        <p class="font-semibold text-gray-800">Server Status</p>
-                                        <p class="text-sm text-gray-600">Online - 99.9% Uptime</p>
-                                    </div>
-                                </div>
-                                <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">AKTIF</span>
-                            </div>
-                            
-                            <div class="flex items-center justify-between p-4 bg-blue-50 rounded-lg border border-blue-200">
-                                <div class="flex items-center">
-                                    <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
-                                        <i class="fas fa-database text-white"></i>
-                                    </div>
-                                    <div>
-                                        <p class="font-semibold text-gray-800">Database</p>
-                                        <p class="text-sm text-gray-600">Response Time: 45ms</p>
-                                    </div>
-                                </div>
-                                <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full">OPTIMAL</span>
-                            </div>
-                            
-                            <div class="flex items-center justify-between p-4 bg-amber-50 rounded-lg border border-amber-200">
-                                <div class="flex items-center">
-                                    <div class="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center mr-3">
-                                        <i class="fas fa-hdd text-white"></i>
-                                    </div>
-                                    <div>
-                                        <p class="font-semibold text-gray-800">Storage</p>
-                                        <p class="text-sm text-gray-600">Used: 64% (3.2GB/5GB)</p>
-                                    </div>
-                                </div>
-                                <span class="px-3 py-1 bg-amber-100 text-amber-800 text-xs font-semibold rounded-full">NORMAL</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Recent Users & Analytics -->
-                <div class="chart-card">
-                    <div class="card-header">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">
-                            <i class="fas fa-users-cog text-blue-500 mr-3"></i>Manajemen Pengguna
-                        </h3>
-                        <p class="text-gray-600 text-sm">Overview pengguna dan aktivitas login</p>
-                    </div>
-                    <div class="p-6">
-                        <!-- User Stats Mini Cards -->
-                        <div class="grid grid-cols-2 gap-4 mb-6">
-                            <div class="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg text-center">
-                                <div class="text-2xl font-bold text-blue-600 mb-1" data-target="45">0</div>
-                                <div class="text-xs text-blue-700 font-medium">Online Hari Ini</div>
-                            </div>
-                            <div class="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-lg text-center">
-                                <div class="text-2xl font-bold text-green-600 mb-1" data-target="128">0</div>
-                                <div class="text-xs text-green-700 font-medium">Login Minggu Ini</div>
-                            </div>
-                        </div>
-                        
-                        <!-- Recent Login Activity -->
-                        <div class="space-y-3">
-                            <h5 class="font-semibold text-gray-800 text-sm mb-3">Login Terbaru:</h5>
-                            
-                            <div class="flex items-center p-3 bg-gray-50 rounded-lg">
-                                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-3">
-                                    <span class="text-white text-xs font-semibold">AD</span>
-                                </div>
-                                <div class="flex-1">
-                                    <p class="text-sm font-medium text-gray-800">Admin User</p>
-                                    <p class="text-xs text-gray-500">5 menit lalu</p>
-                                </div>
-                                <span class="w-2 h-2 bg-green-400 rounded-full"></span>
-                            </div>
-                            
-                            <div class="flex items-center p-3 bg-gray-50 rounded-lg">
-                                <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-3">
-                                    <span class="text-white text-xs font-semibold">GU</span>
-                                </div>
-                                <div class="flex-1">
-                                    <p class="text-sm font-medium text-gray-800">Guru User</p>
-                                    <p class="text-xs text-gray-500">12 menit lalu</p>
-                                </div>
-                                <span class="w-2 h-2 bg-green-400 rounded-full"></span>
-                            </div>
-                            
-                            <div class="flex items-center p-3 bg-gray-50 rounded-lg">
-                                <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center mr-3">
-                                    <span class="text-white text-xs font-semibold">ST</span>
-                                </div>
-                                <div class="flex-1">
-                                    <p class="text-sm font-medium text-gray-800">Siswa User</p>
-                                    <p class="text-xs text-gray-500">25 menit lalu</p>
-                                </div>
-                                <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-6">
-                            <a href="#" class="w-full text-center py-3 px-4 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors duration-300 text-sm font-medium">
-                                <i class="fas fa-users mr-2"></i>Kelola Pengguna
-                            </a>
-                        </div>
-                    </div>
-                </div>
+<div class="dashboard-container">
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+        <div class="welcome-content">
+            <h1 class="welcome-title">
+                Selamat Datang, {{ auth()->user()->name }}! 👋
+            </h1>
+            <p class="welcome-subtitle">
+                Kelola sistem administrasi SMA Negeri 1 Balong dengan mudah dan efisien
+            </p>
+            <div class="welcome-time">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                {{ now()->format('l, d F Y - H:i') }}
             </div>
         </div>
     </div>
 
-    @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Counter Animation Function
-            function animateCounter(element, target, duration = 2000) {
-                const start = 0;
-                const increment = target / (duration / 16);
-                let current = start;
-                
-                element.classList.add('counting');
-                
-                const timer = setInterval(() => {
-                    current += increment;
-                    if (current >= target) {
-                        current = target;
-                        clearInterval(timer);
-                    }
-                    
-                    // Format number with comma separator for thousands
-                    const displayValue = Math.floor(current).toLocaleString();
-                    element.textContent = displayValue;
-                }, 16);
-            }
-            
-            // Intersection Observer for stats counter animation
-            const statsObserverOptions = {
-                threshold: 0.3,
-                rootMargin: '0px 0px -50px 0px'
-            };
-            
-            const statsObserver = new IntersectionObserver(function(entries) {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const statsNumbers = document.querySelectorAll('.stats-number');
-                        
-                        statsNumbers.forEach((numberElement, index) => {
-                            const target = parseInt(numberElement.dataset.target);
-                            
-                            // Stagger the animation start times
-                            setTimeout(() => {
-                                animateCounter(numberElement, target, 1500);
-                            }, index * 150);
-                        });
-                        
-                        // Only animate once
-                        statsObserver.disconnect();
-                    }
-                });
-            }, statsObserverOptions);
-            
-            // Start observing stats cards
-            const firstStatsCard = document.querySelector('.stats-card-enhanced');
-            if (firstStatsCard) {
-                statsObserver.observe(firstStatsCard);
-            }
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-icon bg-blue-100">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="stat-value">1,247</div>
+            <div class="stat-label">Total Siswa</div>
+            <div class="stat-change positive">
+                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                </svg>
+                +12% dari bulan lalu
+            </div>
+        </div>
 
-            // Student Distribution Chart with Enhanced Styling
-            const studentCtx = document.getElementById('studentChart').getContext('2d');
-            const studentChart = new Chart(studentCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Kelas 10', 'Kelas 11', 'Kelas 12'],
-                    datasets: [{
-                        label: 'Jumlah Siswa',
-                        data: [450, 420, 377],
-                        backgroundColor: [
-                            'rgba(59, 130, 246, 0.8)',
-                            'rgba(16, 185, 129, 0.8)',
-                            'rgba(245, 158, 11, 0.8)'
-                        ],
-                        borderColor: [
-                            'rgb(59, 130, 246)',
-                            'rgb(16, 185, 129)',
-                            'rgb(245, 158, 11)'
-                        ],
-                        borderWidth: 2,
-                        borderRadius: 8,
-                        borderSkipped: false,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            titleColor: 'white',
-                            bodyColor: 'white',
-                            borderColor: 'rgba(255, 255, 255, 0.1)',
-                            borderWidth: 1,
-                            cornerRadius: 12,
-                            displayColors: false,
-                            callbacks: {
-                                title: function(context) {
-                                    return context[0].label;
-                                },
-                                label: function(context) {
-                                    return `Siswa: ${context.parsed.y} orang`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: {
-                                display: false
-                            },
-                            ticks: {
-                                font: {
-                                    weight: '600'
-                                },
-                                color: '#6b7280'
-                            }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)',
-                                drawBorder: false
-                            },
-                            ticks: {
-                                font: {
-                                    weight: '500'
-                                },
-                                color: '#6b7280'
-                            }
-                        }
-                    },
-                    animation: {
-                        duration: 2000,
-                        easing: 'easeOutQuart'
-                    }
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-icon bg-green-100">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="stat-value">87</div>
+            <div class="stat-label">Total Guru & Staff</div>
+            <div class="stat-change positive">
+                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                </svg>
+                +3 guru baru
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-icon bg-purple-100">
+                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="stat-value">156</div>
+            <div class="stat-label">Artikel & Berita</div>
+            <div class="stat-change positive">
+                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                </svg>
+                +8 artikel baru
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-icon bg-yellow-100">
+                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="stat-value">42</div>
+            <div class="stat-label">Prestasi Siswa</div>
+            <div class="stat-change positive">
+                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                </svg>
+                +5 prestasi baru
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <a href="{{ route('admin.posts.blog') }}" class="quick-action">
+            <div class="quick-action-icon bg-blue-100">
+                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                </svg>
+            </div>
+            <div class="quick-action-title">Tulis Artikel</div>
+            <div class="quick-action-description">Buat artikel atau berita baru</div>
+        </a>
+
+        <a href="{{ route('admin.students.index') }}" class="quick-action">
+            <div class="quick-action-icon bg-green-100">
+                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                </svg>
+            </div>
+            <div class="quick-action-title">Kelola Siswa</div>
+            <div class="quick-action-description">Tambah atau edit data siswa</div>
+        </a>
+
+        <a href="{{ route('admin.gallery.upload') }}" class="quick-action">
+            <div class="quick-action-icon bg-purple-100">
+                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+            </div>
+            <div class="quick-action-title">Upload Foto</div>
+            <div class="quick-action-description">Tambah foto ke galeri</div>
+        </a>
+
+        <a href="{{ route('admin.settings') }}" class="quick-action">
+            <div class="quick-action-icon bg-gray-100">
+                <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+            </div>
+            <div class="quick-action-title">Pengaturan</div>
+            <div class="quick-action-description">Konfigurasi sistem</div>
+        </a>
+    </div>
+
+    <!-- Charts and Activity -->
+    <div class="chart-grid">
+        <!-- Main Chart -->
+        <div class="chart-card">
+            <div class="chart-header">
+                <div>
+                    <h3 class="chart-title">Aktivitas Website</h3>
+                    <p class="chart-subtitle">Statistik pengunjung 30 hari terakhir</p>
+                </div>
+            </div>
+            <div class="h-64 flex items-center justify-center bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div class="text-center">
+                    <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    <p class="text-gray-500">Chart akan ditampilkan di sini</p>
+                    <p class="text-sm text-gray-400">Integrasi dengan analytics</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3 class="chart-title">Aktivitas Terbaru</h3>
+                <p class="chart-subtitle">Update sistem terkini</p>
+            </div>
+            <div class="space-y-1">
+                <div class="activity-item">
+                    <div class="activity-icon bg-blue-100">
+                        <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Artikel baru dipublikasi</div>
+                        <div class="activity-description">"Prestasi Siswa di Olimpiade Sains"</div>
+                    </div>
+                    <div class="activity-time">2m</div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon bg-green-100">
+                        <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Data siswa baru ditambahkan</div>
+                        <div class="activity-description">5 siswa kelas X terdaftar</div>
+                    </div>
+                    <div class="activity-time">1h</div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon bg-purple-100">
+                        <svg class="w-4 h-4 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Foto galeri diupload</div>
+                        <div class="activity-description">15 foto kegiatan ekstrakurikuler</div>
+                    </div>
+                    <div class="activity-time">3h</div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon bg-yellow-100">
+                        <svg class="w-4 h-4 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Prestasi baru dicatat</div>
+                        <div class="activity-description">Juara 1 Lomba Debat Bahasa Inggris</div>
+                    </div>
+                    <div class="activity-time">1d</div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon bg-red-100">
+                        <svg class="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Pengumuman penting</div>
+                        <div class="activity-description">Jadwal ujian tengah semester</div>
+                    </div>
+                    <div class="activity-time">2d</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Add some interactivity
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animate stats on load
+        const statValues = document.querySelectorAll('.stat-value');
+        statValues.forEach(stat => {
+            const finalValue = parseInt(stat.textContent);
+            let currentValue = 0;
+            const increment = finalValue / 50;
+            
+            const timer = setInterval(() => {
+                currentValue += increment;
+                if (currentValue >= finalValue) {
+                    stat.textContent = finalValue.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    stat.textContent = Math.floor(currentValue).toLocaleString();
                 }
-            });
-            
-            // Enhanced hover effects for activity items
-            const activityItems = document.querySelectorAll('.activity-item');
-            activityItems.forEach(item => {
-                item.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateX(8px) scale(1.02)';
-                    this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.1)';
-                });
-                
-                item.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateX(0) scale(1)';
-                    this.style.boxShadow = 'none';
-                });
-            });
-            
-            // Enhanced quick action button effects
-            const quickActionBtns = document.querySelectorAll('.quick-action-btn');
-            quickActionBtns.forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    // Create ripple effect
-                    const ripple = document.createElement('div');
-                    const rect = this.getBoundingClientRect();
-                    const size = Math.max(rect.width, rect.height);
-                    const x = e.clientX - rect.left - size / 2;
-                    const y = e.clientY - rect.top - size / 2;
-                    
-                    ripple.style.cssText = `
-                        position: absolute;
-                        width: ${size}px;
-                        height: ${size}px;
-                        left: ${x}px;
-                        top: ${y}px;
-                        background: rgba(59, 130, 246, 0.3);
-                        border-radius: 50%;
-                        transform: scale(0);
-                        animation: ripple 0.6s ease-out;
-                        pointer-events: none;
-                        z-index: 1;
-                    `;
-                    
-                    this.appendChild(ripple);
-                    
-                    setTimeout(() => {
-                        ripple.remove();
-                    }, 600);
-                });
-            });
-            
-            // Add ripple animation CSS
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes ripple {
-                    to {
-                        transform: scale(4);
-                        opacity: 0;
-                    }
-                }
-            `;
-            document.head.appendChild(style);
-            
-            // Smooth animations for page load
-            const observer = new IntersectionObserver(function(entries) {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.animationDelay = entry.target.dataset.delay || '0s';
-                        entry.target.classList.add('fade-in-up');
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            });
-            
-            // Observe elements for animation
-            document.querySelectorAll('.chart-card, .activity-card').forEach((el, index) => {
-                el.dataset.delay = (index * 0.1) + 's';
-                observer.observe(el);
-            });
-            
-            // Real-time clock update
-            function updateClock() {
-                const now = new Date();
-                const timeString = now.toLocaleTimeString('id-ID', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit'
-                });
-                
-                // You can add a live clock element if needed
-                // document.getElementById('live-clock').textContent = timeString;
-            }
-            
-            // Update clock every second
-            setInterval(updateClock, 1000);
-            updateClock(); // Initial call
-            
-            // Add loading states to links
-            document.querySelectorAll('a[href]:not([href="#"])').forEach(link => {
-                link.addEventListener('click', function() {
-                    const icon = this.querySelector('i');
-                    if (icon && !icon.classList.contains('fa-spinner')) {
-                        const originalClass = icon.className;
-                        icon.className = 'fas fa-spinner fa-spin';
-                        
-                        // Reset after 2 seconds (in case page doesn't navigate)
-                        setTimeout(() => {
-                            icon.className = originalClass;
-                        }, 2000);
-                    }
-                });
-            });
-            
-            // Enhanced chart responsiveness
-            window.addEventListener('resize', function() {
-                if (studentChart) {
-                    studentChart.resize();
-                }
-            });
+            }, 30);
         });
-    </script>
-    @endpush
-</x-admin-layout>
+    });
+</script>
+@endsection
