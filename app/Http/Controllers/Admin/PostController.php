@@ -261,15 +261,16 @@ class PostController extends Controller
             'status' => 'required|in:draft,published,archived'
         ]);
 
-        $data = [
-            'title' => $request->title,
-            'slug' => \Str::slug($request->title),
-            'excerpt' => $request->excerpt,
-            'type' => 'blog',
-            'tags' => $request->tags,
-            'status' => $request->status,
-            'user_id' => auth()->id(),
-        ];
+    $data = [
+    'title' => $request->title,
+    'slug' => \Str::slug($request->title),
+    'excerpt' => $request->excerpt,
+    'content' => $request->input('content'), // ✅ sudah benar
+    'type' => 'blog',
+    'tags' => $request->tags,
+    'status' => $request->status,
+    'user_id' => auth()->id(),
+];
 
         if ($request->hasFile('featured_image')) {
             $data['featured_image'] = $request->file('featured_image')->store('blogs', 'public');
@@ -279,6 +280,7 @@ class PostController extends Controller
 
         return redirect()->route('admin.posts.blog')
                         ->with('success', 'Blog berhasil ditambahkan!');
+
     }
 
     public function editBlog($id)
@@ -300,13 +302,15 @@ class PostController extends Controller
             'status' => 'required|in:draft,published,archived'
         ]);
 
-        $data = [
-            'title' => $request->title,
-            'slug' => \Str::slug($request->title),
-            'excerpt' => $request->excerpt,
-            'tags' => $request->tags,
-            'status' => $request->status,
-        ];
+       $data = [
+    'title' => $request->title,
+    'slug' => \Str::slug($request->title),
+    'excerpt' => $request->excerpt,
+    'content' => $request->input('content'), // ✅ tambahkan ini
+    'tags' => $request->tags,
+    'status' => $request->status,
+];
+
 
         if ($request->hasFile('featured_image')) {
             $data['featured_image'] = $request->file('featured_image')->store('blogs', 'public');
@@ -326,4 +330,11 @@ class PostController extends Controller
         return redirect()->route('admin.posts.blog')
                         ->with('success', 'Blog berhasil dihapus!');
     }
+
+     public function show($id)
+    {
+        $post = Post::findOrFail($id);
+        return view('admin.posts.show', compact('post'));
+    }
+
 }

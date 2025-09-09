@@ -12,12 +12,12 @@ use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\Admin\AgendaController;
 
-
-// 
 use App\Http\Controllers\Admin\{
     DashboardController,
     PostController,
+    BlogController,  // TAMBAHAN UNTUK BLOG
     DownloadController,
+    VideoController,  // TAMBAHAN UNTUK VIDEO
     ExtracurricularController,
     AchievementController,
     TeacherController,
@@ -27,6 +27,7 @@ use App\Http\Controllers\Admin\{
     SettingController,
     SlideshowController,
 };
+
 /*
 |--------------------------------------------------------------------------
 | Public Routes
@@ -43,15 +44,29 @@ Route::get('/extracurriculars', [PublicController::class, 'extracurriculars'])->
 Route::get('/academic/programs', [PublicController::class, 'academicPrograms'])->name('academic.programs');
 Route::get('/academic/programs', [AcademicController::class, 'index'])->name('public.academic.programs');
 Route::get('/academic/calendar', [PublicController::class, 'academicCalendar'])->name('academic.calendar');
-Route::get('/news', [PublicController::class, 'news'])->name('news.index');
-Route::get('/news/{slug}', [PublicController::class, 'newsDetail'])->name('news.show');
+Route::get('/news', [App\Http\Controllers\Public\BlogController::class, 'index'])->name('news.index');
+Route::get('/news/{id}', [App\Http\Controllers\Public\BlogController::class, 'show'])->name('news.show');
+
+// Blog routes (alias for news)
+Route::get('/blog', [App\Http\Controllers\Public\BlogController::class, 'index'])->name('public.blog.index');
+Route::get('/blog/{id}', [App\Http\Controllers\Public\BlogController::class, 'show'])->name('public.blog.show');
 Route::get('/announcements', [PublicController::class, 'announcements'])->name('announcements.index');
 Route::get('/announcements/{slug}', [PublicController::class, 'announcementDetail'])->name('announcements.show');
 Route::get('/agenda', [PublicController::class, 'agenda'])->name('agenda.index');
 Route::get('/gallery/photos', [PublicController::class, 'galleryPhotos'])->name('gallery.photos');
 Route::get('/gallery/videos', [PublicController::class, 'galleryVideos'])->name('gallery.videos');
+// Public Video Routes
+Route::prefix('videos')->name('public.videos.')->group(function () {
+    Route::get('/', [App\Http\Controllers\Public\VideoController::class, 'index'])->name('index');
+    Route::get('/category/{category}', [App\Http\Controllers\Public\VideoController::class, 'category'])->name('category');
+    Route::get('/search', [App\Http\Controllers\Public\VideoController::class, 'search'])->name('search');
+    Route::get('/{video}', [App\Http\Controllers\Public\VideoController::class, 'show'])->name('show');
+    Route::get('/{video}/download', [App\Http\Controllers\Public\VideoController::class, 'download'])->name('download');
+    Route::get('/{video}/stream', [App\Http\Controllers\Public\VideoController::class, 'stream'])->name('stream');
+});
 Route::get('/gallery/index', [PublicController::class, 'galleryVideos'])->name('gallery.index');
 Route::get('/downloads', [PublicController::class, 'downloads'])->name('downloads.index');
+Route::post('/downloads/{download}/increment', [PublicController::class, 'incrementDownload'])->name('downloads.increment');
 Route::get('/contact', [PublicController::class, 'contact'])->name('contact');
 
 Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery.index');
@@ -100,18 +115,62 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role:super_admin,admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    
+    // Dashboard
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [AdminDashboardController::class, 'profile'])->name('profile');
     Route::get('/settings', [AdminDashboardController::class, 'settings'])->name('settings');
     
-    // Content Management Routes
+    // ===========================================
+    // POSTS MANAGEMENT ROUTES - DIPERBAIKI
+    // ===========================================
     Route::prefix('posts')->name('posts.')->group(function () {
-        Route::get('/slideshow', function () { return view('admin.posts.slideshow.index'); })->name('slideshow');
-        Route::get('/agenda', function () { return view('admin.posts.agenda.index'); })->name('agenda');
-        Route::get('/announcement', function () { return view('admin.posts.announcement.index'); })->name('announcement');
-        Route::get('/blog', function () { return view('admin.posts.blog.index'); })->name('blog');
-        Route::get('/quote', function () { return view('admin.posts.quote.index'); })->name('quote');
+        // Main Posts Index Route
+        Route::get('/', [PostController::class, 'index'])->name('index');
+        
+        // Slideshow Management
+        Route::get('/slideshow', [SlideshowController::class, 'index'])->name('slideshow');
+        Route::get('/slideshow/create', [SlideshowController::class, 'create'])->name('slideshow.create');
+        Route::post('/slideshow', [SlideshowController::class, 'store'])->name('slideshow.store');
+        Route::get('/slideshow/{slideshow}/edit', [SlideshowController::class, 'edit'])->name('slideshow.edit');
+        Route::put('/slideshow/{slideshow}', [SlideshowController::class, 'update'])->name('slideshow.update');
+        Route::delete('/slideshow/{slideshow}', [SlideshowController::class, 'destroy'])->name('slideshow.destroy');
+        
+        // Blog Management - DIPERBAIKI MENGGUNAKAN BlogController
+        Route::get('blog', [BlogController::class, 'index'])->name('blog');
+        Route::get('blog/create', [BlogController::class, 'create'])->name('blog.create');
+        Route::post('blog', [BlogController::class, 'store'])->name('blog.store');
+        Route::get('blog/{blog}/edit', [BlogController::class, 'edit'])->name('blog.edit');
+        Route::put('blog/{blog}', [BlogController::class, 'update'])->name('blog.update');
+        Route::delete('blog/{blog}', [BlogController::class, 'destroy'])->name('blog.destroy');
+        Route::get('blog/{blog}', [BlogController::class, 'show'])->name('blog.show');
+        
+        // Agenda Management
+        Route::get('/agenda', [PostController::class, 'agenda'])->name('agenda');
+        Route::get('/agenda/create', [PostController::class, 'createAgenda'])->name('agenda.create');
+        Route::post('/agenda', [PostController::class, 'storeAgenda'])->name('agenda.store');
+        Route::get('/agenda/{id}/edit', [PostController::class, 'editAgenda'])->name('agenda.edit');
+        Route::put('/agenda/{id}', [PostController::class, 'updateAgenda'])->name('agenda.update');
+        Route::delete('/agenda/{id}', [PostController::class, 'destroyAgenda'])->name('agenda.destroy');
+        
+        // Quote Management
+        Route::get('/quote', [PostController::class, 'quote'])->name('quote');
+        Route::get('/quote/create', [PostController::class, 'createQuote'])->name('quote.create');
+        Route::post('/quote', [PostController::class, 'storeQuote'])->name('quote.store');
+        Route::get('/quote/{id}/edit', [PostController::class, 'editQuote'])->name('quote.edit');
+        Route::put('/quote/{id}', [PostController::class, 'updateQuote'])->name('quote.update');
+        Route::delete('/quote/{id}', [PostController::class, 'destroyQuote'])->name('quote.destroy');
+        
+        // Announcement Routes
+        Route::get('/announcement', [AnnouncementController::class, 'index'])->name('announcement');
+        Route::get('/announcement/create', [AnnouncementController::class, 'create'])->name('announcement.create');
+        Route::post('/announcement', [AnnouncementController::class, 'store'])->name('announcement.store');
+        Route::get('/announcement/{id}', [AnnouncementController::class, 'show'])->name('announcement.show');
+        Route::get('/announcement/{id}/edit', [AnnouncementController::class, 'edit'])->name('announcement.edit');
+        Route::put('/announcement/{id}', [AnnouncementController::class, 'update'])->name('announcement.update');
+        Route::delete('/announcement/{id}', [AnnouncementController::class, 'destroy'])->name('announcement.destroy');
+        Route::post('/announcement/{id}/toggle-status', [AnnouncementController::class, 'toggleStatus'])->name('announcement.toggle-status');
     });
     
     // Academic Management Routes
@@ -122,7 +181,17 @@ Route::middleware(['auth', 'role:super_admin,admin'])->prefix('admin')->name('ad
     Route::get('/students', function () { return view('admin.students.index'); })->name('students.index');
     
     // Media & Files Routes
-    Route::get('/downloads', function () { return view('admin.downloads.index'); })->name('downloads.index');
+    Route::resource('downloads', DownloadController::class);
+    Route::post('/downloads/{download}/increment-download', [DownloadController::class, 'incrementDownload'])->name('downloads.increment');
+    
+    // Video Management Routes
+    Route::resource('videos', VideoController::class)->middleware('check.upload.size');
+    Route::get('/videos/{video}/download', [VideoController::class, 'download'])->name('videos.download');
+    Route::post('/videos/{video}/toggle-featured', [VideoController::class, 'toggleFeatured'])->name('videos.toggle-featured');
+    Route::post('/videos/bulk-action', [VideoController::class, 'bulkAction'])->name('videos.bulk-action');
+    Route::get('/videos-troubleshoot', function() { return view('admin.videos.troubleshoot'); })->name('videos.troubleshoot');
+    Route::get('/videos-upload-info', [VideoController::class, 'getUploadInfo'])->name('videos.upload-info');
+    
     Route::get('/gallery', function () { return view('admin.gallery.index'); })->name('gallery.index');
     
     // Learning Management Routes
@@ -132,6 +201,23 @@ Route::middleware(['auth', 'role:super_admin,admin'])->prefix('admin')->name('ad
     // System Routes
     Route::get('/users', function () { return view('admin.users.index'); })->name('users.index');
     Route::get('/roles', function () { return view('admin.roles.index'); })->name('roles.index');
+    
+    // ANNOUNCEMENT ROUTES (Resource routes untuk backup/alternatif)
+    Route::resource('announcements', AnnouncementController::class);
+    Route::post('announcements/{id}/toggle-status', [AnnouncementController::class, 'toggleStatus'])
+         ->name('announcements.toggle-status');
+    
+    // Academic Routes
+    Route::resource('extracurriculars', ExtracurricularController::class);
+    Route::resource('achievements', AchievementController::class);
+    Route::resource('teachers', TeacherController::class);
+    Route::resource('students', StudentController::class);
+    
+    // System Routes
+    Route::resource('users', UserController::class);
+    Route::resource('roles', RoleController::class);
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings');
+    Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
 });
 
 /*
@@ -154,94 +240,6 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
     Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
 });
 
-
-
-/*
-|--------------------------------------------------------------------------
-| Upload berbagai macam
-|--------------------------------------------------------------------------
-*/
-
-
-// routes/web.php
-
-
-
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
-    
-    // Dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
-    // TAMBAHKAN ANNOUNCEMENT ROUTES DI SINI:
-    // =======================================
-    // Standard CRUD routes for announcements
-    Route::resource('announcements', AnnouncementController::class);
-    
-    // Additional custom routes
-    Route::post('announcements/{id}/toggle-status', [AnnouncementController::class, 'toggleStatus'])
-         ->name('announcements.toggle-status');
-    // =======================================
-    
-    // Content Management Routes
-    Route::prefix('posts')->name('posts.')->group(function () {
-        Route::get('/slideshow', [PostController::class, 'slideshow'])->name('slideshow');
-        Route::get('/agenda', [PostController::class, 'agenda'])->name('agenda');
-        Route::get('/announcement', [PostController::class, 'announcement'])->name('announcement');
-        Route::get('/blog', [PostController::class, 'blog'])->name('blog');
-        
-        // CRUD operations for each post type
-        Route::get('/slideshow/create', [PostController::class, 'createSlideshow'])->name('slideshow.create');
-        Route::post('/slideshow', [PostController::class, 'storeSlideshow'])->name('slideshow.store');
-        Route::get('/slideshow/{id}/edit', [PostController::class, 'editSlideshow'])->name('slideshow.edit');
-        Route::put('/slideshow/{id}', [PostController::class, 'updateSlideshow'])->name('slideshow.update');
-        Route::delete('/slideshow/{id}', [PostController::class, 'destroySlideshow'])->name('slideshow.destroy');
-        
-        Route::get('/agenda/create', [PostController::class, 'createAgenda'])->name('agenda.create');
-        Route::post('/agenda', [PostController::class, 'storeAgenda'])->name('agenda.store');
-        Route::get('/agenda/{id}/edit', [PostController::class, 'editAgenda'])->name('agenda.edit');
-        Route::put('/agenda/{id}', [PostController::class, 'updateAgenda'])->name('agenda.update');
-        Route::delete('/agenda/{id}', [PostController::class, 'destroyAgenda'])->name('agenda.destroy');
-        
-        
-        
-        Route::get('/blog/create', [PostController::class, 'createBlog'])->name('blog.create');
-        Route::post('/blog', [PostController::class, 'storeBlog'])->name('blog.store');
-        Route::get('/blog/{id}/edit', [PostController::class, 'editBlog'])->name('blog.edit');
-        Route::put('/blog/{id}', [PostController::class, 'updateBlog'])->name('blog.update');
-        Route::delete('/blog/{id}', [PostController::class, 'destroyBlog'])->name('blog.destroy');
-    });
-    
-    // Media & Files Routes
-    // Route::resource('downloads', DownloadController::class);
-    // Route::resource('gallery', GalleryController::class);
-    // Route::post('/gallery/upload', [GalleryController::class, 'upload'])->name('gallery.upload');
-    
-    // Academic Routes
-    Route::resource('extracurriculars', ExtracurricularController::class);
-    Route::resource('achievements', AchievementController::class);
-    Route::resource('teachers', TeacherController::class);
-    Route::resource('students', StudentController::class);
-    
-    // System Routes
-    Route::resource('users', UserController::class);
-    Route::resource('roles', RoleController::class);
-    Route::get('/settings', [SettingController::class, 'index'])->name('settings');
-    Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
-    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
-    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
-});
-
-Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
-    Route::prefix('posts')->name('posts.')->group(function () {
-        Route::get('/slideshow', [SlideshowController::class, 'index'])->name('slideshow');
-        Route::get('/slideshow/create', [SlideshowController::class, 'create'])->name('slideshow.create');
-        Route::post('/slideshow', [SlideshowController::class, 'store'])->name('slideshow.store');
-        Route::get('/slideshow/{slideshow}/edit', [SlideshowController::class, 'edit'])->name('slideshow.edit');
-        Route::put('/slideshow/{slideshow}', [SlideshowController::class, 'update'])->name('slideshow.update');
-        Route::delete('/slideshow/{slideshow}', [SlideshowController::class, 'destroy'])->name('slideshow.destroy');
-    });
-});
-
 // ========== PUBLIC ROUTES untuk announcements ==========
 Route::group(['prefix' => 'announcements'], function () {
     Route::get('/', [AnnouncementController::class, 'publicIndex'])->name('announcements.index');
@@ -250,7 +248,7 @@ Route::group(['prefix' => 'announcements'], function () {
 
 /*
 |--------------------------------------------------------------------------
-| bintang 1-9-2025
+| Gallery Routes - Admin & Public
 |--------------------------------------------------------------------------
 */
 
@@ -269,21 +267,7 @@ Route::prefix('gallery')->name('gallery.')->group(function () {
     Route::get('/', [App\Http\Controllers\Public\GalleryController::class, 'index'])->name('index');
     Route::get('/photos/{slug}', [App\Http\Controllers\Public\GalleryController::class, 'photos'])->name('photos');
     Route::get('/download/{slug}', [App\Http\Controllers\Public\GalleryController::class, 'downloadAlbum'])->name('download');
-    
 });
-
-
-// Photos management
-    // Route::prefix('galleries/{gallery}')->name('galleries.')->group(function () {
-    //     Route::get('/photos', [AdminPhotoController::class, 'index'])->name('photos.index');
-    //     Route::get('/photos/create', [AdminPhotoController::class, 'create'])->name('photos.create');
-    //     Route::post('/photos', [AdminPhotoController::class, 'store'])->name('photos.store');
-    //     Route::get('/photos/{photo}', [AdminPhotoController::class, 'show'])->name('photos.show');
-    //     Route::get('/photos/{photo}/edit', [AdminPhotoController::class, 'edit'])->name('photos.edit');
-    //     Route::put('/photos/{photo}', [AdminPhotoController::class, 'update'])->name('photos.update');
-    //     Route::delete('/photos/{photo}', [AdminPhotoController::class, 'destroy'])->name('photos.destroy');
-    // });
-
 
 // Halaman daftar galeri
 Route::get('/gallery/photos', [App\Http\Controllers\GalleryController::class, 'index'])
@@ -387,3 +371,4 @@ Route::prefix('api/agenda')->name('api.agenda.')->group(function () {
 ?>
 
 
+    

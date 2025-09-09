@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Website resmi sekolah">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Home - SMA Negeri 1</title>
     
     <!-- Bootstrap CSS -->
@@ -560,6 +561,26 @@
                         </ul>
                     </li>
                     
+                    <!-- Media Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="mediaDropdown" role="button" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-photo-video me-2 d-lg-none"></i>Media
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ route('gallery.photos.index') }}">
+                                <i class="fas fa-images me-3"></i>Galeri Foto
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ route('public.videos.index') }}">
+                                <i class="fas fa-video me-3"></i>Video Dokumentasi
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ route('downloads.index') }}">
+                                <i class="fas fa-download me-3"></i>Download
+                            </a></li>
+                        </ul>
+                    </li>
+                    
                     <!-- Lainnya Dropdown -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="moreDropdown" role="button" 
@@ -577,14 +598,8 @@
                                 <i class="fas fa-users me-3"></i>Ekstrakurikuler
                             </a></li>
                             <li><hr class="dropdown-divider"></li>
-
-                            <li><a class="dropdown-item" href="{{ route('gallery.photos.index') }}">
-                            <i class="fas fa-images me-3"></i>Galeri
-                            </a></li>
-
-                                
-                            <li><a class="dropdown-item" href="{{ route('downloads.index') }}">
-                                <i class="fas fa-download me-3"></i>Download
+                            <li><a class="dropdown-item" href="{{ route('contact') }}">
+                                <i class="fas fa-envelope me-3"></i>Kontak
                             </a></li>
                         </ul>
                     </li>
@@ -682,7 +697,8 @@
                         <li class="mb-2"><a href="{{ route('public.academic.programs') }}" class="text-white-50 text-decoration-none">Program Studi</a></li>
                         <li class="mb-2"><a href="{{ route('academic.calendar') }}" class="text-white-50 text-decoration-none">Kalender</a></li>
                         <li class="mb-2"><a href="{{ route('downloads.index') }}" class="text-white-50 text-decoration-none">Download</a></li>
-                        <li class="mb-2"><a href="{{ route('gallery.photos.index') }}" class="text-white-50 text-decoration-none">Galeri</a></li>
+                        <li class="mb-2"><a href="{{ route('gallery.photos.index') }}" class="text-white-50 text-decoration-none">Galeri Foto</a></li>
+                        <li class="mb-2"><a href="{{ route('public.videos.index') }}" class="text-white-50 text-decoration-none">Video</a></li>
 
                     </ul>
                 </div>

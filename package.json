@@ -3,7 +3,10 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build",
+        "qodo:analyze": "qodo analyze",
+        "qodo:review": "qodo review",
+        "qodo:test": "qodo test"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.10",

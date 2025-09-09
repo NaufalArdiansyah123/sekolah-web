@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Slideshow;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class SlideshowController extends Controller
 {
@@ -28,8 +29,9 @@ class SlideshowController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image' => 'required|image|mimes:jpg,jpeg,png,gif|max:2048',
-            'status' => 'nullable|in:active,inactive',
+            'image' => 'required|image|mimes:jpg,jpeg,png,gif|max:10240',
+            'status' => 'required|in:active,inactive',
+            'order' => 'nullable|integer|min:0',
         ]);
 
         Log::info('Validation passed:', $validated);
@@ -53,7 +55,8 @@ class SlideshowController extends Controller
                 'description' => $request->description,
                 'image' => $imagePath,
                 'status' => $request->status ?? 'active',
-                'order' => 0, // default order
+                'order' => $request->order ?? 0,
+                'user_id' => auth()->id(), // Tambah user_id jika ada kolom ini
             ]);
 
             Log::info('Slideshow created:', $slideshow->toArray());
@@ -77,7 +80,7 @@ class SlideshowController extends Controller
 
     public function edit(Slideshow $slideshow)
     {
-        return view('admin.slideshows.edit', compact('slideshow'));
+        return view('admin.posts.slideshow.edit', compact('slideshow'));
     }
 
     public function update(Request $request, Slideshow $slideshow)
@@ -85,18 +88,25 @@ class SlideshowController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
-            'status' => 'nullable|in:active,inactive',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:10240',
+            'status' => 'required|in:active,inactive',
+            'order' => 'nullable|integer|min:0',
         ]);
 
         try {
             $updateData = [
                 'title' => $request->title,
                 'description' => $request->description,
-                'status' => $request->status ?? 'active',
+                'status' => $request->status,
+                'order' => $request->order ?? 0,
             ];
 
             if ($request->hasFile('image')) {
+                // Hapus gambar lama jika ada
+                if ($slideshow->image && Storage::disk('public')->exists($slideshow->image)) {
+                    Storage::disk('public')->delete($slideshow->image);
+                }
+
                 $file = $request->file('image');
                 $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
                 $imagePath = $file->storeAs('slideshows', $fileName, 'public');
@@ -107,26 +117,45 @@ class SlideshowController extends Controller
 
             return redirect()
                 ->route('admin.posts.slideshow')
-                ->with('success', 'Slideshow berhasil diupdate!');
+                ->with('success', 'Slideshow berhasil diperbarui!');
             
         } catch (\Exception $e) {
+            Log::error('Error updating slideshow:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
             return redirect()
                 ->back()
                 ->withInput()
-                ->with('error', 'Gagal mengupdate slideshow: ' . $e->getMessage());
+                ->with('error', 'Gagal memperbarui slideshow: ' . $e->getMessage());
         }
     }
 
     public function destroy(Slideshow $slideshow)
     {
         try {
-            $slideshow->delete();
+            // Hapus file gambar jika ada
+            if ($slideshow->image && Storage::disk('public')->exists($slideshow->image)) {
+                Storage::disk('public')->delete($slideshow->image);
+                Log::info('Image deleted:', ['path' => $slideshow->image]);
+            }
+
+            // Hapus record dari database
+            $slideshow->forceDelete();
+            
+            Log::info('Slideshow deleted:', ['id' => $slideshow->id, 'title' => $slideshow->title]);
             
             return redirect()
                 ->route('admin.posts.slideshow')
                 ->with('success', 'Slideshow berhasil dihapus!');
             
         } catch (\Exception $e) {
+            Log::error('Error deleting slideshow:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
             return redirect()
                 ->back()
                 ->with('error', 'Gagal menghapus slideshow: ' . $e->getMessage());

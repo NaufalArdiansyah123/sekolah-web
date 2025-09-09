@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             SettingSeeder::class,
             AnnouncementSeeder::class,
+            BlogPostSeeder::class,
         ]);
     }
 }

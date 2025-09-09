@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Slideshow; // Tambahkan ini untuk menggunakan model Slideshow
+use App\Models\Download;
+use App\Models\BlogPost;
+use App\Models\Video;
 
 class PublicController extends Controller
 {
@@ -19,10 +22,18 @@ class PublicController extends Controller
                           ->orderBy('order', 'asc')
                           ->get();
     
+    // Get latest blog posts for homepage
+    $latestBlogs = BlogPost::with('user')
+                          ->published()
+                          ->latest('published_at')
+                          ->take(6)
+                          ->get();
+    
     return view('public.home', [
         'title' => 'Beranda',
         'description' => 'Website resmi SMA Negeri 1 - Excellence in Education',
-        'slideshows' => $slideshows // Kirim data slideshow ke view
+        'slideshows' => $slideshows, // Kirim data slideshow ke view
+        'latestBlogs' => $latestBlogs // Kirim data blog terbaru
     ]);
 }
 
@@ -124,17 +135,88 @@ class PublicController extends Controller
         ]);
     }
     
+    public function videos(Request $request)
+    {
+        $query = Video::active()->latest();
+
+        // Filter by category
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+
+        // Search
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        $videos = $query->paginate(12);
+        $featuredVideos = Video::active()->featured()->latest()->take(6)->get();
+        $categories = Video::getCategoryOptions();
+
+        // Get video statistics
+        $stats = [
+            'total_videos' => Video::active()->count(),
+            'total_views' => Video::active()->sum('views'),
+            'total_downloads' => Video::active()->sum('downloads'),
+            'categories_count' => Video::active()->distinct('category')->count(),
+        ];
+
+        return view('public.videos.index', [
+            'title' => 'Video Dokumentasi',
+            'videos' => $videos,
+            'featuredVideos' => $featuredVideos,
+            'categories' => $categories,
+            'stats' => $stats
+        ]);
+    }
+    
     public function galleryIndex()
     {
-        return view('public.gallery.index', [
+        return view('public.videos.index', [
             'title' => 'Galeri Video dan Video'
         ]);
     }
 
-    public function downloads()
+    public function downloads(Request $request)
     {
-        return view('public.downloads.index', [
-            'title' => 'Download Center'
+        $query = Download::where('status', 'active');
+
+        // Search filter
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhere('file_name', 'like', "%{$search}%");
+            });
+        }
+
+        // Category filter
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+
+        // Sorting
+        switch ($request->get('sort', 'latest')) {
+            case 'name':
+                $query->orderBy('title');
+                break;
+            case 'downloads':
+                $query->orderBy('download_count', 'desc');
+                break;
+            default:
+                $query->latest();
+        }
+
+        $downloads = $query->paginate(12);
+        
+        return view('public.downloads', [
+            'title' => 'Download Center',
+            'downloads' => $downloads
         ]);
     }
 
@@ -142,6 +224,16 @@ class PublicController extends Controller
     {
         return view('public.contact', [
             'title' => 'Kontak Kami'
+        ]);
+    }
+
+    public function incrementDownload(Download $download)
+    {
+        $download->incrementDownloadCount();
+        
+        return response()->json([
+            'success' => true,
+            'download_count' => $download->download_count
         ]);
     }
 }

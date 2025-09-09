@@ -17,3 +17,9 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+
+# Qodo
+.qodo/reports/
+.qodo/cache/
+.qodo/logs/
+*.qodo.log
