@@ -1,4 +1,4 @@
-@extends('layouts.student.app')
+@extends('layouts.student')
 
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -12,26 +12,26 @@
                         📝 Tugas & Assignment
                     </h1>
                     <p class="text-gray-600 dark:text-gray-300">
-                        Kelola dan kumpulkan tugas dari guru Anda
+                        Lihat dan kumpulkan tugas dari guru Anda
                     </p>
                 </div>
                 
                 <!-- Quick Stats -->
                 <div class="mt-6 lg:mt-0 grid grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-                        <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ $stats['total_assignments'] }}</div>
+                        <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ $stats['total_assignments'] ?? 0 }}</div>
                         <div class="text-sm text-gray-600 dark:text-gray-400">Total Tugas</div>
                     </div>
                     <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-                        <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ $stats['submitted'] }}</div>
+                        <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ $stats['submitted'] ?? 0 }}</div>
                         <div class="text-sm text-gray-600 dark:text-gray-400">Dikumpulkan</div>
                     </div>
                     <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-                        <div class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{{ $stats['pending'] }}</div>
+                        <div class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{{ $stats['pending'] ?? 0 }}</div>
                         <div class="text-sm text-gray-600 dark:text-gray-400">Pending</div>
                     </div>
                     <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-                        <div class="text-2xl font-bold text-red-600 dark:text-red-400">{{ $stats['overdue'] }}</div>
+                        <div class="text-2xl font-bold text-red-600 dark:text-red-400">{{ $stats['overdue'] ?? 0 }}</div>
                         <div class="text-sm text-gray-600 dark:text-gray-400">Terlambat</div>
                     </div>
                 </div>
@@ -45,8 +45,8 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Mata Pelajaran</label>
                     <select name="subject" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
                         <option value="">Semua Mata Pelajaran</option>
-                        @foreach($subjects as $subject)
-                            <option value="{{ $subject }}" {{ $currentFilters['subject'] == $subject ? 'selected' : '' }}>
+                        @foreach($subjects ?? [] as $subject)
+                            <option value="{{ $subject }}" {{ request('subject') == $subject ? 'selected' : '' }}>
                                 {{ $subject }}
                             </option>
                         @endforeach
@@ -57,8 +57,8 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
                     <select name="status" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
                         <option value="">Semua Status</option>
-                        <option value="pending" {{ $currentFilters['status'] == 'pending' ? 'selected' : '' }}>Belum Dikumpulkan</option>
-                        <option value="submitted" {{ $currentFilters['status'] == 'submitted' ? 'selected' : '' }}>Sudah Dikumpulkan</option>
+                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Belum Dikumpulkan</option>
+                        <option value="submitted" {{ request('status') == 'submitted' ? 'selected' : '' }}>Sudah Dikumpulkan</option>
                     </select>
                 </div>
                 
@@ -72,7 +72,7 @@
 
         <!-- Assignments Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            @forelse($assignments as $assignment)
+            @forelse($assignments ?? [] as $assignment)
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-shadow">
                     <!-- Header -->
                     <div class="p-6 border-b border-gray-200 dark:border-gray-700">
@@ -80,11 +80,11 @@
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-white line-clamp-2">
                                 {{ $assignment->title }}
                             </h3>
-                            @if($assignment->submissions->isNotEmpty())
+                            @if($assignment->submissions && $assignment->submissions->isNotEmpty())
                                 <span class="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 text-xs px-2 py-1 rounded-full">
                                     Dikumpulkan
                                 </span>
-                            @elseif($assignment->isOverdue())
+                            @elseif($assignment->due_date < now())
                                 <span class="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 text-xs px-2 py-1 rounded-full">
                                     Terlambat
                                 </span>
@@ -111,10 +111,10 @@
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                 </svg>
-                                {{ $assignment->teacher->name }}
+                                {{ $assignment->teacher->name ?? 'Unknown Teacher' }}
                             </div>
                             
-                            <div class="flex items-center text-sm {{ $assignment->isOverdue() ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400' }}">
+                            <div class="flex items-center text-sm {{ $assignment->due_date < now() ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400' }}">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
@@ -145,7 +145,7 @@
         </div>
 
         <!-- Pagination -->
-        @if($assignments->hasPages())
+        @if(isset($assignments) && $assignments->hasPages())
             <div class="mt-8">
                 {{ $assignments->links() }}
             </div>

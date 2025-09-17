@@ -4,15 +4,15 @@
 
 @section('content')
 <style>
-    :root {
-        --primary-color: #0d6efd;
-        --secondary-color: #0b5ed7;
-        --accent-color: #20c997;
+     :root {
+        --primary-color: #1a202c;
+        --secondary-color: #3182ce;
+        --accent-color: #4299e1;
         --light-gray: #f7fafc;
         --dark-gray: #718096;
-        --glass-bg: rgba(13, 110, 253, 0.95);
-        --gradient-primary: linear-gradient(135deg, #0d6efd, #0b5ed7);
-        --gradient-light: linear-gradient(135deg, rgba(13, 110, 253, 0.1), rgba(11, 94, 215, 0.05));
+        --glass-bg: rgba(26, 32, 44, 0.95);
+        --gradient-primary: linear-gradient(135deg, #1a202c, #3182ce);
+        --gradient-light: linear-gradient(135deg, rgba(49, 130, 206, 0.1), rgba(66, 153, 225, 0.05));
     }
     
     body {
@@ -21,15 +21,15 @@
         line-height: 1.6;
     }
     
-    /* Enhanced Hero Section matching profile page */
+    /* Enhanced Hero Section matching home page */
     .hero-section {
         background: linear-gradient(
             135deg, 
-            rgba(13, 110, 253, 0.8) 0%, 
-            rgba(11, 94, 215, 0.7) 50%, 
-            rgba(13, 110, 253, 0.8) 100%
+            rgba(26, 32, 44, 0.8) 0%, 
+            rgba(49, 130, 206, 0.7) 50%, 
+            rgba(26, 32, 44, 0.8) 100%
         ),
-        url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat;
+        url('https://images.unsplash.com/photo-1580582932707-520aed937b7b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2032&q=80') center/cover no-repeat;
         color: white;
         padding: 100px 0;
         min-height: 70vh;
@@ -47,8 +47,8 @@
         right: 0;
         bottom: 0;
         background: 
-            radial-gradient(circle at 20% 50%, rgba(13, 110, 253, 0.3) 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, rgba(11, 94, 215, 0.3) 0%, transparent 50%);
+            radial-gradient(circle at 20% 50%, rgba(49, 130, 206, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(66, 153, 225, 0.3) 0%, transparent 50%);
         z-index: 1;
     }
     

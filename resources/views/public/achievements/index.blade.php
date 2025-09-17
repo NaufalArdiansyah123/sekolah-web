@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prestasi - SMA Negeri 1 Balong</title>
+    <title>Prestasi - SMK PGRI 2 PONOROGO</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -416,7 +416,7 @@
             <div class="row align-items-center">
                 <div class="col-lg-8 mx-auto text-center">
                     <h1 class="fade-in-up">Prestasi Siswa & Sekolah</h1>
-                    <p class="lead fade-in-up">Kebanggaan dan penghargaan yang diraih oleh siswa dan SMA Negeri 1 Balong</p>
+                    <p class="lead fade-in-up">Kebanggaan dan penghargaan yang diraih oleh siswa dan SMK PGRI 2 PONOROGO</p>
                     <div class="fade-in-up">
                         <a href="#achievements" class="btn btn-hero btn-hero-primary me-3">
                             <i class="fas fa-trophy me-2"></i>Lihat Prestasi
@@ -461,7 +461,7 @@
                 <div class="tab-pane fade show active" id="student" role="tabpanel" aria-labelledby="student-tab">
                     <div class="section-title text-center mb-5">
                         <h2>Prestasi Siswa</h2>
-                        <p>Penghargaan dan prestasi yang diraih oleh siswa-siswi SMA Negeri 1 Balong</p>
+                        <p>Penghargaan dan prestasi yang diraih oleh siswa-siswi SMK PGRI 2 PONOROGO</p>
                     </div>
                     
                     <div class="row">
@@ -492,7 +492,7 @@
                                 </div>
                                 <div class="achievement-content">
                                     <h3 class="achievement-title">Juara 1 Turnamen Basket Pelajar Se-Provinsi</h3>
-                                    <p class="achievement-desc">Tim basket SMA Negeri 1 Balong berhasil menjadi juara 1 setelah mengalahkan tim dari SMA Negeri 2 Kota dalam final yang menegangkan.</p>
+                                    <p class="achievement-desc">Tim basket SMK PGRI 2 PONOROGO berhasil menjadi juara 1 setelah mengalahkan tim dari SMA Negeri 2 Kota dalam final yang menegangkan.</p>
                                     <div class="achievement-meta">
                                         <span class="achievement-category">Olahraga</span>
                                         <span class="achievement-date"><i class="far fa-calendar me-1"></i>5 Nov 2024</span>
@@ -510,7 +510,7 @@
                                 </div>
                                 <div class="achievement-content">
                                     <h3 class="achievement-title">Juara 1 Debat Bahasa Inggris Tingkat Regional</h3>
-                                    <p class="achievement-desc">Tim debat bahasa Inggris SMA Negeri 1 Balong berhasil meraih juara 1 dalam kompetisi debat regional yang diikuti oleh 50 sekolah.</p>
+                                    <p class="achievement-desc">Tim debat bahasa Inggris SMK PGRI 2 PONOROGO berhasil meraih juara 1 dalam kompetisi debat regional yang diikuti oleh 50 sekolah.</p>
                                     <div class="achievement-meta">
                                         <span class="achievement-category">Bahasa</span>
                                         <span class="achievement-date"><i class="far fa-calendar me-1"></i>22 Sep 2024</span>
@@ -528,7 +528,7 @@
                                 </div>
                                 <div class="achievement-content">
                                     <h3 class="achievement-title">Juara 2 Kompetisi Robotik Nasional</h3>
-                                    <p class="achievement-desc">Tim robotik SMA Negeri 1 Balong berhasil meraih juara 2 dalam Kompetisi Robotik Nasional dengan inovasi robot pemilah sampah.</p>
+                                    <p class="achievement-desc">Tim robotik SMK PGRI 2 PONOROGO berhasil meraih juara 2 dalam Kompetisi Robotik Nasional dengan inovasi robot pemilah sampah.</p>
                                     <div class="achievement-meta">
                                         <span class="achievement-category">Teknologi</span>
                                         <span class="achievement-date"><i class="far fa-calendar me-1"></i>30 Agu 2024</span>
@@ -564,7 +564,7 @@
                                 </div>
                                 <div class="achievement-content">
                                     <h3 class="achievement-title">Juara 3 Festival Paduan Suara Pelajar</h3>
-                                    <p class="achievement-desc">Paduan suara SMA Negeri 1 Balong berhasil meraih juara 3 dalam Festival Paduan Suara Pelajar Se-Indonesia.</p>
+                                    <p class="achievement-desc">Paduan suara SMK PGRI 2 PONOROGO berhasil meraih juara 3 dalam Festival Paduan Suara Pelajar Se-Indonesia.</p>
                                     <div class="achievement-meta">
                                         <span class="achievement-category">Seni</span>
                                         <span class="achievement-date"><i class="far fa-calendar me-1"></i>18 Jun 2024</span>
@@ -579,7 +579,7 @@
                 <div class="tab-pane fade" id="school" role="tabpanel" aria-labelledby="school-tab">
                     <div class="section-title text-center mb-5">
                         <h2>Prestasi Sekolah</h2>
-                        <p>Penghargaan dan pengakuan yang diraih oleh SMA Negeri 1 Balong</p>
+                        <p>Penghargaan dan pengakuan yang diraih oleh SMK PGRI 2 PONOROGO</p>
                     </div>
                     
                     <div class="row">
@@ -592,7 +592,7 @@
                                 </div>
                                 <div class="achievement-content">
                                     <h3 class="achievement-title">Sekolah Adiwiyata Nasional 2024</h3>
-                                    <p class="achievement-desc">SMA Negeri 1 Balong meraih penghargaan Sekolah Adiwiyata Nasional atas komitmennya dalam program lingkungan hidup.</p>
+                                    <p class="achievement-desc">SMK PGRI 2 PONOROGO meraih penghargaan Sekolah Adiwiyata Nasional atas komitmennya dalam program lingkungan hidup.</p>
                                     <div class="achievement-meta">
                                         <span class="achievement-category">Lingkungan</span>
                                         <span class="achievement-date"><i class="far fa-calendar me-1"></i>5 Des 2024</span>
@@ -610,7 +610,7 @@
                                 </div>
                                 <div class="achievement-content">
                                     <h3 class="achievement-title">Sekolah Berbudaya Mutu Tingkat Provinsi</h3>
-                                    <p class="achievement-desc">Penghargaan diberikan kepada SMA Negeri 1 Balong sebagai sekolah dengan budaya mutu terbaik se-provinsi.</p>
+                                    <p class="achievement-desc">Penghargaan diberikan kepada SMK PGRI 2 PONOROGO sebagai sekolah dengan budaya mutu terbaik se-provinsi.</p>
                                     <div class="achievement-meta">
                                         <span class="achievement-category">Kualitas</span>
                                         <span class="achievement-date"><i class="far fa-calendar me-1"></i>20 Nov 2024</span>
@@ -628,7 +628,7 @@
                                 </div>
                                 <div class="achievement-content">
                                     <h3 class="achievement-title">Sekolah Digital Terbaik 2024</h3>
-                                    <p class="achievement-desc">SMA Negeri 1 Balong terpilih sebagai sekolah dengan implementasi teknologi digital terbaik se-Indonesia.</p>
+                                    <p class="achievement-desc">SMK PGRI 2 PONOROGO terpilih sebagai sekolah dengan implementasi teknologi digital terbaik se-Indonesia.</p>
                                     <div class="achievement-meta">
                                         <span class="achievement-category">Teknologi</span>
                                         <span class="achievement-date"><i class="far fa-calendar me-1"></i>10 Okt 2024</span>
@@ -643,7 +643,7 @@
                 <div class="tab-pane fade" id="timeline" role="tabpanel" aria-labelledby="timeline-tab">
                     <div class="section-title text-center mb-5">
                         <h2>Linimasa Prestasi</h2>
-                        <p>Perjalanan prestasi SMA Negeri 1 Balong dari tahun ke tahun</p>
+                        <p>Perjalanan prestasi SMK PGRI 2 PONOROGO dari tahun ke tahun</p>
                     </div>
                     
                     <div class="timeline">

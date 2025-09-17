@@ -32,7 +32,7 @@
             <div class="flex items-center">
                 <img class="h-12 w-auto" src="{{ asset('images/logo.png') }}" alt="{{ config('app.name') }}">
                 <div class="ml-3">
-                    <h1 class="text-xl font-bold text-gray-900">SMA Negeri 1</h1>
+                    <h1 class="text-xl font-bold text-gray-900">SMK PGRI 2 PONOROGO</h1>
                     <p class="text-sm text-gray-600">Excellence in Education</p>
                 </div>
             </div>

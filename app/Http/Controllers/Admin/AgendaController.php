@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Agenda;
+use App\Models\Post;
+use Illuminate\Support\Str;
 
 class AgendaController extends Controller
 {
@@ -63,6 +65,7 @@ public function updateAgenda(Request $request, $id)
     
     $agenda->update([
         'title' => $request->title,
+        'slug' => Str::slug($request->title),
         'content' => $request->content,
         'event_date' => $request->event_date,
         'event_time' => $request->event_time,

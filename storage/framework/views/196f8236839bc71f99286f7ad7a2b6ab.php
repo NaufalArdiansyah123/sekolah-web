@@ -35,6 +35,88 @@
                     </svg>
                 </button>
 
+                <!-- Notifications -->
+                <div class="relative" x-data="notificationDropdown()" x-init="init()">
+                    <button @click="toggleNotifications()" 
+                            class="relative bg-white dark:bg-gray-800 p-2 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-200">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-3.5-3.5a1.5 1.5 0 010-2.12l.7-.7a1 1 0 00.3-.7V8a6 6 0 10-12 0v2.58a1 1 0 00.3.7l.7.7a1.5 1.5 0 010 2.12L3 17h5m7 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                        </svg>
+                        <!-- Notification Badge -->
+                        <span x-show="notificationCount > 0" 
+                              x-text="notificationCount > 99 ? '99+' : notificationCount"
+                              class="notification-badge absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold animate-pulse"></span>
+                    </button>
+                    
+                    <!-- Notifications Dropdown -->
+                    <div x-show="notificationsOpen" 
+                         @click.away="notificationsOpen = false"
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 scale-95"
+                         x-transition:enter-end="opacity-100 scale-100"
+                         x-transition:leave="transition ease-in duration-75"
+                         x-transition:leave-start="opacity-100 scale-100"
+                         x-transition:leave-end="opacity-0 scale-95"
+                         class="absolute right-0 mt-3 w-96 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50 max-h-96 overflow-hidden"
+                         style="display: none;">
+                        
+                        <!-- Header -->
+                        <div class="px-4 py-3 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-gray-800 dark:to-gray-700 border-b border-gray-200 dark:border-gray-600">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Notifikasi</h3>
+                                <span x-text="notificationCount" class="bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 text-xs px-2 py-1 rounded-full"></span>
+                            </div>
+                        </div>
+                        
+                        <!-- Notifications List -->
+                        <div class="max-h-80 overflow-y-auto">
+                            <template x-if="notifications.length === 0">
+                                <div class="px-4 py-8 text-center">
+                                    <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-3.5-3.5a1.5 1.5 0 010-2.12l.7-.7a1 1 0 00.3-.7V8a6 6 0 10-12 0v2.58a1 1 0 00.3.7l.7.7a1.5 1.5 0 010 2.12L3 17h5m7 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                                    </svg>
+                                    <p class="text-gray-500 dark:text-gray-400">Tidak ada notifikasi</p>
+                                </div>
+                            </template>
+                            
+                            <template x-for="notification in notifications" :key="notification.id">
+                                <a :href="notification.url" 
+                                   class="block px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 border-b border-gray-100 dark:border-gray-700 last:border-b-0">
+                                    <div class="flex items-start space-x-3">
+                                        <!-- Icon -->
+                                        <div class="flex-shrink-0">
+                                            <div :class="getColorClass(notification.color)" class="w-8 h-8 rounded-full flex items-center justify-center text-sm">
+                                                <span x-text="notification.icon"></span>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Content -->
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 dark:text-white" x-text="notification.title"></p>
+                                            <p class="text-sm text-gray-600 dark:text-gray-400" x-text="notification.message"></p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1" x-text="notification.time"></p>
+                                        </div>
+                                        
+                                        <!-- Urgency Indicator -->
+                                        <template x-if="notification.urgency === 'urgent'">
+                                            <div class="flex-shrink-0">
+                                                <div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </a>
+                            </template>
+                        </div>
+                        
+                        <!-- Footer -->
+                        <div class="px-4 py-3 border-t border-gray-200 dark:border-gray-700">
+                            <a href="<?php echo e(route('student.assignments.index')); ?>" class="text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-medium">
+                                Lihat Semua Tugas →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Quick Access Menu -->
                 <div class="relative" x-data="{ quickMenuOpen: false }">
                     <button @click="quickMenuOpen = !quickMenuOpen" 
@@ -73,22 +155,6 @@
                                 </svg>
                                 <span class="text-emerald-700 dark:text-emerald-300 font-medium">Semua Materi</span>
                             </a>
-                            
-                            <a href="<?php echo e(route('student.materials.recent')); ?>" 
-                               class="flex items-center p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors duration-200">
-                                <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                <span class="text-blue-700 dark:text-blue-300 font-medium">Materi Terbaru</span>
-                            </a>
-                            
-                            <a href="<?php echo e(route('student.materials.popular')); ?>" 
-                               class="flex items-center p-3 rounded-lg bg-purple-50 dark:bg-purple-900/20 hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors duration-200">
-                                <svg class="w-5 h-5 text-purple-600 dark:text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
-                                <span class="text-purple-700 dark:text-purple-300 font-medium">Populer</span>
-                            </a>
                         </div>
                     </div>
                 </div>
@@ -117,19 +183,19 @@
                          x-transition:leave-end="transform opacity-0 scale-95" 
                          class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50 border border-gray-200 dark:border-gray-700"
                          style="display: none;">
-                        <a href="<?php echo e(route('profile.edit')); ?>" 
+                        <a href="<?php echo e(route('student.dashboard')); ?>" 
+                           class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <svg class="w-4 h-4 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                            </svg>
+                            Dashboard
+                        </a>
+                        <a href="#" 
                            class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                             <svg class="w-4 h-4 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                             </svg>
                             Profile Saya
-                        </a>
-                        <a href="<?php echo e(route('home')); ?>" 
-                           class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                            <svg class="w-4 h-4 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                            </svg>
-                            Beranda Website
                         </a>
                         <div class="border-t border-gray-100 dark:border-gray-700"></div>
                         <form method="POST" action="<?php echo e(route('logout')); ?>">

@@ -132,75 +132,7 @@
         </div>
     </div>
 
-    <!-- Related Materials -->
-    @if($relatedMaterials->count() > 0)
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-            <div class="p-6">
-                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Materi Terkait - {{ $material->subject }}</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @foreach($relatedMaterials as $related)
-                        <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-                            <div class="flex items-start space-x-3">
-                                <div class="text-2xl">{{ $related->type_icon }}</div>
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="text-sm font-medium text-gray-900 dark:text-white line-clamp-2 mb-1">
-                                        {{ $related->title }}
-                                    </h3>
-                                    <p class="text-xs text-gray-600 dark:text-gray-400 mb-2">
-                                        Kelas {{ $related->class }} • {{ $related->formatted_file_size }}
-                                    </p>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-xs text-gray-500 dark:text-gray-400">
-                                            {{ $related->downloads }} downloads
-                                        </span>
-                                        <a href="{{ route('student.materials.show', $related->id) }}" 
-                                           class="text-xs text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-medium">
-                                            Lihat
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-    @endif
 
-    <!-- Teacher's Other Materials -->
-    @if($teacherMaterials->count() > 0)
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-            <div class="p-6">
-                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Materi Lain dari {{ $material->teacher->name ?? 'Guru Ini' }}</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    @foreach($teacherMaterials as $teacherMaterial)
-                        <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-                            <div class="flex items-start space-x-3">
-                                <div class="text-2xl">{{ $teacherMaterial->type_icon }}</div>
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="text-sm font-medium text-gray-900 dark:text-white line-clamp-2 mb-1">
-                                        {{ $teacherMaterial->title }}
-                                    </h3>
-                                    <p class="text-xs text-gray-600 dark:text-gray-400 mb-2">
-                                        {{ $teacherMaterial->subject }} • Kelas {{ $teacherMaterial->class }}
-                                    </p>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-xs text-gray-500 dark:text-gray-400">
-                                            {{ $teacherMaterial->downloads }} downloads • {{ $teacherMaterial->formatted_file_size }}
-                                        </span>
-                                        <a href="{{ route('student.materials.show', $teacherMaterial->id) }}" 
-                                           class="text-xs text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-medium">
-                                            Lihat
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-    @endif
 
     <!-- Action Buttons -->
     <div class="flex flex-col sm:flex-row gap-4">

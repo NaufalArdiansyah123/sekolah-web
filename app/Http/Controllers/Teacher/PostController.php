@@ -31,13 +31,15 @@ class PostController extends Controller
             'title' => 'required|max:255',
             'content' => 'nullable',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'status' => 'required|in:active,inactive'
+            'status' => 'required|in:draft,published,archived'
         ]);
 
         $imagePath = $request->file('image')->store('slideshows', 'public');
 
         Post::create([
             'title' => $request->title,
+            'slug' => Str::slug($request->title),
+            'content' => $request->content ?? '',
             'type' => 'slideshow',
             'image' => $imagePath,
             'status' => $request->status,
@@ -62,11 +64,13 @@ class PostController extends Controller
             'title' => 'required|max:255',
             'content' => 'nullable',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'status' => 'required|in:active,inactive'
+            'status' => 'required|in:draft,published,archived'
         ]);
 
         $data = [
             'title' => $request->title,
+            'slug' => Str::slug($request->title),
+            'content' => $request->content ?? $slideshow->content,
             'status' => $request->status,
         ];
 
@@ -143,11 +147,12 @@ class PostController extends Controller
             'content' => 'required',
             'event_date' => 'required|date',
             'location' => 'nullable|max:255',
-            'status' => 'required|in:active,inactive'
+            'status' => 'required|in:draft,published,archived'
         ]);
 
         Post::create([
             'title' => $request->title,
+            'slug' => Str::slug($request->title),
             'content' => $request->content,
             'type' => 'agenda',
             'event_date' => $request->event_date,
@@ -175,11 +180,12 @@ class PostController extends Controller
             'content' => 'required',
             'event_date' => 'required|date',
             'location' => 'nullable|max:255',
-            'status' => 'required|in:active,inactive'
+            'status' => 'required|in:draft,published,archived'
         ]);
 
         $agenda->update([
             'title' => $request->title,
+            'slug' => Str::slug($request->title),
             'content' => $request->content,
             'event_date' => $request->event_date,
             'location' => $request->location,
@@ -258,7 +264,7 @@ class PostController extends Controller
 
         $data = [
             'title' => $request->title,
-            'slug' => \Str::slug($request->title),
+            'slug' => Str::slug($request->title),
             'content' => $request->content,
             'type' => 'announcement',
             'category' => $request->category,
@@ -381,7 +387,7 @@ class PostController extends Controller
 
     $data = [
     'title' => $request->title,
-    'slug' => \Str::slug($request->title),
+    'slug' => Str::slug($request->title),
     'excerpt' => $request->excerpt,
     'content' => $request->input('content'), // ✅ sudah benar
     'type' => 'blog',
@@ -422,7 +428,7 @@ class PostController extends Controller
 
        $data = [
     'title' => $request->title,
-    'slug' => \Str::slug($request->title),
+    'slug' => Str::slug($request->title),
     'excerpt' => $request->excerpt,
     'content' => $request->input('content'), // ✅ tambahkan ini
     'tags' => $request->tags,

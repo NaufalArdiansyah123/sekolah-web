@@ -14,11 +14,6 @@ class PublicController extends Controller
 {
   public function index()
 {
-    $slideshows = Slideshow::all(); // ambil semua data dari tabel slideshow
-    return view('public.home', compact('slideshows'));
-}
-    public function home()
-{
     $slideshows = Slideshow::where('status', 'active')
                           ->orderBy('order', 'asc')
                           ->get();
@@ -30,13 +25,23 @@ class PublicController extends Controller
                           ->take(6)
                           ->get();
     
+    // Get upcoming agendas for homepage
+    $upcomingAgendas = Post::where('type', 'agenda')
+                          ->where('status', 'published')
+                          ->where('event_date', '>=', now())
+                          ->orderBy('event_date', 'asc')
+                          ->take(3)
+                          ->get();
+    
     return view('public.home', [
         'title' => 'Beranda',
         'description' => 'Website resmi SMA Negeri 1 - Excellence in Education',
-        'slideshows' => $slideshows, // Kirim data slideshow ke view
-        'latestBlogs' => $latestBlogs // Kirim data blog terbaru
+        'slideshows' => $slideshows,
+        'latestBlogs' => $latestBlogs,
+        'upcomingAgendas' => $upcomingAgendas
     ]);
 }
+
 
     public function aboutProfile()
     {
@@ -171,7 +176,7 @@ class PublicController extends Controller
     public function agenda(Request $request)
     {
         $query = Post::where('type', 'agenda')
-                    ->where('status', 'active')
+                    ->where('status', 'published')
                     ->latest('event_date');
 
         // Search filter
@@ -240,10 +245,10 @@ class PublicController extends Controller
         $agendas = $query->paginate(10);
         
         // Statistics
-        $totalAgenda = Post::where('type', 'agenda')->where('status', 'active')->count();
-        $upcomingAgenda = Post::where('type', 'agenda')->where('status', 'active')->where('event_date', '>', now())->count();
-        $todayAgenda = Post::where('type', 'agenda')->where('status', 'active')->whereDate('event_date', today())->count();
-        $agendaWithLocation = Post::where('type', 'agenda')->where('status', 'active')->whereNotNull('location')->count();
+        $totalAgenda = Post::where('type', 'agenda')->where('status', 'published')->count();
+        $upcomingAgenda = Post::where('type', 'agenda')->where('status', 'published')->where('event_date', '>', now())->count();
+        $todayAgenda = Post::where('type', 'agenda')->where('status', 'published')->whereDate('event_date', today())->count();
+        $agendaWithLocation = Post::where('type', 'agenda')->where('status', 'published')->whereNotNull('location')->count();
 
         return view('public.agenda.index', [
             'title' => 'Agenda Kegiatan',
@@ -258,12 +263,12 @@ class PublicController extends Controller
     public function agendaDetail($id)
     {
         $agenda = Post::where('type', 'agenda')
-                     ->where('status', 'active')
+                     ->where('status', 'published')
                      ->findOrFail($id);
         
         // Get related agendas
         $relatedAgendas = Post::where('type', 'agenda')
-                             ->where('status', 'active')
+                             ->where('status', 'published')
                              ->where('id', '!=', $id)
                              ->latest('event_date')
                              ->take(3)

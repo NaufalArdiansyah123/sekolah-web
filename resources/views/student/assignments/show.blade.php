@@ -1,6 +1,11 @@
-@extends('layouts.student.app')
+@extends('layouts.student')
+
+@push('scripts')
+<script src="{{ asset('js/assignment-realtime.js') }}"></script>
+@endpush
 
 @section('content')
+<div class="student-page">
 <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
     <div class="container mx-auto px-4 py-8">
         
@@ -27,11 +32,11 @@
                             <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
                                 {{ $assignment->title }}
                             </h1>
-                            @if($submission)
+                            @if($submission ?? false)
                                 <span class="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 px-3 py-1 rounded-full text-sm font-medium">
                                     Sudah Dikumpulkan
                                 </span>
-                            @elseif($assignment->isOverdue())
+                            @elseif($assignment->due_date < now())
                                 <span class="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 px-3 py-1 rounded-full text-sm font-medium">
                                     Terlambat
                                 </span>
@@ -54,10 +59,10 @@
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                 </svg>
-                                {{ $assignment->teacher->name }}
+                                {{ $assignment->teacher->name ?? 'Unknown Teacher' }}
                             </div>
                             
-                            <div class="flex items-center {{ $assignment->isOverdue() ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400' }}">
+                            <div class="flex items-center {{ $assignment->due_date < now() ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400' }}">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
@@ -93,7 +98,7 @@
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                     </svg>
-                                    {{ $assignment->attachment_name }}
+                                    {{ $assignment->attachment_name ?? 'Download File' }}
                                 </a>
                             </div>
                         @endif
@@ -101,14 +106,41 @@
                 </div>
 
                 <!-- Submission Section -->
-                @if($submission)
+                @if($submission ?? false)
                     <!-- Show Submission -->
                     <div class="mt-8 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
                         <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Pengumpulan Anda</h3>
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Pengumpulan Anda</h3>
+                                @if($submission->graded_at)
+                                    <span class="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 px-3 py-1 rounded-full text-sm font-medium">
+                                        ✅ Sudah Dinilai
+                                    </span>
+                                @else
+                                    <span class="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 px-3 py-1 rounded-full text-sm font-medium">
+                                        ⏳ Sedang Diperiksa
+                                    </span>
+                                @endif
+                            </div>
                         </div>
                         
                         <div class="p-6">
+                            <!-- Progress Bar for Grading Status -->
+                            @if(!$submission->graded_at)
+                                <div class="mb-6">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Status Penilaian</span>
+                                        <span class="text-sm text-gray-600 dark:text-gray-400">Sedang dalam proses...</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                        <div class="bg-yellow-500 h-2 rounded-full animate-pulse" style="width: 60%"></div>
+                                    </div>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                                        Guru sedang memeriksa tugas Anda. Nilai akan muncul setelah selesai diperiksa.
+                                    </p>
+                                </div>
+                            @endif
+                            
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                 <div>
                                     <span class="text-sm text-gray-600 dark:text-gray-400">Dikumpulkan pada:</span>
@@ -117,15 +149,42 @@
                                     </div>
                                 </div>
                                 
-                                @if($submission->isGraded())
+                                @if($submission->graded_at)
                                     <div>
-                                        <span class="text-sm text-gray-600 dark:text-gray-400">Nilai:</span>
+                                        <span class="text-sm text-gray-600 dark:text-gray-400">Dinilai pada:</span>
                                         <div class="font-medium text-gray-900 dark:text-white">
-                                            {{ $submission->score }}/{{ $assignment->max_score }} ({{ $submission->grade_percentage }}%)
+                                            {{ $submission->graded_at->format('d M Y, H:i') }}
                                         </div>
                                     </div>
                                 @endif
                             </div>
+                            
+                            @if($submission->score !== null)
+                                <!-- Score Display -->
+                                <div class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Nilai Anda</span>
+                                        @php
+                                            $percentage = round(($submission->score / $assignment->max_score) * 100, 1);
+                                            $grade = $percentage >= 90 ? 'A' : ($percentage >= 80 ? 'B' : ($percentage >= 70 ? 'C' : ($percentage >= 60 ? 'D' : 'E')));
+                                            $gradeColor = $percentage >= 80 ? 'text-green-600 dark:text-green-400' : ($percentage >= 60 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-600 dark:text-red-400');
+                                        @endphp
+                                        <span class="text-2xl font-bold {{ $gradeColor }}">{{ $grade }}</span>
+                                    </div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-lg font-semibold text-gray-900 dark:text-white">
+                                            {{ $submission->score }}/{{ $assignment->max_score }}
+                                        </span>
+                                        <span class="text-lg font-semibold {{ $gradeColor }}">
+                                            {{ $percentage }}%
+                                        </span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+                                        <div class="{{ $percentage >= 80 ? 'bg-green-500' : ($percentage >= 60 ? 'bg-yellow-500' : 'bg-red-500') }} h-3 rounded-full transition-all duration-500" 
+                                             style="width: {{ $percentage }}%"></div>
+                                    </div>
+                                </div>
+                            @endif
                             
                             <div class="mb-4">
                                 <span class="text-sm text-gray-600 dark:text-gray-400">Jawaban:</span>
@@ -134,7 +193,7 @@
                                 </div>
                             </div>
                             
-                            @if($submission->file_path)
+                            @if($submission->file_path ?? false)
                                 <div class="mb-4">
                                     <span class="text-sm text-gray-600 dark:text-gray-400">File yang dikumpulkan:</span>
                                     <div class="mt-2">
@@ -144,13 +203,13 @@
                                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                             </svg>
-                                            {{ $submission->file_name }}
+                                            {{ $submission->file_name ?? 'Download File' }}
                                         </a>
                                     </div>
                                 </div>
                             @endif
                             
-                            @if($submission->feedback)
+                            @if($submission->feedback ?? false)
                                 <div>
                                     <span class="text-sm text-gray-600 dark:text-gray-400">Feedback dari Guru:</span>
                                     <div class="mt-2 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
@@ -160,7 +219,7 @@
                             @endif
                         </div>
                     </div>
-                @elseif(!$assignment->isOverdue())
+                @elseif($assignment->due_date >= now())
                     <!-- Submit Form -->
                     <div class="mt-8 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
                         <div class="p-6 border-b border-gray-200 dark:border-gray-700">
@@ -243,7 +302,7 @@
                             <div class="font-medium text-gray-900 dark:text-white">{{ $assignment->created_at->format('d M Y') }}</div>
                         </div>
                         
-                        @if($assignment->isOverdue())
+                        @if($assignment->due_date < now())
                             <div class="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
                                 <div class="text-sm text-red-800 dark:text-red-200 font-medium">
                                     Terlambat {{ $assignment->due_date->diffForHumans() }}
@@ -261,5 +320,6 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 @endsection

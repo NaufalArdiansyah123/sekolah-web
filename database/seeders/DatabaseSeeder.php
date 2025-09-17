@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             TeacherSeeder::class,
             ExtracurricularSeeder::class,
             AssessmentSeeder::class,
+            QuizSeeder::class,
         ]);
     }
 }

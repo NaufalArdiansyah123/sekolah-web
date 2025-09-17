@@ -298,6 +298,22 @@ Route::middleware(['auth', 'role:superadministrator,super_admin,admin'])->prefix
 Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')->group(function () {
     Route::get('/dashboard', [TeacherDashboardController::class, 'index'])->name('dashboard');
     
+    // Teacher Assignment Management Routes
+    Route::prefix('assignments')->name('assignments.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Teacher\AssignmentController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\Teacher\AssignmentController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\Teacher\AssignmentController::class, 'store'])->name('store');
+        Route::get('/{id}', [App\Http\Controllers\Teacher\AssignmentController::class, 'show'])->name('show');
+        Route::get('/{id}/edit', [App\Http\Controllers\Teacher\AssignmentController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [App\Http\Controllers\Teacher\AssignmentController::class, 'update'])->name('update');
+        Route::delete('/{id}', [App\Http\Controllers\Teacher\AssignmentController::class, 'destroy'])->name('destroy');
+        Route::get('/{id}/submissions', [App\Http\Controllers\Teacher\AssignmentController::class, 'submissions'])->name('submissions');
+        Route::get('/{assignmentId}/submissions/{submissionId}', [App\Http\Controllers\Teacher\AssignmentController::class, 'showSubmission'])->name('grade');
+        Route::post('/{assignmentId}/submissions/{submissionId}/grade', [App\Http\Controllers\Teacher\AssignmentController::class, 'gradeSubmission'])->name('grade.store');
+        Route::post('/{assignmentId}/bulk-grade', [App\Http\Controllers\Teacher\AssignmentController::class, 'bulkGrade'])->name('bulk-grade');
+        Route::get('/{assignmentId}/submissions/progress', [App\Http\Controllers\Teacher\AssignmentController::class, 'getSubmissionProgress'])->name('submissions.progress');
+    });
+    
     // Posts Management Routes for Teachers
     Route::prefix('posts')->name('posts.')->group(function () {
         // Slideshow Management
@@ -397,6 +413,22 @@ Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')
         Route::get('/monthly-report', [App\Http\Controllers\Teacher\AttendanceController::class, 'monthlyReport'])->name('monthly-report');
         Route::get('/statistics', [App\Http\Controllers\Teacher\AttendanceController::class, 'attendanceStatistics'])->name('statistics');
     });
+
+    // Teacher Quiz Management Routes
+    Route::prefix('quizzes')->name('quizzes.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Teacher\QuizController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\Teacher\QuizController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\Teacher\QuizController::class, 'store'])->name('store');
+        Route::get('/{id}', [App\Http\Controllers\Teacher\QuizController::class, 'show'])->name('show');
+        Route::get('/{id}/edit', [App\Http\Controllers\Teacher\QuizController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [App\Http\Controllers\Teacher\QuizController::class, 'update'])->name('update');
+        Route::delete('/{id}', [App\Http\Controllers\Teacher\QuizController::class, 'destroy'])->name('destroy');
+        Route::patch('/{id}/publish', [App\Http\Controllers\Teacher\QuizController::class, 'publish'])->name('publish');
+        Route::patch('/{id}/unpublish', [App\Http\Controllers\Teacher\QuizController::class, 'unpublish'])->name('unpublish');
+        Route::get('/{id}/attempts', [App\Http\Controllers\Teacher\QuizController::class, 'attempts'])->name('attempts');
+        Route::get('/{quizId}/attempts/{attemptId}', [App\Http\Controllers\Teacher\QuizController::class, 'attemptDetail'])->name('attempt-detail');
+        Route::post('/{quizId}/attempts/{attemptId}/grade-essay', [App\Http\Controllers\Teacher\QuizController::class, 'gradeEssay'])->name('grade-essay');
+    });
 });
 
 /*
@@ -417,10 +449,6 @@ Route::group([
     
     // Student Materials Routes - EXPLICIT DEFINITION
     Route::get('/materials', [MaterialController::class, 'index'])->name('materials.index');
-    Route::get('/materials/popular', [MaterialController::class, 'popular'])->name('materials.popular');
-    Route::get('/materials/recent', [MaterialController::class, 'recent'])->name('materials.recent');
-    Route::get('/materials/search', [MaterialController::class, 'search'])->name('materials.search');
-    Route::get('/materials/by-subject', [MaterialController::class, 'getBySubject'])->name('materials.by-subject');
     Route::get('/materials/{id}', [MaterialController::class, 'show'])->name('materials.show');
     Route::get('/materials/{id}/download', [MaterialController::class, 'download'])->name('materials.download');
     
@@ -428,6 +456,11 @@ Route::group([
     Route::get('/assignments', [AssignmentController::class, 'index'])->name('assignments.index');
     Route::get('/assignments/{id}', [AssignmentController::class, 'show'])->name('assignments.show');
     Route::post('/assignments/{id}/submit', [AssignmentController::class, 'submit'])->name('assignments.submit');
+    Route::get('/assignments/{id}/status', [AssignmentController::class, 'checkStatus'])->name('assignments.status');
+    
+    // Student Notifications Routes
+    Route::get('/notifications', [\App\Http\Controllers\Student\NotificationController::class, 'getNotifications'])->name('notifications.get');
+    Route::get('/notifications/count', [\App\Http\Controllers\Student\NotificationController::class, 'getNotificationCount'])->name('notifications.count');
     
     // Student Quiz Routes
     Route::get('/quizzes', [QuizController::class, 'index'])->name('quizzes.index');

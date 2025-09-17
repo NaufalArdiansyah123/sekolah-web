@@ -339,8 +339,9 @@
                 </label>
                 <select name="status" id="status" class="form-input form-select" required>
                     <option value="">Pilih Status</option>
-                    <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Aktif</option>
-                    <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
+                    <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
+                    <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>Dipublikasi</option>
+                    <option value="archived" {{ old('status') == 'archived' ? 'selected' : '' }}>Diarsipkan</option>
                 </select>
                 <div class="form-help">Status publikasi agenda</div>
                 @error('status')
@@ -433,7 +434,12 @@ function showPreview() {
     }
     
     document.getElementById('previewLocation').textContent = location ? `📍 ${location}` : '';
-    document.getElementById('previewStatus').textContent = status ? `Status: ${status === 'active' ? 'Aktif' : 'Tidak Aktif'}` : '';
+    const statusText = {
+        'draft': 'Draft',
+        'published': 'Dipublikasi',
+        'archived': 'Diarsipkan'
+    };
+    document.getElementById('previewStatus').textContent = status ? `Status: ${statusText[status] || status}` : '';
     document.getElementById('previewContent').innerHTML = content;
     
     // Show preview

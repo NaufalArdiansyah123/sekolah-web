@@ -7,7 +7,7 @@
         <div class="row align-items-center">
             <div class="col-lg-8">
                 <h1 class="display-4 fw-bold mb-4">Program Studi</h1>
-                <p class="lead mb-4">SMA Negeri 1 Balong menawarkan berbagai program studi unggulan yang dirancang untuk mempersiapkan siswa menghadapi tantangan masa depan.</p>
+                <p class="lead mb-4">SMK PGRI 2 PONOROGO menawarkan berbagai program studi unggulan yang dirancang untuk mempersiapkan siswa menghadapi tantangan masa depan.</p>
             </div>
             <div class="col-lg-4 text-center">
                 <i class="fas fa-graduation-cap" style="font-size: 8rem; opacity: 0.8;"></i>

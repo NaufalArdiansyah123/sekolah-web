@@ -509,25 +509,7 @@
             <span>Semua Materi</span>
         </a>
 
-        <!-- Materi Populer -->
-        <a href="{{ route('student.materials.popular') }}" 
-           class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('student.materials.popular') ? 'active' : '' }}"
-           @click="isMobile && (sidebarOpen = false)">
-            <svg class="student-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-            </svg>
-            <span>Materi Populer</span>
-        </a>
 
-        <!-- Materi Terbaru -->
-        <a href="{{ route('student.materials.recent') }}" 
-           class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('student.materials.recent') ? 'active' : '' }}"
-           @click="isMobile && (sidebarOpen = false)">
-            <svg class="student-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span>Materi Terbaru</span>
-        </a>
 
         <!-- Section Divider -->
         <div class="student-nav-section-divider"></div>
@@ -571,31 +553,27 @@
             <span>Absensi</span>
         </a>
 
-        <!-- Nilai & Rapor -->
+        <!-- Nilai Akademik -->
         <a href="{{ route('student.grades.index') }}" 
-           class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('student.grades*') ? 'active' : '' }}"
+           class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('student.grades.index') || request()->routeIs('student.grades.show') || request()->routeIs('student.grades.subject') ? 'active' : '' }}"
            @click="isMobile && (sidebarOpen = false)">
             <svg class="student-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
-            <span>Nilai & Rapor</span>
+            <span>Nilai Akademik</span>
         </a>
 
-        <!-- Section Divider -->
-        <div class="student-nav-section-divider"></div>
-        <div class="student-nav-section-title">
-            <span>Quick Access</span>
-        </div>
-
-        <!-- Pencarian Materi -->
-        <a href="{{ route('student.materials.search') }}" 
-           class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('student.materials.search') ? 'active' : '' }}"
+        <!-- Rapor -->
+        <a href="{{ route('student.grades.report') }}" 
+           class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('student.grades.report') ? 'active' : '' }}"
            @click="isMobile && (sidebarOpen = false)">
             <svg class="student-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <span>Cari Materi</span>
+            <span>Rapor</span>
         </a>
+
+
     </div>
 
     <!-- Enhanced User Section -->

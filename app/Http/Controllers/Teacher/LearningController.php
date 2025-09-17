@@ -208,9 +208,38 @@ class LearningController extends Controller
             $query->search($request->get('search'));
         }
 
-        $assignments = $query->get();
+        $assignments = $query->paginate(12);
+        
+        // Get filter options
+        $subjects = Assignment::where('teacher_id', Auth::id())
+            ->select('subject')
+            ->distinct()
+            ->orderBy('subject')
+            ->pluck('subject');
 
-        return view('teacher.learning.assignments.index', compact('assignments'));
+        // Get statistics
+        $stats = [
+            'total_assignments' => Assignment::where('teacher_id', Auth::id())->count(),
+            'active' => Assignment::where('teacher_id', Auth::id())->whereIn('status', ['published', 'active'])->count(),
+            'draft' => Assignment::where('teacher_id', Auth::id())->where('status', 'draft')->count(),
+            'total_submissions' => \App\Models\AssignmentSubmission::whereHas('assignment', function($q) {
+                $q->where('teacher_id', Auth::id());
+            })->count(),
+        ];
+
+        return view('teacher.learning.assignments.index', [
+            'pageTitle' => 'Kelola Tugas',
+            'breadcrumb' => [
+                ['title' => 'Kelola Tugas']
+            ],
+            'assignments' => $assignments,
+            'subjects' => $subjects,
+            'stats' => $stats,
+            'currentFilters' => [
+                'subject' => $request->subject,
+                'status' => $request->status,
+            ]
+        ]);
     }
 
     public function createAssignment()
@@ -292,7 +321,41 @@ class LearningController extends Controller
             ]
         ]);
 
-        return view('teacher.learning.assignments.show', compact('assignment', 'submissions'));
+        // Calculate submission statistics
+        $totalStudents = \App\Models\User::role('student')->count();
+        $totalSubmissions = 0; // Mock data for now
+        $gradedSubmissions = 0; // Mock data for now
+        $ungradedSubmissions = $totalSubmissions - $gradedSubmissions;
+        $pendingSubmissions = $totalStudents - $totalSubmissions;
+        
+        $submissionPercentage = $totalStudents > 0 ? round(($totalSubmissions / $totalStudents) * 100, 1) : 0;
+        $gradingPercentage = $totalSubmissions > 0 ? round(($gradedSubmissions / $totalSubmissions) * 100, 1) : 0;
+        $averageScore = 0; // Mock data for now
+
+        $submissionStats = [
+            'total_students' => $totalStudents,
+            'submitted' => $totalSubmissions,
+            'pending' => $pendingSubmissions,
+            'graded' => $gradedSubmissions,
+            'ungraded' => $ungradedSubmissions,
+            'submission_percentage' => $submissionPercentage,
+            'grading_percentage' => $gradingPercentage,
+            'average_score' => $averageScore,
+        ];
+
+        // Get recent submissions (mock data)
+        $recentSubmissions = collect();
+
+        return view('teacher.learning.assignments.show', [
+            'pageTitle' => $assignment->title,
+            'breadcrumb' => [
+                ['title' => 'Kelola Tugas', 'url' => route('teacher.learning.assignments.index')],
+                ['title' => $assignment->title]
+            ],
+            'assignment' => $assignment,
+            'submissionStats' => $submissionStats,
+            'recentSubmissions' => $recentSubmissions
+        ]);
     }
 
     public function editAssignment($id)

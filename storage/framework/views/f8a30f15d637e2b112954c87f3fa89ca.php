@@ -537,7 +537,7 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8">
-                <h1 class="fade-in-left">Profil SMA Negeri 1 Balong</h1>
+                <h1 class="fade-in-left">Profil SMK PGRI 2 PONOROGO</h1>
                 <p class="lead fade-in-left" style="animation-delay: 0.2s;">Excellence in Education - Membentuk generasi yang berkarakter, berprestasi, dan
                     siap menghadapi masa depan dengan dedikasi lebih dari 30 tahun.</p>
             </div>
@@ -552,7 +552,7 @@
 <section class="stats-section">
     <div class="container">
         <div class="section-title">
-            <h2 class="section-heading fade-in-up">SMA Negeri 1 Balong</h2>
+            <h2 class="section-heading fade-in-up">SMK PGRI 2 PONOROGO</h2>
             <p class="text-muted fade-in-up" style="animation-delay: 0.2s;">Pencapaian dan prestasi yang membanggakan</p>
         </div>
         <div class="row text-center g-4">
@@ -618,7 +618,7 @@
                         <h4 class="mb-0"><i class="fas fa-info-circle me-2"></i>Tentang Kami</h4>
                     </div>
                     <div class="card-body p-4">
-                        <p class="lead mb-4">SMA Negeri 1 Balong adalah institusi pendidikan menengah atas yang telah
+                        <p class="lead mb-4">SMK PGRI 2 PONOROGO adalah institusi pendidikan menengah atas yang telah
                             berkiprah dalam dunia pendidikan selama lebih dari 30 tahun.</p>
                         <p>Kami berkomitmen untuk memberikan pendidikan terbaik guna membentuk generasi penerus bangsa
                             yang unggul dan berkarakter. Dengan motto "Excellence in Education", kami terus berinovasi
@@ -970,9 +970,8 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8 text-center text-lg-start">
-                <h3 class="text-white mb-3 fade-in-left">Tertarik untuk bergabung dengan SMA Negeri 1 Balong?</h3>
-                <p class="text-white mb-4 fade-in-left" style="animation-delay: 0.2s;">Daftarkan diri Anda sekarang dan jadilah bagian dari keluarga besar SMA
-                    Negeri 1 Balong</p>
+                <h3 class="text-white mb-3 fade-in-left">Tertarik untuk bergabung dengan SMK PGRI 2 PONOROGO?</h3>
+                <p class="text-white mb-4 fade-in-left" style="animation-delay: 0.2s;">Daftarkan diri Anda sekarang dan jadilah bagian dari keluarga besar SMK PGRI 2 PONOROGO</p>
             </div>
             <div class="col-lg-4 text-center">
                 <a href="#" class="btn btn-light btn-lg px-4 py-2 btn-enhanced scale-in" style="animation-delay: 0.4s;">

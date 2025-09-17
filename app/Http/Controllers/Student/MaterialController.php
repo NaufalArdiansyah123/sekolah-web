@@ -124,33 +124,13 @@ class MaterialController extends Controller
                                    ->published()
                                    ->findOrFail($id);
 
-        // Get related materials (same subject, different material)
-        $relatedMaterials = LearningMaterial::with('teacher')
-                                           ->published()
-                                           ->where('subject', $material->subject)
-                                           ->where('id', '!=', $material->id)
-                                           ->latest()
-                                           ->take(6)
-                                           ->get();
-
-        // Get recent materials from same teacher
-        $teacherMaterials = LearningMaterial::with('teacher')
-                                           ->published()
-                                           ->where('teacher_id', $material->teacher_id)
-                                           ->where('id', '!=', $material->id)
-                                           ->latest()
-                                           ->take(4)
-                                           ->get();
-
         return view('student.materials.show', [
             'pageTitle' => $material->title,
             'breadcrumb' => [
                 ['title' => 'Materi Pembelajaran', 'url' => route('student.materials.index')],
                 ['title' => $material->title]
             ],
-            'material' => $material,
-            'relatedMaterials' => $relatedMaterials,
-            'teacherMaterials' => $teacherMaterials
+            'material' => $material
         ]);
     }
 
@@ -185,122 +165,7 @@ class MaterialController extends Controller
         );
     }
 
-    /**
-     * Get materials by subject (AJAX)
-     */
-    public function getBySubject(Request $request)
-    {
-        $subject = $request->get('subject');
-        
-        $materials = LearningMaterial::with('teacher')
-                                    ->published()
-                                    ->bySubject($subject)
-                                    ->latest()
-                                    ->take(10)
-                                    ->get();
 
-        return response()->json([
-            'success' => true,
-            'materials' => $materials->map(function ($material) {
-                return [
-                    'id' => $material->id,
-                    'title' => $material->title,
-                    'description' => $material->description,
-                    'type' => $material->type,
-                    'type_icon' => $material->type_icon,
-                    'file_size' => $material->formatted_file_size,
-                    'downloads' => $material->downloads,
-                    'teacher_name' => $material->teacher->name ?? 'Unknown',
-                    'created_at' => $material->created_at->format('d M Y'),
-                    'url' => route('student.materials.show', $material->id),
-                    'download_url' => route('student.materials.download', $material->id)
-                ];
-            })
-        ]);
-    }
 
-    /**
-     * Search materials (AJAX)
-     */
-    public function search(Request $request)
-    {
-        $query = $request->get('q');
-        
-        if (strlen($query) < 2) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Query terlalu pendek'
-            ]);
-        }
 
-        $materials = LearningMaterial::with('teacher')
-                                    ->published()
-                                    ->search($query)
-                                    ->latest()
-                                    ->take(10)
-                                    ->get();
-
-        return response()->json([
-            'success' => true,
-            'materials' => $materials->map(function ($material) {
-                return [
-                    'id' => $material->id,
-                    'title' => $material->title,
-                    'description' => $material->description,
-                    'subject' => $material->subject,
-                    'class' => $material->class,
-                    'type' => $material->type,
-                    'type_icon' => $material->type_icon,
-                    'file_size' => $material->formatted_file_size,
-                    'downloads' => $material->downloads,
-                    'teacher_name' => $material->teacher->name ?? 'Unknown',
-                    'created_at' => $material->created_at->format('d M Y'),
-                    'url' => route('student.materials.show', $material->id),
-                    'download_url' => route('student.materials.download', $material->id)
-                ];
-            })
-        ]);
-    }
-
-    /**
-     * Get popular materials
-     */
-    public function popular()
-    {
-        $materials = LearningMaterial::with('teacher')
-                                    ->published()
-                                    ->orderBy('downloads', 'desc')
-                                    ->take(12)
-                                    ->get();
-
-        return view('student.materials.popular', [
-            'pageTitle' => 'Materi Populer',
-            'breadcrumb' => [
-                ['title' => 'Materi Pembelajaran', 'url' => route('student.materials.index')],
-                ['title' => 'Materi Populer']
-            ],
-            'materials' => $materials
-        ]);
-    }
-
-    /**
-     * Get recent materials
-     */
-    public function recent()
-    {
-        $materials = LearningMaterial::with('teacher')
-                                    ->published()
-                                    ->latest()
-                                    ->take(12)
-                                    ->get();
-
-        return view('student.materials.recent', [
-            'pageTitle' => 'Materi Terbaru',
-            'breadcrumb' => [
-                ['title' => 'Materi Pembelajaran', 'url' => route('student.materials.index')],
-                ['title' => 'Materi Terbaru']
-            ],
-            'materials' => $materials
-        ]);
-    }
 }

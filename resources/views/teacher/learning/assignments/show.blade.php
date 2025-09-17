@@ -1,876 +1,386 @@
 @extends('layouts.teacher')
 
-@section('title', 'Assignment Details')
+@push('scripts')
+<script src="{{ asset('js/assignment-realtime.js') }}"></script>
+@endpush
 
 @section('content')
-<style>
-    .assignment-detail-container {
-        background: var(--bg-secondary);
-        min-height: 100vh;
-        padding: 1.5rem;
-        transition: all 0.3s ease;
-    }
-
-    .page-header {
-        background: linear-gradient(135deg, #059669, #10b981);
-        color: white;
-        padding: 2rem;
-        border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(5, 150, 105, 0.2);
-        position: relative;
-        overflow: hidden;
-        margin-bottom: 2rem;
-    }
-
-    .page-header::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 100%;
-        height: 200%;
-        background: rgba(255, 255, 255, 0.1);
-        transform: rotate(-15deg);
-    }
-
-    .header-content {
-        position: relative;
-        z-index: 2;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 2rem;
-    }
-
-    .header-info {
-        flex: 1;
-    }
-
-    .page-title {
-        font-size: 1.75rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-        line-height: 1.3;
-    }
-
-    .page-subtitle {
-        font-size: 1rem;
-        opacity: 0.9;
-        margin-bottom: 1rem;
-    }
-
-    .header-meta {
-        display: flex;
-        gap: 2rem;
-        flex-wrap: wrap;
-    }
-
-    .meta-item {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.875rem;
-    }
-
-    .header-actions {
-        display: flex;
-        gap: 1rem;
-        flex-shrink: 0;
-    }
-
-    .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.75rem 1.5rem;
-        border-radius: 12px;
-        font-weight: 600;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        border: none;
-        cursor: pointer;
-        font-size: 0.875rem;
-    }
-
-    .btn-primary {
-        background: white;
-        color: #059669;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-        color: #059669;
-        text-decoration: none;
-    }
-
-    .btn-secondary {
-        background: rgba(255, 255, 255, 0.2);
-        color: white;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-    }
-
-    .btn-secondary:hover {
-        background: rgba(255, 255, 255, 0.3);
-        color: white;
-        text-decoration: none;
-        transform: translateY(-2px);
-    }
-
-    /* Assignment Info Cards */
-    .info-cards {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-
-    .info-card {
-        background: var(--bg-primary);
-        border-radius: 16px;
-        padding: 1.5rem;
-        border: 1px solid var(--border-color);
-        box-shadow: 0 4px 20px var(--shadow-color);
-        transition: all 0.3s ease;
-    }
-
-    .info-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 30px var(--shadow-color);
-    }
-
-    .card-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: var(--text-primary);
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .card-content {
-        color: var(--text-secondary);
-        line-height: 1.6;
-    }
-
-    .status-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        border-radius: 12px;
-        font-size: 0.875rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-
-    .status-active {
-        background: rgba(16, 185, 129, 0.1);
-        color: #059669;
-        border: 1px solid rgba(16, 185, 129, 0.2);
-    }
-
-    .status-overdue {
-        background: rgba(239, 68, 68, 0.1);
-        color: #dc2626;
-        border: 1px solid rgba(239, 68, 68, 0.2);
-    }
-
-    .status-draft {
-        background: rgba(107, 114, 128, 0.1);
-        color: #374151;
-        border: 1px solid rgba(107, 114, 128, 0.2);
-    }
-
-    .progress-section {
-        margin-top: 1rem;
-    }
-
-    .progress-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 0.5rem;
-    }
-
-    .progress-label {
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: var(--text-primary);
-    }
-
-    .progress-percentage {
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: #059669;
-    }
-
-    .progress-bar {
-        width: 100%;
-        height: 8px;
-        background: var(--bg-tertiary);
-        border-radius: 4px;
-        overflow: hidden;
-    }
-
-    .progress-fill {
-        height: 100%;
-        background: linear-gradient(135deg, #059669, #10b981);
-        border-radius: 4px;
-        transition: width 0.3s ease;
-    }
-
-    /* Submissions Section */
-    .submissions-section {
-        background: var(--bg-primary);
-        border-radius: 16px;
-        border: 1px solid var(--border-color);
-        box-shadow: 0 4px 20px var(--shadow-color);
-        overflow: hidden;
-    }
-
-    .section-header {
-        padding: 1.5rem 2rem;
-        border-bottom: 1px solid var(--border-color);
-        background: var(--bg-secondary);
-    }
-
-    .section-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: var(--text-primary);
-        margin-bottom: 0.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .section-subtitle {
-        color: var(--text-secondary);
-        font-size: 0.875rem;
-    }
-
-    /* Filters */
-    .filters-container {
-        padding: 1.5rem 2rem;
-        border-bottom: 1px solid var(--border-color);
-        background: var(--bg-secondary);
-    }
-
-    .filters-row {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        align-items: end;
-    }
-
-    .filter-group {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .filter-label {
-        font-weight: 500;
-        color: var(--text-primary);
-        margin-bottom: 0.5rem;
-        font-size: 0.875rem;
-    }
-
-    .filter-input {
-        border: 2px solid var(--border-color);
-        border-radius: 8px;
-        padding: 0.5rem 0.75rem;
-        font-size: 0.875rem;
-        transition: all 0.3s ease;
-        background: var(--bg-primary);
-        color: var(--text-primary);
-    }
-
-    .filter-input:focus {
-        border-color: #059669;
-        box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
-        outline: none;
-    }
-
-    .btn-filter {
-        background: #10b981;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        padding: 0.5rem 1rem;
-        font-size: 0.875rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .btn-filter:hover {
-        background: #059669;
-        transform: translateY(-1px);
-    }
-
-    /* Submissions Table */
-    .submissions-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    .submissions-table th,
-    .submissions-table td {
-        padding: 1rem 2rem;
-        text-align: left;
-        border-bottom: 1px solid var(--border-color);
-    }
-
-    .submissions-table th {
-        background: var(--bg-secondary);
-        font-weight: 600;
-        color: var(--text-primary);
-        font-size: 0.875rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-
-    .submissions-table td {
-        color: var(--text-secondary);
-        transition: all 0.3s ease;
-    }
-
-    .submissions-table tr:hover td {
-        background: var(--bg-secondary);
-        color: var(--text-primary);
-    }
-
-    .student-info {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .student-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 10px;
-        background: linear-gradient(135deg, #059669, #10b981);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: 600;
-        font-size: 0.875rem;
-    }
-
-    .student-details {
-        flex: 1;
-    }
-
-    .student-name {
-        font-weight: 600;
-        color: var(--text-primary);
-        margin-bottom: 0.25rem;
-    }
-
-    .student-id {
-        font-size: 0.75rem;
-        color: var(--text-secondary);
-    }
-
-    .submission-status {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.375rem 0.75rem;
-        border-radius: 8px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-
-    .status-submitted {
-        background: rgba(245, 158, 11, 0.1);
-        color: #d97706;
-        border: 1px solid rgba(245, 158, 11, 0.2);
-    }
-
-    .status-graded {
-        background: rgba(16, 185, 129, 0.1);
-        color: #059669;
-        border: 1px solid rgba(16, 185, 129, 0.2);
-    }
-
-    .status-late {
-        background: rgba(239, 68, 68, 0.1);
-        color: #dc2626;
-        border: 1px solid rgba(239, 68, 68, 0.2);
-    }
-
-    .score-display {
-        font-weight: 600;
-        color: var(--text-primary);
-        font-size: 1rem;
-    }
-
-    .score-pending {
-        color: var(--text-secondary);
-        font-style: italic;
-    }
-
-    .action-buttons {
-        display: flex;
-        gap: 0.5rem;
-    }
-
-    .action-btn {
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        text-decoration: none;
-        border: none;
-        font-size: 0.75rem;
-    }
-
-    .btn-view { background: #059669; }
-    .btn-grade { background: #f59e0b; }
-    .btn-download { background: #3b82f6; }
-
-    .action-btn:hover {
-        transform: scale(1.1);
-        color: white;
-        text-decoration: none;
-    }
-
-    /* Empty State */
-    .empty-state {
-        text-align: center;
-        padding: 4rem 2rem;
-        color: var(--text-secondary);
-    }
-
-    .empty-icon {
-        width: 80px;
-        height: 80px;
-        background: var(--bg-secondary);
-        border-radius: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1.5rem;
-        color: var(--text-tertiary);
-    }
-
-    .empty-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-        color: var(--text-primary);
-    }
-
-    .empty-description {
-        color: var(--text-secondary);
-        line-height: 1.6;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        .assignment-detail-container {
-            padding: 1rem;
-        }
-
-        .header-content {
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .header-actions {
-            width: 100%;
-            justify-content: center;
-        }
-
-        .info-cards {
-            grid-template-columns: 1fr;
-        }
-
-        .filters-row {
-            grid-template-columns: 1fr;
-        }
-
-        .submissions-table {
-            font-size: 0.875rem;
-        }
-
-        .submissions-table th,
-        .submissions-table td {
-            padding: 0.75rem 1rem;
-        }
-    }
-
-    /* Animation */
-    .info-card {
-        animation: slideUp 0.5s ease-out;
-    }
-
-    .info-card:nth-child(2) {
-        animation-delay: 0.1s;
-    }
-
-    .info-card:nth-child(3) {
-        animation-delay: 0.2s;
-    }
-
-    @keyframes slideUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-</style>
-
-<div class="assignment-detail-container">
-    <!-- Page Header -->
-    <div class="page-header">
-        <div class="header-content">
-            <div class="header-info">
-                <h1 class="page-title">{{ $assignment->title }}</h1>
-                <p class="page-subtitle">{{ $assignment->subject }} • {{ $assignment->class }}</p>
-                <div class="header-meta">
-                    <div class="meta-item">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        Due: {{ $assignment->due_date->format('M d, Y H:i') }}
-                    </div>
-                    <div class="meta-item">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                        </svg>
-                        {{ $assignment->submissions_count }}/{{ $assignment->total_students }} submitted
-                    </div>
-                    <div class="meta-item">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        Max Score: {{ $assignment->max_score }}
-                    </div>
+<div class="teacher-page">
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div class="container mx-auto px-4 py-8">
+        
+        <!-- Header Section -->
+        <div class="mb-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                        📝 Detail Tugas
+                    </h1>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        {{ $assignment->title }} • {{ $assignment->subject }}
+                    </p>
                 </div>
-            </div>
-            <div class="header-actions">
-                <a href="{{ route('teacher.learning.assignments.edit', $assignment->id) }}" class="btn btn-secondary">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-                    </svg>
-                    Edit
-                </a>
-                <a href="{{ route('teacher.learning.assignments.index') }}" class="btn btn-primary">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                    </svg>
-                    Back to Assignments
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Assignment Info Cards -->
-    <div class="info-cards">
-        <!-- Assignment Details -->
-        <div class="info-card">
-            <h3 class="card-title">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                </svg>
-                Assignment Details
-            </h3>
-            <div class="card-content">
-                <p><strong>Description:</strong> {{ $assignment->description }}</p>
-                <p><strong>Instructions:</strong> {{ $assignment->instructions }}</p>
-                <p><strong>Created:</strong> {{ $assignment->created_at->format('M d, Y') }}</p>
-                <div style="margin-top: 1rem;">
-                    <span class="status-badge status-{{ $assignment->status }}">
-                        @if($assignment->status == 'active')
-                            🟢 Active
-                        @elseif($assignment->status == 'overdue')
-                            🔴 Overdue
-                        @else
-                            ⚫ Draft
-                        @endif
-                    </span>
+                
+                <div class="mt-6 lg:mt-0 flex space-x-3">
+                    <a href="{{ route('teacher.assignments.submissions', $assignment->id) }}" 
+                       class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                        Lihat Pengumpulan
+                    </a>
+                    <a href="{{ route('teacher.assignments.edit', $assignment->id) }}" 
+                       class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                        Edit Tugas
+                    </a>
+                    <a href="{{ route('teacher.assignments.index') }}" 
+                       class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                        Kembali
+                    </a>
                 </div>
             </div>
         </div>
 
-        <!-- Submission Progress -->
-        <div class="info-card">
-            <h3 class="card-title">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                </svg>
-                Submission Progress
-            </h3>
-            <div class="card-content">
-                <div class="progress-section">
-                    <div class="progress-header">
-                        <span class="progress-label">Students Submitted</span>
-                        <span class="progress-percentage">{{ $assignment->progress_percentage }}%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: {{ $assignment->progress_percentage }}%"></div>
-                    </div>
-                </div>
-                <div style="margin-top: 1rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; font-size: 0.875rem;">
-                    <div>
-                        <strong>Submitted:</strong> {{ $assignment->submissions_count }}
-                    </div>
-                    <div>
-                        <strong>Pending:</strong> {{ $assignment->total_students - $assignment->submissions_count }}
-                    </div>
-                    <div>
-                        <strong>Total Students:</strong> {{ $assignment->total_students }}
-                    </div>
-                    <div>
-                        <strong>Graded:</strong> {{ $submissions->where('status', 'graded')->count() }}
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Quick Stats -->
-        <div class="info-card">
-            <h3 class="card-title">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/>
-                </svg>
-                Quick Statistics
-            </h3>
-            <div class="card-content">
-                @php
-                    $gradedSubmissions = $submissions->where('status', 'graded');
-                    $averageScore = $gradedSubmissions->count() > 0 ? $gradedSubmissions->avg('score') : 0;
-                    $highestScore = $gradedSubmissions->count() > 0 ? $gradedSubmissions->max('score') : 0;
-                    $lowestScore = $gradedSubmissions->count() > 0 ? $gradedSubmissions->min('score') : 0;
-                @endphp
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; font-size: 0.875rem;">
-                    <div>
-                        <strong>Average Score:</strong><br>
-                        <span style="font-size: 1.25rem; color: #059669; font-weight: 600;">
-                            {{ $gradedSubmissions->count() > 0 ? number_format($averageScore, 1) : 'N/A' }}
-                        </span>
-                    </div>
-                    <div>
-                        <strong>Highest Score:</strong><br>
-                        <span style="font-size: 1.25rem; color: #10b981; font-weight: 600;">
-                            {{ $gradedSubmissions->count() > 0 ? $highestScore : 'N/A' }}
-                        </span>
-                    </div>
-                    <div>
-                        <strong>Lowest Score:</strong><br>
-                        <span style="font-size: 1.25rem; color: #f59e0b; font-weight: 600;">
-                            {{ $gradedSubmissions->count() > 0 ? $lowestScore : 'N/A' }}
-                        </span>
-                    </div>
-                    <div>
-                        <strong>Completion Rate:</strong><br>
-                        <span style="font-size: 1.25rem; color: #3b82f6; font-weight: 600;">
-                            {{ $assignment->progress_percentage }}%
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Submissions Section -->
-    <div class="submissions-section">
-        <!-- Section Header -->
-        <div class="section-header">
-            <h2 class="section-title">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                </svg>
-                Student Submissions
-            </h2>
-            <p class="section-subtitle">Track and manage student assignment submissions</p>
-        </div>
-
-        <!-- Filters -->
-        <div class="filters-container">
-            <form method="GET" action="{{ route('teacher.learning.assignments.show', $assignment->id) }}">
-                <div class="filters-row">
-                    <div class="filter-group">
-                        <label class="filter-label">Search Student</label>
-                        <input type="text" 
-                               name="search" 
-                               value="{{ request('search') }}" 
-                               placeholder="Search by name or ID..." 
-                               class="filter-input">
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Status</label>
-                        <select name="status" class="filter-input">
-                            <option value="">All Status</option>
-                            <option value="submitted" {{ request('status') == 'submitted' ? 'selected' : '' }}>📝 Submitted</option>
-                            <option value="graded" {{ request('status') == 'graded' ? 'selected' : '' }}>✅ Graded</option>
-                            <option value="late" {{ request('status') == 'late' ? 'selected' : '' }}>⏰ Late</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Sort By</label>
-                        <select name="sort" class="filter-input">
-                            <option value="name" {{ request('sort') == 'name' ? 'selected' : '' }}>Student Name</option>
-                            <option value="submitted_at" {{ request('sort') == 'submitted_at' ? 'selected' : '' }}>Submission Date</option>
-                            <option value="score" {{ request('sort') == 'score' ? 'selected' : '' }}>Score</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">&nbsp;</label>
-                        <button type="submit" class="btn-filter">Filter</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-
-        <!-- Submissions Table -->
-        @if($submissions->count() > 0)
-            <table class="submissions-table">
-                <thead>
-                    <tr>
-                        <th>Student</th>
-                        <th>Submitted At</th>
-                        <th>Status</th>
-                        <th>Score</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($submissions as $submission)
-                    <tr>
-                        <td>
-                            <div class="student-info">
-                                <div class="student-avatar">
-                                    {{ strtoupper(substr($submission->student_name, 0, 2)) }}
-                                </div>
-                                <div class="student-details">
-                                    <div class="student-name">{{ $submission->student_name }}</div>
-                                    <div class="student-id">ID: {{ $submission->student_nis }}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div>
-                                <div style="font-weight: 500;">{{ $submission->submitted_at->format('M d, Y') }}</div>
-                                <div style="font-size: 0.75rem; color: var(--text-tertiary);">{{ $submission->submitted_at->format('H:i') }}</div>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="submission-status status-{{ $submission->status }}">
-                                @if($submission->status == 'submitted')
-                                    📝 Submitted
-                                @elseif($submission->status == 'graded')
-                                    ✅ Graded
-                                @else
-                                    ⏰ Late
-                                @endif
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Main Content -->
+            <div class="lg:col-span-2">
+                <!-- Assignment Details -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden mb-8">
+                    <!-- Header -->
+                    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                        <div class="flex items-start justify-between mb-4">
+                            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+                                {{ $assignment->title }}
+                            </h2>
+                            <span class="bg-{{ $assignment->status === 'published' || $assignment->status === 'active' ? 'green' : ($assignment->status === 'draft' ? 'yellow' : 'red') }}-100 text-{{ $assignment->status === 'published' || $assignment->status === 'active' ? 'green' : ($assignment->status === 'draft' ? 'yellow' : 'red') }}-800 dark:bg-{{ $assignment->status === 'published' || $assignment->status === 'active' ? 'green' : ($assignment->status === 'draft' ? 'yellow' : 'red') }}-900 dark:text-{{ $assignment->status === 'published' || $assignment->status === 'active' ? 'green' : ($assignment->status === 'draft' ? 'yellow' : 'red') }}-200 px-3 py-1 rounded-full text-sm font-medium">
+                                {{ ucfirst($assignment->status) }}
                             </span>
-                        </td>
-                        <td>
-                            @if($submission->score !== null)
-                                <span class="score-display">{{ $submission->score }}/{{ $assignment->max_score }}</span>
-                            @else
-                                <span class="score-display score-pending">Not graded</span>
-                            @endif
-                        </td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="action-btn btn-view" title="View Submission">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                    </svg>
-                                </button>
-                                @if($submission->status !== 'graded')
-                                <button class="action-btn btn-grade" title="Grade Submission">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                    </svg>
-                                </button>
-                                @endif
-                                <button class="action-btn btn-download" title="Download Submission">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                    </svg>
-                                </button>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                            <div class="flex items-center text-gray-600 dark:text-gray-400">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                </svg>
+                                {{ $assignment->subject }}
                             </div>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        @else
-            <!-- Empty State -->
-            <div class="empty-state">
-                <div class="empty-icon">
-                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                    </svg>
+                            
+                            <div class="flex items-center text-gray-600 dark:text-gray-400">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                                </svg>
+                                {{ $assignment->class ?? 'Semua Kelas' }}
+                            </div>
+                            
+                            <div class="flex items-center text-gray-600 dark:text-gray-400">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                                </svg>
+                                {{ ucfirst($assignment->type) }}
+                            </div>
+                            
+                            <div class="flex items-center {{ $assignment->due_date < now() ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400' }}">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                {{ $assignment->due_date->format('d M Y, H:i') }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Description -->
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Deskripsi Tugas</h3>
+                        <div class="prose dark:prose-invert max-w-none mb-6">
+                            {!! nl2br(e($assignment->description)) !!}
+                        </div>
+                        
+                        @if($assignment->instructions)
+                            <div class="mb-6">
+                                <h4 class="text-md font-semibold text-gray-900 dark:text-white mb-3">Instruksi</h4>
+                                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                                    <div class="prose dark:prose-invert max-w-none text-sm">
+                                        {!! nl2br(e($assignment->instructions)) !!}
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                        
+                        @if($assignment->attachment_path)
+                            <div>
+                                <h4 class="text-md font-semibold text-gray-900 dark:text-white mb-3">File Lampiran</h4>
+                                <a href="{{ Storage::url($assignment->attachment_path) }}" 
+                                   target="_blank"
+                                   class="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg transition-colors">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                    {{ $assignment->attachment_name ?? 'Download File' }}
+                                </a>
+                            </div>
+                        @endif
+                    </div>
                 </div>
-                <h3 class="empty-title">No Submissions Yet</h3>
-                <p class="empty-description">
-                    No students have submitted their assignments yet. Students can submit their work until the due date.
+
+                <!-- Submission Overview -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Ringkasan Pengumpulan</h2>
+                            <a href="{{ route('teacher.assignments.submissions', $assignment->id) }}" 
+                               class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium">
+                                Lihat Semua →
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6">
+                        <!-- Progress Overview -->
+                        <div class="mb-6">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Progress Pengumpulan</span>
+                                <span class="text-sm text-gray-600 dark:text-gray-400">
+                                    {{ $submissionStats['submitted'] }}/{{ $submissionStats['total_students'] }} siswa
+                                </span>
+                            </div>
+                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+                                <div class="bg-gradient-to-r from-blue-500 to-green-500 h-3 rounded-full transition-all duration-500" 
+                                     style="width: {{ $submissionStats['submission_percentage'] }}%"></div>
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-600 dark:text-gray-400 mt-1">
+                                <span>{{ $submissionStats['submission_percentage'] }}% terkumpul</span>
+                                <span>{{ $submissionStats['pending'] }} belum mengumpulkan</span>
+                            </div>
+                        </div>
+
+                        <!-- Grading Progress -->
+                        <div class="mb-6">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Progress Penilaian</span>
+                                <span class="text-sm text-gray-600 dark:text-gray-400">
+                                    {{ $submissionStats['graded'] }}/{{ $submissionStats['submitted'] }} dinilai
+                                </span>
+                            </div>
+                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+                                <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-3 rounded-full transition-all duration-500" 
+                                     style="width: {{ $submissionStats['grading_percentage'] }}%"></div>
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-600 dark:text-gray-400 mt-1">
+                                <span>{{ $submissionStats['grading_percentage'] }}% dinilai</span>
+                                <span>{{ $submissionStats['ungraded'] }} belum dinilai</span>
+                            </div>
+                        </div>
+
+                        <!-- Statistics Grid -->
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                                <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ $submissionStats['submitted'] }}</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400">Terkumpul</div>
+                            </div>
+                            <div class="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                                <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ $submissionStats['graded'] }}</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400">Dinilai</div>
+                            </div>
+                            <div class="text-center p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                                <div class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{{ $submissionStats['ungraded'] }}</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400">Belum Dinilai</div>
+                            </div>
+                            <div class="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                                <div class="text-2xl font-bold text-purple-600 dark:text-purple-400">{{ round($submissionStats['average_score'], 1) }}</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400">Rata-rata</div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Submissions -->
+                        @if($recentSubmissions->count() > 0)
+                            <div class="mt-6">
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Pengumpulan Terbaru</h3>
+                                <div class="space-y-3">
+                                    @foreach($recentSubmissions as $submission)
+                                        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                            <div class="flex items-center">
+                                                <img class="h-8 w-8 rounded-full" 
+                                                     src="{{ $submission->student->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($submission->student->name).'&color=7C3AED&background=EDE9FE' }}" 
+                                                     alt="{{ $submission->student->name }}">
+                                                <div class="ml-3">
+                                                    <div class="text-sm font-medium text-gray-900 dark:text-white">
+                                                        {{ $submission->student->name }}
+                                                    </div>
+                                                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                                                        {{ $submission->submitted_at->diffForHumans() }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                @if($submission->graded_at)
+                                                    <span class="text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 px-2 py-1 rounded">
+                                                        {{ $submission->score }}/{{ $assignment->max_score }}
+                                                    </span>
+                                                @else
+                                                    <span class="text-xs bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 px-2 py-1 rounded">
+                                                        Belum dinilai
+                                                    </span>
+                                                @endif
+                                                <a href="{{ route('teacher.assignments.grade', [$assignment->id, $submission->id]) }}" 
+                                                   class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 text-sm">
+                                                    {{ $submission->graded_at ? 'Edit' : 'Nilai' }}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sidebar -->
+            <div class="lg:col-span-1">
+                <!-- Assignment Info -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Informasi Tugas</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <span class="text-sm text-gray-600 dark:text-gray-400">Nilai Maksimal:</span>
+                            <div class="font-medium text-gray-900 dark:text-white">{{ $assignment->max_score }} poin</div>
+                        </div>
+                        
+                        <div>
+                            <span class="text-sm text-gray-600 dark:text-gray-400">Total Siswa:</span>
+                            <div class="font-medium text-gray-900 dark:text-white">{{ $submissionStats['total_students'] }} siswa</div>
+                        </div>
+                        
+                        <div>
+                            <span class="text-sm text-gray-600 dark:text-gray-400">Dibuat pada:</span>
+                            <div class="font-medium text-gray-900 dark:text-white">{{ $assignment->created_at->format('d M Y') }}</div>
+                        </div>
+                        
+                        <div>
+                            <span class="text-sm text-gray-600 dark:text-gray-400">Deadline:</span>
+                            <div class="font-medium text-gray-900 dark:text-white">{{ $assignment->due_date->format('d M Y, H:i') }}</div>
+                        </div>
+                        
+                        @if($assignment->due_date < now())
+                            <div class="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                                <div class="text-sm text-red-800 dark:text-red-200 font-medium">
+                                    Deadline terlewat {{ $assignment->due_date->diffForHumans() }}
+                                </div>
+                            </div>
+                        @else
+                            <div class="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                                <div class="text-sm text-blue-800 dark:text-blue-200 font-medium">
+                                    Deadline {{ $assignment->due_date->diffForHumans() }}
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Aksi Cepat</h3>
+                    
+                    <div class="space-y-3">
+                        <a href="{{ route('teacher.assignments.submissions', $assignment->id) }}" 
+                           class="w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-2 px-4 rounded-lg font-medium transition-colors block">
+                            Kelola Pengumpulan
+                        </a>
+                        
+                        <a href="{{ route('teacher.assignments.edit', $assignment->id) }}" 
+                           class="w-full bg-green-600 hover:bg-green-700 text-white text-center py-2 px-4 rounded-lg font-medium transition-colors block">
+                            Edit Tugas
+                        </a>
+                        
+                        @if($submissionStats['ungraded'] > 0)
+                            <button onclick="window.location.href='{{ route('teacher.assignments.submissions', $assignment->id) }}?grading_status=ungraded'" 
+                                    class="w-full bg-purple-600 hover:bg-purple-700 text-white text-center py-2 px-4 rounded-lg font-medium transition-colors">
+                                Nilai Tugas ({{ $submissionStats['ungraded'] }})
+                            </button>
+                        @endif
+                        
+                        <button onclick="confirmDelete()" 
+                                class="w-full bg-red-600 hover:bg-red-700 text-white text-center py-2 px-4 rounded-lg font-medium transition-colors">
+                            Hapus Tugas
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-gray-800">
+        <div class="mt-3 text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900">
+                <svg class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                </svg>
+            </div>
+            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Hapus Tugas</h3>
+            <div class="mt-2 px-7 py-3">
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                    Apakah Anda yakin ingin menghapus tugas ini? Semua data pengumpulan dan nilai akan ikut terhapus. Tindakan ini tidak dapat dibatalkan.
                 </p>
             </div>
-        @endif
+            <div class="items-center px-4 py-3">
+                <form action="{{ route('teacher.assignments.destroy', $assignment->id) }}" method="POST" class="inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" 
+                            class="px-4 py-2 bg-red-500 text-white text-base font-medium rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300 mr-2">
+                        Ya, Hapus
+                    </button>
+                </form>
+                <button onclick="closeDeleteModal()" 
+                        class="px-4 py-2 bg-gray-300 text-gray-700 text-base font-medium rounded-md shadow-sm hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                    Batal
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Action button handlers
-    document.querySelectorAll('.btn-view').forEach(button => {
-        button.addEventListener('click', function() {
-            // Handle view submission
-            alert('View submission functionality would be implemented here');
-        });
-    });
+function confirmDelete() {
+    document.getElementById('deleteModal').classList.remove('hidden');
+}
 
-    document.querySelectorAll('.btn-grade').forEach(button => {
-        button.addEventListener('click', function() {
-            // Handle grade submission
-            alert('Grade submission functionality would be implemented here');
-        });
-    });
+function closeDeleteModal() {
+    document.getElementById('deleteModal').classList.add('hidden');
+}
 
-    document.querySelectorAll('.btn-download').forEach(button => {
-        button.addEventListener('click', function() {
-            // Handle download submission
-            alert('Download submission functionality would be implemented here');
-        });
-    });
-
-    // Card hover effects
-    const infoCards = document.querySelectorAll('.info-card');
-    infoCards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-5px) scale(1.02)';
-        });
+// Auto-refresh statistics every 30 seconds
+setInterval(function() {
+    fetch(window.location.href, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.text())
+    .then(html => {
+        // Update statistics
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
         
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0) scale(1)';
-        });
-    });
-});
+        // Update progress bars
+        const newSubmissionProgress = doc.querySelector('.bg-gradient-to-r.from-blue-500');
+        const currentSubmissionProgress = document.querySelector('.bg-gradient-to-r.from-blue-500');
+        
+        if (newSubmissionProgress && currentSubmissionProgress) {
+            currentSubmissionProgress.style.width = newSubmissionProgress.style.width;
+        }
+        
+        const newGradingProgress = doc.querySelector('.bg-gradient-to-r.from-purple-500');
+        const currentGradingProgress = document.querySelector('.bg-gradient-to-r.from-purple-500');
+        
+        if (newGradingProgress && currentGradingProgress) {
+            currentGradingProgress.style.width = newGradingProgress.style.width;
+        }
+    })
+    .catch(error => console.log('Auto-refresh error:', error));
+}, 30000);
 </script>
 @endsection

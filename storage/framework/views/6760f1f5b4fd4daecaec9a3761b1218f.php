@@ -53,6 +53,14 @@
             height: 70px;
         }
         
+        .navbar.scrolled .brand-icon img {
+            height: 40px;
+        }
+        
+        .navbar.scrolled .brand-main {
+            font-size: 1.1rem;
+        }
+        
         .navbar .container-fluid {
             height: 100%;
             align-items: center;
@@ -71,17 +79,31 @@
         }
         
         .navbar-brand .brand-icon {
-            background: linear-gradient(135deg, var(--secondary-color), #4299e1);
-            border-radius: 12px;
-            padding: 8px;
+            background: transparent;
+            border-radius: 0;
+            padding: 0;
             margin-right: 12px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 12px rgba(49, 130, 206, 0.3);
+            box-shadow: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .navbar-brand .brand-icon img {
+            height: 50px;
+            width: auto;
+            object-fit: contain;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .navbar-brand:hover .brand-icon {
-            transform: scale(1.1) rotate(5deg);
-            box-shadow: 0 6px 20px rgba(49, 130, 206, 0.4);
+            transform: scale(1.05);
+            box-shadow: none;
+        }
+        
+        .navbar-brand:hover .brand-icon img {
+            transform: scale(1.05);
         }
         
         .navbar-brand .brand-text {
@@ -365,6 +387,14 @@
             .navbar-brand .brand-sub {
                 display: none;
             }
+            
+            .navbar-brand .brand-icon img {
+                height: 40px;
+            }
+            
+            .navbar-brand .brand-main {
+                font-size: 1rem;
+            }
         }
         
         /* Tablet Styles */
@@ -505,11 +535,11 @@
             <!-- Enhanced Brand -->
             <a class="navbar-brand" href="<?php echo e(route('home')); ?>">
                 <div class="brand-icon">
-                    <i class="fas fa-graduation-cap"></i>
+                    <img src="<?php echo e(asset('images/logo-sterida.png')); ?>" alt="Logo SMK PGRI 2 PONOROGO">
                 </div>
                 <div class="brand-text">
-                    <span class="brand-main">SMA Negeri 99</span>
-                    <span class="brand-sub d-none d-lg-block">Excellence in Education</span>
+                    <span class="brand-main">SMK PGRI 2 PONOROGO</span>
+                    <span class="brand-sub d-none d-lg-block">Terbukti Lebih Maju</span>
                 </div>
             </a>
             
@@ -703,7 +733,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
-                    <h5><i class="fas fa-graduation-cap me-2"></i>SMA Negeri 1</h5>
+                    <h5><i class="fas fa-graduation-cap me-2"></i>SMK PGRI 2 PONOROGO</h5>
                     <p class="mb-3">Excellence in Education - Membentuk generasi yang berkarakter dan berprestasi untuk masa depan Indonesia yang gemilang.</p>
                     <div class="social-links">
                         <a href="#" class="text-white me-3" aria-label="Facebook">
@@ -752,14 +782,14 @@
                     </p>
                     <p class="mb-0">
                         <i class="fas fa-envelope me-2"></i>
-                        <small>info@sman1.sch.id</small>
+                        <small>info@smkpgri2ponorogo.sch.id</small>
                     </p>
                 </div>
             </div>
             <hr style="border-color: rgba(255,255,255,0.2); margin: 2rem 0 1rem 0;">
             <div class="row align-items-center">
                 <div class="col-md-6">
-                    <p class="mb-0">&copy; <?php echo e(date('Y')); ?> SMA Negeri 1. All rights reserved.</p>
+                    <p class="mb-0">&copy; <?php echo e(date('Y')); ?> SMK PGRI 2 PONOROGO. All rights reserved.</p>
                 </div>
                 <div class="col-md-6 text-md-end">
                     <p class="mb-0">

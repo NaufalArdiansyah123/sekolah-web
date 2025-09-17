@@ -48,7 +48,7 @@ class GradeController extends Controller
         ];
 
         // Calculate subject averages
-        $subjectAverages = [];
+        $subjectAverages = collect();
         foreach ($gradesBySubject as $subject => $subjectGrades) {
             $subjectAverages[$subject] = [
                 'average' => round($subjectGrades->avg('score'), 2),
@@ -61,9 +61,9 @@ class GradeController extends Controller
         $recentGrades = $grades->take(10);
 
         return view('student.grades.index', [
-            'pageTitle' => 'Nilai & Rapor',
+            'pageTitle' => 'Nilai Akademik',
             'breadcrumb' => [
-                ['title' => 'Nilai & Rapor']
+                ['title' => 'Nilai Akademik']
             ],
             'grades' => $grades,
             'gradesBySubject' => $gradesBySubject,
@@ -106,7 +106,7 @@ class GradeController extends Controller
         return view('student.grades.subject', [
             'pageTitle' => 'Nilai ' . $subject,
             'breadcrumb' => [
-                ['title' => 'Nilai & Rapor', 'url' => route('student.grades.index')],
+                ['title' => 'Nilai Akademik', 'url' => route('student.grades.index')],
                 ['title' => $subject]
             ],
             'grades' => $grades,
@@ -161,7 +161,7 @@ class GradeController extends Controller
         return view('student.grades.report', [
             'pageTitle' => 'Rapor Semester ' . $semester . ' - ' . $year,
             'breadcrumb' => [
-                ['title' => 'Nilai & Rapor', 'url' => route('student.grades.index')],
+                ['title' => 'Nilai Akademik', 'url' => route('student.grades.index')],
                 ['title' => 'Rapor']
             ],
             'subjectGrades' => $subjectGrades,
@@ -194,7 +194,7 @@ class GradeController extends Controller
         return view('student.grades.show', [
             'pageTitle' => 'Detail Nilai',
             'breadcrumb' => [
-                ['title' => 'Nilai & Rapor', 'url' => route('student.grades.index')],
+                ['title' => 'Nilai Akademik', 'url' => route('student.grades.index')],
                 ['title' => 'Detail Nilai']
             ],
             'grade' => $grade

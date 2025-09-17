@@ -345,7 +345,7 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8 mx-auto text-center">
-                <h1 class="fade-in-up">Sejarah SMA Negeri 1 Balong</h1>
+                <h1 class="fade-in-up">Sejarah SMK PGRI 2 PONOROGO</h1>
                 <p class="lead fade-in-up">Menelusuri perjalanan panjang dan prestasi gemilang sejak berdiri tahun 1985</p>
                 <div class="fade-in-up">
                     <a href="#timeline" class="btn btn-hero btn-hero-primary me-3">
@@ -365,7 +365,7 @@
     <div class="container">
         <div class="section-title text-center mb-5">
             <h2>Perjalanan Sejarah</h2>
-            <p>Kilasan peristiwa penting dalam perkembangan SMA Negeri 1 Balong</p>
+            <p>Kilasan peristiwa penting dalam perkembangan SMK PGRI 2 PONOROGO</p>
         </div>
         
         <div class="timeline">
@@ -374,7 +374,7 @@
                 <div class="timeline-content">
                     <div class="timeline-year">1985</div>
                     <h3 class="timeline-title">Pendirian Sekolah</h3>
-                    <p class="timeline-desc">SMA Negeri 1 Balong didirikan pada tanggal 15 Juli 1985 dengan hanya 3 kelas dan 5 guru pengajar. Awalnya menempati gedung SD Negeri 2 Balong yang dipakai bergantian.</p>
+                    <p class="timeline-desc">SMK PGRI 2 PONOROGO didirikan pada tanggal 15 Juli 1985 dengan hanya 3 kelas dan 5 guru pengajar. Awalnya menempati gedung SD Negeri 2 Balong yang dipakai bergantian.</p>
                 </div>
             </div>
             
@@ -449,7 +449,7 @@
     <div class="container">
         <div class="section-title text-center mb-5">
             <h2>Visi & Misi</h2>
-            <p>Panduan dan arah pengembangan SMA Negeri 1 Balong</p>
+            <p>Panduan dan arah pengembangan SMK PGRI 2 PONOROGO</p>
         </div>
         
         <div class="row">
@@ -457,7 +457,7 @@
                 <div class="vm-card fade-in-up">
                     <i class="fas fa-eye fa-3x text-primary"></i>
                     <h5>Visi Sekolah</h5>
-                    <p>"Mewujudkan SMA Negeri 1 Balong sebagai lembaga pendidikan unggulan yang menghasilkan lulusan berkarakter, berprestasi, dan mampu bersaing di era global dengan dilandasi iman dan takwa."</p>
+                    <p>"Mewujudkan SMK PGRI 2 PONOROGO sebagai lembaga pendidikan unggulan yang menghasilkan lulusan berkarakter, berprestasi, dan mampu bersaing di era global dengan dilandasi iman dan takwa."</p>
                 </div>
             </div>
             

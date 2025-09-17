@@ -670,10 +670,15 @@
                  x-transition:leave-start="opacity-100 transform scale-100"
                  x-transition:leave-end="opacity-0 transform scale-95"
                  class="nav-dropdown-content">
+                <a href="{{ route('teacher.quizzes.index') }}" 
+                   class="nav-dropdown-item {{ request()->routeIs('teacher.quizzes.*') ? 'active' : '' }}"
+                   @click="sidebarOpen = false">
+                    🧪 Kuis & Ujian
+                </a>
                 <a href="{{ route('teacher.assessment.index') }}" 
                    class="nav-dropdown-item {{ request()->routeIs('teacher.assessment.index') || request()->routeIs('teacher.assessment.show') || request()->routeIs('teacher.assessment.edit') || request()->routeIs('teacher.assessment.create') ? 'active' : '' }}"
                    @click="sidebarOpen = false">
-                    🎯 Ujian & Kuis
+                    🎯 Assessment
                 </a>
                 <a href="{{ route('teacher.assessment.grades') }}" 
                    class="nav-dropdown-item {{ request()->routeIs('teacher.assessment.grades') ? 'active' : '' }}"

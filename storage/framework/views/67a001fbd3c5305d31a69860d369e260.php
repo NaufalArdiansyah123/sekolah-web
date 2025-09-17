@@ -10,26 +10,26 @@
                         📝 Tugas & Assignment
                     </h1>
                     <p class="text-gray-600 dark:text-gray-300">
-                        Kelola dan kumpulkan tugas dari guru Anda
+                        Lihat dan kumpulkan tugas dari guru Anda
                     </p>
                 </div>
                 
                 <!-- Quick Stats -->
                 <div class="mt-6 lg:mt-0 grid grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-                        <div class="text-2xl font-bold text-blue-600 dark:text-blue-400"><?php echo e($stats['total_assignments']); ?></div>
+                        <div class="text-2xl font-bold text-blue-600 dark:text-blue-400"><?php echo e($stats['total_assignments'] ?? 0); ?></div>
                         <div class="text-sm text-gray-600 dark:text-gray-400">Total Tugas</div>
                     </div>
                     <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-                        <div class="text-2xl font-bold text-green-600 dark:text-green-400"><?php echo e($stats['submitted']); ?></div>
+                        <div class="text-2xl font-bold text-green-600 dark:text-green-400"><?php echo e($stats['submitted'] ?? 0); ?></div>
                         <div class="text-sm text-gray-600 dark:text-gray-400">Dikumpulkan</div>
                     </div>
                     <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-                        <div class="text-2xl font-bold text-yellow-600 dark:text-yellow-400"><?php echo e($stats['pending']); ?></div>
+                        <div class="text-2xl font-bold text-yellow-600 dark:text-yellow-400"><?php echo e($stats['pending'] ?? 0); ?></div>
                         <div class="text-sm text-gray-600 dark:text-gray-400">Pending</div>
                     </div>
                     <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-                        <div class="text-2xl font-bold text-red-600 dark:text-red-400"><?php echo e($stats['overdue']); ?></div>
+                        <div class="text-2xl font-bold text-red-600 dark:text-red-400"><?php echo e($stats['overdue'] ?? 0); ?></div>
                         <div class="text-sm text-gray-600 dark:text-gray-400">Terlambat</div>
                     </div>
                 </div>
@@ -43,8 +43,8 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Mata Pelajaran</label>
                     <select name="subject" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
                         <option value="">Semua Mata Pelajaran</option>
-                        <?php $__currentLoopData = $subjects; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $subject): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <option value="<?php echo e($subject); ?>" <?php echo e($currentFilters['subject'] == $subject ? 'selected' : ''); ?>>
+                        <?php $__currentLoopData = $subjects ?? []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $subject): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($subject); ?>" <?php echo e(request('subject') == $subject ? 'selected' : ''); ?>>
                                 <?php echo e($subject); ?>
 
                             </option>
@@ -56,8 +56,8 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
                     <select name="status" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
                         <option value="">Semua Status</option>
-                        <option value="pending" <?php echo e($currentFilters['status'] == 'pending' ? 'selected' : ''); ?>>Belum Dikumpulkan</option>
-                        <option value="submitted" <?php echo e($currentFilters['status'] == 'submitted' ? 'selected' : ''); ?>>Sudah Dikumpulkan</option>
+                        <option value="pending" <?php echo e(request('status') == 'pending' ? 'selected' : ''); ?>>Belum Dikumpulkan</option>
+                        <option value="submitted" <?php echo e(request('status') == 'submitted' ? 'selected' : ''); ?>>Sudah Dikumpulkan</option>
                     </select>
                 </div>
                 
@@ -71,7 +71,7 @@
 
         <!-- Assignments Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <?php $__empty_1 = true; $__currentLoopData = $assignments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $assignment): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+            <?php $__empty_1 = true; $__currentLoopData = $assignments ?? []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $assignment): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-shadow">
                     <!-- Header -->
                     <div class="p-6 border-b border-gray-200 dark:border-gray-700">
@@ -80,11 +80,11 @@
                                 <?php echo e($assignment->title); ?>
 
                             </h3>
-                            <?php if($assignment->submissions->isNotEmpty()): ?>
+                            <?php if($assignment->submissions && $assignment->submissions->isNotEmpty()): ?>
                                 <span class="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 text-xs px-2 py-1 rounded-full">
                                     Dikumpulkan
                                 </span>
-                            <?php elseif($assignment->isOverdue()): ?>
+                            <?php elseif($assignment->due_date < now()): ?>
                                 <span class="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 text-xs px-2 py-1 rounded-full">
                                     Terlambat
                                 </span>
@@ -113,11 +113,11 @@
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                 </svg>
-                                <?php echo e($assignment->teacher->name); ?>
+                                <?php echo e($assignment->teacher->name ?? 'Unknown Teacher'); ?>
 
                             </div>
                             
-                            <div class="flex items-center text-sm <?php echo e($assignment->isOverdue() ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'); ?>">
+                            <div class="flex items-center text-sm <?php echo e($assignment->due_date < now() ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'); ?>">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
@@ -149,7 +149,7 @@
         </div>
 
         <!-- Pagination -->
-        <?php if($assignments->hasPages()): ?>
+        <?php if(isset($assignments) && $assignments->hasPages()): ?>
             <div class="mt-8">
                 <?php echo e($assignments->links()); ?>
 
@@ -158,4 +158,4 @@
     </div>
 </div>
 <?php $__env->stopSection(); ?>
-<?php echo $__env->make('layouts.student.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\sekolah-web\resources\views/student/assignments/index.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.student', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\sekolah-web\resources\views/student/assignments/index.blade.php ENDPATH**/ ?>

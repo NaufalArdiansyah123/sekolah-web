@@ -178,7 +178,7 @@ class QuizController extends Controller
      */
     public function submit(Request $request, $attemptId)
     {
-        $attempt = QuizAttempt::with('quiz')
+        $attempt = QuizAttempt::with(['quiz.questions'])
             ->where('id', $attemptId)
             ->where('student_id', Auth::id())
             ->firstOrFail();
@@ -188,34 +188,56 @@ class QuizController extends Controller
         }
 
         $answers = $request->input('answers', []);
-        $score = 0;
-        $totalQuestions = $attempt->quiz->questions()->count();
+        $totalScore = 0;
+        $totalPoints = 0;
+        $correctAnswers = 0;
+        $totalQuestions = $attempt->quiz->questions->count();
 
-        DB::transaction(function() use ($attempt, $answers, &$score, $totalQuestions) {
-            foreach ($answers as $questionId => $answer) {
+        DB::transaction(function() use ($attempt, $answers, &$totalScore, &$totalPoints, &$correctAnswers, $totalQuestions) {
+            foreach ($attempt->quiz->questions as $question) {
+                $studentAnswer = $answers[$question->id] ?? null;
+                $isCorrect = false;
+                $pointsEarned = 0;
+                
+                // Auto-grade based on question type
+                if ($question->type === 'multiple_choice' || $question->type === 'true_false') {
+                    $isCorrect = $question->correct_answer === $studentAnswer;
+                    $pointsEarned = $isCorrect ? $question->points : 0;
+                    if ($isCorrect) {
+                        $correctAnswers++;
+                    }
+                } elseif ($question->type === 'essay') {
+                    // Essay questions need manual grading
+                    $isCorrect = null; // Will be graded manually by teacher
+                    $pointsEarned = 0; // Will be assigned by teacher
+                }
+                
+                // Save the answer
                 QuizAnswer::create([
                     'quiz_attempt_id' => $attempt->id,
-                    'question_id' => $questionId,
-                    'answer' => $answer
+                    'question_id' => $question->id,
+                    'answer' => $studentAnswer,
+                    'is_correct' => $isCorrect,
+                    'points_earned' => $pointsEarned
                 ]);
-
-                // Calculate score (simplified - you might want more complex scoring)
-                $question = $attempt->quiz->questions()->find($questionId);
-                if ($question && $question->correct_answer === $answer) {
-                    $score++;
-                }
+                
+                $totalScore += $pointsEarned;
+                $totalPoints += $question->points;
             }
 
-            // Update attempt
+            // Calculate final score percentage
+            $finalScore = $totalPoints > 0 ? ($totalScore / $totalPoints) * 100 : 0;
+            
+            // Update attempt with results
             $attempt->update([
                 'completed_at' => now(),
-                'score' => ($score / $totalQuestions) * 100,
+                'score' => $finalScore,
                 'status' => 'completed'
             ]);
         });
 
         return redirect()->route('student.quizzes.result', $attemptId)
-            ->with('success', 'Kuis berhasil diselesaikan!');
+            ->with('success', 'Kuis berhasil diselesaikan! Skor Anda: ' . number_format($totalScore, 1) . '/' . $totalPoints . ' (' . $correctAnswers . '/' . $totalQuestions . ' benar)');
     }
 
     /**

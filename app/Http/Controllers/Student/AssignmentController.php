@@ -25,8 +25,7 @@ class AssignmentController extends Controller
         $query = Assignment::with(['teacher', 'submissions' => function($q) {
             $q->where('student_id', Auth::id());
         }])
-        ->where('status', 'published')
-        ->where('due_date', '>=', now())
+        ->whereIn('status', ['published', 'active'])
         ->latest();
 
         // Filter by subject
@@ -50,7 +49,7 @@ class AssignmentController extends Controller
         $assignments = $query->paginate(12);
         
         // Get filter options
-        $subjects = Assignment::where('status', 'published')
+        $subjects = Assignment::whereIn('status', ['published', 'active'])
             ->select('subject')
             ->distinct()
             ->orderBy('subject')
@@ -58,14 +57,14 @@ class AssignmentController extends Controller
 
         // Get statistics
         $stats = [
-            'total_assignments' => Assignment::where('status', 'published')->count(),
+            'total_assignments' => Assignment::whereIn('status', ['published', 'active'])->count(),
             'submitted' => AssignmentSubmission::where('student_id', Auth::id())->count(),
-            'pending' => Assignment::where('status', 'published')
+            'pending' => Assignment::whereIn('status', ['published', 'active'])
                 ->where('due_date', '>=', now())
                 ->whereDoesntHave('submissions', function($q) {
                     $q->where('student_id', Auth::id());
                 })->count(),
-            'overdue' => Assignment::where('status', 'published')
+            'overdue' => Assignment::whereIn('status', ['published', 'active'])
                 ->where('due_date', '<', now())
                 ->whereDoesntHave('submissions', function($q) {
                     $q->where('student_id', Auth::id());
@@ -155,5 +154,39 @@ class AssignmentController extends Controller
 
         return redirect()->route('student.assignments.show', $id)
             ->with('success', 'Tugas berhasil dikumpulkan!');
+    }
+
+    /**
+     * Check assignment grading status (AJAX)
+     */
+    public function checkStatus($id)
+    {
+        $assignment = Assignment::findOrFail($id);
+        $submission = AssignmentSubmission::where('assignment_id', $id)
+            ->where('student_id', Auth::id())
+            ->first();
+
+        if (!$submission) {
+            return response()->json([
+                'submitted' => false,
+                'graded' => false
+            ]);
+        }
+
+        $data = [
+            'submitted' => true,
+            'graded' => !is_null($submission->graded_at),
+            'submitted_at' => $submission->submitted_at->toISOString(),
+        ];
+
+        if ($submission->graded_at) {
+            $data['graded_at'] = $submission->graded_at->toISOString();
+            $data['score'] = $submission->score;
+            $data['max_score'] = $assignment->max_score;
+            $data['percentage'] = round(($submission->score / $assignment->max_score) * 100, 1);
+            $data['feedback'] = $submission->feedback;
+        }
+
+        return response()->json($data);
     }
 }

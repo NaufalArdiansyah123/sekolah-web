@@ -819,7 +819,7 @@
                     <h1><?php echo e($slide->title ?? 'DISIPLIN'); ?></h1>
                     <p><?php echo e($slide->description ?? 'Membangun karakter siswa yang bertanggung jawab dan berdisiplin tinggi untuk meraih prestasi terbaik dalam kehidupan'); ?></p>
                     <div class="slide-buttons">
-                        <a href="#" class="btn-slide btn-primary-slide">
+                        <a href="<?php echo e(route('about.profile')); ?>" class="btn-slide btn-primary-slide">
                             <i class="fas fa-info-circle"></i>
                             Tentang Kami
                         </a>
@@ -1049,42 +1049,41 @@
                         <h5 class="mb-0"><i class="fas fa-calendar me-2"></i>Agenda Kegiatan</h5>
                     </div>
                     <div class="card-body">
-                        <div class="agenda-item mb-3 pb-3 border-bottom">
-                            <div class="d-flex align-items-center">
-                                <div class="agenda-date me-3 text-center">
-                                    <div class="fw-bold" style="color: var(--gold-color); font-size: 1.5rem;">18</div>
-                                    <small class="text-muted">DES</small>
+                        <?php if($upcomingAgendas->count() > 0): ?>
+                            <?php $__currentLoopData = $upcomingAgendas; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $agenda): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <div class="agenda-item <?php echo e($index < $upcomingAgendas->count() - 1 ? 'mb-3 pb-3 border-bottom' : ''); ?>">
+                                    <div class="d-flex align-items-center">
+                                        <div class="agenda-date me-3 text-center">
+                                            <div class="fw-bold" style="color: var(--gold-color); font-size: 1.5rem;">
+                                                <?php echo e($agenda->event_date ? $agenda->event_date->format('d') : '?'); ?>
+
+                                            </div>
+                                            <small class="text-muted">
+                                                <?php echo e($agenda->event_date ? $agenda->event_date->format('M') : 'TBD'); ?>
+
+                                            </small>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1 fw-bold"><?php echo e(Str::limit($agenda->title, 30)); ?></h6>
+                                            <small class="text-muted">
+                                                <?php if($agenda->event_date): ?>
+                                                    <?php echo e($agenda->event_date->format('H:i')); ?> WIB
+                                                <?php endif; ?>
+                                                <?php if($agenda->location): ?>
+                                                    • <?php echo e(Str::limit($agenda->location, 20)); ?>
+
+                                                <?php endif; ?>
+                                            </small>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h6 class="mb-1 fw-bold">Upacara Bendera</h6>
-                                    <small class="text-muted">07:00 - 08:00 WIB</small>
-                                </div>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <?php else: ?>
+                            <div class="text-center py-4">
+                                <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                                <p class="text-muted mb-0">Belum ada agenda mendatang</p>
                             </div>
-                        </div>
-                        <div class="agenda-item mb-3 pb-3 border-bottom">
-                            <div class="d-flex align-items-center">
-                                <div class="agenda-date me-3 text-center">
-                                    <div class="fw-bold" style="color: var(--gold-color); font-size: 1.5rem;">22</div>
-                                    <small class="text-muted">DES</small>
-                                </div>
-                                <div>
-                                    <h6 class="mb-1 fw-bold">Festival Seni & Budaya</h6>
-                                    <small class="text-muted">13:00 - 15:00 WIB</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="agenda-item">
-                            <div class="d-flex align-items-center">
-                                <div class="agenda-date me-3 text-center">
-                                    <div class="fw-bold" style="color: var(--gold-color); font-size: 1.5rem;">28</div>
-                                    <small class="text-muted">DES</small>
-                                </div>
-                                <div>
-                                    <h6 class="mb-1 fw-bold">Pelepasan Siswa Kelas XII</h6>
-                                    <small class="text-muted">09:00 - 11:00 WIB</small>
-                                </div>
-                            </div>
-                        </div>
+                        <?php endif; ?>
                         <a href="<?php echo e(route('agenda.index')); ?>" class="btn btn-outline-info btn-enhanced mt-3">
                             <i class="fas fa-calendar-check me-2"></i>Lihat Agenda
                         </a>
