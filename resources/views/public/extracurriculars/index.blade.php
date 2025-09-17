@@ -1,980 +1,1495 @@
 @extends('layouts.public')
 
-@section('content')
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ekstrakurikuler - SMA Negeri 1 Balong</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary-color: #1a202c;
-            --secondary-color: #3182ce;
-            --accent-color: #4299e1;
-            --light-gray: #f7fafc;
-            --dark-gray: #718096;
-            --glass-bg: rgba(26, 32, 44, 0.95);
-            --gradient-primary: linear-gradient(135deg, #1a202c, #3182ce);
-            --gradient-light: linear-gradient(135deg, rgba(49, 130, 206, 0.1), rgba(66, 153, 225, 0.05));
-            --sports-color: #38a169;
-            --arts-color: #d69e2e;
-            --academic-color: #3182ce;
-            --technology-color: #805ad5;
-        }
-        
-        /* Enhanced Hero Section */
-        .extracurricular-hero-section {
-            background: linear-gradient(
-                135deg, 
-                rgba(26, 32, 44, 0.8) 0%, 
-                rgba(49, 130, 206, 0.7) 50%, 
-                rgba(26, 32, 44, 0.8) 100%
-            ),
-            url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat;
-            color: white;
-            padding: 100px 0;
-            min-height: 50vh;
-            display: flex;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .extracurricular-hero-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 50%, rgba(49, 130, 206, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(66, 153, 225, 0.3) 0%, transparent 50%);
-            z-index: 1;
-        }
-        
-        .extracurricular-hero-section .container {
-            position: relative;
-            z-index: 2;
-        }
-        
-        .extracurricular-hero-section h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            line-height: 1.2;
-            margin-bottom: 1.5rem;
-            text-shadow: 0 4px 8px rgba(0,0,0,0.5);
-        }
-        
-        .extracurricular-hero-section .lead {
-            font-size: 1.25rem;
-            margin-bottom: 2rem;
-            opacity: 0.95;
-            font-weight: 400;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        
-        /* Enhanced Buttons */
-        .btn-hero {
-            padding: 15px 30px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border-radius: 50px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-            border: none;
-            backdrop-filter: blur(10px);
-        }
-        
-        .btn-hero-primary {
-            background: rgba(255,255,255,0.95);
-            color: var(--primary-color);
-        }
-        
-        .btn-hero-primary:hover {
-            background: white;
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-            color: var(--primary-color);
-        }
-        
-        /* Extracurricular Tabs */
-        .extracurricular-tabs {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            margin: -40px auto 40px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.05);
-            position: relative;
-            z-index: 10;
-            max-width: 90%;
-        }
-        
-        .extracurricular-tabs .nav-link {
-            padding: 15px 25px;
-            font-weight: 600;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-            color: var(--dark-gray);
-        }
-        
-        .extracurricular-tabs .nav-link.active {
-            background: var(--gradient-primary);
-            color: white;
-            box-shadow: 0 8px 20px rgba(49, 130, 206, 0.3);
-        }
-        
-        /* Extracurricular Section */
-        .extracurricular-section {
-            padding: 80px 0;
-            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
-        }
-        
-        .extracurricular-card {
-            background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(0,0,0,0.05);
-            margin-bottom: 30px;
-            height: 100%;
-        }
-        
-        .extracurricular-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
-        }
-        
-        .extracurricular-image {
-            height: 200px;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .extracurricular-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-        
-        .extracurricular-card:hover .extracurricular-image img {
-            transform: scale(1.1);
-        }
-        
-        .extracurricular-category {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-        
-        .category-sports {
-            background: var(--sports-color);
-        }
-        
-        .category-arts {
-            background: var(--arts-color);
-        }
-        
-        .category-academic {
-            background: var(--academic-color);
-        }
-        
-        .category-technology {
-            background: var(--technology-color);
-        }
-        
-        .extracurricular-content {
-            padding: 25px;
-        }
-        
-        .extracurricular-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 15px;
-            line-height: 1.3;
-        }
-        
-        .extracurricular-desc {
-            color: var(--dark-gray);
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-        
-        .extracurricular-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px solid rgba(0,0,0,0.1);
-        }
-        
-        .extracurricular-schedule {
-            color: var(--dark-gray);
-            font-size: 0.9rem;
-        }
-        
-        .extracurricular-coach {
-            display: flex;
-            align-items: center;
-            color: var(--dark-gray);
-            font-size: 0.9rem;
-        }
-        
-        .coach-avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            margin-right: 10px;
-            object-fit: cover;
-        }
-        
-        /* Stats Section */
-        .extracurricular-stats {
-            padding: 80px 0;
-            background: white;
-        }
-        
-        .stat-card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
-            height: 100%;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
-        }
-        
-        .stat-icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            color: var(--secondary-color);
-        }
-        
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-        
-        .stat-label {
-            color: var(--dark-gray);
-            font-weight: 600;
-        }
-        
-        /* Registration Section */
-        .registration-section {
-            padding: 80px 0;
-            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
-        }
-        
-        .registration-card {
-            background: white;
-            border-radius: 16px;
-            padding: 40px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-            text-align: center;
-        }
-        
-        /* Enhanced Buttons */
-        .btn-enhanced {
-            border-radius: 12px;
-            font-weight: 600;
-            padding: 12px 24px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            text-transform: none;
-            letter-spacing: 0.3px;
-        }
-        
-        .btn-enhanced:hover {
-            transform: translateY(-2px);
-        }
-        
-        .btn-primary-enhanced {
-            background: var(--gradient-primary);
-            border: none;
-            box-shadow: 0 8px 25px rgba(49, 130, 206, 0.3);
-        }
-        
-        .btn-primary-enhanced:hover {
-            box-shadow: 0 12px 35px rgba(49, 130, 206, 0.4);
-            background: linear-gradient(135deg, #2d3748, #2b6cb0);
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .extracurricular-hero-section {
-                padding: 60px 0;
-                text-align: center;
-            }
-            
-            .extracurricular-hero-section h1 {
-                font-size: 2.5rem;
-            }
-            
-            .extracurricular-tabs {
-                margin-top: -20px;
-            }
-            
-            .extracurricular-tabs .nav-link {
-                padding: 10px 15px;
-                font-size: 0.9rem;
-                margin-bottom: 10px;
-            }
-            
-            .extracurricular-meta {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .extracurricular-coach {
-                margin-top: 10px;
-            }
-        }
-        
-        /* Animation Classes */
-        .fade-in-up {
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeInUp 0.8s ease forwards;
-        }
-        
-        .fade-in-up:nth-child(2) { animation-delay: 0.2s; }
-        .fade-in-up:nth-child(3) { animation-delay: 0.4s; }
-        .fade-in-up:nth-child(4) { animation-delay: 0.6s; }
-        
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Enhanced Hero Section for Extracurricular Page -->
-    <section class="extracurricular-hero-section">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-8 mx-auto text-center">
-                    <h1 class="fade-in-up">Ekstrakurikuler</h1>
-                    <p class="lead fade-in-up">Wadah pengembangan bakat, minat, dan kreativitas siswa di luar kegiatan akademik</p>
-                    <div class="fade-in-up">
-                        <a href="#extracurricular" class="btn btn-hero btn-hero-primary me-3">
-                            <i class="fas fa-users me-2"></i>Jelajahi Ekstrakurikuler
-                        </a>
-                        <a href="{{ route('home') }}" class="btn btn-hero btn-hero-outline">
-                            <i class="fas fa-home me-2"></i>Kembali ke Home
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+@section('title', 'Ekstrakurikuler - SMA Negeri 99')
 
-    <!-- Extracurricular Tabs -->
+@section('content')
+<style>
+    :root {
+        --primary-color: #1e293b;
+        --secondary-color: #3b82f6;
+        --accent-color: #06b6d4;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --light-gray: #f8fafc;
+        --medium-gray: #e2e8f0;
+        --dark-gray: #64748b;
+        --text-dark: #0f172a;
+        --glass-bg: rgba(30, 41, 59, 0.95);
+        --gradient-primary: linear-gradient(135deg, #1e293b 0%, #3b82f6 50%, #06b6d4 100%);
+        --gradient-secondary: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%);
+        --shadow-soft: 0 4px 25px rgba(0, 0, 0, 0.08);
+        --shadow-medium: 0 8px 40px rgba(0, 0, 0, 0.12);
+        --shadow-strong: 0 20px 60px rgba(0, 0, 0, 0.15);
+    }
+    
+    * {
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--text-dark);
+        line-height: 1.7;
+        background: var(--light-gray);
+        overflow-x: hidden;
+    }
+    
+    /* Enhanced Hero Section */
+    .hero-section {
+        background: linear-gradient(
+            135deg, 
+            rgba(26, 32, 44, 0.8) 0%, 
+            rgba(49, 130, 206, 0.7) 50%, 
+            rgba(26, 32, 44, 0.8) 100%
+        ),
+        url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat;
+        color: white;
+        padding: 100px 0;
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 50%, rgba(49, 130, 206, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(66, 153, 225, 0.3) 0%, transparent 50%);
+        z-index: 1;
+    }
+    
+    @keyframes backgroundShift {
+        0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.8; }
+        33% { transform: scale(1.1) rotate(1deg); opacity: 0.6; }
+        66% { transform: scale(0.95) rotate(-1deg); opacity: 0.9; }
+    }
+    
+    .hero-section .container {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .hero-section h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        line-height: 1.2;
+        margin-bottom: 1.5rem;
+        text-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    }
+    
+    .hero-section .lead {
+        font-size: 1.25rem;
+        margin-bottom: 2rem;
+        opacity: 0.95;
+        font-weight: 400;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .hero-icon {
+        font-size: 9rem;
+        opacity: 0.9;
+        background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(255,255,255,0.4));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: heroIconFloat 8s ease-in-out infinite;
+        text-shadow: 0 0 30px rgba(255,255,255,0.4);
+        filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+    }
+    
+    @keyframes heroIconFloat {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        25% { transform: translateY(-15px) rotate(2deg); }
+        50% { transform: translateY(-25px) rotate(0deg); }
+        75% { transform: translateY(-15px) rotate(-2deg); }
+    }
+
+    /* Enhanced Animation Styles */
+    .fade-in-up {
+        opacity: 0;
+        transform: translateY(50px);
+        transition: all 1s cubic-bezier(0.23, 1, 0.320, 1);
+    }
+    
+    .fade-in-left {
+        opacity: 0;
+        transform: translateX(-50px);
+        transition: all 1s cubic-bezier(0.23, 1, 0.320, 1);
+    }
+    
+    .fade-in-right {
+        opacity: 0;
+        transform: translateX(50px);
+        transition: all 1s cubic-bezier(0.23, 1, 0.320, 1);
+    }
+    
+    .scale-in {
+        opacity: 0;
+        transform: scale(0.7);
+        transition: all 1s cubic-bezier(0.23, 1, 0.320, 1);
+    }
+    
+    /* Animation Active States */
+    .fade-in-up.animate,
+    .fade-in-left.animate,
+    .fade-in-right.animate {
+        opacity: 1;
+        transform: translate(0, 0);
+    }
+    
+    .scale-in.animate {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    /* Enhanced Stats Section */
+    .stats-section {
+        padding: 100px 0;
+        background: 
+            linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%);
+        position: relative;
+    }
+    
+    .stats-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.05) 0%, transparent 50%);
+        z-index: 1;
+    }
+    
+    .stats-section .container {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .stats-card {
+        background: linear-gradient(145deg, #ffffff 0%, #fefefe 100%);
+        border-radius: 24px;
+        transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
+        border: 1px solid rgba(226, 232, 240, 0.6);
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--shadow-soft);
+        backdrop-filter: blur(20px);
+        height: 100%;
+    }
+    
+    .stats-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: linear-gradient(90deg, 
+            var(--secondary-color) 0%, 
+            var(--accent-color) 25%, 
+            var(--success-color) 50%, 
+            var(--warning-color) 75%, 
+            var(--secondary-color) 100%
+        );
+        transform: scaleX(0);
+        transition: transform 0.6s cubic-bezier(0.23, 1, 0.320, 1);
+        transform-origin: left;
+    }
+    
+    .stats-card:hover::before {
+        transform: scaleX(1);
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-15px) scale(1.03);
+        box-shadow: var(--shadow-strong);
+        border-color: rgba(59, 130, 246, 0.2);
+    }
+    
+    .stats-card .card-body {
+        padding: 2.5rem 2rem;
+    }
+    
+    .stats-card i {
+        margin-bottom: 1.5rem;
+        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+    }
+    
+    .stats-card h2 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* Enhanced Section Styling */
+    .extracurriculars-section {
+        padding: 100px 0;
+        background: var(--light-gray);
+        position: relative;
+    }
+    
+    .extracurriculars-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(ellipse at 30% 40%, rgba(59, 130, 246, 0.03) 0%, transparent 70%),
+            radial-gradient(ellipse at 70% 60%, rgba(6, 182, 212, 0.03) 0%, transparent 70%);
+        z-index: 1;
+    }
+    
+    .extracurriculars-section .container {
+        position: relative;
+        z-index: 2;
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 4rem;
+    }
+
+    .section-heading {
+        font-size: 3.2rem;
+        font-weight: 800;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+        position: relative;
+        padding-bottom: 1.5rem;
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .section-heading::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 120px;
+        height: 6px;
+        background: var(--gradient-primary);
+        border-radius: 3px;
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    }
+
+    .section-subtitle {
+        font-size: 1.2rem;
+        color: var(--dark-gray);
+        max-width: 700px;
+        margin: 0 auto;
+        line-height: 1.7;
+        font-weight: 400;
+    }
+
+    /* Enhanced Extracurricular Cards */
+    .extracurriculars-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+        gap: 2.5rem;
+        margin-bottom: 4rem;
+    }
+
+    .extracurricular-card {
+        background: linear-gradient(145deg, #ffffff 0%, #fefefe 100%);
+        border-radius: 28px;
+        overflow: hidden;
+        transition: all 0.6s cubic-bezier(0.23, 1, 0.320, 1);
+        box-shadow: var(--shadow-soft);
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        backdrop-filter: blur(20px);
+        position: relative;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        transform-origin: center;
+    }
+
+    .extracurricular-card::before {
+        content: '';
+        position: absolute;
+        top: -100%;
+        left: -100%;
+        width: 300%;
+        height: 300%;
+        background: 
+            radial-gradient(circle, 
+                rgba(59, 130, 246, 0.05) 0%, 
+                rgba(6, 182, 212, 0.03) 30%, 
+                transparent 70%
+            );
+        opacity: 0;
+        transition: all 0.6s cubic-bezier(0.23, 1, 0.320, 1);
+        z-index: 1;
+    }
+
+    .extracurricular-card:hover::before {
+        opacity: 1;
+        top: -50%;
+        left: -50%;
+    }
+
+    .extracurricular-card:hover {
+        transform: translateY(-20px) scale(1.02) rotateX(5deg);
+        box-shadow: 
+            var(--shadow-strong),
+            0 0 0 1px rgba(59, 130, 246, 0.1),
+            0 0 50px rgba(59, 130, 246, 0.1);
+        border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    .card-image {
+        height: 220px;
+        background: var(--gradient-primary);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-image::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+            135deg, 
+            rgba(0,0,0,0.1) 0%, 
+            rgba(0,0,0,0.05) 50%, 
+            rgba(255,255,255,0.1) 100%
+        );
+        z-index: 2;
+    }
+
+    .card-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s ease;
+        filter: brightness(1.1) saturate(1.2);
+    }
+
+    .extracurricular-card:hover .card-image img {
+        transform: scale(1.15);
+    }
+
+    .card-image-placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 4rem;
+        font-weight: 600;
+        text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    .card-content {
+        padding: 2.5rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        z-index: 3;
+        background: linear-gradient(145deg, #ffffff 0%, #fefefe 100%);
+    }
+
+    .card-title {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: var(--primary-color);
+        margin-bottom: 0.8rem;
+        transition: all 0.3s ease;
+        line-height: 1.3;
+    }
+
+    .card-coach {
+        color: var(--secondary-color);
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .card-description {
+        color: var(--dark-gray);
+        line-height: 1.7;
+        margin-bottom: 2rem;
+        flex-grow: 1;
+        font-size: 1rem;
+    }
+
+    .card-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: linear-gradient(135deg, 
+            rgba(59, 130, 246, 0.06) 0%, 
+            rgba(6, 182, 212, 0.04) 100%
+        );
+        border-radius: 18px;
+        border: 1px solid rgba(59, 130, 246, 0.1);
+        backdrop-filter: blur(10px);
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 0.5rem;
+    }
+
+    .stat-number {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--secondary-color);
+        display: block;
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+        color: var(--dark-gray);
+        margin-top: 0.5rem;
+        font-weight: 500;
+    }
+
+    .card-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .btn-view, .btn-register {
+        padding: 1rem 1.5rem;
+        border-radius: 16px;
+        text-decoration: none;
+        font-weight: 600;
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        font-size: 0.95rem;
+        border: none;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-view {
+        background: linear-gradient(135deg, 
+            rgba(59, 130, 246, 0.1) 0%, 
+            rgba(6, 182, 212, 0.08) 100%
+        );
+        color: var(--secondary-color);
+        border: 2px solid rgba(59, 130, 246, 0.2);
+    }
+
+    .btn-view:hover {
+        background: linear-gradient(135deg, 
+            rgba(59, 130, 246, 0.2) 0%, 
+            rgba(6, 182, 212, 0.15) 100%
+        );
+        color: var(--secondary-color);
+        text-decoration: none;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+        border-color: rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-register {
+        background: var(--gradient-primary);
+        color: white;
+        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+        border: 2px solid transparent;
+    }
+
+    .btn-register:hover {
+        background: linear-gradient(135deg, #1e40af 0%, #0e7490 100%);
+        color: white;
+        text-decoration: none;
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(59, 130, 246, 0.4);
+    }
+
+    /* Check Registration Section */
+    .check-registration {
+        background: linear-gradient(145deg, #ffffff 0%, #fefefe 100%);
+        padding: 3rem;
+        border-radius: 28px;
+        box-shadow: var(--shadow-medium);
+        margin-bottom: 4rem;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .check-registration::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: var(--gradient-primary);
+        z-index: 1;
+    }
+
+    .check-registration h3 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .check-form {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 1.5rem;
+        align-items: end;
+    }
+
+    .form-group {
+        flex: 1;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 0.75rem;
+        display: block;
+        font-size: 1rem;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 1rem 1.5rem;
+        border: 2px solid var(--medium-gray);
+        border-radius: 16px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: white;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .form-input:focus {
+        border-color: var(--secondary-color);
+        box-shadow: 
+            inset 0 2px 4px rgba(0,0,0,0.02),
+            0 0 0 4px rgba(59, 130, 246, 0.1);
+        outline: none;
+        transform: translateY(-1px);
+    }
+
+    .btn-check {
+        background: var(--gradient-primary);
+        color: white;
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        white-space: nowrap;
+    }
+
+    .btn-check:hover {
+        background: linear-gradient(135deg, #1e40af 0%, #0e7490 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(59, 130, 246, 0.4);
+    }
+
+    /* Enhanced Registration CTA Section */
+    .registration-cta-section {
+        margin-top: 5rem;
+    }
+
+    .registration-cta-card {
+        background: var(--gradient-primary);
+        border-radius: 32px;
+        padding: 4rem 3rem;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--shadow-strong);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .registration-cta-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: 
+            radial-gradient(circle, 
+                rgba(255, 255, 255, 0.1) 0%, 
+                rgba(255, 255, 255, 0.05) 40%, 
+                transparent 70%
+            );
+        animation: ctaFloat 12s ease-in-out infinite;
+        z-index: 1;
+    }
+
+    @keyframes ctaFloat {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        33% { transform: translate(-20px, -30px) scale(1.1); }
+        66% { transform: translate(20px, -20px) scale(0.9); }
+    }
+
+    .cta-content, .cta-actions {
+        position: relative;
+        z-index: 2;
+    }
+
+    .cta-title {
+        font-size: 2.4rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.7), 0 0 20px rgba(0,0,0,0.5);
+        color: #ffffff;
+        line-height: 1.2;
+    }
+
+    .cta-description {
+        font-size: 1.2rem;
+        margin-bottom: 2.5rem;
+        opacity: 1;
+        line-height: 1.7;
+        text-shadow: 1px 1px 6px rgba(0,0,0,0.6);
+        color: #f1f5f9;
+        max-width: 600px;
+    }
+
+    .cta-features {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: center;
+        font-size: 1.05rem;
+        font-weight: 500;
+        color: #f1f5f9;
+        gap: 0.75rem;
+    }
+
+    .feature-item i {
+        font-size: 1.2rem;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    }
+
+    .stat-circle {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: linear-gradient(145deg, 
+            rgba(255, 255, 255, 0.25) 0%, 
+            rgba(255, 255, 255, 0.1) 100%
+        );
+        border: 3px solid rgba(255, 255, 255, 0.4);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 2rem;
+        backdrop-filter: blur(20px);
+        transition: all 0.4s ease;
+        box-shadow: 
+            0 10px 30px rgba(0,0,0,0.2),
+            inset 0 1px 0 rgba(255,255,255,0.3);
+    }
+
+    .stat-circle:hover {
+        transform: scale(1.08) rotateZ(5deg);
+        background: linear-gradient(145deg, 
+            rgba(255, 255, 255, 0.35) 0%, 
+            rgba(255, 255, 255, 0.2) 100%
+        );
+        box-shadow: 
+            0 15px 40px rgba(0,0,0,0.3),
+            inset 0 1px 0 rgba(255,255,255,0.4);
+    }
+
+    .stat-circle .stat-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        line-height: 1;
+        color: #ffffff;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+
+    .stat-circle .stat-text {
+        font-size: 0.9rem;
+        text-align: center;
+        margin-top: 0.5rem;
+        opacity: 0.95;
+        color: #f1f5f9;
+        text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    }
+
+    .btn-cta-primary, .btn-cta-secondary {
+        display: block;
+        width: 100%;
+        padding: 1.25rem 2rem;
+        border-radius: 18px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.05rem;
+        margin-bottom: 1rem;
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+        border: 2px solid transparent;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-cta-primary {
+        background: linear-gradient(145deg, 
+            rgba(255, 255, 255, 0.95) 0%, 
+            rgba(255, 255, 255, 0.9) 100%
+        );
+        color: var(--primary-color);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        backdrop-filter: blur(20px);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-cta-primary:hover {
+        background: #ffffff;
+        color: var(--primary-color);
+        text-decoration: none;
+        transform: translateY(-4px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+    }
+
+    .btn-cta-secondary {
+        background: linear-gradient(145deg, 
+            rgba(255, 255, 255, 0.15) 0%, 
+            rgba(255, 255, 255, 0.1) 100%
+        );
+        color: white;
+        border-color: rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(20px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-cta-secondary:hover {
+        background: linear-gradient(145deg, 
+            rgba(255, 255, 255, 0.25) 0%, 
+            rgba(255, 255, 255, 0.2) 100%
+        );
+        color: white;
+        text-decoration: none;
+        transform: translateY(-3px);
+        border-color: rgba(255, 255, 255, 0.5);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Footer Styling - Ensuring proper contrast */
+    footer {
+        background: var(--primary-color) !important;
+        color: #f1f5f9 !important;
+        border-top: 4px solid var(--secondary-color);
+        margin-top: 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    footer::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(ellipse at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 60%),
+            radial-gradient(ellipse at 80% 50%, rgba(6, 182, 212, 0.1) 0%, transparent 60%);
+        z-index: 1;
+    }
+
+    footer .container {
+        position: relative;
+        z-index: 2;
+    }
+
+    footer h5 {
+        color: #ffffff !important;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        font-size: 1.2rem;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    footer p, footer li, footer a {
+        color: #cbd5e1 !important;
+        transition: color 0.3s ease;
+    }
+
+    footer a:hover {
+        color: #ffffff !important;
+        text-decoration: none;
+        transform: translateX(5px);
+        transition: all 0.3s ease;
+    }
+
+    footer .text-muted {
+        color: #94a3b8 !important;
+        border-top: 1px solid rgba(203, 213, 225, 0.2);
+        padding-top: 2rem;
+        margin-top: 2rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .hero-section {
+            padding: 80px 0 60px;
+            text-align: center;
+        }
+        
+        .hero-section h1 {
+            font-size: 3rem;
+        }
+        
+        .hero-icon {
+            font-size: 7rem;
+            margin-top: 2rem;
+        }
+
+        .extracurriculars-grid {
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .section-heading {
+            font-size: 2.5rem;
+        }
+
+        .check-form {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .registration-cta-card {
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .cta-title {
+            font-size: 2rem;
+        }
+
+        .stats-section, .extracurriculars-section {
+            padding: 80px 0;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .hero-section h1 {
+            font-size: 2.5rem;
+        }
+        
+        .hero-section .lead {
+            font-size: 1.2rem;
+        }
+
+        .hero-icon {
+            font-size: 6rem;
+        }
+        
+        .extracurriculars-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .section-heading {
+            font-size: 2.2rem;
+        }
+
+        .card-actions {
+            grid-template-columns: 1fr;
+        }
+
+        .card-stats {
+            grid-template-columns: repeat(3, 1fr);
+            padding: 1rem;
+        }
+
+        .check-registration {
+            padding: 2rem;
+        }
+
+        .cta-features {
+            margin-bottom: 2rem;
+        }
+
+        .feature-item {
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .hero-section {
+            padding: 60px 0 40px;
+        }
+
+        .hero-section h1 {
+            font-size: 2.2rem;
+        }
+        
+        .extracurriculars-section, .stats-section {
+            padding: 60px 0;
+        }
+        
+        .card-content {
+            padding: 2rem 1.5rem;
+        }
+
+        .section-heading {
+            font-size: 2rem;
+        }
+
+        .stats-card .card-body {
+            padding: 2rem 1.5rem;
+        }
+
+        .registration-cta-card {
+            padding: 2rem 1.5rem;
+        }
+
+        .cta-title {
+            font-size: 1.8rem;
+        }
+
+        .cta-description {
+            font-size: 1.1rem;
+        }
+
+        .check-registration h3 {
+            font-size: 1.5rem;
+        }
+    }
+
+    /* Staggered animation delays */
+    .fade-in-up:nth-child(1) { animation-delay: 0.1s; }
+    .fade-in-up:nth-child(2) { animation-delay: 0.2s; }
+    .fade-in-up:nth-child(3) { animation-delay: 0.3s; }
+    .fade-in-up:nth-child(4) { animation-delay: 0.4s; }
+    .fade-in-up:nth-child(5) { animation-delay: 0.5s; }
+    .fade-in-up:nth-child(6) { animation-delay: 0.6s; }
+
+    /* Loading animation */
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    .loading-shimmer {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .loading-shimmer::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.4) 50%,
+            transparent 100%
+        );
+        animation: shimmer 2s infinite;
+    }
+
+    /* Smooth scrolling */
+    html {
+        scroll-behavior: smooth;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--light-gray);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--gradient-primary);
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #1e40af 0%, #0e7490 100%);
+    }
+
+    /* Add ID to extracurriculars grid for smooth scrolling */
+    .extracurriculars-grid {
+        scroll-margin-top: 120px;
+    }
+
+    /* Enhanced empty state */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: linear-gradient(145deg, #ffffff 0%, #fefefe 100%);
+        border-radius: 24px;
+        box-shadow: var(--shadow-soft);
+        border: 1px solid rgba(226, 232, 240, 0.8);
+    }
+
+    .empty-state i {
+        color: var(--dark-gray);
+        margin-bottom: 2rem;
+        opacity: 0.7;
+        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+    }
+
+    .empty-state h3 {
+        color: var(--primary-color);
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state p {
+        color: var(--dark-gray);
+        font-size: 1.1rem;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    /* Enhanced pagination */
+    .pagination {
+        margin-top: 3rem;
+    }
+
+    .pagination .page-link {
+        border: 2px solid var(--medium-gray);
+        color: var(--primary-color);
+        padding: 0.75rem 1rem;
+        margin: 0 0.25rem;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .pagination .page-link:hover {
+        background: var(--gradient-primary);
+        border-color: var(--secondary-color);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(49, 130, 206, 0.3);
+    }
+
+    .pagination .page-item.active .page-link {
+        background: var(--gradient-primary);
+        border-color: var(--secondary-color);
+        color: white;
+        box-shadow: 0 4px 15px rgba(49, 130, 206, 0.3);
+    }
+</style>
+
+<!-- Enhanced Hero Section -->
+<section class="hero-section">
     <div class="container">
-        <div class="extracurricular-tabs fade-in-up">
-            <ul class="nav nav-pills justify-content-center flex-wrap" id="extracurricularTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="all-tab" data-bs-toggle="pill" data-bs-target="#all" type="button" role="tab" aria-controls="all" aria-selected="true">
-                        <i class="fas fa-star me-2"></i>Semua
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="sports-tab" data-bs-toggle="pill" data-bs-target="#sports" type="button" role="tab" aria-controls="sports" aria-selected="false">
-                        <i class="fas fa-running me-2"></i>Olahraga
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="arts-tab" data-bs-toggle="pill" data-bs-target="#arts" type="button" role="tab" aria-controls="arts" aria-selected="false">
-                        <i class="fas fa-paint-brush me-2"></i>Seni & Budaya
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="academic-tab" data-bs-toggle="pill" data-bs-target="#academic" type="button" role="tab" aria-controls="academic" aria-selected="false">
-                        <i class="fas fa-book me-2"></i>Akademik
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="technology-tab" data-bs-toggle="pill" data-bs-target="#technology" type="button" role="tab" aria-controls="technology" aria-selected="false">
-                        <i class="fas fa-laptop-code me-2"></i>Teknologi
-                    </button>
-                </li>
-            </ul>
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="fade-in-left">Ekstrakurikuler SMA Negeri 99</h1>
+                <p class="lead fade-in-left" style="animation-delay: 0.2s;"> Kembangkan bakat dan minatmu melalui berbagai kegiatan ekstrakurikuler yang menarik dan bermanfaat. 
+                    Bergabunglah dengan komunitas siswa yang berprestasi dan berkarakter!</p>
+            </div>
+            <div class="col-lg-4 text-center">
+                <i class="fas fa-users hero-icon scale-in" style="animation-delay: 0.4s;"></i>
+            </div>
         </div>
     </div>
+</section>
 
-    <!-- Extracurricular Content Section -->
-    <section class="extracurricular-section" id="extracurricular">
-        <div class="container">
-            <div class="section-title text-center mb-5">
-                <h2>Pilihan Ekstrakurikuler</h2>
-                <p>Berbagai kegiatan ekstrakurikuler untuk mengembangkan potensi siswa</p>
+<!-- Enhanced Quick Stats -->
+<section class="stats-section">
+    <div class="container">
+        <div class="section-title">
+            <h2 class="section-heading fade-in-up">Statistik Ekstrakurikuler</h2>
+            <p class="section-subtitle fade-in-up" style="animation-delay: 0.2s;">
+                Data terkini mengenai kegiatan ekstrakurikuler di SMA Negeri 99
+            </p>
+        </div>
+        <div class="row text-center g-4">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stats-card card h-100 shadow-sm fade-in-up">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="fas fa-list fa-3x text-primary"></i>
+                        </div>
+                        <h2 class="display-4 fw-bold mb-2">{{ $extracurriculars->total() }}</h2>
+                        <p class="text-muted mb-0 fw-medium">TOTAL EKSTRAKURIKULER</p>
+                    </div>
+                </div>
             </div>
-            
-            <div class="tab-content" id="extracurricularTabsContent">
-                <!-- All Extracurricular Tab -->
-                <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">
-                    <div class="row">
-                        <!-- Basketball -->
-                        <div class="col-lg-4 col-md-6 mb-4 fade-in-up">
-                            <div class="extracurricular-card">
-                                <div class="extracurricular-image">
-                                    <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-4.0.3&auto=format&fit=crop&w=2090&q=80" alt="Basketball">
-                                    <span class="extracurricular-category category-sports">Olahraga</span>
-                                </div>
-                                <div class="extracurricular-content">
-                                    <h3 class="extracurricular-title">Basketball</h3>
-                                    <p class="extracurricular-desc">Ekstrakurikuler basketball melatih keterampilan dribbling, shooting, dan kerjasama tim. Cocok untuk siswa yang menyukai olahraga tim.</p>
-                                    <div class="extracurricular-meta">
-                                        <div class="extracurricular-schedule">
-                                            <i class="far fa-calendar-alt me-1"></i>Senin & Kamis, 15:00-17:00
-                                        </div>
-                                        <div class="extracurricular-coach">
-                                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="coach-avatar">
-                                            <span>Pelatih: Budi Santoso</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stats-card card h-100 shadow-sm fade-in-up" style="animation-delay: 0.2s;">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="fas fa-user-plus fa-3x text-success"></i>
                         </div>
-                        
-                        <!-- Robotics -->
-                        <div class="col-lg-4 col-md-6 mb-4 fade-in-up">
-                            <div class="extracurricular-card">
-                                <div class="extracurricular-image">
-                                    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Robotics">
-                                    <span class="extracurricular-category category-technology">Teknologi</span>
-                                </div>
-                                <div class="extracurricular-content">
-                                    <h3 class="extracurricular-title">Robotics</h3>
-                                    <p class="extracurricular-desc">Belajar merancang, membangun, dan memprogram robot. Mengasah kemampuan logika, pemrograman, dan engineering.</p>
-                                    <div class="extracurricular-meta">
-                                        <div class="extracurricular-schedule">
-                                            <i class="far fa-calendar-alt me-1"></i>Selasa & Jumat, 14:00-16:00
-                                        </div>
-                                        <div class="extracurricular-coach">
-                                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="coach-avatar">
-                                            <span>Pelatih: Dr. Ahmad Rizki</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Dance -->
-                        <div class="col-lg-4 col-md-6 mb-4 fade-in-up">
-                            <div class="extracurricular-card">
-                                <div class="extracurricular-image">
-                                    <img src="https://images.unsplash.com/photo-1547153760-18fc86324498?ixlib=rb-4.0.3&auto=format&fit=crop&w=2071&q=80" alt="Dance">
-                                    <span class="extracurricular-category category-arts">Seni & Budaya</span>
-                                </div>
-                                <div class="extracurricular-content">
-                                    <h3 class="extracurricular-title">Tari Tradisional</h3>
-                                    <p class="extracurricular-desc">Mempelajari dan melestarikan tarian tradisional Indonesia. Mengembangkan rasa seni, budaya, dan kreativitas.</p>
-                                    <div class="extracurricular-meta">
-                                        <div class="extracurricular-schedule">
-                                            <i class="far fa-calendar-alt me-1"></i>Rabu & Sabtu, 15:00-17:00
-                                        </div>
-                                        <div class="extracurricular-coach">
-                                            <img src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="coach-avatar">
-                                            <span>Pelatih: Siti Rahayu</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Debate -->
-                        <div class="col-lg-4 col-md-6 mb-4 fade-in-up">
-                            <div class="extracurricular-card">
-                                <div class="extracurricular-image">
-                                    <img src="https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Debate">
-                                    <span class="extracurricular-category category-academic">Akademik</span>
-                                </div>
-                                <div class="extracurricular-content">
-                                    <h3 class="extracurricular-title">Debat Bahasa Inggris</h3>
-                                    <p class="extracurricular-desc">Meningkatkan kemampuan berbahasa Inggris, public speaking, dan critical thinking melalui kegiatan debat.</p>
-                                    <div class="extracurricular-meta">
-                                        <div class="extracurricular-schedule">
-                                            <i class="far fa-calendar-alt me-1"></i>Senin & Kamis, 14:00-16:00
-                                        </div>
-                                        <div class="extracurricular-coach">
-                                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="coach-avatar">
-                                            <span>Pelatih: John Smith</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Music -->
-                        <div class="col-lg-4 col-md-6 mb-4 fade-in-up">
-                            <div class="extracurricular-card">
-                                <div class="extracurricular-image">
-                                    <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Music">
-                                    <span class="extracurricular-category category-arts">Seni & Budaya</span>
-                                </div>
-                                <div class="extracurricular-content">
-                                    <h3 class="extracurricular-title">Paduan Suara</h3>
-                                    <p class="extracurricular-desc">Mengembangkan bakat menyanyi, harmonisasi, dan musikalitas. Cocok untuk siswa yang mencintai musik vokal.</p>
-                                    <div class="extracurricular-meta">
-                                        <div class="extracurricular-schedule">
-                                            <i class="far fa-calendar-alt me-1"></i>Selasa & Jumat, 15:00-17:00
-                                        </div>
-                                        <div class="extracurricular-coach">
-                                            <img src="https://images.unsplash.com/photo-1516557070064-1281ce41de9b?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="coach-avatar">
-                                            <span>Pelatih: Maria Dewi</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Science Club -->
-                        <div class="col-lg-4 col-md-6 mb-4 fade-in-up">
-                            <div class="extracurricular-card">
-                                <div class="extracurricular-image">
-                                    <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Science Club">
-                                    <span class="extracurricular-category category-academic">Akademik</span>
-                                </div>
-                                <div class="extracurricular-content">
-                                    <h3 class="extracurricular-title">Klub Sains</h3>
-                                    <p class="extracurricular-desc">Eksperimen sains, proyek penelitian, dan persiapan olimpiade sains. Untuk siswa yang tertarik dengan dunia sains.</p>
-                                    <div class="extracurricular-meta">
-                                        <div class="extracurricular-schedule">
-                                            <i class="far fa-calendar-alt me-1"></i>Rabu & Sabtu, 14:00-16:00
-                                        </div>
-                                        <div class="extracurricular-coach">
-                                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="coach-avatar">
-                                            <span>Pelatih: Dr. Lisa Andriani</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <h2 class="display-4 fw-bold mb-2">{{ $extracurriculars->sum('registrations_count') }}</h2>
+                        <p class="text-muted mb-0 fw-medium">TOTAL PENDAFTAR</p>
                     </div>
                 </div>
-                
-                <!-- Sports Tab -->
-                <div class="tab-pane fade" id="sports" role="tabpanel" aria-labelledby="sports-tab">
-                    <div class="row">
-                        <!-- Basketball -->
-                        <div class="col-lg-4 col-md-6 mb-4 fade-in-up">
-                            <div class="extracurricular-card">
-                                <div class="extracurricular-image">
-                                    <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-4.0.3&auto=format&fit=crop&w=2090&q=80" alt="Basketball">
-                                    <span class="extracurricular-category category-sports">Olahraga</span>
-                                </div>
-                                <div class="extracurricular-content">
-                                    <h3 class="extracurricular-title">Basketball</h3>
-                                    <p class="extracurricular-desc">Ekstrakurikuler basketball melatih keterampilan dribbling, shooting, dan kerjasama tim. Cocok untuk siswa yang menyukai olahraga tim.</p>
-                                    <div class="extracurricular-meta">
-                                        <div class="extracurricular-schedule">
-                                            <i class="far fa-calendar-alt me-1"></i>Senin & Kamis, 15:00-17:00
-                                        </div>
-                                        <div class="extracurricular-coach">
-                                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="coach-avatar">
-                                            <span>Pelatih: Budi Santoso</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stats-card card h-100 shadow-sm fade-in-up" style="animation-delay: 0.4s;">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="fas fa-check-circle fa-3x text-info"></i>
                         </div>
-                        
-                        <!-- Football -->
-                        <div class="col-lg-4 col-md-6 mb-4 fade-in-up">
-                            <div class="extracurricular-card">
-                                <div class="extracurricular-image">
-                                    <img src="https://images.unsplash.com/photo-1575361204480-aadea25e6e68?ixlib=rb-4.0.3&auto=format&fit=crop&w=2071&q=80" alt="Football">
-                                    <span class="extracurricular-category category-sports">Olahraga</span>
-                                </div>
-                                <div class="extracurricular-content">
-                                    <h3 class="extracurricular-title">Sepak Bola</h3>
-                                    <p class="extracurricular-desc">Mengembangkan teknik dasar sepak bola, strategi permainan, dan kerjasama tim. Untuk siswa yang bercita-cita menjadi atlet sepak bola.</p>
-                                    <div class="extracurricular-meta">
-                                        <div class="extracurricular-schedule">
-                                            <i class="far fa-calendar-alt me-1"></i>Selasa & Jumat, 15:00-17:00
-                                        </div>
-                                        <div class="extracurricular-coach">
-                                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="coach-avatar">
-                                            <span>Pelatih: Rudi Hartono</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Badminton -->
-                        <div class="col-lg-4 col-md-6 mb-4 fade-in-up">
-                            <div class="extracurricular-card">
-                                <div class="extracurricular-image">
-                                    <img src="https://images.unsplash.com/photo-1596638787647-904d822d751e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Badminton">
-                                    <span class="extracurricular-category category-sports">Olahraga</span>
-                                </div>
-                                <div class="extracurricular-content">
-                                    <h3 class="extracurricular-title">Bulu Tangkis</h3>
-                                    <p class="extracurricular-desc">Melatih teknik dasar bulu tangkis, strategi permainan, dan meningkatkan kebugaran fisik. Cocok untuk semua tingkat kemampuan.</p>
-                                    <div class="extracurricular-meta">
-                                        <div class="extracurricular-schedule">
-                                            <i class="far fa-calendar-alt me-1"></i>Rabu & Sabtu, 15:00-17:00
-                                        </div>
-                                        <div class="extracurricular-coach">
-                                            <img src="https://images.unsplash.com/photo-1564564321837-a57b7070ac4f?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="coach-avatar">
-                                            <span>Pelatih: Susi Susanti</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <h2 class="display-4 fw-bold mb-2">{{ $extracurriculars->sum('approved_registrations_count') }}</h2>
+                        <p class="text-muted mb-0 fw-medium">SISWA DITERIMA</p>
                     </div>
                 </div>
-                
-                <!-- Arts Tab -->
-                <div class="tab-pane fade" id="arts" role="tabpanel" aria-labelledby="arts-tab">
-                    <div class="row">
-                        <!-- Dance -->
-                        <div class="col-lg-4 col-md-6 mb-4 fade-in-up">
-                            <div class="extracurricular-card">
-                                <div class="extracurricular-image">
-                                    <img src="https://images.unsplash.com/photo-1547153760-18fc86324498?ixlib=rb-4.0.3&auto=format&fit=crop&w=2071&q=80" alt="Dance">
-                                    <span class="extracurricular-category category-arts">Seni & Budaya</span>
-                                </div>
-                                <div class="extracurricular-content">
-                                    <h3 class="extracurricular-title">Tari Tradisional</h3>
-                                    <p class="extracurricular-desc">Mempelajari dan melestarikan tarian tradisional Indonesia. Mengembangkan rasa seni, budaya, dan kreativitas.</p>
-                                    <div class="extracurricular-meta">
-                                        <div class="extracurricular-schedule">
-                                            <i class="far fa-calendar-alt me-1"></i>Rabu & Sabtu, 15:00-17:00
-                                        </div>
-                                        <div class="extracurricular-coach">
-                                            <img src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="coach-avatar">
-                                            <span>Pelatih: Siti Rahayu</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stats-card card h-100 shadow-sm fade-in-up" style="animation-delay: 0.6s;">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="fas fa-clock fa-3x text-warning"></i>
                         </div>
-                        
-                        <!-- Music -->
-                        <div class="col-lg-4 col-md-6 mb-4 fade-in-up">
-                            <div class="extracurricular-card">
-                                <div class="extracurricular-image">
-                                    <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Music">
-                                    <span class="extracurricular-category category-arts">Seni & Budaya</span>
-                                </div>
-                                <div class="extracurricular-content">
-                                    <h3 class="extracurricular-title">Paduan Suara</h3>
-                                    <p class="extracurricular-desc">Mengembangkan bakat menyanyi, harmonisasi, dan musikalitas. Cocok untuk siswa yang mencintai musik vokal.</p>
-                                    <div class="extracurricular-meta">
-                                        <div class="extracurricular-schedule">
-                                            <i class="far fa-calendar-alt me-1"></i>Selasa & Jumat, 15:00-17:00
-                                        </div>
-                                        <div class="extracurricular-coach">
-                                            <img src="https://images.unsplash.com/photo-1516557070064-1281ce41de9b?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="coach-avatar">
-                                            <span>Pelatih: Maria Dewi</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Theater -->
-                        <div class="col-lg-4 col-md-6 mb-4 fade-in-up">
-                            <div class="extracurricular-card">
-                                <div class="extracurricular-image">
-                                    <img src="https://images.unsplash.com/photo-1543536448-d209d2d13a1c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Theater">
-                                    <span class="extracurricular-category category-arts">Seni & Budaya</span>
-                                </div>
-                                <div class="extracurricular-content">
-                                    <h3 class="extracurricular-title">Teater</h3>
-                                    <p class="extracurricular-desc">Mengembangkan kemampuan akting, public speaking, dan ekspresi diri melalui seni peran. Cocok untuk siswa kreatif.</p>
-                                    <div class="extracurricular-meta">
-                                        <div class="extracurricular-schedule">
-                                            <i class="far fa-calendar-alt me-1"></i>Senin & Kamis, 15:00-17:00
-                                        </div>
-                                        <div class="extracurricular-coach">
-                                            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="coach-avatar">
-                                            <span>Pelatih: Rano Karno</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Academic Tab -->
-                <div class="tab-pane fade" id="academic" role="tabpanel" aria-labelledby="academic-tab">
-                    <div class="row">
-                        <!-- Debate -->
-                        <div class="col-lg-4 col-md-6 mb-4 fade-in-up">
-                            <div class="extracurricular-card">
-                                <div class="extracurricular-image">
-                                    <img src="https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Debate">
-                                    <span class="extracurricular-category category-academic">Akademik</span>
-                                </div>
-                                <div class="extracurricular-content">
-                                    <h3 class="extracurricular-title">Debat Bahasa Inggris</h3>
-                                    <p class="extracurricular-desc">Meningkatkan kemampuan berbahasa Inggris, public speaking, dan critical thinking melalui kegiatan debat.</p>
-                                    <div class="extracurricular-meta">
-                                        <div class="extracurricular-schedule">
-                                            <i class="far fa-calendar-alt me-1"></i>Senin & Kamis, 14:00-16:00
-                                        </div>
-                                        <div class="extracurricular-coach">
-                                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="coach-avatar">
-                                            <span>Pelatih: John Smith</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Science Club -->
-                        <div class="col-lg-4 col-md-6 mb-4 fade-in-up">
-                            <div class="extracurricular-card">
-                                <div class="extracurricular-image">
-                                    <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Science Club">
-                                    <span class="extracurricular-category category-academic">Akademik</span>
-                                </div>
-                                <div class="extracurricular-content">
-                                    <h3 class="extracurricular-title">Klub Sains</h3>
-                                    <p class="extracurricular-desc">Eksperimen sains, proyek penelitian, dan persiapan olimpiade sains. Untuk siswa yang tertarik dengan dunia sains.</p>
-                                    <div class="extracurricular-meta">
-                                        <div class="extracurricular-schedule">
-                                            <i class="far fa-calendar-alt me-1"></i>Rabu & Sabtu, 14:00-16:00
-                                        </div>
-                                        <div class="extracurricular-coach">
-                                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="coach-avatar">
-                                            <span>Pelatih: Dr. Lisa Andriani</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Journalism -->
-                        <div class="col-lg-4 col-md-6 mb-4 fade-in-up">
-                            <div class="extracurricular-card">
-                                <div class="extracurricular-image">
-                                    <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Journalism">
-                                    <span class="extracurricular-category category-academic">Akademik</span>
-                                </div>
-                                <div class="extracurricular-content">
-                                    <h3 class="extracurricular-title">Jurnalistik</h3>
-                                    <p class="extracurricular-desc">Mengasah kemampuan menulis, wawancara, dan peliputan berita. Menerbitkan majalah sekolah dan mengelola media sosial.</p>
-                                    <div class="extracurricular-meta">
-                                        <div class="extracurricular-schedule">
-                                            <i class="far fa-calendar-alt me-1"></i>Selasa & Jumat, 14:00-16:00
-                                        </div>
-                                        <div class="extracurricular-coach">
-                                            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="coach-avatar">
-                                            <span>Pelatih: Dian Sastrowardoyo</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Technology Tab -->
-                <div class="tab-pane fade" id="technology" role="tabpanel" aria-labelledby="technology-tab">
-                    <div class="row">
-                        <!-- Robotics -->
-                        <div class="col-lg-4 col-md-6 mb-4 fade-in-up">
-                            <div class="extracurricular-card">
-                                <div class="extracurricular-image">
-                                    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Robotics">
-                                    <span class="extracurricular-category category-technology">Teknologi</span>
-                                </div>
-                                <div class="extracurricular-content">
-                                    <h3 class="extracurricular-title">Robotics</h3>
-                                    <p class="extracurricular-desc">Belajar merancang, membangun, dan memprogram robot. Mengasah kemampuan logika, pemrograman, dan engineering.</p>
-                                    <div class="extracurricular-meta">
-                                        <div class="extracurricular-schedule">
-                                            <i class="far fa-calendar-alt me-1"></i>Selasa & Jumat, 14:00-16:00
-                                        </div>
-                                        <div class="extracurricular-coach">
-                                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="coach-avatar">
-                                            <span>Pelatih: Dr. Ahmad Rizki</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Programming -->
-                        <div class="col-lg-4 col-md-6 mb-4 fade-in-up">
-                            <div class="extracurricular-card">
-                                <div class="extracurricular-image">
-                                    <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Programming">
-                                    <span class="extracurricular-category category-technology">Teknologi</span>
-                                </div>
-                                <div class="extracurricular-content">
-                                    <h3 class="extracurricular-title">Pemrograman</h3>
-                                    <p class="extracurricular-desc">Mempelajari dasar-dasar pemrograman, pengembangan web, dan aplikasi mobile. Cocok untuk siswa yang tertarik dengan coding.</p>
-                                    <div class="extracurricular-meta">
-                                        <div class="extracurricular-schedule">
-                                            <i class="far fa-calendar-alt me-1"></i>Senin & Kamis, 14:00-16:00
-                                        </div>
-                                        <div class="extracurricular-coach">
-                                            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="coach-avatar">
-                                            <span>Pelatih: Andi Wijaya</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Digital Design -->
-                        <div class="col-lg-4 col-md-6 mb-4 fade-in-up">
-                            <div class="extracurricular-card">
-                                <div class="extracurricular-image">
-                                    <img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2064&q=80" alt="Digital Design">
-                                    <span class="extracurricular-category category-technology">Teknologi</span>
-                                </div>
-                                <div class="extracurricular-content">
-                                    <h3 class="extracurricular-title">Desain Digital</h3>
-                                    <p class="extracurricular-desc">Mempelajari desain grafis, editing foto, dan pembuatan konten visual. Mengembangkan kreativitas dan kemampuan teknis.</p>
-                                    <div class="extracurricular-meta">
-                                        <div class="extracurricular-schedule">
-                                            <i class="far fa-calendar-alt me-1"></i>Rabu & Sabtu, 14:00-16:00
-                                        </div>
-                                        <div class="extracurricular-coach">
-                                            <img src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Coach" class="coach-avatar">
-                                            <span>Pelatih: Maya Indrasari</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <h2 class="display-4 fw-bold mb-2">{{ $extracurriculars->sum('pending_registrations_count') }}</h2>
+                        <p class="text-muted mb-0 fw-medium">MENUNGGU PERSETUJUAN</p>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Extracurricular Stats Section -->
-    <section class="extracurricular-stats">
-        <div class="container">
-            <div class="section-title text-center mb-5">
-                <h2>Ekstrakurikuler dalam Angka</h2>
-                <p>Statistik partisipasi dan pencapaian kegiatan ekstrakurikuler</p>
-            </div>
-            
-            <div class="row">
-                <div class="col-md-3 col-sm-6 mb-4 fade-in-up">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="stat-number">85%</div>
-                        <div class="stat-label">Siswa Berpartisipasi</div>
-                    </div>
+<!-- Check Registration Section -->
+<section class="extracurriculars-section">
+    <div class="container">
+        <div class="check-registration fade-in-up">
+            <h3 class="mb-3">
+                <i class="fas fa-search me-2"></i>
+                Cek Status Pendaftaran
+            </h3>
+            <p class="text-muted mb-3">Masukkan NIS untuk melihat status pendaftaran ekstrakurikuler Anda</p>
+            <form action="{{ route('public.extracurriculars.check') }}" method="GET" class="check-form">
+                <div class="form-group">
+                    <label class="form-label">Nomor Induk Siswa (NIS)</label>
+                    <input type="text" name="student_nis" class="form-input" placeholder="Masukkan NIS Anda" required>
                 </div>
-                
-                <div class="col-md-3 col-sm-6 mb-4 fade-in-up">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-trophy"></i>
-                        </div>
-                        <div class="stat-number">42</div>
-                        <div class="stat-label">Prestasi Nasional</div>
-                    </div>
-                </div>
-                
-                <div class="col-md-3 col-sm-6 mb-4 fade-in-up">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-chalkboard-teacher"></i>
-                        </div>
-                        <div class="stat-number">18</div>
-                        <div class="stat-label">Pelatih Berpengalaman</div>
-                    </div>
-                </div>
-                
-                <div class="col-md-3 col-sm-6 mb-4 fade-in-up">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="stat-number">12</div>
-                        <div class="stat-label">Jam/Minggu</div>
-                    </div>
-                </div>
-            </div>
+                <button type="submit" class="btn-check">
+                    <i class="fas fa-search me-2"></i>
+                    Cek Status
+                </button>
+            </form>
         </div>
-    </section>
 
-    <!-- Registration Section -->
-    <section class="registration-section">
-        <div class="container">
-            <div class="registration-card fade-in-up">
-                <h2 class="mb-4">Tertarik Bergabung?</h2>
-                <p class="mb-4">Daftarkan diri Anda sekarang untuk mengikuti salah satu ekstrakurikuler yang tersedia. Pengembangan bakat dan minat menunggu Anda!</p>
-                
-            </div>
+        <div class="section-title">
+            <h2 class="section-heading fade-in-up">Daftar Ekstrakurikuler</h2>
+            <p class="section-subtitle fade-in-up" style="animation-delay: 0.2s;">
+                Pilih ekstrakurikuler yang sesuai dengan minat dan bakatmu
+            </p>
         </div>
-    </section>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Tab functionality
-            const extracurricularTabs = document.querySelectorAll('#extracurricularTabs .nav-link');
-            
-            extracurricularTabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    // Remove active class from all tabs
-                    extracurricularTabs.forEach(t => t.classList.remove('active'));
+        <div class="extracurriculars-grid" id="extracurriculars-list">
+            @if($extracurriculars->count() > 0)
+                @foreach($extracurriculars as $index => $extracurricular)
+                <div class="extracurricular-card fade-in-up" style="animation-delay: {{ ($index % 6) * 0.1 }}s;">
+                    <div class="card-image">
+                        @if($extracurricular->image)
+                            <img src="{{ asset('storage/' . $extracurricular->image) }}" 
+                                 alt="{{ $extracurricular->name }}">
+                        @else
+                            <div class="card-image-placeholder">
+                                <i class="fas fa-users"></i>
+                            </div>
+                        @endif
+                    </div>
                     
-                    // Add active class to clicked tab
-                    this.classList.add('active');
-                });
-            });
+                    <div class="card-content">
+                        <h3 class="card-title">{{ $extracurricular->name }}</h3>
+                        <p class="card-coach">
+                            <i class="fas fa-user-tie"></i>
+                            Pembina: {{ $extracurricular->coach }}
+                        </p>
+                        
+                        <p class="card-description">
+                            {{ Str::limit($extracurricular->description, 120) }}
+                        </p>
+
+                        <div class="card-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">{{ $extracurricular->registrations_count }}</span>
+                                <div class="stat-label">Total Pendaftar</div>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">{{ $extracurricular->approved_registrations_count }}</span>
+                                <div class="stat-label">Diterima</div>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">{{ $extracurricular->pending_registrations_count }}</span>
+                                <div class="stat-label">Menunggu</div>
+                            </div>
+                        </div>
+
+                        <div class="card-actions">
+                            <a href="{{ route('public.extracurriculars.show', $extracurricular) }}" class="btn-view">
+                                <i class="fas fa-eye"></i>
+                                Detail
+                            </a>
+                            @if($extracurricular->status === 'active')
+                                <a href="{{ route('public.extracurriculars.register', $extracurricular) }}" class="btn-register">
+                                    <i class="fas fa-user-plus"></i>
+                                    Daftar
+                                </a>
+                            @else
+                                <span class="btn-register" style="opacity: 0.6; cursor: not-allowed;">
+                                    <i class="fas fa-lock"></i>
+                                    Tutup
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            @else
+                <!-- Enhanced Empty State -->
+                <div class="col-12">
+                    <div class="empty-state">
+                        <i class="fas fa-users fa-5x mb-4"></i>
+                        <h3>Belum Ada Ekstrakurikuler</h3>
+                        <p>Saat ini belum ada ekstrakurikuler yang tersedia. Silakan cek kembali nanti.</p>
+                    </div>
+                </div>
+            @endif
+        </div>
+
+        <!-- Enhanced Pagination -->
+        @if($extracurriculars->hasPages())
+            <div class="d-flex justify-content-center">
+                {{ $extracurriculars->links() }}
+            </div>
+        @endif
+
+        <!-- Enhanced Registration Call-to-Action Section -->
+        <div class="registration-cta-section fade-in-up">
+            <div class="registration-cta-card">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <div class="cta-content">
+                            <h3 class="cta-title">
+                                <i class="fas fa-rocket me-3"></i>
+                                Siap Bergabung dengan Ekstrakurikuler?
+                            </h3>
+                            <p class="cta-description">
+                                Jangan lewatkan kesempatan untuk mengembangkan bakat dan minatmu! 
+                                Daftar sekarang dan jadilah bagian dari komunitas siswa berprestasi di SMA Negeri 99.
+                            </p>
+                            <div class="cta-features">
+                                <div class="feature-item">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span>Pendaftaran mudah dan cepat</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span>Bimbingan dari pembina berpengalaman</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span>Kesempatan mengikuti kompetisi</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span>Pengembangan soft skills dan karakter</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 text-center">
+                        <div class="cta-actions">
+                            <div class="cta-stats mb-4">
+                                <div class="stat-circle">
+                                    <div class="stat-number">{{ $extracurriculars->where('status', 'active')->count() }}</div>
+                                    <div class="stat-text">Ekstrakurikuler Aktif</div>
+                                </div>
+                            </div>
+                            <a href="#extracurriculars-list" class="btn-cta-primary">
+                                <i class="fas fa-user-plus me-2"></i>
+                                Pilih & Daftar Sekarang
+                            </a>
+                            <a href="{{ route('public.extracurriculars.check') }}" class="btn-cta-secondary">
+                                <i class="fas fa-search me-2"></i>
+                                Cek Status Pendaftaran
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Enhanced Intersection Observer for animations
+    const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -80px 0px'
+    };
+    
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+    
+    // Observe all animated elements
+    const animatedElements = document.querySelectorAll('.fade-in-up, .fade-in-left, .fade-in-right, .scale-in');
+    animatedElements.forEach(element => {
+        observer.observe(element);
+    });
+
+    // Enhanced card hover effects with 3D transforms
+    const extracurricularCards = document.querySelectorAll('.extracurricular-card');
+    extracurricularCards.forEach((card, index) => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-25px) scale(1.03) perspective(1000px) rotateX(10deg)';
+            this.style.zIndex = '10';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1) perspective(1000px) rotateX(0deg)';
+            this.style.zIndex = '1';
+        });
+
+        // Add staggered animation delay
+        card.style.animationDelay = `${(index % 6) * 0.15}s`;
+    });
+
+    // Enhanced stats animation with counter effect
+    const statsCards = document.querySelectorAll('.stats-card');
+    statsCards.forEach((card, index) => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-18px) scale(1.06)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+
+        // Add counter animation
+        const numberElement = card.querySelector('h2');
+        if (numberElement) {
+            const targetNumber = parseInt(numberElement.textContent);
+            let currentNumber = 0;
+            const increment = targetNumber / 50;
             
-            // Animation on scroll
-            const animatedElements = document.querySelectorAll('.fade-in-up');
+            const counter = setInterval(() => {
+                currentNumber += increment;
+                if (currentNumber >= targetNumber) {
+                    currentNumber = targetNumber;
+                    clearInterval(counter);
+                }
+                numberElement.textContent = Math.floor(currentNumber);
+            }, 50);
+        }
+    });
+
+    // Enhanced form interactions
+    const formInputs = document.querySelectorAll('.form-input');
+    formInputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.style.transform = 'translateY(-2px)';
+        });
+        
+        input.addEventListener('blur', function() {
+            this.parentElement.style.transform = 'translateY(0)';
+        });
+    });
+
+    // Smooth scroll for CTA buttons
+    const ctaButtons = document.querySelectorAll('a[href^="#"]');
+    ctaButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
             
-            function checkScroll() {
-                animatedElements.forEach(element => {
-                    const elementPosition = element.getBoundingClientRect().top;
-                    const screenPosition = window.innerHeight / 1.3;
-                    
-                    if (elementPosition < screenPosition) {
-                        element.style.animationPlayState = 'running';
-                    }
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
                 });
             }
-            
-            // Initial check
-            checkScroll();
-            
-            // Check on scroll
-            window.addEventListener('scroll', checkScroll);
         });
-    </script>
-</body>
-</html>
+    });
+
+    // Enhanced parallax effect for hero section
+    window.addEventListener('scroll', function() {
+        const scrolled = window.pageYOffset;
+        const heroSection = document.querySelector('.hero-section');
+        const rate = scrolled * -0.5;
+        
+        if (heroSection) {
+            heroSection.style.transform = `translateY(${rate}px)`;
+        }
+    });
+
+    // Add loading animation to cards
+    extracurricularCards.forEach((card, index) => {
+        setTimeout(() => {
+            card.classList.add('animate');
+        }, index * 100);
+    });
+
+    console.log('Enhanced extracurriculars page loaded with premium animations!');
+});
+</script>
+@endsection

@@ -6,6 +6,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Log;
 
 class CheckRole
 {
@@ -17,12 +18,33 @@ class CheckRole
 
         $user = auth()->user();
         
+        // Log untuk debugging
+        Log::info('CheckRole middleware', [
+            'user_id' => $user->id,
+            'user_email' => $user->email,
+            'required_roles' => $roles,
+            'user_roles' => $user->roles->pluck('name')->toArray()
+        ]);
+        
+        // Jika user memiliki role superadministrator, izinkan akses ke semua
+        if ($user->hasRole('superadministrator') || $user->hasRole('super_admin')) {
+            Log::info('Access granted: User has superadministrator role');
+            return $next($request);
+        }
+        
+        // Periksa role yang diminta
         foreach ($roles as $role) {
             if ($user->hasRole($role)) {
+                Log::info('Access granted: User has required role', ['role' => $role]);
                 return $next($request);
             }
         }
 
+        Log::warning('Access denied: User does not have required roles', [
+            'required_roles' => $roles,
+            'user_roles' => $user->roles->pluck('name')->toArray()
+        ]);
+        
         abort(403, 'Unauthorized access');
     }
 }

@@ -1,13 +1,10 @@
-<?php
-// resources/views/admin/gallery/index.blade.php
-?>
 @extends('layouts.admin')
 
-@section('title', 'Gallery Management')
+@section('title', 'Upload Photos')
 
 @section('content')
 <style>
-    .gallery-container {
+    .upload-container {
         background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #ffffff 100%);
         min-height: 100vh;
         padding: 1.5rem;
@@ -39,9 +36,9 @@
         margin: 0;
     }
 
-    .btn-primary {
-        background: linear-gradient(135deg, #0ea5e9, #0284c7);
-        color: white;
+    .btn-secondary {
+        background: rgba(107, 114, 128, 0.1);
+        color: #374151;
         padding: 0.75rem 1.5rem;
         border-radius: 12px;
         text-decoration: none;
@@ -50,225 +47,261 @@
         align-items: center;
         gap: 0.5rem;
         transition: all 0.3s ease;
+        border: 1px solid rgba(107, 114, 128, 0.2);
+    }
+
+    .btn-secondary:hover {
+        background: rgba(107, 114, 128, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(107, 114, 128, 0.2);
+        color: #374151;
+        text-decoration: none;
+    }
+
+    .upload-form {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 2rem;
+        border: 1px solid rgba(14, 165, 233, 0.1);
+        box-shadow: 0 4px 20px rgba(14, 165, 233, 0.08);
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #0c4a6e;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .form-control {
+        border: 2px solid rgba(14, 165, 233, 0.1);
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.8);
+    }
+
+    .form-control:focus {
+        border-color: #0ea5e9;
+        box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        background: white;
+    }
+
+    .form-select {
+        border: 2px solid rgba(14, 165, 233, 0.1);
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.8);
+    }
+
+    .form-select:focus {
+        border-color: #0ea5e9;
+        box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        background: white;
+    }
+
+    .file-upload-area {
+        border: 3px dashed rgba(14, 165, 233, 0.3);
+        border-radius: 16px;
+        padding: 3rem 2rem;
+        text-align: center;
+        background: rgba(14, 165, 233, 0.02);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .file-upload-area:hover {
+        border-color: #0ea5e9;
+        background: rgba(14, 165, 233, 0.05);
+    }
+
+    .file-upload-area.dragover {
+        border-color: #0ea5e9;
+        background: rgba(14, 165, 233, 0.1);
+        transform: scale(1.02);
+    }
+
+    .upload-icon {
+        width: 64px;
+        height: 64px;
+        background: linear-gradient(135deg, #dbeafe, #bae6fd);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+    }
+
+    .upload-text {
+        color: #0c4a6e;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .upload-subtext {
+        color: #64748b;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    .file-input {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #0ea5e9, #0284c7);
+        color: white;
+        padding: 0.875rem 2rem;
+        border-radius: 12px;
+        font-weight: 600;
         border: none;
-        box-shadow: 0 2px 8px rgba(14, 165, 233, 0.2);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+        font-size: 1rem;
     }
 
     .btn-primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(14, 165, 233, 0.3);
-        color: white;
-        text-decoration: none;
+        box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4);
     }
 
-    /* Statistics Cards */
-    .stats-container {
+    .btn-primary:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .preview-container {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.25rem;
-        margin-bottom: 2rem;
-    }
-
-    .stat-item {
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(10px);
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 1rem;
+        margin-top: 1.5rem;
         padding: 1.5rem;
-        border-radius: 14px;
+        background: rgba(14, 165, 233, 0.02);
+        border-radius: 12px;
         border: 1px solid rgba(14, 165, 233, 0.1);
-        transition: all 0.3s ease;
     }
 
-    .stat-item:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(14, 165, 233, 0.15);
-    }
-
-    .stat-icon {
-        width: 42px;
-        height: 42px;
-        background: linear-gradient(135deg, #dbeafe, #bae6fd);
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 1rem;
-    }
-
-    .stat-value {
-        font-size: 1.75rem;
-        font-weight: 700;
-        color: #0c4a6e;
-        margin-bottom: 0.25rem;
-    }
-
-    .stat-title {
-        color: #64748b;
-        font-size: 0.85rem;
-        font-weight: 500;
-    }
-
-    /* Albums Grid */
-    .albums-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 1.5rem;
-    }
-
-    .album-item {
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(10px);
-        border-radius: 16px;
+    .preview-item {
+        position: relative;
+        border-radius: 8px;
         overflow: hidden;
-        border: 1px solid rgba(14, 165, 233, 0.1);
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 12px rgba(14, 165, 233, 0.05);
-    }
-
-    .album-item:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 30px rgba(14, 165, 233, 0.15);
-    }
-
-    .album-image {
-        width: 100%;
-        height: 180px;
-        object-fit: cover;
+        background: white;
+        box-shadow: 0 2px 8px rgba(14, 165, 233, 0.1);
         transition: transform 0.3s ease;
     }
 
-    .album-item:hover .album-image {
-        transform: scale(1.03);
+    .preview-item:hover {
+        transform: scale(1.05);
     }
 
-    .album-placeholder {
+    .preview-image {
         width: 100%;
-        height: 180px;
-        background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+        height: 120px;
+        object-fit: cover;
+    }
+
+    .preview-remove {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        background: rgba(239, 68, 68, 0.9);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
         display: flex;
         align-items: center;
         justify-content: center;
+        cursor: pointer;
+        font-size: 12px;
+        transition: all 0.3s ease;
     }
 
-    .album-body {
-        padding: 1.25rem;
+    .preview-remove:hover {
+        background: #dc2626;
+        transform: scale(1.1);
     }
 
-    .album-name {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #0c4a6e;
-        margin-bottom: 0.5rem;
-        line-height: 1.4;
-    }
-
-    .album-desc {
+    .preview-name {
+        padding: 0.5rem;
+        font-size: 0.75rem;
         color: #64748b;
-        font-size: 0.85rem;
-        line-height: 1.5;
-        margin-bottom: 1rem;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
+        text-align: center;
+        word-break: break-all;
+    }
+
+    .alert {
+        border-radius: 12px;
+        border: none;
+        padding: 1rem 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .alert-success {
+        background: rgba(16, 185, 129, 0.1);
+        color: #059669;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .alert-danger {
+        background: rgba(239, 68, 68, 0.1);
+        color: #dc2626;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .progress-container {
+        display: none;
+        margin-top: 1rem;
+    }
+
+    .progress {
+        height: 8px;
+        border-radius: 4px;
+        background: rgba(14, 165, 233, 0.1);
         overflow: hidden;
     }
 
-    .album-info {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 0.75rem;
-        font-size: 0.75rem;
-        color: #64748b;
+    .progress-bar {
+        background: linear-gradient(90deg, #0ea5e9, #0284c7);
+        height: 100%;
+        border-radius: 4px;
+        transition: width 0.3s ease;
     }
 
-    .category-tag {
-        padding: 0.25rem 0.75rem;
-        border-radius: 12px;
-        font-size: 0.7rem;
-        font-weight: 500;
-        background: rgba(14, 165, 233, 0.1);
-        color: #0c4a6e;
-        border: 1px solid rgba(14, 165, 233, 0.15);
-    }
-
-    /* Category specific colors */
-    .category-school_events { background: rgba(239, 68, 68, 0.1); color: #dc2626; border-color: rgba(239, 68, 68, 0.2); }
-    .category-academic { background: rgba(14, 165, 233, 0.1); color: #0284c7; border-color: rgba(14, 165, 233, 0.2); }
-    .category-extracurricular { background: rgba(16, 185, 129, 0.1); color: #059669; border-color: rgba(16, 185, 129, 0.2); }
-    .category-achievements { background: rgba(245, 158, 11, 0.1); color: #d97706; border-color: rgba(245, 158, 11, 0.2); }
-    .category-facilities { background: rgba(139, 92, 246, 0.1); color: #7c3aed; border-color: rgba(139, 92, 246, 0.2); }
-    .category-general { background: rgba(107, 114, 128, 0.1); color: #374151; border-color: rgba(107, 114, 128, 0.2); }
-
-    .album-controls {
+    .form-actions {
         display: flex;
-        gap: 0.5rem;
-    }
-
-    .control-btn {
-        padding: 0.6rem 1rem;
-        border-radius: 8px;
-        font-size: 0.8rem;
-        font-weight: 500;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
+        gap: 1rem;
         justify-content: center;
-        gap: 0.375rem;
-        transition: all 0.3s ease;
-        border: none;
-        cursor: pointer;
-        letter-spacing: 0.01em;
-    }
-
-    .btn-remove {
-        background: rgba(248, 113, 113, 0.1);
-        color: #ef4444;
-        border: 1px solid rgba(248, 113, 113, 0.2);
-    }
-
-    .btn-remove:hover {
-        background: rgba(248, 113, 113, 0.2);
-        transform: translateY(-1px);
-        box-shadow: 0 3px 12px rgba(248, 113, 113, 0.25);
-    }
-
-    /* Empty State */
-    .no-content {
-        text-align: center;
-        padding: 3rem 2rem;
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(10px);
-        border-radius: 16px;
-        border: 1px solid rgba(14, 165, 233, 0.1);
-        box-shadow: 0 4px 20px rgba(14, 165, 233, 0.08);
-    }
-
-    .empty-icon {
-        width: 60px;
-        height: 60px;
-        background: linear-gradient(135deg, #dbeafe, #bae6fd);
-        border-radius: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1.25rem;
-    }
-
-    .empty-heading {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #0c4a6e;
-        margin-bottom: 0.5rem;
-    }
-
-    .empty-message {
-        color: #64748b;
-        margin-bottom: 1.5rem;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(14, 165, 233, 0.1);
     }
 
     /* Responsive Design */
     @media (max-width: 768px) {
-        .gallery-container {
+        .upload-container {
             padding: 1rem;
         }
 
@@ -279,26 +312,26 @@
             padding: 1.25rem;
         }
 
-        .albums-container {
-            grid-template-columns: 1fr;
+        .upload-form {
+            padding: 1.5rem;
         }
 
-        .stats-container {
-            grid-template-columns: repeat(2, 1fr);
+        .file-upload-area {
+            padding: 2rem 1rem;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .preview-container {
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
         }
     }
 
-    /* Smooth Animations */
-    .album-item {
+    /* Animation */
+    .upload-form {
         animation: slideUp 0.5s ease-out;
-    }
-
-    .album-item:nth-child(2n) {
-        animation-delay: 0.1s;
-    }
-
-    .album-item:nth-child(3n) {
-        animation-delay: 0.2s;
     }
 
     @keyframes slideUp {
@@ -313,204 +346,276 @@
     }
 </style>
 
-<div class="gallery-container">
+<div class="upload-container">
     <!-- Page Header -->
     <div class="page-header">
         <div>
-            <h1 class="page-title">Gallery Management</h1>
-            <p class="page-subtitle">Manage your photo albums and gallery content</p>
+            <h1 class="page-title">Upload Photos</h1>
+            <p class="page-subtitle">Add new photos to your gallery collection</p>
         </div>
-        <a href="{{ route('admin.gallery.upload') }}" class="btn-primary">
+        <a href="{{ route('admin.gallery.index') }}" class="btn-secondary">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
             </svg>
-            Upload Photos
+            Back to Gallery
         </a>
     </div>
 
-    <!-- Statistics Section -->
-    <div class="stats-container">
-        <div class="stat-item">
-            <div class="stat-icon">
-                <svg class="w-6 h-6" style="color: #0284c7;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 7a2 2 0 002-2h10a2 2 0 002 2v2M5 7V5a2 2 0 012-2h6a2 2 0 012 2v2"/>
-                </svg>
-            </div>
-            
-            <div class="stat-value">
-                {{ is_array($photos) ? array_sum(array_column($photos, 'photo_count')) : 0 }}
-            </div>
-
-
-            <div class="stat-title">Total Albums</div>
-        </div>
-
-        <div class="stat-item">
-            <div class="stat-icon">
-                <svg class="w-6 h-6" style="color: #0284c7;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-            </div>
-            <div class="stat-value">{{ array_sum(array_column($photos, 'photo_count')) }}</div>
-            <div class="stat-title">Total Photos</div>
-        </div>
-
-        <div class="stat-item">
-            <div class="stat-icon">
-                <svg class="w-6 h-6" style="color: #0284c7;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-                </svg>
-            </div>
-            <div class="stat-value">{{ count(array_unique(array_column($photos, 'category'))) }}</div>
-            <div class="stat-title">Categories</div>
-        </div>
-    </div>
-
-    <!-- Albums Grid -->
-    @if(count($photos) > 0)
-        <div class="albums-container">
-            @foreach($photos as $album)
-                <div class="album-item">
-                    @if(isset($album['photos'][0]))
-                        <img src="{{ asset('storage/' . $album['photos'][0]['thumbnail_path']) }}" 
-                             alt="{{ $album['title'] }}" 
-                             class="album-image"
-                             onerror="this.src='{{ asset('images/placeholder-image.png') }}'">
-                    @else
-                        <div class="album-placeholder">
-                            <svg class="w-16 h-16" style="color: #0284c7;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
-                        </div>
-                    @endif
-                    
-                    <div class="album-body">
-                        <h3 class="album-name">{{ $album['title'] }}</h3>
-                        
-                        @if($album['description'])
-                            <p class="album-desc">{{ $album['description'] }}</p>
-                        @endif
-                        
-                        <div class="album-info">
-                            <span class="category-tag category-{{ $album['category'] }}">
-                                {{ ucfirst(str_replace('_', ' ', $album['category'])) }}
-                            </span>
-                            <span>{{ $album['photo_count'] }} photos</span>
-                        </div>
-                        
-                        <div class="album-info">
-                            <span>{{ \Carbon\Carbon::parse($album['created_at'])->format('M d, Y') }}</span>
-                            <span>by {{ $album['created_by'] }}</span>
-                        </div>
-                        
-                        <div class="album-controls">
-                            <a href="{{ route('gallery.photos', $album['slug']) }}" 
-                               target="_blank"
-                               class="control-btn btn-view-public">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                </svg>
-                                View Public
-                            </a>
-                            
-                            <form action="{{ route('admin.gallery.destroy', $album['id']) }}" 
-                                  method="POST" 
-                                  style="display: inline;"
-                                  onsubmit="return confirm('Are you sure you want to delete this album? This action cannot be undone.')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="control-btn btn-remove">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H8a1 1 0 00-1 1v3M4 7h16"/>
-                                    </svg>
-                                    Delete
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    @else
-        <!-- Empty State -->
-        <div class="no-content">
-            <div class="empty-icon">
-                <svg class="w-10 h-10" style="color: #0284c7;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-            </div>
-            <h3 class="empty-heading">No Photo Albums Yet</h3>
-            <p class="empty-message">Start building your gallery by uploading your first photo album</p>
-            <a href="{{ route('admin.gallery.upload') }}" class="btn-primary">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                </svg>
-                Upload Your First Album
-            </a>
+    <!-- Success/Error Messages -->
+    @if(session('success'))
+        <div class="alert alert-success">
+            <svg class="w-5 h-5" style="display: inline; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            {{ session('success') }}
         </div>
     @endif
+
+    @if($errors->any())
+        <div class="alert alert-danger">
+            <svg class="w-5 h-5" style="display: inline; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <strong>Please fix the following errors:</strong>
+            <ul style="margin: 0.5rem 0 0 1.5rem;">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <!-- Upload Form -->
+    <form action="{{ route('admin.gallery.store') }}" method="POST" enctype="multipart/form-data" class="upload-form" id="uploadForm">
+        @csrf
+        
+        <!-- Album Information -->
+        <div class="form-group">
+            <label for="title" class="form-label">Album Title *</label>
+            <input type="text" 
+                   class="form-control" 
+                   id="title" 
+                   name="title" 
+                   value="{{ old('title') }}" 
+                   required 
+                   placeholder="Enter album title">
+        </div>
+
+        <div class="form-group">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" 
+                      id="description" 
+                      name="description" 
+                      rows="3" 
+                      placeholder="Enter album description (optional)">{{ old('description') }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="category" class="form-label">Category *</label>
+            <select class="form-select" id="category" name="category" required>
+                <option value="">Select Category</option>
+                <option value="school_events" {{ old('category') == 'school_events' ? 'selected' : '' }}>School Events</option>
+                <option value="academic" {{ old('category') == 'academic' ? 'selected' : '' }}>Academic</option>
+                <option value="extracurricular" {{ old('category') == 'extracurricular' ? 'selected' : '' }}>Extracurricular</option>
+                <option value="achievements" {{ old('category') == 'achievements' ? 'selected' : '' }}>Achievements</option>
+                <option value="facilities" {{ old('category') == 'facilities' ? 'selected' : '' }}>Facilities</option>
+                <option value="general" {{ old('category') == 'general' ? 'selected' : '' }}>General</option>
+            </select>
+        </div>
+
+        <!-- File Upload Area -->
+        <div class="form-group">
+            <label class="form-label">Photos *</label>
+            <div class="file-upload-area" id="fileUploadArea">
+                <div class="upload-icon">
+                    <svg class="w-8 h-8" style="color: #0284c7;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                <div class="upload-text">Drop photos here or click to browse</div>
+                <div class="upload-subtext">
+                    Supports: JPEG, PNG, JPG, GIF, WebP (Max: 10MB each)
+                </div>
+                <input type="file" 
+                       class="file-input" 
+                       id="photos" 
+                       name="photos[]" 
+                       multiple 
+                       accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
+                       required>
+            </div>
+            
+            <!-- Progress Bar -->
+            <div class="progress-container" id="progressContainer">
+                <div class="progress">
+                    <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+                </div>
+                <div style="text-align: center; margin-top: 0.5rem; font-size: 0.9rem; color: #64748b;" id="progressText">
+                    Uploading...
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview Container -->
+        <div class="preview-container" id="previewContainer" style="display: none;"></div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+            <button type="submit" class="btn-primary" id="submitBtn">
+                <svg class="w-5 h-5" style="display: inline; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                </svg>
+                Upload Photos
+            </button>
+            <a href="{{ route('admin.gallery.index') }}" class="btn-secondary">
+                Cancel
+            </a>
+        </div>
+    </form>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Smooth hover animations
-    const albumCards = document.querySelectorAll('.album-item');
-    albumCards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-6px) scale(1.02)';
-        });
+    const fileInput = document.getElementById('photos');
+    const fileUploadArea = document.getElementById('fileUploadArea');
+    const previewContainer = document.getElementById('previewContainer');
+    const submitBtn = document.getElementById('submitBtn');
+    const uploadForm = document.getElementById('uploadForm');
+    const progressContainer = document.getElementById('progressContainer');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    
+    let selectedFiles = [];
+
+    // File input change event
+    fileInput.addEventListener('change', function(e) {
+        handleFiles(e.target.files);
+    });
+
+    // Drag and drop events
+    fileUploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        fileUploadArea.classList.add('dragover');
+    });
+
+    fileUploadArea.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        fileUploadArea.classList.remove('dragover');
+    });
+
+    fileUploadArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        fileUploadArea.classList.remove('dragover');
+        handleFiles(e.dataTransfer.files);
+    });
+
+    function handleFiles(files) {
+        selectedFiles = Array.from(files);
+        updateFileInput();
+        showPreviews();
+    }
+
+    function updateFileInput() {
+        // Create a new DataTransfer object to update the file input
+        const dt = new DataTransfer();
+        selectedFiles.forEach(file => dt.items.add(file));
+        fileInput.files = dt.files;
+    }
+
+    function showPreviews() {
+        previewContainer.innerHTML = '';
         
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0) scale(1)';
+        if (selectedFiles.length === 0) {
+            previewContainer.style.display = 'none';
+            return;
+        }
+
+        previewContainer.style.display = 'grid';
+
+        selectedFiles.forEach((file, index) => {
+            const previewItem = document.createElement('div');
+            previewItem.className = 'preview-item';
+
+            const img = document.createElement('img');
+            img.className = 'preview-image';
+            img.src = URL.createObjectURL(file);
+
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'preview-remove';
+            removeBtn.innerHTML = '×';
+            removeBtn.type = 'button';
+            removeBtn.onclick = () => removeFile(index);
+
+            const fileName = document.createElement('div');
+            fileName.className = 'preview-name';
+            fileName.textContent = file.name.length > 15 ? file.name.substring(0, 15) + '...' : file.name;
+
+            previewItem.appendChild(img);
+            previewItem.appendChild(removeBtn);
+            previewItem.appendChild(fileName);
+            previewContainer.appendChild(previewItem);
         });
+
+        // Update submit button text
+        submitBtn.innerHTML = `
+            <svg class="w-5 h-5" style="display: inline; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+            </svg>
+            Upload ${selectedFiles.length} Photo${selectedFiles.length > 1 ? 's' : ''}
+        `;
+    }
+
+    function removeFile(index) {
+        selectedFiles.splice(index, 1);
+        updateFileInput();
+        showPreviews();
+    }
+
+    // Form submission with progress
+    uploadForm.addEventListener('submit', function(e) {
+        if (selectedFiles.length === 0) {
+            e.preventDefault();
+            alert('Please select at least one photo to upload.');
+            return;
+        }
+
+        // Show progress
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `
+            <svg class="w-5 h-5 animate-spin" style="display: inline; margin-right: 0.5rem;" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Uploading...
+        `;
+        progressContainer.style.display = 'block';
+
+        // Simulate progress (since we can't track real progress with standard form submission)
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+            progress += Math.random() * 15;
+            if (progress > 90) progress = 90;
+            progressBar.style.width = progress + '%';
+            progressText.textContent = `Uploading... ${Math.round(progress)}%`;
+        }, 200);
+
+        // Clear interval after form submission
+        setTimeout(() => {
+            clearInterval(progressInterval);
+            progressBar.style.width = '100%';
+            progressText.textContent = 'Processing...';
+        }, 3000);
     });
 
-    // Button click effects
-    const buttons = document.querySelectorAll('.control-btn, .btn-primary');
-    buttons.forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            // Create ripple effect
-            const ripple = document.createElement('div');
-            const rect = this.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height);
-            const x = e.clientX - rect.left - size / 2;
-            const y = e.clientY - rect.top - size / 2;
-            
-            ripple.style.cssText = `
-                position: absolute;
-                width: ${size}px;
-                height: ${size}px;
-                left: ${x}px;
-                top: ${y}px;
-                background: rgba(255, 255, 255, 0.4);
-                border-radius: 50%;
-                transform: scale(0);
-                animation: buttonRipple 0.5s ease-out;
-                pointer-events: none;
-                z-index: 10;
-            `;
-            
-            this.style.position = 'relative';
-            this.style.overflow = 'hidden';
-            this.appendChild(ripple);
-            
-            setTimeout(() => {
-                if (ripple.parentNode) {
-                    ripple.remove();
-                }
-            }, 500);
-        });
-    });
-
-    // Add ripple animation style
+    // Add CSS for spinner animation
     const style = document.createElement('style');
     style.textContent = `
-        @keyframes buttonRipple {
-            to {
-                transform: scale(3);
-                opacity: 0;
-            }
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
     `;
     document.head.appendChild(style);

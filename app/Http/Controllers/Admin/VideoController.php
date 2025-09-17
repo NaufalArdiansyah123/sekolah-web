@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Log;
+use App\Services\NotificationService;
 
 class VideoController extends Controller
 {
@@ -150,6 +151,13 @@ class VideoController extends Controller
             Log::info('Video uploaded successfully', [
                 'video_id' => $video->id,
                 'filename' => $filename
+            ]);
+
+            // Send notification
+            NotificationService::mediaUpload('video', $video->original_name, $video->file_size, [
+                'video_id' => $video->id,
+                'category' => $video->category,
+                'file_size_mb' => round($video->file_size / 1048576, 2)
             ]);
 
             return redirect()->route('admin.videos.index')

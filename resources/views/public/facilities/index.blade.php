@@ -1,34 +1,21 @@
 @extends('layouts.public')
 
+@section('title', 'Fasilitas Sekolah')
+
 @section('content')
+<link rel="stylesheet" href="{{ asset('css/public-template.css') }}">
 <style>
-    :root {
-        --primary-color: #1a202c;
-        --secondary-color: #3182ce;
-        --accent-color: #4299e1;
-        --light-gray: #f7fafc;
-        --dark-gray: #718096;
-        --glass-bg: rgba(26, 32, 44, 0.95);
-        --gradient-primary: linear-gradient(135deg, #1a202c, #3182ce);
-        --gradient-light: linear-gradient(135deg, rgba(49, 130, 206, 0.1), rgba(66, 153, 225, 0.05));
-    }
+    /* Page-specific styles for Facilities */
     
-    /* Enhanced Hero Section with Background Image */
-    .facilities-hero-section {
-        background: linear-gradient(
+    .hero-section {
+        background-image: linear-gradient(
             135deg, 
             rgba(26, 32, 44, 0.8) 0%, 
             rgba(49, 130, 206, 0.7) 50%, 
             rgba(26, 32, 44, 0.8) 100%
         ),
-        url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat;
-        color: white;
-        padding: 100px 0;
+        url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
         min-height: 50vh;
-        display: flex;
-        align-items: center;
-        position: relative;
-        overflow: hidden;
     }
     
     .facilities-hero-section::before {
@@ -421,7 +408,7 @@
 </style>
 
 <!-- Enhanced Hero Section for Facilities Page -->
-<section class="facilities-hero-section">
+<section class="hero-section">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8 mx-auto text-center">
@@ -868,6 +855,7 @@
 </div>
 
 <!-- JavaScript untuk Filter dan Animasi -->
+<script src="{{ asset('js/public-template.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Filter functionality

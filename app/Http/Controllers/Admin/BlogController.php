@@ -49,6 +49,7 @@ class BlogController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255|unique:blog_posts,slug',
             'content' => 'required|string',
             'category' => 'nullable|string|in:berita,pengumuman,kegiatan,prestasi',
             'status' => 'nullable|string|in:draft,published,archived',
@@ -100,6 +101,7 @@ class BlogController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255|unique:blog_posts,slug,' . $blog->id,
             'content' => 'required|string',
             'category' => 'nullable|string|in:berita,pengumuman,kegiatan,prestasi',
             'status' => 'nullable|string|in:draft,published,archived',

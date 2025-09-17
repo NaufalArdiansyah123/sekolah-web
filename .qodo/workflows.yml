@@ -1,64 +1,280 @@
-name: Qodo Workflows
-description: Automated code analysis and review workflows for sekolah-web
+# Qodo Workflows Configuration for sekolah-web Laravel Project
 
 workflows:
-  code_analysis:
-    name: Code Analysis
-    description: Analyze code quality, security, and performance
+  # Full codebase analysis workflow
+  full_analysis:
+    name: "Complete Codebase Analysis"
+    description: "Comprehensive security, performance, and quality analysis"
     trigger:
-      - on_commit
       - manual
+      - scheduled
     steps:
-      - name: Security Analysis
-        action: analyze
+      - name: "Initialize Analysis"
+        action: "setup"
         config:
-          type: security
-          severity: medium
-      - name: Performance Analysis
-        action: analyze
+          clear_cache: true
+          load_config: "qodo.json"
+      
+      - name: "Security Analysis"
+        action: "analyze"
+        focus: "security"
         config:
-          type: performance
-          severity: low
-      - name: Code Quality
-        action: analyze
+          rules:
+            - sql_injection
+            - xss_prevention
+            - csrf_protection
+            - authentication_bypass
+            - authorization_flaws
+            - file_upload_vulnerabilities
+            - session_hijacking
+            - input_validation
+          severity: "all"
+          include_patterns:
+            - "app/**/*.php"
+            - "routes/**/*.php"
+            - "resources/**/*.blade.php"
+      
+      - name: "Performance Analysis"
+        action: "analyze"
+        focus: "performance"
         config:
-          type: quality
-          severity: medium
+          rules:
+            - database_n_plus_one
+            - inefficient_queries
+            - memory_leaks
+            - caching_opportunities
+            - asset_optimization
+          include_patterns:
+            - "app/**/*.php"
+            - "database/**/*.php"
+            - "resources/**/*.js"
+            - "resources/**/*.css"
+      
+      - name: "Code Quality Analysis"
+        action: "analyze"
+        focus: "quality"
+        config:
+          rules:
+            - code_complexity
+            - duplication
+            - naming_conventions
+            - laravel_best_practices
+            - documentation_coverage
+          include_patterns:
+            - "app/**/*.php"
+            - "tests/**/*.php"
+      
+      - name: "Generate Report"
+        action: "report"
+        config:
+          formats: ["html", "json", "markdown"]
+          output_dir: "qodo-reports"
+          include_metrics: true
+          include_suggestions: true
 
-  pre_commit_review:
-    name: Pre-commit Review
-    description: Quick review before committing changes
+  # Quick security scan for commits
+  quick_scan:
+    name: "Quick Security Scan"
+    description: "Fast security check for recent changes"
     trigger:
       - pre_commit
+      - manual
     steps:
-      - name: Lint Check
-        action: lint
+      - name: "Security Quick Check"
+        action: "analyze"
+        focus: "security"
         config:
-          languages: [php, javascript]
-      - name: Basic Security Scan
-        action: analyze
+          quick_mode: true
+          severity: ["critical", "high"]
+          rules:
+            - sql_injection
+            - xss_prevention
+            - authentication_bypass
+          changed_files_only: true
+      
+      - name: "Generate Quick Report"
+        action: "report"
         config:
-          type: security
-          severity: high
-          quick: true
+          formats: ["text", "json"]
+          output_dir: "qodo-reports/quick"
+          severity_threshold: "high"
 
-  pull_request_review:
-    name: Pull Request Review
-    description: Comprehensive review for pull requests
+  # Pull request analysis
+  pr_analysis:
+    name: "Pull Request Analysis"
+    description: "Comprehensive analysis for pull requests"
     trigger:
       - pull_request
+      - manual
     steps:
-      - name: Full Code Analysis
-        action: analyze
+      - name: "Diff Analysis"
+        action: "analyze"
+        focus: "diff"
         config:
-          type: all
-          severity: low
-      - name: Test Coverage Check
-        action: test
+          compare_with: "main"
+          include_context: true
+          rules:
+            - security_regressions
+            - performance_impact
+            - breaking_changes
+      
+      - name: "Test Coverage Check"
+        action: "test_coverage"
         config:
-          coverage: true
-      - name: Generate Review Report
-        action: report
+          minimum_threshold: 70
+          include_new_code: true
+          fail_on_decrease: true
+      
+      - name: "Generate PR Report"
+        action: "report"
         config:
-          format: markdown
-          include_suggestions: true
+          formats: ["markdown", "json"]
+          output_dir: "qodo-reports/pr"
+          template: "pull_request"
+          include_diff: true
+
+  # Laravel-specific analysis
+  laravel_analysis:
+    name: "Laravel Framework Analysis"
+    description: "Laravel-specific security and best practices check"
+    trigger:
+      - manual
+      - scheduled
+    steps:
+      - name: "Eloquent Security"
+        action: "analyze"
+        focus: "laravel.eloquent"
+        config:
+          rules:
+            - mass_assignment_vulnerabilities
+            - sql_injection_in_raw_queries
+            - improper_model_relationships
+          include_patterns:
+            - "app/Models/**/*.php"
+      
+      - name: "Route Security"
+        action: "analyze"
+        focus: "laravel.routes"
+        config:
+          rules:
+            - missing_middleware
+            - route_parameter_injection
+            - improper_route_caching
+          include_patterns:
+            - "routes/**/*.php"
+      
+      - name: "Blade Template Security"
+        action: "analyze"
+        focus: "laravel.blade"
+        config:
+          rules:
+            - unescaped_output
+            - xss_in_templates
+            - improper_csrf_handling
+          include_patterns:
+            - "resources/views/**/*.blade.php"
+      
+      - name: "Configuration Security"
+        action: "analyze"
+        focus: "laravel.config"
+        config:
+          rules:
+            - debug_mode_in_production
+            - insecure_session_config
+            - weak_encryption_settings
+          include_patterns:
+            - "config/**/*.php"
+
+  # Frontend analysis
+  frontend_analysis:
+    name: "Frontend Security Analysis"
+    description: "JavaScript and CSS security analysis"
+    trigger:
+      - manual
+    steps:
+      - name: "JavaScript Security"
+        action: "analyze"
+        focus: "javascript"
+        config:
+          rules:
+            - dom_xss
+            - insecure_ajax_calls
+            - client_side_validation_bypass
+          include_patterns:
+            - "resources/js/**/*.js"
+            - "resources/views/**/*.blade.php"
+      
+      - name: "Alpine.js Security"
+        action: "analyze"
+        focus: "alpinejs"
+        config:
+          rules:
+            - unsafe_html_binding
+            - client_side_template_injection
+          include_patterns:
+            - "resources/views/**/*.blade.php"
+
+# Global configuration for all workflows
+global:
+  timeout: 1800  # 30 minutes
+  retry_count: 2
+  parallel_execution: true
+  cache_enabled: true
+  
+  # Notification settings
+  notifications:
+    on_success: false
+    on_failure: true
+    on_warning: false
+    channels: ["console"]
+  
+  # Output settings
+  output:
+    verbose: false
+    include_timing: true
+    color_output: true
+  
+  # Integration settings
+  integrations:
+    git:
+      enabled: true
+      track_changes: true
+    laravel:
+      artisan_integration: true
+      env_detection: true
+    testing:
+      phpunit_integration: true
+      coverage_tracking: true
+
+# Scheduled workflows
+schedule:
+  full_analysis:
+    cron: "0 2 * * 1"  # Every Monday at 2 AM
+    enabled: false
+  
+  security_scan:
+    cron: "0 6 * * *"  # Daily at 6 AM
+    enabled: false
+
+# Custom rules for Laravel school management system
+custom_rules:
+  school_specific:
+    - name: "student_data_protection"
+      description: "Ensure student personal data is properly protected"
+      pattern: "app/Models/Student.php"
+      severity: "high"
+    
+    - name: "grade_manipulation_prevention"
+      description: "Check for proper authorization on grade modifications"
+      pattern: "app/Http/Controllers/**/*Grade*.php"
+      severity: "critical"
+    
+    - name: "file_upload_security"
+      description: "Validate file upload security for documents and media"
+      pattern: "app/Http/Controllers/**/*Upload*.php"
+      severity: "high"
+    
+    - name: "authentication_bypass"
+      description: "Check for authentication bypass in admin routes"
+      pattern: "routes/web.php"
+      severity: "critical"

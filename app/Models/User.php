@@ -22,6 +22,21 @@ class User extends Authenticatable
         'bio',
         'avatar',
         'status',
+        'nis',
+        'birth_date',
+        'birth_place',
+        'gender',
+        'religion',
+        'class',
+        'parent_name',
+        'parent_phone',
+        'parent_email',
+        'enrollment_date',
+        'approved_at',
+        'approved_by',
+        'rejected_at',
+        'rejected_by',
+        'rejection_reason',
     ];
 
     protected $hidden = [
@@ -32,6 +47,10 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'birth_date' => 'date',
+        'enrollment_date' => 'date',
+        'approved_at' => 'datetime',
+        'rejected_at' => 'datetime',
     ];
 
     public function posts()
@@ -89,5 +108,53 @@ class User extends Authenticatable
     public function getRoleNameAttribute()
     {
         return $this->roles->first()->name ?? 'No Role';
+    }
+
+    /**
+     * Get the user who approved this registration
+     */
+    public function approvedBy()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    /**
+     * Get the user who rejected this registration
+     */
+    public function rejectedBy()
+    {
+        return $this->belongsTo(User::class, 'rejected_by');
+    }
+
+    /**
+     * Check if user is a student
+     */
+    public function isStudent()
+    {
+        return $this->hasRole('student');
+    }
+
+    /**
+     * Check if user registration is pending
+     */
+    public function isPending()
+    {
+        return $this->status === 'pending';
+    }
+
+    /**
+     * Check if user registration is approved
+     */
+    public function isApproved()
+    {
+        return $this->status === 'active';
+    }
+
+    /**
+     * Check if user registration is rejected
+     */
+    public function isRejected()
+    {
+        return $this->status === 'rejected';
     }
 }

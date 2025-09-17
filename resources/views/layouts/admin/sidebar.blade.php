@@ -466,7 +466,7 @@
         border-radius: 10px;
         background: rgba(255, 255, 255, 0.1);
         border: 1px solid var(--border-color);
-        display: flex;
+        display: none; /* Hidden by default */
         align-items: center;
         justify-content: center;
         cursor: pointer;
@@ -500,6 +500,10 @@
         
         .nav-section {
             padding-bottom: 2rem;
+        }
+        
+        .mobile-close-btn {
+            display: flex; /* Show only on mobile */
         }
     }
 </style>
@@ -634,12 +638,7 @@
                 <a href="{{ route('admin.gallery.index') }}" 
                    class="nav-dropdown-item {{ request()->routeIs('admin.gallery.index*') ? 'active' : '' }}"
                    @click="sidebarOpen = false">
-                    🖼️ Gallery Manager
-                </a>
-                <a href="{{ route('admin.gallery.upload') }}" 
-                   class="nav-dropdown-item {{ request()->routeIs('admin.gallery.upload*') ? 'active' : '' }}"
-                   @click="sidebarOpen = false">
-                    📤 Upload Photos
+                    🖼️ Photo Management
                 </a>
                 <a href="{{ route('admin.videos.index') }}" 
                    class="nav-dropdown-item {{ request()->routeIs('admin.videos.*') ? 'active' : '' }}"
@@ -684,11 +683,6 @@
                    @click="sidebarOpen = false">
                     🎯 Ekstrakurikuler
                 </a>
-                <a href="{{ route('admin.achievements.index') }}" 
-                   class="nav-dropdown-item {{ request()->routeIs('admin.achievements.*') ? 'active' : '' }}"
-                   @click="sidebarOpen = false">
-                    🏆 Prestasi
-                </a>
                 <a href="{{ route('admin.teachers.index') }}" 
                    class="nav-dropdown-item {{ request()->routeIs('admin.teachers.*') ? 'active' : '' }}"
                    @click="sidebarOpen = false">
@@ -698,6 +692,59 @@
                    class="nav-dropdown-item {{ request()->routeIs('admin.students.*') ? 'active' : '' }}"
                    @click="sidebarOpen = false">
                     👨‍🎓 Siswa
+                </a>
+            </div>
+        </div>
+
+        <!-- Section Divider -->
+        <div class="nav-section-divider"></div>
+        <div class="nav-section-title">
+            <span>Management User</span>
+        </div>
+
+        <!-- User Management -->
+        <div class="nav-dropdown" x-data="{ open: {{ request()->routeIs('admin.users.*', 'admin.student-registrations.*') ? 'true' : 'false' }} }">
+            <button @click="open = !open" 
+                    class="nav-dropdown-btn group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg w-full"
+                    :class="{ 'active': open }">
+                <div class="flex items-center">
+                    <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                    </svg>
+                    <span>Management User</span>
+                </div>
+                <svg class="dropdown-icon h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                </svg>
+            </button>
+            
+            <div x-show="open" 
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 transform scale-95"
+                 x-transition:enter-end="opacity-100 transform scale-100"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100 transform scale-100"
+                 x-transition:leave-end="opacity-0 transform scale-95"
+                 class="nav-dropdown-content">
+                <a href="{{ route('admin.users.index') }}" 
+                   class="nav-dropdown-item {{ request()->routeIs('admin.users.*') ? 'active' : '' }}"
+                   @click="sidebarOpen = false">
+                    👥 Kelola User
+                </a>
+                <a href="{{ route('admin.student-registrations.index') }}" 
+                   class="nav-dropdown-item {{ request()->routeIs('admin.student-registrations.*') ? 'active' : '' }}"
+                   @click="sidebarOpen = false">
+                    📝 Pendaftaran Siswa
+                    @php
+                        $pendingCount = \App\Models\User::where('status', 'pending')->whereHas('roles', function($q) {
+                            $q->where('name', 'student');
+                        })->count();
+                    @endphp
+                    @if($pendingCount > 0)
+                        <span class="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                            {{ $pendingCount }}
+                        </span>
+                    @endif
                 </a>
             </div>
         </div>

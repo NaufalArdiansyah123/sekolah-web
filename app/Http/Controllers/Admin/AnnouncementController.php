@@ -89,7 +89,26 @@ class AnnouncementController extends Controller
         // Increment views
         $announcement->increment('views');
         
-        return view('announcements.show', compact('announcement'));
+        // Get related announcements from same category
+        $relatedAnnouncements = Announcement::where('status', 'published')
+                                           ->where('id', '!=', $id)
+                                           ->where('kategori', $announcement->kategori)
+                                           ->latest()
+                                           ->limit(5)
+                                           ->get();
+        
+        // If not enough related announcements, get more from other categories
+        if ($relatedAnnouncements->count() < 5) {
+            $additionalAnnouncements = Announcement::where('status', 'published')
+                                                 ->where('id', '!=', $id)
+                                                 ->whereNotIn('id', $relatedAnnouncements->pluck('id'))
+                                                 ->latest()
+                                                 ->limit(5 - $relatedAnnouncements->count())
+                                                 ->get();
+            $relatedAnnouncements = $relatedAnnouncements->merge($additionalAnnouncements);
+        }
+        
+        return view('public.announcements.show', compact('announcement', 'relatedAnnouncements'));
     }
 
     // ========== ADMIN METHODS (yang sudah ada, sedikit diperbaiki) ==========
@@ -97,10 +116,36 @@ class AnnouncementController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Menggunakan Eloquent untuk konsistensi
-        $announcements = Announcement::orderBy('created_at', 'desc')->paginate(10);
+        // Menggunakan Eloquent untuk konsistensi dengan filtering
+        $query = Announcement::query();
+        
+        // Filter berdasarkan pencarian
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('judul', 'LIKE', '%' . $request->search . '%')
+                  ->orWhere('isi', 'LIKE', '%' . $request->search . '%')
+                  ->orWhere('penulis', 'LIKE', '%' . $request->search . '%');
+            });
+        }
+        
+        // Filter berdasarkan kategori
+        if ($request->filled('category')) {
+            $query->where('kategori', $request->category);
+        }
+        
+        // Filter berdasarkan status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        
+        // Filter berdasarkan prioritas
+        if ($request->filled('priority')) {
+            $query->where('prioritas', $request->priority);
+        }
+        
+        $announcements = $query->orderBy('created_at', 'desc')->paginate(10);
 
         return view('admin.posts.announcement.index', compact('announcements'));
     }

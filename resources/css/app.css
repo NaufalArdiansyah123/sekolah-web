@@ -3,6 +3,63 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+/* Student Dashboard Layout Fixes */
+.student-layout {
+    display: flex;
+    min-height: 100vh;
+    position: relative;
+}
+
+.student-sidebar {
+    width: 16rem; /* 64 * 0.25rem = 16rem */
+    flex-shrink: 0;
+    height: 100vh;
+    overflow-y: auto;
+    position: relative;
+    z-index: 10;
+}
+
+.student-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.student-content {
+    flex: 1;
+    padding: 1.5rem;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .student-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 50;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .student-sidebar.open {
+        transform: translateX(0);
+    }
+    
+    .student-main {
+        width: 100%;
+    }
+}
+
+/* Desktop */
+@media (min-width: 769px) {
+    .student-sidebar {
+        position: relative;
+        transform: none !important;
+    }
+}
+
 /* Custom Styles for School Website */
 @layer components {
     .btn-primary {

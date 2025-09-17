@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Download;
+use App\Services\NotificationService;
 
 class DownloadController extends Controller
 {
@@ -74,7 +75,7 @@ class DownloadController extends Controller
         $fileName = $request->file('file')->getClientOriginalName();
         $fileSize = $request->file('file')->getSize();
 
-        Download::create([
+        $download = Download::create([
             'title' => $request->title,
             'description' => $request->description,
             'file_path' => $filePath,
@@ -83,6 +84,13 @@ class DownloadController extends Controller
             'category' => $request->category,
             'status' => $request->status,
             'user_id' => auth()->id(),
+        ]);
+
+        // Send notification
+        NotificationService::mediaUpload('media', $fileName, $fileSize, [
+            'download_id' => $download->id,
+            'category' => $request->category,
+            'file_size_mb' => round($fileSize / 1048576, 2)
         ]);
 
         return redirect()->route('admin.downloads.index')

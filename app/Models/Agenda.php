@@ -14,5 +14,8 @@ class Agenda extends Model
         'kategori', 'prioritas', 'lokasi', 'penanggung_jawab'
     ];
 
-    protected $dates = ['tanggal'];
+    protected $casts = [
+        'tanggal' => 'datetime',
+        'waktu' => 'string'
+    ];
 }

@@ -8,13 +8,14 @@ use App\Models\Slideshow; // Tambahkan ini untuk menggunakan model Slideshow
 use App\Models\Download;
 use App\Models\BlogPost;
 use App\Models\Video;
+use App\Models\Post;
 
 class PublicController extends Controller
 {
   public function index()
 {
     $slideshows = Slideshow::all(); // ambil semua data dari tabel slideshow
-    return view('home', compact('slideshows'));
+    return view('public.home', compact('slideshows'));
 }
     public function home()
 {
@@ -93,39 +94,192 @@ class PublicController extends Controller
         ]);
     }
 
-    public function news()
+    public function news(Request $request)
     {
+        $query = BlogPost::with('user')
+                         ->published()
+                         ->latest('published_at');
+
+        // Search filter
+        if ($request->filled('search')) {
+            $query->search($request->search);
+        }
+
+        // Category filter
+        if ($request->filled('category')) {
+            $query->byCategory($request->category);
+        }
+
+        $blogs = $query->paginate(12);
+        
+        // Get categories for filter
+        $categories = BlogPost::published()
+                             ->distinct()
+                             ->pluck('category')
+                             ->filter()
+                             ->sort();
+
+        // Get latest blogs for sidebar
+        $latestBlogs = BlogPost::published()
+                              ->latest('published_at')
+                              ->take(5)
+                              ->get();
+
         return view('public.news.index', [
-            'title' => 'Berita Terkini'
+            'title' => 'Berita Terkini',
+            'blogs' => $blogs,
+            'categories' => $categories,
+            'latestBlogs' => $latestBlogs
         ]);
     }
 
-    public function newsDetail($slug)
+    public function newsDetail($id)
     {
+        $blog = BlogPost::with('user')
+                       ->published()
+                       ->findOrFail($id);
+        
+        // Load the user relationship
+        $blog->load('user');
+        
+        // Get related blogs
+        $relatedBlogs = BlogPost::published()
+                               ->where('id', '!=', $blog->id)
+                               ->where('category', $blog->category)
+                               ->latest('published_at')
+                               ->take(4)
+                               ->get();
+        
+        // If not enough related blogs, get more from other categories
+        if ($relatedBlogs->count() < 4) {
+            $additionalBlogs = BlogPost::published()
+                                      ->where('id', '!=', $blog->id)
+                                      ->whereNotIn('id', $relatedBlogs->pluck('id'))
+                                      ->latest('published_at')
+                                      ->take(4 - $relatedBlogs->count())
+                                      ->get();
+            $relatedBlogs = $relatedBlogs->merge($additionalBlogs);
+        }
+
         return view('public.news.show', [
-            'title' => 'Detail Berita'
+            'title' => $blog->title,
+            'blog' => $blog,
+            'relatedBlogs' => $relatedBlogs
         ]);
     }
 
-    public function announcements()
+    public function agenda(Request $request)
     {
-        return view('public.announcements.index', [
-            'title' => 'Pengumuman'
-        ]);
-    }
+        $query = Post::where('type', 'agenda')
+                    ->where('status', 'active')
+                    ->latest('event_date');
 
-    public function agenda()
-    {
+        // Search filter
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('content', 'like', "%{$search}%")
+                  ->orWhere('location', 'like', "%{$search}%");
+            });
+        }
+
+        // Period filter
+        if ($request->filled('period')) {
+            switch ($request->period) {
+                case 'upcoming':
+                    $query->where('event_date', '>', now());
+                    break;
+                case 'today':
+                    $query->whereDate('event_date', today());
+                    break;
+                case 'this_week':
+                    $query->whereBetween('event_date', [
+                        now()->startOfWeek(),
+                        now()->endOfWeek()
+                    ]);
+                    break;
+                case 'this_month':
+                    $query->whereMonth('event_date', now()->month)
+                          ->whereYear('event_date', now()->year);
+                    break;
+                case 'past':
+                    $query->where('event_date', '<', now());
+                    break;
+            }
+        }
+
+        // Month filter (only if period is not set to specific time ranges)
+        if ($request->filled('month') && !in_array($request->period, ['today', 'this_week', 'this_month'])) {
+            $query->whereMonth('event_date', $request->month);
+        }
+        
+        // Year filter
+        if ($request->filled('year') && !in_array($request->period, ['today', 'this_week', 'this_month'])) {
+            $query->whereYear('event_date', $request->year);
+        }
+
+        // Sorting
+        switch ($request->get('sort', 'latest')) {
+            case 'oldest':
+                $query->oldest();
+                break;
+            case 'date_asc':
+                $query->orderBy('event_date', 'asc');
+                break;
+            case 'date_desc':
+                $query->orderBy('event_date', 'desc');
+                break;
+            case 'title':
+                $query->orderBy('title', 'asc');
+                break;
+            default: // latest
+                $query->latest('event_date');
+        }
+        
+        $agendas = $query->paginate(10);
+        
+        // Statistics
+        $totalAgenda = Post::where('type', 'agenda')->where('status', 'active')->count();
+        $upcomingAgenda = Post::where('type', 'agenda')->where('status', 'active')->where('event_date', '>', now())->count();
+        $todayAgenda = Post::where('type', 'agenda')->where('status', 'active')->whereDate('event_date', today())->count();
+        $agendaWithLocation = Post::where('type', 'agenda')->where('status', 'active')->whereNotNull('location')->count();
+
         return view('public.agenda.index', [
-            'title' => 'Agenda Kegiatan'
+            'title' => 'Agenda Kegiatan',
+            'agendas' => $agendas,
+            'totalAgenda' => $totalAgenda,
+            'upcomingAgenda' => $upcomingAgenda,
+            'todayAgenda' => $todayAgenda,
+            'agendaWithLocation' => $agendaWithLocation
+        ]);
+    }
+    
+    public function agendaDetail($id)
+    {
+        $agenda = Post::where('type', 'agenda')
+                     ->where('status', 'active')
+                     ->findOrFail($id);
+        
+        // Get related agendas
+        $relatedAgendas = Post::where('type', 'agenda')
+                             ->where('status', 'active')
+                             ->where('id', '!=', $id)
+                             ->latest('event_date')
+                             ->take(3)
+                             ->get();
+        
+        return view('public.agenda.show', [
+            'title' => $agenda->title,
+            'agenda' => $agenda,
+            'relatedAgendas' => $relatedAgendas
         ]);
     }
 
     public function galleryPhotos()
     {
-        return view('public.gallery.photos', [
-            'title' => 'Galeri Foto'
-        ]);
+        // Redirect to main gallery index
+        return redirect()->route('gallery.index');
     }
 
     public function galleryVideos()
@@ -174,11 +328,63 @@ class PublicController extends Controller
         ]);
     }
     
+    public function videoDetail($id)
+    {
+        $video = Video::active()->findOrFail($id);
+        
+        // Increment view count
+        $video->increment('views');
+        
+        // Get related videos
+        $relatedVideos = Video::active()
+                             ->where('id', '!=', $id)
+                             ->where('category', $video->category)
+                             ->latest()
+                             ->take(6)
+                             ->get();
+        
+        // If not enough related videos, get more from other categories
+        if ($relatedVideos->count() < 6) {
+            $additionalVideos = Video::active()
+                                   ->where('id', '!=', $id)
+                                   ->whereNotIn('id', $relatedVideos->pluck('id'))
+                                   ->latest()
+                                   ->take(6 - $relatedVideos->count())
+                                   ->get();
+            $relatedVideos = $relatedVideos->merge($additionalVideos);
+        }
+        
+        return view('public.videos.show', [
+            'title' => $video->title,
+            'video' => $video,
+            'relatedVideos' => $relatedVideos
+        ]);
+    }
+    
+    public function videoDownload($id)
+    {
+        $video = Video::active()->findOrFail($id);
+        
+        // Increment download count
+        $video->increment('downloads');
+        
+        // Check if video file exists
+        if (!$video->file_path || !file_exists(storage_path('app/public/' . $video->file_path))) {
+            abort(404, 'Video file not found');
+        }
+        
+        $filePath = storage_path('app/public/' . $video->file_path);
+        $fileName = $video->original_name ?: ($video->title . '.' . pathinfo($video->file_path, PATHINFO_EXTENSION));
+        
+        return response()->download($filePath, $fileName, [
+            'Content-Type' => 'application/octet-stream',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"'
+        ]);
+    }
+    
     public function galleryIndex()
     {
-        return view('public.videos.index', [
-            'title' => 'Galeri Video dan Video'
-        ]);
+        return redirect()->route('gallery.index');
     }
 
     public function downloads(Request $request)
@@ -222,9 +428,113 @@ class PublicController extends Controller
 
     public function contact()
     {
-        return view('public.contact', [
-            'title' => 'Kontak Kami'
+        return view('public.contact');
+    }
+
+    public function announcements(Request $request)
+    {
+        $query = Post::where('type', 'announcement')
+                    ->where('status', 'published')
+                    ->with('user')
+                    ->latest('published_at');
+
+        // Search filter
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('content', 'like', "%{$search}%")
+                  ->orWhere('author', 'like', "%{$search}%");
+            });
+        }
+
+        // Category filter
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+
+        // Priority filter
+        if ($request->filled('priority')) {
+            $query->where('priority', $request->priority);
+        }
+
+        $announcements = $query->paginate(12);
+        
+        // Get categories for filter
+        $categories = Post::where('type', 'announcement')
+                         ->where('status', 'published')
+                         ->distinct()
+                         ->pluck('category')
+                         ->filter()
+                         ->sort();
+
+        // Get priorities for filter
+        $priorities = Post::where('type', 'announcement')
+                         ->where('status', 'published')
+                         ->distinct()
+                         ->pluck('priority')
+                         ->filter()
+                         ->sort();
+        
+        return view('public.announcements.index', [
+            'title' => 'Pengumuman Sekolah',
+            'announcements' => $announcements,
+            'categories' => $categories,
+            'priorities' => $priorities
         ]);
+    }
+
+    public function announcementDetail($id)
+    {
+        $announcement = Post::where('type', 'announcement')
+                           ->where('status', 'published')
+                           ->with('user')
+                           ->findOrFail($id);
+        
+        // Increment view count
+        $announcement->increment('views_count');
+        
+        // Get related announcements
+        $relatedAnnouncements = Post::where('type', 'announcement')
+                                   ->where('status', 'published')
+                                   ->where('id', '!=', $id)
+                                   ->where('category', $announcement->category)
+                                   ->latest('published_at')
+                                   ->take(4)
+                                   ->get();
+        
+        // If not enough related announcements, get more from other categories
+        if ($relatedAnnouncements->count() < 4) {
+            $additionalAnnouncements = Post::where('type', 'announcement')
+                                          ->where('status', 'published')
+                                          ->where('id', '!=', $id)
+                                          ->whereNotIn('id', $relatedAnnouncements->pluck('id'))
+                                          ->latest('published_at')
+                                          ->take(4 - $relatedAnnouncements->count())
+                                          ->get();
+            $relatedAnnouncements = $relatedAnnouncements->merge($additionalAnnouncements);
+        }
+        
+        return view('public.announcements.show', [
+            'title' => $announcement->title,
+            'announcement' => $announcement,
+            'relatedAnnouncements' => $relatedAnnouncements
+        ]);
+    }
+
+    public function submitContact(Request $request)
+    {
+        // Handle contact form submission
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string|max:2000',
+        ]);
+
+        // Here you would typically save to database or send email
+        // For now, just return success
+        return back()->with('success', 'Thank you for your message. We will get back to you soon!');
     }
 
     public function incrementDownload(Download $download)

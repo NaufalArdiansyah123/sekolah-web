@@ -22,11 +22,6 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
     ];
-// app/Http/Kernel.php
-protected $routeMiddleware = [
-    'auth' => \App\Http\Middleware\Authenticate::class,
-    'role' => \App\Http\Middleware\CheckRole::class, // alias role
-];
 
     /**
      * The application's route middleware groups.
@@ -41,6 +36,7 @@ protected $routeMiddleware = [
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \App\Http\Middleware\CheckUserStatus::class, // Add user status check to web middleware
         ],
 
         'api' => [
@@ -70,5 +66,7 @@ protected $routeMiddleware = [
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'check.upload.size' => \App\Http\Middleware\CheckFileUploadSize::class,
+        'role' => \App\Http\Middleware\CheckRole::class,
+        'check.user.status' => \App\Http\Middleware\CheckUserStatus::class,
     ];
 }

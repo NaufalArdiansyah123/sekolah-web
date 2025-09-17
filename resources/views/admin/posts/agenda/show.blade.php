@@ -1,423 +1,453 @@
 @extends('layouts.admin')
 
-@section('title', 'Detail Agenda')
-
-@push('styles')
+@section('content')
 <style>
-    .agenda-container {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        padding: 20px;
+    /* Enhanced Detail Styles */
+    .detail-container {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
     }
-
-    .agenda-wrapper {
-        max-width: 1000px;
-        margin: 0 auto;
-        background: rgba(255, 255, 255, 0.95);
-        border-radius: 20px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        backdrop-filter: blur(10px);
-        overflow: hidden;
+    
+    .dark .detail-container {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
-
+    
     .agenda-header {
-        background: linear-gradient(45deg, #2c3e50, #3498db);
-        color: white;
-        padding: 30px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 1.5rem;
+        margin-bottom: 1.5rem;
     }
-
-    .agenda-header h1 {
-        font-size: 2.5em;
-        margin: 0;
-    }
-
-    .btn {
-        padding: 12px 25px;
-        border: none;
-        border-radius: 10px;
-        font-size: 1em;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-block;
-        text-align: center;
-        margin-left: 10px;
-    }
-
-    .btn-secondary {
-        background: linear-gradient(45deg, #95a5a6, #7f8c8d);
-        color: white;
-    }
-
-    .btn-warning {
-        background: linear-gradient(45deg, #f39c12, #e67e22);
-        color: white;
-    }
-
-    .btn-danger {
-        background: linear-gradient(45deg, #e74c3c, #c0392b);
-        color: white;
-    }
-
-    .btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        color: white;
-        text-decoration: none;
-    }
-
-    .agenda-content {
-        padding: 30px;
-    }
-
-    .detail-card {
-        background: white;
-        border-radius: 15px;
-        padding: 30px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        margin-bottom: 30px;
-    }
-
-    .detail-header {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 20px;
-        align-items: start;
-        margin-bottom: 30px;
-        padding-bottom: 20px;
-        border-bottom: 2px solid #ecf0f1;
-    }
-
+    
     .agenda-title {
-        font-size: 2em;
-        font-weight: bold;
-        color: #2c3e50;
-        margin: 0;
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+        line-height: 1.3;
     }
-
-    .status-badge {
-        padding: 8px 16px;
-        border-radius: 25px;
-        font-size: 0.9em;
-        font-weight: bold;
-        text-transform: uppercase;
-    }
-
-    .status-upcoming { background: #3498db; color: white; }
-    .status-ongoing { background: #2ecc71; color: white; }
-    .status-completed { background: #95a5a6; color: white; }
-
-    .detail-grid {
+    
+    .agenda-meta {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 30px;
-        margin-bottom: 30px;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
     }
-
-    .detail-item {
-        background: #f8f9fa;
-        padding: 20px;
-        border-radius: 10px;
-        border-left: 4px solid #3498db;
-    }
-
-    .detail-label {
-        font-size: 0.9em;
-        font-weight: 600;
-        color: #7f8c8d;
-        text-transform: uppercase;
-        margin-bottom: 8px;
-    }
-
-    .detail-value {
-        font-size: 1.1em;
-        color: #2c3e50;
-        font-weight: 500;
-    }
-
-    .content-section {
-        background: #f8f9fa;
-        padding: 25px;
-        border-radius: 10px;
-        margin-bottom: 30px;
-    }
-
-    .content-section h3 {
-        color: #2c3e50;
-        margin-bottom: 15px;
-        font-size: 1.4em;
-    }
-
-    .content-text {
-        color: #34495e;
-        line-height: 1.8;
-        font-size: 1.1em;
-    }
-
-    .meta-info {
-        background: white;
-        border-radius: 15px;
-        padding: 20px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .meta-info h4 {
-        color: #2c3e50;
-        margin-bottom: 15px;
-    }
-
+    
     .meta-item {
         display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+    }
+    
+    .meta-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.25rem;
+    }
+    
+    .meta-content h4 {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.25rem;
+    }
+    
+    .meta-content p {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+    }
+    
+    .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .status-active {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+    
+    .status-inactive {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+    }
+    
+    .agenda-content {
+        color: var(--text-primary);
+        line-height: 1.7;
+        font-size: 1rem;
+    }
+    
+    .agenda-content h1,
+    .agenda-content h2,
+    .agenda-content h3,
+    .agenda-content h4,
+    .agenda-content h5,
+    .agenda-content h6 {
+        color: var(--text-primary);
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .agenda-content p {
+        margin-bottom: 1rem;
+    }
+    
+    .agenda-content ul,
+    .agenda-content ol {
+        margin-bottom: 1rem;
+        padding-left: 1.5rem;
+    }
+    
+    .agenda-content li {
+        margin-bottom: 0.5rem;
+    }
+    
+    .agenda-content blockquote {
+        border-left: 4px solid var(--accent-color);
+        padding-left: 1rem;
+        margin: 1.5rem 0;
+        font-style: italic;
+        color: var(--text-secondary);
+    }
+    
+    .agenda-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--border-color);
+    }
+    
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+    }
+    
+    .btn-primary {
+        background: var(--accent-color);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: #2563eb;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+    
+    .btn-secondary {
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+    }
+    
+    .btn-secondary:hover {
+        background: var(--bg-secondary);
+        transform: translateY(-1px);
+    }
+    
+    .btn-success {
+        background: #10b981;
+        color: white;
+    }
+    
+    .btn-success:hover {
+        background: #059669;
+        transform: translateY(-1px);
+    }
+    
+    .btn-warning {
+        background: #f59e0b;
+        color: white;
+    }
+    
+    .btn-warning:hover {
+        background: #d97706;
+        transform: translateY(-1px);
+    }
+    
+    .btn-danger {
+        background: #ef4444;
+        color: white;
+    }
+    
+    .btn-danger:hover {
+        background: #dc2626;
+        transform: translateY(-1px);
+    }
+    
+    .info-section {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+    
+    .info-item {
+        display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 10px 0;
-        border-bottom: 1px solid #ecf0f1;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--border-color);
     }
-
-    .meta-item:last-child {
+    
+    .info-item:last-child {
         border-bottom: none;
     }
-
-    .meta-label {
+    
+    .info-label {
         font-weight: 600;
-        color: #7f8c8d;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
     }
-
-    .meta-value {
-        color: #2c3e50;
+    
+    .info-value {
+        font-weight: 600;
+        color: var(--text-primary);
+        text-align: right;
     }
-
-    .alert {
-        padding: 15px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-        border: none;
-    }
-
-    .alert-success {
-        background: linear-gradient(45deg, #2ecc71, #27ae60);
-        color: white;
-    }
-
-    .countdown-timer {
-        background: linear-gradient(45deg, #e74c3c, #c0392b);
-        color: white;
-        padding: 15px;
-        border-radius: 10px;
-        text-align: center;
-        margin-bottom: 20px;
-        font-weight: bold;
-        font-size: 1.2em;
-    }
-
+    
+    /* Responsive */
     @media (max-width: 768px) {
-        .agenda-header {
+        .detail-container {
+            padding: 1.5rem;
+        }
+        
+        .agenda-title {
+            font-size: 1.5rem;
+        }
+        
+        .agenda-meta {
+            grid-template-columns: 1fr;
+        }
+        
+        .agenda-actions {
             flex-direction: column;
-            gap: 20px;
-            text-align: center;
         }
-
-        .agenda-header h1 {
-            font-size: 2em;
-        }
-
-        .detail-header {
+        
+        .info-grid {
             grid-template-columns: 1fr;
-            text-align: center;
-        }
-
-        .detail-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .agenda-content {
-            padding: 20px;
         }
     }
 </style>
-@endpush
 
-@section('content')
-<div class="agenda-container">
-    <div class="agenda-wrapper">
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Detail Agenda</h1>
+            <p class="text-gray-600 dark:text-gray-400 mt-1">Informasi lengkap agenda kegiatan</p>
+        </div>
+        <a href="{{ route('admin.posts.agenda') }}" 
+           class="btn btn-secondary">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            Kembali
+        </a>
+    </div>
+
+    <!-- Agenda Detail -->
+    <div class="detail-container">
+        <!-- Header -->
         <div class="agenda-header">
-            <h1>📋 Detail Agenda</h1>
-            <div>
-                <a href="{{ route('admin.posts.agenda.index') }}" class="btn btn-secondary">
-                    ↩️ Kembali
-                </a>
-                <a href="{{ route('admin.posts.agenda.edit', $agenda->id) }}" class="btn btn-warning">
-                    ✏️ Edit
-                </a>
-                <form action="{{ route('admin.posts.agenda.destroy', $agenda->id) }}" 
-                      method="POST" 
-                      style="display: inline-block;"
-                      onsubmit="return confirm('Yakin ingin menghapus agenda ini?')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger">
-                        🗑️ Hapus
-                    </button>
-                </form>
+            <h2 class="agenda-title">{{ $agenda->title }}</h2>
+            
+            <!-- Meta Information -->
+            <div class="agenda-meta">
+                <div class="meta-item">
+                    <div class="meta-icon" style="background: #3b82f6;">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="meta-content">
+                        <h4>Tanggal & Waktu</h4>
+                        <p>{{ $agenda->event_date ? $agenda->event_date->format('l, d F Y') : 'Tidak ada tanggal' }}</p>
+                        @if($agenda->event_date)
+                            <p class="text-sm text-gray-500">{{ $agenda->event_date->format('H:i') }} WIB</p>
+                        @endif
+                    </div>
+                </div>
+                
+                @if($agenda->location)
+                    <div class="meta-item">
+                        <div class="meta-icon" style="background: #10b981;">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="meta-content">
+                            <h4>Lokasi</h4>
+                            <p>{{ $agenda->location }}</p>
+                        </div>
+                    </div>
+                @endif
+                
+                <div class="meta-item">
+                    <div class="meta-icon" style="background: #f59e0b;">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="meta-content">
+                        <h4>Status</h4>
+                        <span class="status-badge status-{{ $agenda->status }}">
+                            @if($agenda->status == 'active')
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                </svg>
+                                Aktif
+                            @else
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                                </svg>
+                                Tidak Aktif
+                            @endif
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
 
+        <!-- Content -->
         <div class="agenda-content">
-            {{-- Flash Messages --}}
-            @if(session('success'))
-                <div class="alert alert-success">
-                    ✅ {{ session('success') }}
-                </div>
+            {!! $agenda->content !!}
+        </div>
+
+        <!-- Actions -->
+        <div class="agenda-actions">
+            <a href="{{ route('admin.posts.agenda.edit', $agenda->id) }}" 
+               class="btn btn-warning">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+                Edit Agenda
+            </a>
+            
+            @if($agenda->status == 'active')
+                <a href="{{ route('agenda.show', $agenda->id) }}" 
+                   class="btn btn-success" 
+                   target="_blank">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                    </svg>
+                    Lihat di Public
+                </a>
             @endif
+            
+            <form method="POST" 
+                  action="{{ route('admin.posts.agenda.destroy', $agenda->id) }}" 
+                  class="inline"
+                  onsubmit="return confirmDelete('Apakah Anda yakin ingin menghapus agenda ini? Tindakan ini tidak dapat dibatalkan.')">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-danger">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                    Hapus Agenda
+                </button>
+            </form>
+        </div>
+    </div>
 
-            {{-- Countdown Timer (jika agenda belum berlangsung) --}}
-            @php
-                $eventDate = \Carbon\Carbon::parse($agenda->event_date);
-                $now = \Carbon\Carbon::now();
-                
-                if ($eventDate->isToday()) {
-                    $status = 'ongoing';
-                    $statusText = 'Berlangsung Hari Ini';
-                } elseif ($eventDate->isFuture()) {
-                    $status = 'upcoming';
-                    $statusText = 'Akan Datang';
-                    $diffInDays = $now->diffInDays($eventDate);
-                } else {
-                    $status = 'completed';
-                    $statusText = 'Telah Selesai';
-                }
-            @endphp
-
-            @if($status === 'upcoming')
-                <div class="countdown-timer">
-                    ⏰ Agenda akan dimulai dalam {{ $diffInDays }} hari
-                </div>
-            @elseif($status === 'ongoing')
-                <div class="countdown-timer" style="background: linear-gradient(45deg, #2ecc71, #27ae60);">
-                    🔴 Agenda sedang berlangsung hari ini!
-                </div>
-            @endif
-
-            <div class="detail-card">
-                <div class="detail-header">
-                    <h2 class="agenda-title">{{ $agenda->title }}</h2>
-                    <span class="status-badge status-{{ $status }}">
-                        {{ $statusText }}
+    <!-- Additional Information -->
+    <div class="info-section">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Informasi Tambahan
+        </h3>
+        
+        <div class="info-grid">
+            <div class="info-item">
+                <span class="info-label">ID Agenda</span>
+                <span class="info-value">#{{ $agenda->id }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Dibuat Oleh</span>
+                <span class="info-value">{{ $agenda->user->name ?? 'Admin' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Tanggal Dibuat</span>
+                <span class="info-value">{{ $agenda->created_at->format('d M Y H:i') }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Terakhir Diupdate</span>
+                <span class="info-value">{{ $agenda->updated_at->format('d M Y H:i') }}</span>
+            </div>
+            @if($agenda->event_date)
+                <div class="info-item">
+                    <span class="info-label">Status Waktu</span>
+                    <span class="info-value">
+                        @if($agenda->event_date->isPast())
+                            <span class="text-red-600">Sudah Lewat</span>
+                        @elseif($agenda->event_date->isToday())
+                            <span class="text-green-600">Hari Ini</span>
+                        @else
+                            <span class="text-blue-600">Mendatang</span>
+                        @endif
                     </span>
                 </div>
-
-                <div class="detail-grid">
-                    <div class="detail-item">
-                        <div class="detail-label">📅 Tanggal Kegiatan</div>
-                        <div class="detail-value">
-                            {{ $eventDate->format('l, d F Y') }}
-                            @if($agenda->event_time)
-                                <br><small>🕐 {{ \Carbon\Carbon::parse($agenda->event_time)->format('H:i') }} WIB</small>
-                            @endif
-                        </div>
-                    </div>
-
-                    @if($agenda->location)
-                        <div class="detail-item">
-                            <div class="detail-label">📍 Lokasi</div>
-                            <div class="detail-value">{{ $agenda->location }}</div>
-                        </div>
-                    @endif
-
-                    @if($agenda->organizer)
-                        <div class="detail-item">
-                            <div class="detail-label">👤 Penyelenggara</div>
-                            <div class="detail-value">{{ $agenda->organizer }}</div>
-                        </div>
-                    @endif
-
-                    <div class="detail-item">
-                        <div class="detail-label">📊 Status</div>
-                        <div class="detail-value">
-                            <span class="status-badge status-{{ $status }}" style="font-size: 0.8em;">
-                                {{ $statusText }}
-                            </span>
-                        </div>
-                    </div>
+                <div class="info-item">
+                    <span class="info-label">Countdown</span>
+                    <span class="info-value">
+                        @if($agenda->event_date->isPast())
+                            {{ $agenda->event_date->diffForHumans() }}
+                        @else
+                            {{ $agenda->event_date->diffForHumans() }}
+                        @endif
+                    </span>
                 </div>
-
-                @if($agenda->content)
-                    <div class="content-section">
-                        <h3>📝 Deskripsi Kegiatan</h3>
-                        <div class="content-text">
-                            {!! nl2br(e($agenda->content)) !!}
-                        </div>
-                    </div>
-                @endif
-            </div>
-
-            <div class="meta-info">
-                <h4>ℹ️ Informasi Tambahan</h4>
-                <div class="meta-item">
-                    <span class="meta-label">Dibuat pada:</span>
-                    <span class="meta-value">{{ $agenda->created_at->format('d M Y, H:i') }}</span>
-                </div>
-                <div class="meta-item">
-                    <span class="meta-label">Terakhir diperbarui:</span>
-                    <span class="meta-value">{{ $agenda->updated_at->format('d M Y, H:i') }}</span>
-                </div>
-                <div class="meta-item">
-                    <span class="meta-label">ID Agenda:</span>
-                    <span class="meta-value">#{{ $agenda->id }}</span>
-                </div>
-                @if($eventDate->isFuture())
-                    <div class="meta-item">
-                        <span class="meta-label">Waktu tersisa:</span>
-                        <span class="meta-value">{{ $eventDate->diffForHumans() }}</span>
-                    </div>
-                @endif
-            </div>
+            @endif
         </div>
     </div>
 </div>
-@endsection
 
-@push('scripts')
 <script>
-    // Auto-hide success message
-    document.addEventListener('DOMContentLoaded', function() {
-        const successAlert = document.querySelector('.alert-success');
-        if (successAlert) {
-            setTimeout(() => {
-                successAlert.style.opacity = '0';
-                setTimeout(() => {
-                    successAlert.style.display = 'none';
-                }, 300);
-            }, 3000);
-        }
-    });
-
-    // Real-time countdown untuk agenda yang akan datang
-    @if($status === 'upcoming')
-    function updateCountdown() {
-        const eventDate = new Date('{{ $eventDate->toISOString() }}');
-        const now = new Date();
-        const diff = eventDate - now;
-        
-        if (diff > 0) {
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            
-            const countdownElement = document.querySelector('.countdown-timer');
-            if (countdownElement) {
-                countdownElement.innerHTML = `⏰ Agenda akan dimulai dalam ${days} hari, ${hours} jam, ${minutes} menit`;
-            }
-        }
-    }
-    
-    // Update setiap menit
-    setInterval(updateCountdown, 60000);
-    updateCountdown();
-    @endif
+function confirmDelete(message) {
+    return confirm(message);
+}
 </script>
-@endpush
+@endsection

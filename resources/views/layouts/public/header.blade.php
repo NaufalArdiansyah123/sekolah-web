@@ -54,8 +54,8 @@
                     [
                         'title' => 'Akademik',
                         'children' => [
-                            ['title' => 'Program Studi', 'route' => 'academic.programs'],
-                            ['title' => 'Ekstrakurikuler', 'route' => 'extracurriculars.index'],
+                            ['title' => 'Program Studi', 'route' => 'public.academic.programs'],
+                            ['title' => 'Ekstrakurikuler', 'route' => 'public.extracurriculars.index'],
                             ['title' => 'Kalender Akademik', 'route' => 'academic.calendar'],
                         ]
                     ],

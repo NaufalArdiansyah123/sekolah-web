@@ -1,177 +1,813 @@
 @extends('layouts.admin')
 
+@section('title', 'Announcement Management')
+
 @section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1>Daftar Pengumuman</h1>
-                <a href="{{ route('admin.announcements.create') }}" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Tambah Pengumuman
-                </a>
-            </div>
-
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="fas fa-check-circle"></i> {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            @endif
-
-            @if(session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="fas fa-exclamation-triangle"></i> {{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            @endif
-
-            <div class="card">
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-striped table-hover">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th style="width: 5%">#</th>
-                                    <th style="width: 25%">Judul</th>
-                                    <th style="width: 12%">Kategori</th>
-                                    <th style="width: 10%">Prioritas</th>
-                                    <th style="width: 12%">Penulis</th>
-                                    <th style="width: 10%">Status</th>
-                                    <th style="width: 8%">Views</th>
-                                    <th style="width: 13%">Tanggal Publikasi</th>
-                                    <th style="width: 5%">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($announcements as $index => $announcement)
-                                <tr>
-                                    <td>{{ $announcements->firstItem() + $index }}</td>
-                                    <td>
-                                        <div class="fw-bold">{{ Str::limit($announcement->judul, 50) }}</div>
-                                        @if($announcement->gambar)
-                                            <small class="text-muted"><i class="fas fa-image"></i> Ada gambar</small>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-info">{{ ucfirst($announcement->kategori) }}</span>
-                                    </td>
-                                    <td>
-                                        @if($announcement->prioritas === 'tinggi')
-                                            <span class="badge bg-danger">Tinggi</span>
-                                        @elseif($announcement->prioritas === 'sedang')
-                                            <span class="badge bg-warning">Sedang</span>
-                                        @else
-                                            <span class="badge bg-success">Rendah</span>
-                                        @endif
-                                    </td>
-                                    <td>{{ $announcement->penulis }}</td>
-                                    <td>
-                                        @if($announcement->status === 'published')
-                                            <span class="badge bg-success">Published</span>
-                                        @elseif($announcement->status === 'draft')
-                                            <span class="badge bg-secondary">Draft</span>
-                                        @else
-                                            <span class="badge bg-dark">Archived</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-primary">{{ $announcement->views ?? 0 }}</span>
-                                    </td>
-                                    <td>
-                                        <small>{{ date('d/m/Y H:i', strtotime($announcement->tanggal_publikasi)) }}</small>
-                                    </td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" 
-                                                    data-bs-toggle="dropdown">
-                                                Aksi
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <li>
-                                                    <a class="dropdown-item" href="{{ route('admin.announcements.show', $announcement->id) }}">
-                                                        <i class="fas fa-eye"></i> Lihat
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item" href="{{ route('admin.announcements.edit', $announcement->id) }}">
-                                                        <i class="fas fa-edit"></i> Edit
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <button class="dropdown-item toggle-status" 
-                                                            data-id="{{ $announcement->id }}" 
-                                                            data-current-status="{{ $announcement->status }}">
-                                                        <i class="fas fa-toggle-on"></i> 
-                                                        {{ $announcement->status === 'published' ? 'Set Draft' : 'Publish' }}
-                                                    </button>
-                                                </li>
-                                                <li><hr class="dropdown-divider"></li>
-                                                <li>
-                                                    <form action="{{ route('admin.announcements.destroy', $announcement->id) }}" 
-                                                          method="POST" class="d-inline delete-form">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="dropdown-item text-danger">
-                                                            <i class="fas fa-trash"></i> Hapus
-                                                        </button>
-                                                    </form>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="9" class="text-center py-4">
-                                        <div class="text-muted">
-                                            <i class="fas fa-inbox fa-3x mb-3"></i>
-                                            <p>Belum ada pengumuman</p>
-                                            <a href="{{ route('admin.announcements.create') }}" class="btn btn-primary">
-                                                <i class="fas fa-plus"></i> Tambah Pengumuman Pertama
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-
-                    @if($announcements->hasPages())
-                        <div class="d-flex justify-content-center mt-4">
-                            {{ $announcements->links() }}
-                        </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-@endsection
-
-@push('styles')
 <style>
-    .table th {
-        border-top: none;
+    .announcement-container {
+        background: var(--bg-secondary);
+        min-height: 100vh;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(245, 158, 11, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 100%;
+        height: 200%;
+        background: rgba(255, 255, 255, 0.1);
+        transform: rotate(-15deg);
+    }
+
+    .header-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        width: 100%;
+    }
+
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem 0;
+    }
+
+    .page-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-primary {
+        background: white;
+        color: #f59e0b;
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        text-decoration: none;
         font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        color: #f59e0b;
+        text-decoration: none;
+    }
+
+    /* Statistics Cards */
+    .stats-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.25rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-item {
+        background: var(--bg-primary);
+        backdrop-filter: blur(10px);
+        padding: 1.5rem;
+        border-radius: 14px;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 12px var(--shadow-color);
+    }
+
+    .stat-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px var(--shadow-color);
+    }
+
+    .stat-icon {
+        width: 42px;
+        height: 42px;
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+
+    .dark .stat-icon {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+
+    .stat-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+        transition: color 0.3s ease;
+    }
+
+    .stat-title {
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+
+    /* Filters */
+    .filters-container {
+        background: var(--bg-primary);
+        backdrop-filter: blur(10px);
+        border-radius: 14px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 2px 12px var(--shadow-color);
+        transition: all 0.3s ease;
+    }
+
+    .filters-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        align-items: end;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .filter-label {
+        font-weight: 500;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
         font-size: 0.875rem;
+        transition: color 0.3s ease;
     }
-    .card {
-        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+
+    .filter-input {
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+        background: var(--bg-primary);
+        color: var(--text-primary);
     }
-    .btn-group .dropdown-toggle::after {
-        margin-left: 0.5em;
+
+    .filter-input:focus {
+        border-color: #f59e0b;
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        outline: none;
+    }
+
+    .btn-filter {
+        background: #10b981;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-filter:hover {
+        background: #059669;
+        transform: translateY(-1px);
+    }
+
+    .btn-reset {
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-reset:hover {
+        background: var(--border-color);
+        color: var(--text-primary);
+        text-decoration: none;
+        transform: translateY(-1px);
+    }
+
+    /* Table */
+    .table-container {
+        background: var(--bg-primary);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 4px 20px var(--shadow-color);
+        transition: all 0.3s ease;
+    }
+
+    .table {
+        margin: 0;
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 100%;
+    }
+
+    .table thead th {
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
+        font-weight: 600;
+        padding: 1rem;
+        border: none;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        transition: all 0.3s ease;
+    }
+
+    .table tbody td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-color);
+        vertical-align: middle;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        transition: all 0.3s ease;
+    }
+
+    .table tbody tr {
+        transition: all 0.3s ease;
+    }
+
+    .table tbody tr:hover {
+        background: var(--bg-secondary);
+        transform: scale(1.001);
+    }
+
+    .announcement-title {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+        line-height: 1.4;
+        transition: color 0.3s ease;
+    }
+
+    .announcement-excerpt {
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        line-height: 1.4;
+        transition: color 0.3s ease;
+    }
+
+    .badge {
+        padding: 0.375rem 0.75rem;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .badge-akademik { background: rgba(59, 130, 246, 0.1); color: #1d4ed8; border: 1px solid rgba(59, 130, 246, 0.2); }
+    .badge-kegiatan { background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.2); }
+    .badge-administrasi { background: rgba(245, 158, 11, 0.1); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.2); }
+
+    .badge-tinggi { background: rgba(239, 68, 68, 0.1); color: #dc2626; border: 1px solid rgba(239, 68, 68, 0.2); }
+    .badge-sedang { background: rgba(245, 158, 11, 0.1); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.2); }
+    .badge-normal { background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.2); }
+
+    .badge-published { background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.2); }
+    .badge-draft { background: rgba(107, 114, 128, 0.1); color: #374151; border: 1px solid rgba(107, 114, 128, 0.2); }
+    .badge-archived { background: rgba(75, 85, 99, 0.1); color: #1f2937; border: 1px solid rgba(75, 85, 99, 0.2); }
+
+    .views-badge {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .action-dropdown {
+        position: relative;
+    }
+
+    .dropdown-toggle {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .dropdown-toggle:hover {
+        background: var(--bg-tertiary);
+        transform: translateY(-1px);
+    }
+
+    .dropdown-menu {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        box-shadow: 0 8px 25px var(--shadow-color);
+        overflow: hidden;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        min-width: 150px;
+        z-index: 10;
+        display: none;
+    }
+
+    .dropdown-menu.show {
+        display: block;
+    }
+
+    .dropdown-item {
+        padding: 0.75rem 1rem;
+        color: var(--text-primary);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+        border: none;
+        background: none;
+        width: 100%;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .dropdown-item:hover {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+    }
+
+    .dropdown-item.text-danger {
+        color: #dc2626;
+    }
+
+    .dropdown-item.text-danger:hover {
+        background: rgba(239, 68, 68, 0.05);
+        color: #dc2626;
+    }
+
+    .dropdown-divider {
+        height: 1px;
+        background: var(--border-color);
+        margin: 0;
+        border: none;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: var(--text-secondary);
+        background: var(--bg-primary);
+        border-radius: 16px;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+    }
+
+    .empty-icon {
+        width: 80px;
+        height: 80px;
+        background: var(--bg-secondary);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        color: var(--text-tertiary);
+        transition: all 0.3s ease;
+    }
+
+    .empty-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+        transition: color 0.3s ease;
+    }
+
+    .empty-message {
+        margin-bottom: 2rem;
+        line-height: 1.6;
+        color: var(--text-secondary);
+        transition: color 0.3s ease;
+    }
+
+    /* Alerts */
+    .alert {
+        border-radius: 12px;
+        border: none;
+        padding: 1rem 1.5rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .alert-success {
+        background: rgba(16, 185, 129, 0.1);
+        color: #059669;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .alert-danger {
+        background: rgba(239, 68, 68, 0.1);
+        color: #dc2626;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .alert-dismissible .btn-close {
+        background: none;
+        border: none;
+        font-size: 1.2rem;
+        opacity: 0.6;
+        cursor: pointer;
+        color: inherit;
+    }
+
+    .alert-dismissible .btn-close:hover {
+        opacity: 1;
+    }
+
+    /* Pagination */
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        padding: 2rem;
+        background: var(--bg-primary);
+        border-top: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .announcement-container {
+            padding: 1rem;
+        }
+
+        .page-header {
+            padding: 1.5rem;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+        }
+
+        .stats-container {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .filters-row {
+            grid-template-columns: 1fr;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .table {
+            min-width: 800px;
+        }
+    }
+
+    /* Animation */
+    .table-container {
+        animation: slideUp 0.5s ease-out;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 </style>
-@endpush
 
-@push('scripts')
+<div class="announcement-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="header-content">
+            <h1 class="page-title">
+                <svg class="w-8 h-8" style="display: inline; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
+                </svg>
+                Announcement Management
+            </h1>
+            <p class="page-subtitle">Manage school announcements and notifications</p>
+            <a href="{{ route('admin.announcements.create') }}" class="btn-primary">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                </svg>
+                Add Announcement
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistics Section -->
+    <div class="stats-container">
+        <div class="stat-item">
+            <div class="stat-icon">
+                <svg class="w-6 h-6" style="color: #d97706;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
+                </svg>
+            </div>
+            <div class="stat-value">{{ $announcements->total() }}</div>
+            <div class="stat-title">Total Announcements</div>
+        </div>
+
+        <div class="stat-item">
+            <div class="stat-icon">
+                <svg class="w-6 h-6" style="color: #d97706;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                </svg>
+            </div>
+            <div class="stat-value">{{ $announcements->where('status', 'published')->count() }}</div>
+            <div class="stat-title">Published</div>
+        </div>
+
+        <div class="stat-item">
+            <div class="stat-icon">
+                <svg class="w-6 h-6" style="color: #d97706;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                </svg>
+            </div>
+            <div class="stat-value">{{ $announcements->where('status', 'draft')->count() }}</div>
+            <div class="stat-title">Drafts</div>
+        </div>
+
+        <div class="stat-item">
+            <div class="stat-icon">
+                <svg class="w-6 h-6" style="color: #d97706;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+            </div>
+            <div class="stat-value">{{ $announcements->sum('views') }}</div>
+            <div class="stat-title">Total Views</div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-container">
+        <form method="GET" action="{{ route('admin.announcements.index') }}">
+            <div class="filters-row">
+                <div class="filter-group">
+                    <label class="filter-label">Search</label>
+                    <input type="text" 
+                           name="search" 
+                           value="{{ request('search') }}" 
+                           placeholder="Search announcements..." 
+                           class="filter-input">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Category</label>
+                    <select name="category" class="filter-input">
+                        <option value="">All Categories</option>
+                        <option value="akademik" {{ request('category') == 'akademik' ? 'selected' : '' }}>Academic</option>
+                        <option value="kegiatan" {{ request('category') == 'kegiatan' ? 'selected' : '' }}>Activities</option>
+                        <option value="administrasi" {{ request('category') == 'administrasi' ? 'selected' : '' }}>Administration</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Status</label>
+                    <select name="status" class="filter-input">
+                        <option value="">All Status</option>
+                        <option value="published" {{ request('status') == 'published' ? 'selected' : '' }}>Published</option>
+                        <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draft</option>
+                        <option value="archived" {{ request('status') == 'archived' ? 'selected' : '' }}>Archived</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Priority</label>
+                    <select name="priority" class="filter-input">
+                        <option value="">All Priorities</option>
+                        <option value="tinggi" {{ request('priority') == 'tinggi' ? 'selected' : '' }}>High</option>
+                        <option value="sedang" {{ request('priority') == 'sedang' ? 'selected' : '' }}>Medium</option>
+                        <option value="normal" {{ request('priority') == 'normal' ? 'selected' : '' }}>Normal</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">&nbsp;</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button type="submit" class="btn-filter">Filter</button>
+                        <a href="{{ route('admin.announcements.index') }}" class="btn-reset">Reset</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Success/Error Messages -->
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            {{ session('success') }}
+            <button type="button" class="btn-close" onclick="this.parentElement.style.display='none'">&times;</button>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            {{ session('error') }}
+            <button type="button" class="btn-close" onclick="this.parentElement.style.display='none'">&times;</button>
+        </div>
+    @endif
+
+    <!-- Table -->
+    <div class="table-container">
+        @if($announcements->count() > 0)
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">#</th>
+                        <th style="width: 30%">Title & Content</th>
+                        <th style="width: 12%">Category</th>
+                        <th style="width: 10%">Priority</th>
+                        <th style="width: 12%">Author</th>
+                        <th style="width: 8%">Status</th>
+                        <th style="width: 8%">Views</th>
+                        <th style="width: 10%">Date</th>
+                        <th style="width: 5%">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($announcements as $index => $announcement)
+                    <tr>
+                        <td>{{ $announcements->firstItem() + $index }}</td>
+                        <td>
+                            <div class="announcement-title">{{ Str::limit($announcement->judul, 40) }}</div>
+                            <div class="announcement-excerpt">{{ Str::limit(strip_tags($announcement->isi), 60) }}</div>
+                            @if($announcement->gambar)
+                                <small style="color: #f59e0b; font-size: 0.75rem;">
+                                    <svg class="w-3 h-3" style="display: inline;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    Has image
+                                </small>
+                            @endif
+                        </td>
+                        <td>
+                            <span class="badge badge-{{ $announcement->kategori }}">
+                                {{ ucfirst($announcement->kategori) }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge badge-{{ $announcement->prioritas }}">
+                                {{ ucfirst($announcement->prioritas) }}
+                            </span>
+                        </td>
+                        <td>{{ $announcement->penulis }}</td>
+                        <td>
+                            <span class="badge badge-{{ $announcement->status }}">
+                                {{ ucfirst($announcement->status) }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="views-badge">{{ $announcement->views ?? 0 }}</span>
+                        </td>
+                        <td>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                                {{ \Carbon\Carbon::parse($announcement->tanggal_publikasi)->format('M d, Y') }}
+                            </div>
+                            <div style="font-size: 0.75rem; color: var(--text-tertiary);">
+                                {{ \Carbon\Carbon::parse($announcement->tanggal_publikasi)->format('H:i') }}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="action-dropdown">
+                                <button type="button" class="dropdown-toggle" onclick="toggleDropdown({{ $announcement->id }})">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
+                                    </svg>
+                                </button>
+                                <div class="dropdown-menu" id="dropdown-{{ $announcement->id }}">
+                                    <a class="dropdown-item" href="{{ route('admin.announcements.show', $announcement->id) }}">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                        </svg>
+                                        View
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('admin.announcements.edit', $announcement->id) }}">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                        </svg>
+                                        Edit
+                                    </a>
+                                    <button class="dropdown-item toggle-status" 
+                                            data-id="{{ $announcement->id }}" 
+                                            data-current-status="{{ $announcement->status }}">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"/>
+                                        </svg>
+                                        {{ $announcement->status === 'published' ? 'Set Draft' : 'Publish' }}
+                                    </button>
+                                    <hr class="dropdown-divider">
+                                    <form action="{{ route('admin.announcements.destroy', $announcement->id) }}" 
+                                          method="POST" class="delete-form">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H8a1 1 0 00-1 1v3M4 7h16"/>
+                                            </svg>
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+
+            @if($announcements->hasPages())
+                <div class="pagination-container">
+                    {{ $announcements->appends(request()->query())->links() }}
+                </div>
+            @endif
+        @else
+            <!-- Empty State -->
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
+                    </svg>
+                </div>
+                <h3 class="empty-title">No Announcements Found</h3>
+                <p class="empty-message">
+                    @if(request()->hasAny(['search', 'category', 'status', 'priority']))
+                        No announcements match your current filters. Try adjusting your search criteria.
+                    @else
+                        Start creating announcements to keep your school community informed.
+                    @endif
+                </p>
+                @if(!request()->hasAny(['search', 'category', 'status', 'priority']))
+                    <a href="{{ route('admin.announcements.create') }}" class="btn-primary">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                        Create First Announcement
+                    </a>
+                @else
+                    <a href="{{ route('admin.announcements.index') }}" class="btn-reset">
+                        Clear Filters
+                    </a>
+                @endif
+            </div>
+        @endif
+    </div>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Delete confirmation
     document.querySelectorAll('.delete-form').forEach(function(form) {
         form.addEventListener('submit', function(e) {
-            if (!confirm('Yakin ingin menghapus pengumuman ini?')) {
+            if (!confirm('Are you sure you want to delete this announcement? This action cannot be undone.')) {
                 e.preventDefault();
             }
         });
@@ -182,8 +818,20 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', function() {
             const id = this.dataset.id;
             const currentStatus = this.dataset.currentStatus;
+            const newStatus = currentStatus === 'published' ? 'draft' : 'published';
             
-            if (confirm(`Yakin ingin mengubah status menjadi ${currentStatus === 'published' ? 'draft' : 'published'}?`)) {
+            if (confirm(`Are you sure you want to change status to ${newStatus}?`)) {
+                // Show loading state
+                const originalText = this.innerHTML;
+                this.innerHTML = `
+                    <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Updating...
+                `;
+                this.disabled = true;
+
                 fetch(`/admin/announcements/${id}/toggle-status`, {
                     method: 'POST',
                     headers: {
@@ -196,15 +844,68 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (data.success) {
                         location.reload();
                     } else {
-                        alert('Gagal mengubah status: ' + data.message);
+                        alert('Failed to update status: ' + (data.message || 'Unknown error'));
+                        this.innerHTML = originalText;
+                        this.disabled = false;
                     }
                 })
                 .catch(error => {
-                    alert('Terjadi kesalahan: ' + error);
+                    alert('An error occurred: ' + error);
+                    this.innerHTML = originalText;
+                    this.disabled = false;
                 });
             }
         });
     });
+
+    // Auto-hide alerts after 5 seconds
+    document.querySelectorAll('.alert').forEach(function(alert) {
+        setTimeout(function() {
+            alert.style.opacity = '0';
+            alert.style.transform = 'translateY(-10px)';
+            setTimeout(function() {
+                alert.style.display = 'none';
+            }, 300);
+        }, 5000);
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.action-dropdown')) {
+            document.querySelectorAll('.dropdown-menu').forEach(function(menu) {
+                menu.classList.remove('show');
+            });
+        }
+    });
+
+    // Add CSS for spinner animation
+    const style = document.createElement('style');
+    style.textContent = `
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    `;
+    document.head.appendChild(style);
 });
+
+// Dropdown functions
+function toggleDropdown(id) {
+    const dropdown = document.getElementById('dropdown-' + id);
+    const isShown = dropdown.classList.contains('show');
+    
+    // Close all dropdowns
+    document.querySelectorAll('.dropdown-menu').forEach(function(menu) {
+        menu.classList.remove('show');
+    });
+    
+    // Toggle current dropdown
+    if (!isShown) {
+        dropdown.classList.add('show');
+    }
+}
 </script>
-@endpush
+@endsection

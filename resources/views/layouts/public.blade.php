@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <meta name="description" content="Website resmi sekolah">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Home - SMA Negeri 1</title>
@@ -11,6 +11,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Mobile Responsive Fix -->
+    <link rel="stylesheet" href="{{ asset('css/mobile-fix.css') }}">
     
     <style>
         :root {
@@ -312,6 +315,26 @@
             box-shadow: 0 6px 25px rgba(49, 130, 206, 0.4);
         }
         
+        /* Student Registration Button */
+        .nav-item .register-btn {
+            background: linear-gradient(135deg, #10b981, #34d399);
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            font-weight: 600;
+            color: white !important;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+        }
+        
+        .nav-item .register-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(16, 185, 129, 0.4);
+            color: white !important;
+            text-decoration: none;
+        }
+        
         /* Mobile Styles Enhancement */
         @media (max-width: 991.98px) {
             .navbar-collapse {
@@ -568,7 +591,7 @@
                             <i class="fas fa-photo-video me-2 d-lg-none"></i>Media
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{{ route('gallery.photos.index') }}">
+                            <li><a class="dropdown-item" href="{{ route('gallery.index') }}">
                                 <i class="fas fa-images me-3"></i>Galeri Foto
                             </a></li>
                             <li><a class="dropdown-item" href="{{ route('public.videos.index') }}">
@@ -594,8 +617,11 @@
                             <li><a class="dropdown-item" href="{{ route('achievements.index') }}">
                                 <i class="fas fa-trophy me-3"></i>Prestasi
                             </a></li>
-                            <li><a class="dropdown-item" href="{{ route('extracurriculars.index') }}">
+                            <li><a class="dropdown-item" href="{{ route('public.extracurriculars.index') }}">
                                 <i class="fas fa-users me-3"></i>Ekstrakurikuler
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ route('public.teachers.index') }}">
+                                <i class="fas fa-chalkboard-teacher me-3"></i>Guru & Staff
                             </a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{{ route('contact') }}">
@@ -630,7 +656,7 @@
                                 <span class="d-inline d-md-none">Profile</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}">
+                                <li><a class="dropdown-item" href="{{ route('dashboard') }}">
                                     <i class="fas fa-tachometer-alt me-3"></i>Dashboard
                                 </a></li>
                                 <li><a class="dropdown-item" href="{{ route('profile.edit') }}">
@@ -648,7 +674,19 @@
                             </ul>
                         </li>
                     @else
-                       
+                        <!-- Student Registration Button -->
+                        <li class="nav-item me-2">
+                            <a class="nav-link register-btn" href="{{ route('student.register.form') }}">
+                                <i class="fas fa-user-plus me-2"></i>Daftar Siswa
+                            </a>
+                        </li>
+                        
+                        <!-- Login Button -->
+                        <li class="nav-item">
+                            <a class="nav-link login-btn" href="{{ route('login') }}">
+                                <i class="fas fa-sign-in-alt me-2"></i>Masuk
+                            </a>
+                        </li>
                     @endauth
                 </ul>
             </div>
@@ -688,7 +726,7 @@
                         <li class="mb-2"><a href="{{ route('about.profile') }}" class="text-white-50 text-decoration-none">Profil Sekolah</a></li>
                         <li class="mb-2"><a href="{{ route('facilities.index') }}" class="text-white-50 text-decoration-none">Fasilitas</a></li>
                         <li class="mb-2"><a href="{{ route('achievements.index') }}" class="text-white-50 text-decoration-none">Prestasi</a></li>
-                        <li class="mb-2"><a href="{{ route('extracurriculars.index') }}" class="text-white-50 text-decoration-none">Ekstrakurikuler</a></li>
+                        <li class="mb-2"><a href="{{ route('public.extracurriculars.index') }}" class="text-white-50 text-decoration-none">Ekstrakurikuler</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-2 col-md-6 mb-4 mb-lg-0">
@@ -697,7 +735,7 @@
                         <li class="mb-2"><a href="{{ route('public.academic.programs') }}" class="text-white-50 text-decoration-none">Program Studi</a></li>
                         <li class="mb-2"><a href="{{ route('academic.calendar') }}" class="text-white-50 text-decoration-none">Kalender</a></li>
                         <li class="mb-2"><a href="{{ route('downloads.index') }}" class="text-white-50 text-decoration-none">Download</a></li>
-                        <li class="mb-2"><a href="{{ route('gallery.photos.index') }}" class="text-white-50 text-decoration-none">Galeri Foto</a></li>
+                        <li class="mb-2"><a href="{{ route('gallery.index') }}" class="text-white-50 text-decoration-none">Galeri</a></li>
                         <li class="mb-2"><a href="{{ route('public.videos.index') }}" class="text-white-50 text-decoration-none">Video</a></li>
 
                     </ul>

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use App\Services\NotificationService;
 
 class GalleryController extends Controller
 {
@@ -113,6 +114,14 @@ class GalleryController extends Controller
             ];
 
             $this->saveAlbumData($albumData);
+
+            // Send notification
+            NotificationService::mediaUpload('gallery', $request->title, null, [
+                'album_id' => $albumData['id'],
+                'photo_count' => count($uploadedPhotos),
+                'category' => $request->category,
+                'album_slug' => $albumSlug
+            ]);
 
             return redirect()->route('admin.gallery.index')
                 ->with('success', 'Photos uploaded successfully! ' . count($uploadedPhotos) . ' photos added to gallery.');

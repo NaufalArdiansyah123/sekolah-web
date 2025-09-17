@@ -2,28 +2,24 @@
 
 namespace Database\Seeders;
 
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\BlogPost;
 use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class BlogPostSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Run the database seeders.
      */
     public function run(): void
     {
-        // Clear existing blog posts
-        DB::table('blog_posts')->truncate();
-
-        // Get first user or create one
-        $user = User::first();
-        if (!$user) {
-            $user = User::create([
-                'name' => 'Admin Sekolah',
-                'email' => 'admin@sman1balong.sch.id',
+        // Get admin user or create one
+        $admin = User::where('email', 'admin@sekolah.com')->first();
+        if (!$admin) {
+            $admin = User::create([
+                'name' => 'Administrator',
+                'email' => 'admin@sekolah.com',
                 'password' => bcrypt('password'),
                 'email_verified_at' => now(),
             ]);
@@ -31,226 +27,130 @@ class BlogPostSeeder extends Seeder
 
         $blogPosts = [
             [
-                'title' => 'Prestasi Gemilang Siswa SMA Negeri 1 Balong di Olimpiade Sains Nasional 2024',
-                'content' => 'SMA Negeri 1 Balong kembali menorehkan prestasi membanggakan di ajang Olimpiade Sains Nasional (OSN) 2024. Tim siswa kami berhasil meraih medali emas untuk bidang Matematika dan medali perak untuk bidang Fisika.
+                'title' => 'SMA Negeri 1 Balong Raih Juara Umum Olimpiade Sains Nasional 2024',
+                'content' => 'Prestasi membanggakan kembali ditorehkan oleh siswa-siswi SMA Negeri 1 Balong dengan meraih juara umum dalam Olimpiade Sains Nasional (OSN) 2024. Tim yang terdiri dari 15 siswa terbaik berhasil meraih 5 medali emas, 3 medali perak, dan 2 medali perunggu dalam berbagai bidang sains.
 
-Prestasi ini merupakan hasil kerja keras siswa-siswa terbaik kami yang telah mempersiapkan diri selama berbulan-bulan. Mereka mengikuti pembinaan intensif dari guru-guru berpengalaman dan mengikuti berbagai simulasi ujian.
+Pencapaian ini merupakan hasil kerja keras siswa-siswi yang telah mempersiapkan diri selama berbulan-bulan dengan bimbingan intensif dari para guru pembina. Bidang yang berhasil meraih medali emas antara lain Matematika, Fisika, Kimia, Biologi, dan Informatika.
 
-"Kami sangat bangga dengan pencapaian siswa-siswa kami. Ini membuktikan bahwa kualitas pendidikan di SMA Negeri 1 Balong terus meningkat," ujar Kepala Sekolah, Singgih Wibowo A Se.MM.
+Kepala Sekolah SMA Negeri 1 Balong, Drs. Ahmad Suryanto, M.Pd., menyampaikan rasa bangga dan apresiasi tinggi kepada seluruh siswa yang telah mengharumkan nama sekolah. "Prestasi ini membuktikan bahwa kualitas pendidikan di SMA Negeri 1 Balong terus meningkat dan mampu bersaing di tingkat nasional," ujarnya.
 
-Para siswa yang meraih prestasi ini adalah:
-- Ahmad Rizki Pratama (Kelas XI IPA 1) - Medali Emas Matematika
-- Siti Nurhaliza (Kelas XI IPA 2) - Medali Perak Fisika
-- Muhammad Fadli (Kelas XI IPA 1) - Medali Perunggu Kimia
-
-Prestasi ini diharapkan dapat memotivasi siswa-siswa lainnya untuk terus berprestasi dan mengharumkan nama sekolah di tingkat nasional maupun internasional.',
+Para siswa peraih medali akan mendapatkan pembinaan lebih lanjut untuk persiapan kompetisi internasional. Sekolah juga berkomitmen untuk terus meningkatkan fasilitas laboratorium dan program pembinaan olimpiade sains.',
                 'category' => 'prestasi',
                 'status' => 'published',
-                'meta_description' => 'SMA Negeri 1 Balong meraih prestasi gemilang di Olimpiade Sains Nasional 2024 dengan medali emas dan perak.',
-                'keywords' => 'olimpiade sains, prestasi siswa, medali emas, matematika, fisika',
+                'meta_description' => 'SMA Negeri 1 Balong meraih juara umum OSN 2024 dengan 5 emas, 3 perak, dan 2 perunggu',
+                'keywords' => 'olimpiade sains, prestasi, medali emas, SMA Negeri 1 Balong, OSN 2024',
                 'author' => 'Tim Redaksi',
-                'published_at' => Carbon::now()->subDays(2),
-                'user_id' => $user->id,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'published_at' => now()->subDays(2),
+                'user_id' => $admin->id,
             ],
             [
-                'title' => 'Kegiatan Bakti Sosial SMA Negeri 1 Balong untuk Korban Bencana Alam',
-                'content' => 'Dalam rangka menumbuhkan rasa empati dan kepedulian sosial, SMA Negeri 1 Balong mengadakan kegiatan bakti sosial untuk membantu korban bencana alam yang terjadi di wilayah sekitar.
+                'title' => 'Penerimaan Peserta Didik Baru Tahun Ajaran 2024/2025 Resmi Dibuka',
+                'content' => 'SMA Negeri 1 Balong dengan bangga mengumumkan pembukaan Penerimaan Peserta Didik Baru (PPDB) untuk tahun ajaran 2024/2025. Pendaftaran akan dilaksanakan secara online melalui sistem PPDB Provinsi mulai tanggal 15 Juni hingga 25 Juni 2024.
 
-Kegiatan ini melibatkan seluruh warga sekolah, mulai dari siswa, guru, hingga karyawan. Bantuan yang dikumpulkan berupa sembako, pakaian layak pakai, dan uang tunai.
+Tahun ini, SMA Negeri 1 Balong menyediakan 360 kursi untuk siswa baru yang terbagi dalam 12 kelas dengan rincian 8 kelas IPA dan 4 kelas IPS. Seleksi akan dilakukan berdasarkan nilai rapor semester 1-5 SMP dengan bobot 50%, prestasi akademik dan non-akademik 30%, serta hasil tes wawancara 20%.
 
-"Kegiatan ini bertujuan untuk mengajarkan siswa tentang pentingnya berbagi dan membantu sesama yang sedang kesulitan," kata Wakil Kepala Sekolah Bidang Kesiswaan, Budi Santoso, M.Pd.
+Persyaratan pendaftaran meliputi:
+1. Lulusan SMP/MTs tahun 2024
+2. Nilai rata-rata rapor minimal 8.0
+3. Tidak buta warna untuk jurusan IPA
+4. Sehat jasmani dan rohani
+5. Berkelakuan baik
 
-Total bantuan yang berhasil dikumpulkan mencapai:
-- 500 paket sembako
-- 1000 potong pakaian layak pakai
-- Rp 25.000.000 uang tunai
-- Peralatan sekolah untuk anak-anak korban bencana
+Calon siswa dapat mengakses informasi lengkap dan melakukan pendaftaran melalui website resmi sekolah atau datang langsung ke sekretariat PPDB yang beroperasi setiap hari kerja pukul 08.00-15.00 WIB.
 
-Penyerahan bantuan dilakukan langsung ke lokasi bencana dengan melibatkan perwakilan siswa dari setiap kelas. Kegiatan ini mendapat apresiasi tinggi dari masyarakat setempat.',
-                'category' => 'kegiatan',
-                'status' => 'published',
-                'meta_description' => 'SMA Negeri 1 Balong mengadakan bakti sosial untuk korban bencana alam dengan mengumpulkan bantuan sembako dan pakaian.',
-                'keywords' => 'bakti sosial, bencana alam, bantuan, empati, kepedulian sosial',
-                'author' => 'Humas Sekolah',
-                'published_at' => Carbon::now()->subDays(5),
-                'user_id' => $user->id,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'title' => 'Pengumuman Penerimaan Peserta Didik Baru (PPDB) Tahun Ajaran 2024/2025',
-                'content' => 'SMA Negeri 1 Balong dengan ini mengumumkan pembukaan pendaftaran Penerimaan Peserta Didik Baru (PPDB) untuk Tahun Ajaran 2024/2025.
-
-JADWAL PENDAFTARAN:
-- Pendaftaran Online: 15 Juni - 25 Juni 2024
-- Verifikasi Berkas: 26 Juni - 28 Juni 2024
-- Pengumuman Hasil: 30 Juni 2024
-- Daftar Ulang: 1 Juli - 5 Juli 2024
-
-PERSYARATAN UMUM:
-1. Lulusan SMP/MTs atau sederajat
-2. Usia maksimal 21 tahun pada 1 Juli 2024
-3. Sehat jasmani dan rohani
-4. Berkelakuan baik
-
-DOKUMEN YANG DIPERLUKAN:
-- Ijazah SMP/MTs atau Surat Keterangan Lulus
-- Kartu Keluarga
-- Akta Kelahiran
-- Pas foto terbaru ukuran 3x4 (3 lembar)
-- Surat keterangan sehat dari dokter
-
-Informasi lebih lanjut dapat diperoleh melalui website sekolah atau menghubungi panitia PPDB.',
+Untuk informasi lebih lanjut, hubungi panitia PPDB di nomor telepon (024) 123-4567 atau email ppdb@sman1balong.sch.id.',
                 'category' => 'pengumuman',
                 'status' => 'published',
-                'meta_description' => 'Pengumuman PPDB SMA Negeri 1 Balong tahun ajaran 2024/2025 dengan berbagai jalur pendaftaran.',
-                'keywords' => 'PPDB, pendaftaran, siswa baru, tahun ajaran 2024/2025, zonasi, prestasi',
+                'meta_description' => 'PPDB SMA Negeri 1 Balong 2024/2025 dibuka 15-25 Juni dengan 360 kursi tersedia',
+                'keywords' => 'PPDB, penerimaan siswa baru, SMA Negeri 1 Balong, pendaftaran online',
                 'author' => 'Panitia PPDB',
-                'published_at' => Carbon::now()->subDays(7),
-                'user_id' => $user->id,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'published_at' => now()->subDays(5),
+                'user_id' => $admin->id,
             ],
             [
-                'title' => 'Festival Seni dan Budaya SMA Negeri 1 Balong Meriah dan Penuh Kreativitas',
-                'content' => 'SMA Negeri 1 Balong sukses menyelenggarakan Festival Seni dan Budaya yang berlangsung selama tiga hari di aula sekolah. Acara ini menampilkan berbagai pertunjukan seni dari siswa-siswa berbakat.
+                'title' => 'Workshop Digital Marketing untuk Siswa Kelas XII',
+                'content' => 'Dalam rangka mempersiapkan siswa menghadapi era digital dan dunia kerja yang semakin kompetitif, SMA Negeri 1 Balong mengadakan workshop Digital Marketing untuk siswa kelas XII. Kegiatan ini berlangsung selama 3 hari, mulai tanggal 20-22 Maret 2024 di aula sekolah.
 
-Festival ini menampilkan beragam pertunjukan, antara lain:
-- Tari tradisional dari berbagai daerah
-- Musik modern dan tradisional
-- Drama dan teater
-- Pameran karya seni rupa
-- Fashion show dengan tema budaya Indonesia
+Workshop ini menghadirkan narasumber profesional dari industri digital marketing, yaitu Bapak Rizki Pratama, S.Kom., M.M., yang merupakan Digital Marketing Manager di salah satu perusahaan teknologi terkemuka di Indonesia. Materi yang disampaikan meliputi:
 
-"Festival ini bertujuan untuk melestarikan budaya Indonesia sekaligus memberikan wadah bagi siswa untuk mengekspresikan kreativitas mereka," ungkap Dr. Siti Nurhaliza, S.Pd, Wakil Kepala Sekolah Bidang Kurikulum.
+1. Pengenalan Digital Marketing dan Tren Terkini
+2. Social Media Marketing Strategy
+3. Content Creation dan Copywriting
+4. Search Engine Optimization (SEO) Dasar
+5. Analisis Data dan Metrics
+6. Praktik Membuat Campaign Digital
 
-Puncak acara ditutup dengan penampilan kolaborasi antara siswa dan guru dalam sebuah pertunjukan musik yang memukau. Festival ini mendapat apresiasi tinggi dari orang tua siswa dan masyarakat sekitar.',
+Sebanyak 120 siswa kelas XII mengikuti workshop ini dengan antusias. Mereka tidak hanya mendapatkan teori, tetapi juga praktik langsung membuat konten digital dan merancang strategi pemasaran untuk produk simulasi.
+
+"Workshop ini sangat bermanfaat untuk membuka wawasan siswa tentang peluang karir di bidang digital. Kami berharap siswa dapat mengaplikasikan ilmu yang didapat untuk mengembangkan jiwa entrepreneurship," kata Ibu Sari Dewi, S.Pd., selaku koordinator kegiatan.
+
+Di akhir workshop, siswa terbaik akan mendapatkan sertifikat dan kesempatan magang di perusahaan mitra.',
                 'category' => 'kegiatan',
                 'status' => 'published',
-                'meta_description' => 'Festival Seni dan Budaya SMA Negeri 1 Balong menampilkan berbagai pertunjukan kreatif siswa.',
-                'keywords' => 'festival seni, budaya, tari tradisional, musik, drama, kreativitas siswa',
-                'author' => 'Tim Dokumentasi',
-                'published_at' => Carbon::now()->subDays(10),
-                'user_id' => $user->id,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'meta_description' => 'Workshop Digital Marketing 3 hari untuk siswa kelas XII SMA Negeri 1 Balong',
+                'keywords' => 'workshop, digital marketing, siswa kelas XII, pelatihan, entrepreneurship',
+                'author' => 'Sari Dewi',
+                'published_at' => now()->subDays(7),
+                'user_id' => $admin->id,
             ],
             [
-                'title' => 'Kunjungan Industri Siswa Jurusan IPA ke Pusat Penelitian LIPI',
-                'content' => 'Siswa-siswa jurusan IPA SMA Negeri 1 Balong melakukan kunjungan industri ke Pusat Penelitian Lembaga Ilmu Pengetahuan Indonesia (LIPI) dalam rangka memperluas wawasan tentang dunia penelitian dan sains.
+                'title' => 'Tim Basket Putra Juara Turnamen Antarsekolah Se-Kota',
+                'content' => 'Tim basket putra SMA Negeri 1 Balong berhasil meraih juara 1 dalam Turnamen Basket Antarsekolah Se-Kota yang diselenggarakan oleh Dinas Pendidikan Kota. Turnamen yang berlangsung selama 2 minggu ini diikuti oleh 16 sekolah menengah atas se-kota.
 
-Kunjungan ini diikuti oleh 60 siswa kelas XI dan XII IPA didampingi oleh 5 guru pembimbing. Para siswa berkesempatan melihat langsung berbagai laboratorium penelitian dan berinteraksi dengan para peneliti.
+Perjalanan tim menuju gelar juara tidaklah mudah. Mereka harus mengalahkan beberapa sekolah unggulan yang juga memiliki tim basket yang kuat. Di babak final, tim SMA Negeri 1 Balong berhasil mengalahkan SMA Negeri 3 dengan skor 78-65 dalam pertandingan yang berlangsung sengit.
 
-Kegiatan yang dilakukan selama kunjungan:
-- Tur laboratorium fisika dan kimia
-- Presentasi tentang penelitian terkini
-- Workshop praktikum sederhana
-- Diskusi dengan para peneliti muda
-- Pengenalan peralatan penelitian canggih
+Kapten tim, Muhammad Fadil (kelas XI IPA 2), menyampaikan rasa syukur dan bangga atas pencapaian ini. "Ini adalah hasil kerja keras seluruh tim dan dukungan dari sekolah. Kami berlatih setiap hari setelah jam pelajaran selesai," ungkapnya.
 
-"Kunjungan ini sangat bermanfaat untuk membuka wawasan siswa tentang dunia penelitian. Banyak siswa yang tertarik untuk melanjutkan studi di bidang sains," kata Dra. Retno Wulandari, guru Fisika yang memimpin rombongan.',
+Pelatih tim, Bapak Agus Santoso, S.Pd., juga mengapresiasi dedikasi para pemain. "Mereka menunjukkan sportivitas dan semangat juang yang luar biasa. Prestasi ini memotivasi kami untuk terus berlatih dan meraih prestasi yang lebih tinggi."
+
+Sebagai juara, tim akan mewakili kota dalam turnamen tingkat provinsi yang akan diselenggarakan bulan depan. Sekolah memberikan dukungan penuh dengan menyediakan fasilitas latihan yang lebih baik dan program pembinaan intensif.',
+                'category' => 'prestasi',
+                'status' => 'published',
+                'meta_description' => 'Tim basket putra SMA Negeri 1 Balong juara turnamen antarsekolah se-kota',
+                'keywords' => 'basket, juara, turnamen, olahraga, prestasi sekolah',
+                'author' => 'Agus Santoso',
+                'published_at' => now()->subDays(10),
+                'user_id' => $admin->id,
+            ],
+            [
+                'title' => 'Peringatan Hari Kemerdekaan RI ke-79 dengan Berbagai Lomba Menarik',
+                'content' => 'Dalam rangka memperingati Hari Kemerdekaan Republik Indonesia ke-79, SMA Negeri 1 Balong menggelar berbagai kegiatan dan lomba yang meriah. Perayaan berlangsung selama 3 hari, mulai tanggal 15-17 Agustus 2024, dengan tema "Bersatu Membangun Negeri".
+
+Rangkaian kegiatan dimulai dengan upacara bendera pada tanggal 17 Agustus yang diikuti oleh seluruh warga sekolah. Upacara dipimpin oleh Kepala Sekolah sebagai inspektur upacara, dengan pembawa acara dari siswa OSIS.
+
+Berbagai lomba tradisional dan modern diselenggarakan untuk memeriahkan perayaan:
+
+**Lomba Tradisional:**
+- Balap karung
+- Panjat pinang
+- Tarik tambang
+- Lomba makan kerupuk
+- Balap kelereng dengan sendok
+
+**Lomba Modern:**
+- Futsal antar kelas
+- Voli antar guru dan siswa
+- Lomba fotografi dengan tema kemerdekaan
+- Lomba video pendek TikTok
+- Quiz online tentang sejarah Indonesia
+
+Antusiasme warga sekolah sangat tinggi. Setiap kelas mengirimkan perwakilan untuk mengikuti berbagai lomba. Suasana kekeluargaan dan kebersamaan sangat terasa selama kegiatan berlangsung.
+
+Pemenang lomba mendapatkan piala, sertifikat, dan hadiah menarik. Lomba futsal dimenangkan oleh kelas XII IPA 1, sementara lomba fotografi dimenangkan oleh Andi Pratama dari kelas XI IPS 2.
+
+"Kegiatan ini bertujuan untuk menumbuhkan rasa cinta tanah air dan mempererat tali persaudaraan antar warga sekolah," kata Bapak Drs. Ahmad Suryanto, M.Pd., Kepala SMA Negeri 1 Balong.',
                 'category' => 'kegiatan',
                 'status' => 'published',
-                'meta_description' => 'Siswa IPA SMA Negeri 1 Balong berkunjung ke LIPI untuk memperluas wawasan tentang dunia penelitian.',
-                'keywords' => 'kunjungan industri, LIPI, penelitian, sains, laboratorium, siswa IPA',
-                'author' => 'Guru Pembimbing',
-                'published_at' => Carbon::now()->subDays(14),
-                'user_id' => $user->id,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'title' => 'Implementasi Kurikulum Merdeka di SMA Negeri 1 Balong Berjalan Sukses',
-                'content' => 'SMA Negeri 1 Balong telah berhasil mengimplementasikan Kurikulum Merdeka dengan baik. Perubahan ini membawa dampak positif bagi proses pembelajaran dan pengembangan karakter siswa.
-
-Kurikulum Merdeka memberikan keleluasaan kepada siswa untuk memilih mata pelajaran sesuai dengan minat dan bakat mereka. Hal ini membuat pembelajaran menjadi lebih bermakna dan menyenangkan.
-
-Perubahan yang terlihat sejak implementasi:
-- Siswa lebih aktif dalam pembelajaran
-- Peningkatan kreativitas dan inovasi
-- Pembelajaran berbasis proyek yang menarik
-- Kolaborasi antar mata pelajaran
-- Pengembangan soft skills yang optimal
-
-"Kurikulum Merdeka memberikan ruang yang lebih luas bagi guru untuk berinovasi dalam pembelajaran. Siswa juga lebih termotivasi karena bisa belajar sesuai passion mereka," ungkap Kepala Sekolah.',
-                'category' => 'berita',
-                'status' => 'published',
-                'meta_description' => 'SMA Negeri 1 Balong sukses mengimplementasikan Kurikulum Merdeka dengan dampak positif bagi pembelajaran.',
-                'keywords' => 'kurikulum merdeka, implementasi, pembelajaran, inovasi, kreativitas siswa',
-                'author' => 'Tim Kurikulum',
-                'published_at' => Carbon::now()->subDays(18),
-                'user_id' => $user->id,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'title' => 'Program Beasiswa Prestasi untuk Siswa Berprestasi SMA Negeri 1 Balong',
-                'content' => 'SMA Negeri 1 Balong meluncurkan program beasiswa prestasi untuk mendukung siswa-siswa berprestasi yang memiliki keterbatasan ekonomi. Program ini merupakan bentuk komitmen sekolah dalam memberikan pendidikan berkualitas untuk semua.
-
-Program beasiswa ini mencakup:
-- Pembebasan biaya sekolah
-- Bantuan seragam dan perlengkapan sekolah
-- Uang saku bulanan
-- Bimbingan belajar gratis
-- Akses ke semua fasilitas sekolah
-
-Kriteria penerima beasiswa:
-1. Prestasi akademik minimal rata-rata 8.5
-2. Kondisi ekonomi keluarga kurang mampu
-3. Aktif dalam kegiatan ekstrakurikuler
-4. Berkelakuan baik
-5. Komitmen untuk mempertahankan prestasi
-
-"Program ini diharapkan dapat memotivasi siswa untuk terus berprestasi sekaligus membantu mereka yang memiliki keterbatasan ekonomi," kata Wakil Kepala Sekolah Bidang Kesiswaan.',
-                'category' => 'pengumuman',
-                'status' => 'published',
-                'meta_description' => 'SMA Negeri 1 Balong meluncurkan program beasiswa prestasi untuk siswa berprestasi dengan keterbatasan ekonomi.',
-                'keywords' => 'beasiswa prestasi, siswa berprestasi, bantuan pendidikan, ekonomi kurang mampu',
-                'author' => 'Bagian Kesiswaan',
-                'published_at' => Carbon::now()->subDays(21),
-                'user_id' => $user->id,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'title' => 'Peringatan Hari Pendidikan Nasional dengan Berbagai Kegiatan Menarik',
-                'content' => 'SMA Negeri 1 Balong memperingati Hari Pendidikan Nasional dengan mengadakan berbagai kegiatan menarik yang melibatkan seluruh warga sekolah. Tema peringatan tahun ini adalah "Pendidikan Berkualitas untuk Masa Depan Gemilang".
-
-Rangkaian kegiatan yang dilaksanakan:
-- Upacara bendera dengan pembacaan teks proklamasi
-- Lomba karya tulis ilmiah siswa
-- Pameran inovasi pembelajaran
-- Seminar pendidikan dengan narasumber ahli
-- Pentas seni dan budaya
-- Bazar makanan tradisional
-
-Dalam sambutannya, Kepala Sekolah menekankan pentingnya pendidikan dalam membangun karakter bangsa. "Pendidikan bukan hanya tentang transfer ilmu, tetapi juga pembentukan karakter dan moral generasi muda," ujarnya.
-
-Acara puncak adalah penganugerahan penghargaan kepada guru dan siswa berprestasi. Beberapa guru menerima penghargaan sebagai guru teladan, sementara siswa berprestasi mendapat apresiasi atas pencapaian mereka.',
-                'category' => 'kegiatan',
-                'status' => 'published',
-                'meta_description' => 'SMA Negeri 1 Balong memperingati Hari Pendidikan Nasional dengan berbagai kegiatan menarik.',
-                'keywords' => 'hari pendidikan nasional, hardiknas, upacara, lomba, seminar pendidikan',
-                'author' => 'Panitia Hardiknas',
-                'published_at' => Carbon::now()->subDays(25),
-                'user_id' => $user->id,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'meta_description' => 'Peringatan HUT RI ke-79 di SMA Negeri 1 Balong dengan lomba tradisional dan modern',
+                'keywords' => 'kemerdekaan, HUT RI, lomba, upacara, kegiatan sekolah',
+                'author' => 'Tim Redaksi',
+                'published_at' => now()->subDays(15),
+                'user_id' => $admin->id,
             ],
         ];
 
-        try {
-            foreach ($blogPosts as $post) {
-                BlogPost::create($post);
-                $this->command->info("Created blog post: {$post['title']}");
-            }
-
-            $this->command->info('✅ Blog posts seeded successfully! Total: ' . count($blogPosts) . ' posts created.');
-        } catch (\Exception $e) {
-            $this->command->error('❌ Error seeding blog posts: ' . $e->getMessage());
-            throw $e;
+        foreach ($blogPosts as $post) {
+            BlogPost::create($post);
         }
     }
 }

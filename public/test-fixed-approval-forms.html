@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Fixed Approval Forms</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        .info { color: blue; font-weight: bold; }
+        .code { background: #f0f0f0; padding: 10px; margin: 10px 0; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <h1>Test Fixed Approval Forms</h1>
+    
+    <div class="section">
+        <h2 class="success">✅ Forms Fixed</h2>
+        <p>The approval forms have been updated to use proper route helpers:</p>
+        <div class="code">
+            OLD: {{ url('admin/extracurriculars/registration/' . $registration->id . '/approve') }}<br>
+            NEW: {{ route('admin.extracurriculars.approve-registration', $registration) }}
+        </div>
+        <div class="code">
+            OLD: {{ url('admin/extracurriculars/registration/' . $registration->id . '/reject') }}<br>
+            NEW: {{ route('admin.extracurriculars.reject-registration', $registration) }}
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2 class="info">🔧 What Was Changed</h2>
+        <ul>
+            <li>✅ Approval forms now use route() helper instead of url() helper</li>
+            <li>✅ JavaScript interceptor updated with better logging</li>
+            <li>✅ All caches cleared</li>
+            <li>✅ Routes tested and cached</li>
+            <li>✅ Backup created for safety</li>
+        </ul>
+    </div>
+    
+    <div class="section">
+        <h2>🧪 Testing Steps</h2>
+        <ol>
+            <li><strong>Clear browser cache:</strong> Ctrl+Shift+Delete</li>
+            <li><strong>Open Developer Tools:</strong> F12 → Console tab</li>
+            <li><strong>Test the page:</strong> <a href="http://127.0.0.1:8000/admin/extracurriculars/all-registrations" target="_blank">All Registrations</a></li>
+            <li><strong>Hard refresh:</strong> Ctrl+F5</li>
+            <li><strong>Try approval buttons:</strong> Should work without alerts</li>
+            <li><strong>Check console:</strong> Should show proper form submissions</li>
+        </ol>
+    </div>
+    
+    <div class="section">
+        <h2>📊 Expected Console Output</h2>
+        <div class="code">
+            ✅ "Fixed JavaScript loaded - preventing POST to wrong URL"<br>
+            ✅ "Individual approval/rejection form detected: { action: ..., type: approval }"<br>
+            ❌ No more "BLOCKED: Form trying to POST to all-registrations URL"
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>🚨 If Still Having Issues</h2>
+        <ul>
+            <li>Check if routes exist: <code>php artisan route:list | grep registration</code></li>
+            <li>Verify controller methods exist</li>
+            <li>Check Laravel logs: storage/logs/laravel.log</li>
+            <li>Try incognito mode</li>
+            <li>Restart browser completely</li>
+        </ul>
+    </div>
+    
+    <script>
+    console.log("Test page loaded");
+    console.log("If approval forms are fixed, you should not see blocking alerts anymore");
+    </script>
+</body>
+</html>

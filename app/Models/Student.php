@@ -43,7 +43,25 @@ class Student extends Model
 
     public function extracurriculars()
     {
-        return $this->belongsToMany(Extracurricular::class, 'student_extracurriculars');
+        // Get extracurriculars through approved registrations
+        return $this->hasManyThrough(
+            Extracurricular::class,
+            ExtracurricularRegistration::class,
+            'student_nis', // Foreign key on extracurricular_registrations table
+            'id', // Foreign key on extracurriculars table
+            'nis', // Local key on students table
+            'extracurricular_id' // Local key on extracurricular_registrations table
+        )->where('extracurricular_registrations.status', 'approved');
+    }
+    
+    public function extracurricularRegistrations()
+    {
+        return $this->hasMany(ExtracurricularRegistration::class, 'student_nis', 'nis');
+    }
+    
+    public function approvedExtracurriculars()
+    {
+        return $this->extracurricularRegistrations()->where('status', 'approved')->with('extracurricular');
     }
 
     public function scopeActive($query)
@@ -66,5 +84,27 @@ class Student extends Model
     public function getAgeAttribute()
     {
         return $this->birth_date ? $this->birth_date->age : null;
+    }
+
+    public function getPhotoUrlAttribute()
+    {
+        if ($this->photo) {
+            return asset('storage/' . $this->photo);
+        }
+        return null;
+    }
+
+    public function getStatusLabelAttribute()
+    {
+        switch ($this->status) {
+            case 'active':
+                return 'Aktif';
+            case 'inactive':
+                return 'Tidak Aktif';
+            case 'graduated':
+                return 'Lulus';
+            default:
+                return ucfirst($this->status);
+        }
     }
 }

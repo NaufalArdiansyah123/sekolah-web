@@ -7,12 +7,39 @@ use App\Models\Slideshow;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use App\Services\NotificationService;
 
 class SlideshowController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $slideshows = Slideshow::latest()->paginate(10);
+        $query = Slideshow::query();
+        
+        // Filter berdasarkan pencarian
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('title', 'LIKE', '%' . $request->search . '%')
+                  ->orWhere('description', 'LIKE', '%' . $request->search . '%');
+            });
+        }
+        
+        // Filter berdasarkan status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        
+        // Filter berdasarkan order
+        if ($request->filled('order')) {
+            if ($request->order === 'asc') {
+                $query->orderBy('order', 'asc');
+            } elseif ($request->order === 'desc') {
+                $query->orderBy('order', 'desc');
+            }
+        } else {
+            $query->latest();
+        }
+        
+        $slideshows = $query->paginate(10);
         return view('admin.posts.slideshow.index', compact('slideshows'));
     }
 
@@ -60,6 +87,12 @@ class SlideshowController extends Controller
             ]);
 
             Log::info('Slideshow created:', $slideshow->toArray());
+
+            // Send notification
+            NotificationService::mediaUpload('slideshow', $slideshow->title, null, [
+                'slideshow_id' => $slideshow->id,
+                'image_path' => $slideshow->image
+            ]);
 
             return redirect()
                 ->route('admin.posts.slideshow')

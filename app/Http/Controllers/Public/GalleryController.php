@@ -24,7 +24,7 @@ class GalleryController extends Controller
             abort(404, 'Album not found');
         }
 
-        return view('public.gallery.photos', compact('album'));
+        return view('public.gallery.index', compact('album'));
     }
 
     public function downloadAlbum($slug)
@@ -66,7 +66,7 @@ class GalleryController extends Controller
         }
     }
 
-    private function getGalleryAlbums()
+    public function getGalleryAlbums()
     {
         $albumsFile = storage_path('app/gallery_albums.json');
         

@@ -1,909 +1,765 @@
-
 @extends('layouts.public')
 
-@section('title', 'Profil Sekolah')
+@section('title', 'Pengumuman Sekolah')
 
 @section('content')
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pengumuman - SMA Negeri 1 Balong</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #1a202c;
-            --secondary-color: #3182ce;
-            --accent-color: #4299e1;
-            --light-gray: #f7fafc;
-            --dark-gray: #718096;
-            --glass-bg: rgba(26, 32, 44, 0.95);
-            --gradient-primary: linear-gradient(135deg, #1a202c, #3182ce);
-            --gradient-light: linear-gradient(135deg, rgba(49, 130, 206, 0.1), rgba(66, 153, 225, 0.05));
-        }
+<style>
+    :root {
+        --primary-color: #1a202c;
+        --secondary-color: #3182ce;
+        --accent-color: #4299e1;
+        --light-gray: #f7fafc;
+        --dark-gray: #718096;
+        --glass-bg: rgba(26, 32, 44, 0.95);
+        --gradient-primary: linear-gradient(135deg, #1a202c, #3182ce);
+        --gradient-light: linear-gradient(135deg, rgba(49, 130, 206, 0.1), rgba(66, 153, 225, 0.05));
+    }
+    
+    body {
+        font-family: 'Poppins', sans-serif;
+        color: #333;
+        line-height: 1.6;
+    }
+    
+    /* Enhanced Hero Section matching other pages */
+    .hero-section {
+        background: linear-gradient(
+            135deg, 
+            rgba(26, 32, 44, 0.8) 0%, 
+            rgba(49, 130, 206, 0.7) 50%, 
+            rgba(26, 32, 44, 0.8) 100%
+        ),
+        url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3') center/cover no-repeat;
+        color: white;
+        padding: 100px 0;
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 50%, rgba(49, 130, 206, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(66, 153, 225, 0.3) 0%, transparent 50%);
+        z-index: 1;
+    }
+    
+    .hero-section .container {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .hero-section h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        line-height: 1.2;
+        margin-bottom: 1.5rem;
+        text-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    }
+    
+    .hero-section .lead {
+        font-size: 1.25rem;
+        margin-bottom: 2rem;
+        opacity: 0.95;
+        font-weight: 400;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .hero-icon {
+        font-size: 8rem;
+        opacity: 0.8;
+        background: linear-gradient(135deg, rgba(255,255,255,0.6), rgba(255,255,255,0.2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: float 6s ease-in-out infinite;
+        text-shadow: 0 0 20px rgba(255,255,255,0.3);
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+    }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
-            margin: 0;
-            padding: 0;
-        }
+    /* Enhanced Animation Styles */
+    .fade-in-up {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .fade-in-left {
+        opacity: 0;
+        transform: translateX(-40px);
+        transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .fade-in-right {
+        opacity: 0;
+        transform: translateX(40px);
+        transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .fade-in {
+        opacity: 0;
+        transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .scale-in {
+        opacity: 0;
+        transform: scale(0.8);
+        transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Animation Active States */
+    .fade-in-up.animate,
+    .fade-in-left.animate,
+    .fade-in-right.animate {
+        opacity: 1;
+        transform: translate(0, 0);
+    }
+    
+    .fade-in.animate {
+        opacity: 1;
+    }
+    
+    .scale-in.animate {
+        opacity: 1;
+        transform: scale(1);
+    }
 
-        /* Header Section */
-        .header-section {
-            background: var(--gradient-primary);
-            color: white;
-            padding: 80px 0 60px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .header-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 50%, rgba(49, 130, 206, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(66, 153, 225, 0.3) 0%, transparent 50%);
-            z-index: 1;
-        }
-        
-        .header-section .container {
-            position: relative;
-            z-index: 2;
-        }
-        
-        .header-section h1 {
-            font-size: 3rem;
-            font-weight: 800;
-            text-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            margin-bottom: 1rem;
-        }
-        
-        .header-section .lead {
-            font-size: 1.2rem;
-            opacity: 0.95;
-            font-weight: 400;
-        }
+    /* Enhanced Filter Section */
+    .filter-section {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        border: 1px solid rgba(255,255,255,0.8);
+        backdrop-filter: blur(10px);
+        padding: 2rem;
+        margin-bottom: 3rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .filter-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: 
+            radial-gradient(circle at 20% 50%, rgba(49, 130, 206, 0.05) 0%, transparent 70%);
+        opacity: 0;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .filter-section:hover::before {
+        opacity: 1;
+    }
+    
+    .filter-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+        text-align: center;
+        position: relative;
+    }
+    
+    .filter-title::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+        border-radius: 2px;
+    }
+    
+    .form-control-enhanced {
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 12px 16px;
+        font-size: 0.95rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+    }
+    
+    .form-control-enhanced:focus {
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 4px rgba(49, 130, 206, 0.1);
+        background: white;
+        transform: translateY(-2px);
+    }
+    
+    .btn-filter {
+        background: var(--gradient-primary);
+        border: none;
+        border-radius: 12px;
+        padding: 12px 24px;
+        font-weight: 600;
+        color: white;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 8px 25px rgba(49, 130, 206, 0.3);
+        cursor: pointer;
+        position: relative;
+        z-index: 10;
+    }
+    
+    .btn-filter:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 35px rgba(49, 130, 206, 0.4);
+        background: linear-gradient(135deg, #2d3748, #2b6cb0);
+        color: white;
+    }
+    
+    .btn-secondary {
+        background: #6c757d;
+        border: none;
+        border-radius: 12px;
+        padding: 12px 24px;
+        font-weight: 600;
+        color: white;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        position: relative;
+        z-index: 10;
+    }
+    
+    .btn-secondary:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+        color: white;
+    }
 
-        .breadcrumb-nav {
-            background: rgba(255,255,255,0.1);
-            border-radius: 50px;
-            padding: 10px 20px;
-            backdrop-filter: blur(10px);
-            display: inline-flex;
-            margin-top: 20px;
-        }
+    /* Enhanced Announcement Cards */
+    .announcement-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: none;
+        position: relative;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        border: 1px solid rgba(255,255,255,0.8);
+        backdrop-filter: blur(10px);
+        margin-bottom: 2rem;
+    }
+    
+    .announcement-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(49, 130, 206, 0.05) 0%, transparent 70%);
+        opacity: 0;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1;
+    }
+    
+    .announcement-card:hover::before {
+        opacity: 1;
+    }
+    
+    .announcement-card:hover {
+        transform: translateY(-15px) scale(1.02);
+        box-shadow: 0 30px 70px rgba(0,0,0,0.15);
+    }
+    
+    .announcement-image {
+        height: 200px;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    
+    .announcement-card:hover .announcement-image {
+        transform: scale(1.05);
+    }
+    
+    .announcement-content {
+        padding: 2rem;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .priority-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        z-index: 3;
+    }
+    
+    .priority-urgent {
+        background: rgba(239, 68, 68, 0.9);
+        color: white;
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+    }
+    
+    .priority-high {
+        background: rgba(245, 158, 11, 0.9);
+        color: white;
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+    }
+    
+    .priority-normal {
+        background: rgba(16, 185, 129, 0.9);
+        color: white;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    }
+    
+    .priority-low {
+        background: rgba(107, 114, 128, 0.9);
+        color: white;
+        box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+    }
+    
+    .category-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        background: rgba(49, 130, 206, 0.1);
+        color: var(--secondary-color);
+        margin-bottom: 1rem;
+    }
+    
+    .announcement-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+        line-height: 1.3;
+        transition: color 0.3s ease;
+    }
+    
+    .announcement-card:hover .announcement-title {
+        color: var(--secondary-color);
+    }
+    
+    .announcement-excerpt {
+        color: #4a5568;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .announcement-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        font-size: 0.875rem;
+        color: var(--dark-gray);
+    }
+    
+    .announcement-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .btn-announcement {
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: none;
+        cursor: pointer;
+        font-size: 0.875rem;
+    }
+    
+    .btn-primary-announcement {
+        background: var(--gradient-primary);
+        color: white;
+        box-shadow: 0 4px 15px rgba(49, 130, 206, 0.3);
+    }
+    
+    .btn-primary-announcement:hover {
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(49, 130, 206, 0.4);
+        text-decoration: none;
+    }
 
-        .breadcrumb-nav a {
-            color: rgba(255,255,255,0.8);
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: var(--dark-gray);
+    }
+    
+    .empty-state-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        opacity: 0.5;
+    }
+    
+    .empty-state h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--primary-color);
+    }
+    
+    .empty-state p {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
 
-        .breadcrumb-nav a:hover {
-            color: white;
-        }
+    /* Pagination */
+    .pagination {
+        justify-content: center;
+        margin-top: 3rem;
+    }
+    
+    .page-link {
+        border: none;
+        border-radius: 10px;
+        margin: 0 0.25rem;
+        padding: 0.75rem 1rem;
+        color: var(--secondary-color);
+        background: white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .page-link:hover {
+        background: var(--secondary-color);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(49, 130, 206, 0.3);
+    }
+    
+    .page-item.active .page-link {
+        background: var(--gradient-primary);
+        border-color: var(--secondary-color);
+        box-shadow: 0 4px 15px rgba(49, 130, 206, 0.3);
+    }
 
-        .breadcrumb-nav span {
-            color: rgba(255,255,255,0.6);
-            margin: 0 10px;
-        }
-
-        /* Filter and Search Section */
-        .filter-section {
-            background: white;
-            padding: 40px 0;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
-            position: relative;
-            z-index: 10;
-        }
-
-        .search-box {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
-            border: 2px solid rgba(49, 130, 206, 0.1);
-            padding: 12px 20px;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-        }
-
-        .search-box:focus {
-            outline: none;
-            border-color: var(--secondary-color);
-            box-shadow: 0 8px 30px rgba(49, 130, 206, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .filter-btn {
-            background: var(--gradient-primary);
-            border: none;
-            color: white;
-            padding: 12px 25px;
-            border-radius: 15px;
-            font-weight: 600;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 8px 25px rgba(49, 130, 206, 0.3);
-        }
-
-        .filter-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(49, 130, 206, 0.4);
-            background: linear-gradient(135deg, #2d3748, #2b6cb0);
-            color: white;
-        }
-
-        .filter-tabs {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 20px;
-        }
-
-        .filter-tab {
-            padding: 8px 20px;
-            background: rgba(49, 130, 206, 0.1);
-            border: none;
-            border-radius: 25px;
-            color: var(--secondary-color);
-            font-weight: 500;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .filter-tab.active,
-        .filter-tab:hover {
-            background: var(--gradient-primary);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(49, 130, 206, 0.3);
-        }
-
-        /* Announcement Cards */
-        .announcements-section {
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .hero-section {
             padding: 60px 0;
-        }
-
-        .announcement-card {
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(0,0,0,0.05);
-            margin-bottom: 30px;
-            position: relative;
-        }
-
-        .announcement-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--gradient-primary);
-            transform: scaleX(0);
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .announcement-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .announcement-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 25px 60px rgba(0,0,0,0.15);
-        }
-
-        .announcement-header {
-            padding: 25px 30px 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .announcement-category {
-            background: var(--gradient-primary);
-            color: white;
-            padding: 6px 15px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .announcement-date {
-            color: var(--dark-gray);
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .announcement-body {
-            padding: 20px 30px 30px;
-        }
-
-        .announcement-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 15px;
-            line-height: 1.3;
-        }
-
-        .announcement-content {
-            color: var(--dark-gray);
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-
-        .announcement-meta {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding-top: 20px;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        .announcement-author {
-            display: flex;
-            align-items: center;
-            color: var(--dark-gray);
-            font-size: 0.9rem;
-        }
-
-        .announcement-author i {
-            margin-right: 8px;
-            color: var(--secondary-color);
-        }
-
-        .announcement-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-action {
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .btn-read {
-            background: rgba(49, 130, 206, 0.1);
-            color: var(--secondary-color);
-        }
-
-        .btn-read:hover {
-            background: var(--secondary-color);
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        .btn-share {
-            background: rgba(16, 185, 129, 0.1);
-            color: #10b981;
-        }
-
-        .btn-share:hover {
-            background: #10b981;
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        /* Priority Badges */
-        .priority-high {
-            background: linear-gradient(135deg, #dc2626, #ef4444) !important;
-        }
-
-        .priority-medium {
-            background: linear-gradient(135deg, #d97706, #f59e0b) !important;
-        }
-
-        .priority-normal {
-            background: linear-gradient(135deg, #059669, #10b981) !important;
-        }
-
-        /* Sidebar */
-        .sidebar-card {
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-            margin-bottom: 30px;
-            border: 1px solid rgba(0,0,0,0.05);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .sidebar-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.12);
-        }
-
-        .sidebar-card .card-header {
-            padding: 20px;
-            font-weight: 600;
-            border: none;
-            position: relative;
-        }
-
-        .sidebar-card .card-body {
-            padding: 25px;
-        }
-
-        /* Pagination */
-        .pagination-wrapper {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-            margin-top: 30px;
             text-align: center;
         }
-
-        .pagination .page-link {
-            border: none;
-            padding: 12px 18px;
-            margin: 0 5px;
-            border-radius: 10px;
-            color: var(--secondary-color);
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .pagination .page-item.active .page-link {
-            background: var(--gradient-primary);
-            box-shadow: 0 5px 15px rgba(49, 130, 206, 0.3);
-        }
-
-        .pagination .page-link:hover {
-            background: rgba(49, 130, 206, 0.1);
-            transform: translateY(-2px);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .header-section {
-                padding: 60px 0 40px;
-                text-align: center;
-            }
-            
-            .header-section h1 {
-                font-size: 2.5rem;
-            }
-            
-            .filter-tabs {
-                justify-content: center;
-            }
-            
-            .announcement-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-            
-            .announcement-meta {
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
-            }
-        }
-
-        /* Animation Classes */
-        .fade-in-up {
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeInUp 0.8s ease forwards;
+        
+        .hero-section h1 {
+            font-size: 2.5rem;
         }
         
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .hero-icon {
+            font-size: 6rem;
+            margin-top: 30px;
         }
+        
+        .announcement-content {
+            padding: 1.5rem;
+        }
+        
+        .announcement-title {
+            font-size: 1.25rem;
+        }
+        
+        .announcement-meta {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .filter-section {
+            padding: 1.5rem;
+        }
+    }
+</style>
 
-        .announcement-card:nth-child(1) { animation-delay: 0.1s; }
-        .announcement-card:nth-child(2) { animation-delay: 0.2s; }
-        .announcement-card:nth-child(3) { animation-delay: 0.3s; }
-        .announcement-card:nth-child(4) { animation-delay: 0.4s; }
-    </style>
-</head>
-<body>
-    <!-- Header Section -->
-    <section class="header-section">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-8">
-                    <h1><i class="fas fa-bullhorn me-3"></i>Pengumuman</h1>
-                    <p class="lead">Informasi penting dan terkini untuk seluruh civitas akademika SMA Negeri 1 Balong</p>
-                    <nav class="breadcrumb-nav">
-                        <a href="#"><i class="fas fa-home me-2"></i>Beranda</a>
-                        <span>/</span>
-                        <span>Pengumuman</span>
-                    </nav>
+<!-- Enhanced Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="fade-in-left">Pengumuman Sekolah</h1>
+                <p class="lead fade-in-left" style="animation-delay: 0.2s;">
+                    Informasi terbaru dan penting dari SMA Negeri 1 - 
+                    Tetap update dengan pengumuman resmi sekolah
+                </p>
+                <div class="d-flex gap-3 fade-in-left" style="animation-delay: 0.4s;">
+                    <span class="badge bg-light text-dark fs-6">📢 Pengumuman</span>
+                    <span class="badge bg-light text-dark fs-6">🚨 Urgent</span>
+                    <span class="badge bg-light text-dark fs-6">📅 Terbaru</span>
                 </div>
-                <div class="col-lg-4 text-center">
-                    <i class="fas fa-megaphone" style="font-size: 8rem; opacity: 0.3;"></i>
-                </div>
+            </div>
+            <div class="col-lg-4 text-center">
+                <i class="fas fa-bullhorn hero-icon scale-in" style="animation-delay: 0.6s;"></i>
             </div>
         </div>
-    </section>
-
-   <!-- Filter Section -->
-<section class="filter-section">
-    <div class="container">
-        <form method="GET" action="{{ route('announcements.index') }}" id="filterForm">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <div class="input-group">
-                        <input type="text" class="form-control search-box" name="search" 
-                               placeholder="Cari announcements..." id="searchInput" 
-                               value="{{ request('search') }}">
-                        <button class="btn filter-btn" type="submit">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="filter-tabs">
-                        <button type="button" class="filter-tab {{ request('category', 'all') == 'all' ? 'active' : '' }}" 
-                                onclick="setCategory('all')">
-                            <i class="fas fa-list me-2"></i>Semua
-                        </button>
-                        <button type="button" class="filter-tab {{ request('category') == 'akademik' ? 'active' : '' }}" 
-                                onclick="setCategory('akademik')">
-                            <i class="fas fa-graduation-cap me-2"></i>Akademik
-                        </button>
-                        <button type="button" class="filter-tab {{ request('category') == 'kegiatan' ? 'active' : '' }}" 
-                                onclick="setCategory('kegiatan')">
-                            <i class="fas fa-calendar-alt me-2"></i>Kegiatan
-                        </button>
-                        <button type="button" class="filter-tab {{ request('category') == 'administrasi' ? 'active' : '' }}" 
-                                onclick="setCategory('administrasi')">
-                            <i class="fas fa-file-alt me-2"></i>Administrasi
-                        </button>
-                    </div>
-                    <input type="hidden" name="category" id="categoryInput" value="{{ request('category', 'all') }}">
-                </div>
-            </div>
-        </form>
     </div>
 </section>
 
-<!-- Announcements Section -->
-<section class="announcements-section">
+<!-- Main Content -->
+<section class="py-5">
     <div class="container">
-        <div class="row">
-            <!-- Main Content -->
-            <div class="col-lg-8">
-                @if($announcements->count() > 0)
-                    @foreach($announcements as $index => $announcement)
-                        <div class="announcement-card fade-in-up" data-category="{{ $announcement->kategori }}">
-                            <div class="announcement-header">
-                                <span class="announcement-category {{ $announcement->prioritas == 'tinggi' ? 'priority-high' : ($announcement->prioritas == 'sedang' ? 'priority-medium' : 'priority-normal') }}">
-                                    {{ ucfirst($announcement->prioritas == 'tinggi' ? 'Penting' : ($announcement->prioritas == 'sedang' ? ucfirst($announcement->kategori) : 'Normal')) }}
-                                </span>
-                                <div class="announcement-date">
-                                    <i class="fas fa-clock me-1"></i>{{ \Carbon\Carbon::parse($announcement->created_at)->format('d F Y') }}
-                                </div>
-                            </div>
-                            <div class="announcement-body">
-                                <h3 class="announcement-title">{{ $announcement->judul }}</h3>
-                                <div class="announcement-content">
-                                    {{ Str::limit(strip_tags($announcement->isi), 200) }}
-                                </div>
-                                <div class="announcement-meta">
-                                    <div class="announcement-author">
-                                        <i class="fas fa-user"></i>
-                                        {{ $announcement->penulis ?? 'Administrator' }}
-                                    </div>
-                                    <div class="announcement-actions">
-                                        <a href="{{ route('announcements.show', $announcement->id) }}" class="btn-action btn-read">
-                                            <i class="fas fa-eye"></i>Baca Selengkapnya
-                                        </a>
-                                        <a href="#" class="btn-action btn-share" 
-                                           data-title="{{ $announcement->judul }}" 
-                                           data-url="{{ route('announcements.show', $announcement->id) }}">
-                                            <i class="fas fa-share"></i>Bagikan
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
+        <!-- Enhanced Filter Section -->
+        <div class="filter-section fade-in-up">
+            <h3 class="filter-title">Cari Pengumuman</h3>
 
-                    <!-- Pagination -->
-                    <div class="pagination-wrapper">
-                        {{ $announcements->appends(request()->query())->links('pagination::bootstrap-4') }}
+            <form method="GET" action="{{ route('announcements.index') }}" id="filterForm">
+                <div class="row g-3 align-items-end">
+                    <div class="col-lg-3 col-md-6">
+                        <label class="form-label fw-semibold text-muted">Kata Kunci</label>
+                        <input type="text" 
+                               name="search" 
+                               value="{{ request('search') }}"
+                               placeholder="Cari pengumuman..."
+                               class="form-control form-control-enhanced">
                     </div>
-                @else
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>
-                        Tidak ada announcements yang ditemukan.
-                    </div>
-                @endif
-            </div>
-
-            <!-- Sidebar -->
-            <div class="col-lg-4">
-                <!-- Announcements Terpopuler -->
-                <div class="sidebar-card">
-                    <div class="card-header" style="background: var(--gradient-primary); color: white;">
-                        <h5 class="mb-0"><i class="fas fa-fire me-2"></i>Announcements Terpopuler</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="list-group list-group-flush">
-                            @foreach($popularAnnouncements as $popular)
-                                <a href="{{ route('announcements.show', $popular->id) }}" 
-                                   class="list-group-item list-group-item-action border-0 px-0">
-                                    <small class="text-muted">{{ \Carbon\Carbon::parse($popular->created_at)->format('d F Y') }}</small>
-                                    <h6 class="mb-1">{{ Str::limit($popular->judul, 50) }}</h6>
-                                </a>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Kategori Announcements -->
-                <div class="sidebar-card">
-                    <div class="card-header bg-info text-white">
-                        <h5 class="mb-0"><i class="fas fa-tags me-2"></i>Kategori</h5>
-                    </div>
-                    <div class="card-body">
-                        @foreach($kategoriCounts as $kategori => $count)
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <a href="{{ route('announcements.index', ['category' => $kategori]) }}" 
-                                   class="text-decoration-none">
-                                    <span>{{ ucfirst($kategori) }}</span>
-                                </a>
-                                <span class="badge bg-primary rounded-pill">{{ $count }}</span>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-
-                <!-- Arsip Announcements -->
-                <div class="sidebar-card">
-                    <div class="card-header bg-secondary text-white">
-                        <h5 class="mb-0"><i class="fas fa-archive me-2"></i>Arsip</h5>
-                    </div>
-                    <div class="card-body">
-                        <select class="form-select mb-3" onchange="filterByMonth(this.value)">
-                            <option value="">Pilih Bulan</option>
-                            @foreach($availableMonths as $month)
-                                <option value="{{ $month['value'] }}" 
-                                        {{ request('month') == $month['value'] ? 'selected' : '' }}>
-                                    {{ $month['text'] }}
+                    
+                    <div class="col-lg-3 col-md-6">
+                        <label class="form-label fw-semibold text-muted">Kategori</label>
+                        <select name="category" class="form-control form-control-enhanced">
+                            <option value="">Semua Kategori</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category }}" {{ request('category') == $category ? 'selected' : '' }}>
+                                    {{ ucfirst($category) }}
                                 </option>
                             @endforeach
                         </select>
-                        <a href="{{ route('announcements.index') }}" class="btn btn-outline-secondary w-100">
-                            <i class="fas fa-list me-2"></i>Lihat Semua
-                        </a>
                     </div>
-                </div>
-
-                <!-- Quick Links -->
-                <div class="sidebar-card">
-                    <div class="card-header bg-dark text-white">
-                        <h5 class="mb-0"><i class="fas fa-link me-2"></i>Quick Links</h5>
+                    
+                    <div class="col-lg-3 col-md-6">
+                        <label class="form-label fw-semibold text-muted">Prioritas</label>
+                        <select name="priority" class="form-control form-control-enhanced">
+                            <option value="">Semua Prioritas</option>
+                            @foreach($priorities as $priority)
+                                <option value="{{ $priority }}" {{ request('priority') == $priority ? 'selected' : '' }}>
+                                    {{ ucfirst($priority) }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
-                    <div class="card-body">
-                        <div class="d-grid gap-2">
-                            <a href="{{ url('/') }}" class="btn btn-outline-primary">
-                                <i class="fas fa-home me-2"></i>Beranda
-                            </a>
-                            <a href="{{ url('/berita') }}" class="btn btn-outline-success">
-                                <i class="fas fa-newspaper me-2"></i>Berita
-                            </a>
-                            <a href="{{ url('/agenda') }}" class="btn btn-outline-info">
-                                <i class="fas fa-calendar me-2"></i>Agenda
-                            </a>
-                            <a href="{{ url('/download') }}" class="btn btn-outline-warning">
-                                <i class="fas fa-download me-2"></i>Download
-                            </a>
+                    
+                    <div class="col-lg-3 col-md-12">
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-filter flex-fill">
+                                <i class="fas fa-search me-2"></i>
+                                Cari
+                            </button>
+                            @if(request()->hasAny(['search', 'category', 'priority']))
+                                <a href="{{ route('announcements.index') }}" class="btn btn-secondary">
+                                    <i class="fas fa-times me-2"></i>
+                                    Reset
+                                </a>
+                            @endif
                         </div>
                     </div>
                 </div>
-            </div>
+                
+                <!-- Active Filters Display -->
+                @if(request()->hasAny(['search', 'category', 'priority']))
+                    <div class="mt-3">
+                        <small class="text-muted">Filter aktif:</small>
+                        <div class="d-flex flex-wrap gap-2 mt-2">
+                            @if(request('search'))
+                                <span class="badge bg-primary">Pencarian: "{{ request('search') }}"</span>
+                            @endif
+                            @if(request('category'))
+                                <span class="badge bg-success">Kategori: {{ ucfirst(request('category')) }}</span>
+                            @endif
+                            @if(request('priority'))
+                                <span class="badge bg-info">Prioritas: {{ ucfirst(request('priority')) }}</span>
+                            @endif
+                        </div>
+                    </div>
+                @endif
+            </form>
         </div>
+
+        <!-- Results Info -->
+        @if($announcements->count() > 0)
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h4 class="mb-0">Ditemukan {{ $announcements->total() }} pengumuman</h4>
+                    <small class="text-muted">Menampilkan {{ $announcements->firstItem() }}-{{ $announcements->lastItem() }} dari {{ $announcements->total() }} pengumuman</small>
+                </div>
+            </div>
+        @endif
+        
+        <!-- Announcements Grid -->
+        @if($announcements->count() > 0)
+            <div class="row">
+                @foreach($announcements as $index => $announcement)
+                    <div class="col-lg-6 col-md-6 mb-4">
+                        <div class="announcement-card fade-in-up" style="animation-delay: {{ $index * 0.1 }}s;">
+                            @if($announcement->featured_image)
+                                <img src="{{ asset('storage/' . $announcement->featured_image) }}" 
+                                     alt="{{ $announcement->title }}" 
+                                     class="announcement-image w-100">
+                            @endif
+                            
+                            <!-- Priority Badge -->
+                            <div class="priority-badge priority-{{ $announcement->priority ?? 'normal' }}">
+                                @if($announcement->priority === 'urgent') 🚨 Urgent
+                                @elseif($announcement->priority === 'high') ⚠️ Tinggi
+                                @elseif($announcement->priority === 'normal') ✅ Normal
+                                @else 📝 Rendah
+                                @endif
+                            </div>
+                            
+                            <div class="announcement-content">
+                                <!-- Category Badge -->
+                                <span class="category-badge">
+                                    📂 {{ ucfirst($announcement->category) }}
+                                </span>
+                                
+                                <!-- Title -->
+                                <h3 class="announcement-title">{{ $announcement->title }}</h3>
+                                
+                                <!-- Content Preview -->
+                                <p class="announcement-excerpt">
+                                    {{ Str::limit(strip_tags($announcement->content), 120) }}
+                                </p>
+                                
+                                <!-- Meta Information -->
+                                <div class="announcement-meta">
+                                    <div class="announcement-meta-item">
+                                        <i class="fas fa-user text-primary"></i>
+                                        <span>{{ $announcement->author }}</span>
+                                        @if($announcement->user)
+                                            <small class="text-muted">
+                                                ({{ $announcement->user->hasRole('admin') ? 'Admin' : 'Guru' }})
+                                            </small>
+                                        @endif
+                                    </div>
+                                    <div class="announcement-meta-item">
+                                        <i class="fas fa-calendar text-success"></i>
+                                        <span>{{ $announcement->published_at ? $announcement->published_at->format('d M Y, H:i') : $announcement->created_at->format('d M Y, H:i') }}</span>
+                                    </div>
+                                    <div class="announcement-meta-item">
+                                        <i class="fas fa-eye text-info"></i>
+                                        <span>{{ $announcement->views_count ?? 0 }} views</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Read More Button -->
+                                <a href="{{ route('announcements.show', $announcement->id) }}" 
+                                   class="btn-announcement btn-primary-announcement">
+                                    <i class="fas fa-eye"></i>
+                                    Baca Selengkapnya
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            <!-- Enhanced Pagination -->
+            <div class="d-flex justify-content-center mt-5">
+                {{ $announcements->appends(request()->query())->links() }}
+            </div>
+        @else
+            <!-- Enhanced Empty State -->
+            <div class="empty-state fade-in-up">
+                <i class="fas fa-bullhorn empty-state-icon"></i>
+                <h3>Tidak ada pengumuman ditemukan</h3>
+                <p>
+                    @if(request()->hasAny(['search', 'category', 'priority']))
+                        Tidak ada pengumuman yang sesuai dengan filter yang dipilih.
+                    @else
+                        Belum ada pengumuman yang dipublikasikan saat ini.
+                    @endif
+                </p>
+                @if(request()->hasAny(['search', 'category', 'priority']))
+                    <a href="{{ route('announcements.index') }}" class="btn btn-filter">
+                        <i class="fas fa-refresh me-2"></i>
+                        Lihat Semua Pengumuman
+                    </a>
+                @endif
+            </div>
+        @endif
     </div>
 </section>
 
-    @endsection
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Search functionality
-            const searchInput = document.getElementById('searchInput');
-            const announcementCards = document.querySelectorAll('.announcement-card');
-
-            searchInput.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-                
-                announcementCards.forEach(card => {
-                    const title = card.querySelector('.announcement-title').textContent.toLowerCase();
-                    const content = card.querySelector('.announcement-content').textContent.toLowerCase();
-                    
-                    if (title.includes(searchTerm) || content.includes(searchTerm)) {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            });
-
-            // Filter functionality
-            const filterTabs = document.querySelectorAll('.filter-tab');
-            
-            filterTabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    // Remove active class from all tabs
-                    filterTabs.forEach(t => t.classList.remove('active'));
-                    // Add active class to clicked tab
-                    this.classList.add('active');
-                    
-                    const category = this.dataset.category;
-                    
-                    announcementCards.forEach(card => {
-                        if (category === 'all' || card.dataset.category === category) {
-                            card.style.display = 'block';
-                        } else {
-                            card.style.display = 'none';
-                        }
-                    });
-                });
-            });
-
-            // Intersection Observer for animations
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-            
-            const observer = new IntersectionObserver(function(entries) {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.animationDelay = entry.target.dataset.delay || '0s';
-                        entry.target.classList.add('fade-in-up');
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, observerOptions);
-            
-            // Observe elements for animation
-            document.querySelectorAll('.announcement-card').forEach((el, index) => {
-                el.dataset.delay = (index * 0.1) + 's';
-                observer.observe(el);
-            });
-
-            // Smooth scroll for internal links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        target.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                });
-            });
-
-            // Share functionality
-            document.querySelectorAll('.btn-share').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    const card = this.closest('.announcement-card');
-                    const title = card.querySelector('.announcement-title').textContent;
-                    const url = window.location.href;
-                    
-                    if (navigator.share) {
-                        navigator.share({
-                            title: title,
-                            text: 'Pengumuman dari SMA Negeri 1 Balong',
-                            url: url
-                        });
-                    } else {
-                        // Fallback untuk browser yang tidak support Web Share API
-                        const shareText = `${title} - ${url}`;
-                        navigator.clipboard.writeText(shareText).then(() => {
-                            // Show temporary notification
-                            const originalText = this.innerHTML;
-                            this.innerHTML = '<i class="fas fa-check"></i>Tersalin';
-                            this.style.background = '#10b981';
-                            this.style.color = 'white';
-                            
-                            setTimeout(() => {
-                                this.innerHTML = originalText;
-                                this.style.background = '';
-                                this.style.color = '';
-                            }, 2000);
-                        });
-                    }
-                });
-            });
-            
-            // Pengumuman
-                        function setCategory(category) {
-                document.getElementById('categoryInput').value = category;
-                document.getElementById('filterForm').submit();
-            }
-
-            function filterByMonth(month) {
-                const form = document.getElementById('filterForm');
-                const monthInput = document.createElement('input');
-                monthInput.type = 'hidden';
-                monthInput.name = 'month';
-                monthInput.value = month;
-                form.appendChild(monthInput);
-                form.submit();
-            }
-
-            // Update share functionality
-            document.querySelectorAll('.btn-share').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    const title = this.dataset.title;
-                    const url = this.dataset.url;
-                    
-                    if (navigator.share) {
-                        navigator.share({
-                            title: title,
-                            text: 'Announcements dari SMA Negeri 1 Balong',
-                            url: url
-                        });
-                    } else {
-                        // Fallback untuk browser yang tidak support Web Share API
-                        const shareText = `${title} - ${window.location.origin}${url}`;
-                        navigator.clipboard.writeText(shareText).then(() => {
-                            // Show temporary notification
-                            const originalText = this.innerHTML;
-                            this.innerHTML = '<i class="fas fa-check"></i>Tersalin';
-                            this.style.background = '#10b981';
-                            this.style.color = 'white';
-                            
-                            setTimeout(() => {
-                                this.innerHTML = originalText;
-                                this.style.background = '';
-                                this.style.color = '';
-                            }, 2000);
-                        });
-                    }
-                });
-            });
-
-            // Add hover effects to cards
-            document.querySelectorAll('.announcement-card').forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-10px)';
-                });
-                
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
-                });
-            });
-
-            // Archive functionality
-            document.querySelector('select.form-select').addEventListener('change', function() {
-                const selectedMonth = this.value;
-                // Here you would typically filter announcements by month
-                console.log('Filtering by month:', selectedMonth);
-            });
-
-            // Add loading animation to read more buttons
-            document.querySelectorAll('.btn-read').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const originalText = this.innerHTML;
-                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>Memuat...';
-                    
-                    // Simulate loading
-                    setTimeout(() => {
-                        this.innerHTML = originalText;
-                        // Here you would typically navigate to the full article
-                    }, 1000);
-                });
-            });
-
-            // Responsive search behavior
-            function handleResize() {
-                if (window.innerWidth <= 768) {
-                    searchInput.placeholder = "Cari...";
-                } else {
-                    searchInput.placeholder = "Cari pengumuman...";
-                }
-            }
-
-            window.addEventListener('resize', handleResize);
-            handleResize(); // Call once on load
-
-            // Auto-hide notifications after some time
-            setTimeout(() => {
-                const alerts = document.querySelectorAll('.alert');
-                alerts.forEach(alert => {
-                    alert.style.transition = 'opacity 0.5s ease';
-                    alert.style.opacity = '0';
-                    setTimeout(() => alert.remove(), 500);
-                });
-            }, 5000);
-        });
-
-        // Add some dynamic content loading simulation
-        function loadMoreAnnouncements() {
-            // This would typically make an AJAX request
-            console.log('Loading more announcements...');
-        }
-
-        // Scroll to top functionality
-        window.addEventListener('scroll', function() {
-            const scrollButton = document.getElementById('scrollToTop');
-            if (!scrollButton) {
-                // Create scroll to top button dynamically
-                const btn = document.createElement('button');
-                btn.id = 'scrollToTop';
-                btn.innerHTML = '<i class="fas fa-chevron-up"></i>';
-                btn.style.cssText = `
-                    position: fixed;
-                    bottom: 30px;
-                    right: 30px;
-                    width: 50px;
-                    height: 50px;
-                    border-radius: 50%;
-                    background: var(--gradient-primary);
-                    color: white;
-                    border: none;
-                    cursor: pointer;
-                    z-index: 1000;
-                    transition: all 0.3s ease;
-                    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-                    display: none;
-                `;
-                
-                btn.addEventListener('click', function() {
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth'
-                    });
-                });
-                
-                btn.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-3px)';
-                    this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.3)';
-                });
-                
-                btn.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
-                    this.style.boxShadow = '0 5px 15px rgba(0,0,0,0.2)';
-                });
-                
-                document.body.appendChild(btn);
-            }
-            
-            const scrollButton = document.getElementById('scrollToTop');
-            if (window.pageYOffset > 300) {
-                scrollButton.style.display = 'block';
-            } else {
-                scrollButton.style.display = 'none';
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Enhanced Intersection Observer for animations
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate');
+                observer.unobserve(entry.target);
             }
         });
-    </script>
-</body>
-</html>
+    }, observerOptions);
+    
+    // Observe all animated elements
+    const animatedElements = document.querySelectorAll('.fade-in-up, .fade-in-left, .fade-in-right, .fade-in, .scale-in');
+    animatedElements.forEach(element => {
+        observer.observe(element);
+    });
+    
+    // Enhanced card hover effects
+    const announcementCards = document.querySelectorAll('.announcement-card');
+    announcementCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-15px) scale(1.02)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = '';
+        });
+    });
+    
+    // Smooth scroll for internal links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+    
+    // Page load animation sequence
+    setTimeout(() => {
+        document.body.classList.add('page-loaded');
+    }, 100);
+    
+    console.log('Enhanced announcements page animations loaded successfully!');
+});
+</script>
+@endsection

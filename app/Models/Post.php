@@ -13,22 +13,36 @@ class Post extends Model
     protected $fillable = [
         'title',
         'slug',
-        'content',
         'excerpt',
+        'content',
         'type',
-        'image',
-        'featured_image',
-        'tags',
         'status',
-        'priority',
+        'category',
+        'tags',
+        'author',
+        'user_id',
+        'published_at',
+        'featured_image',
+        'image_alt',
+        'meta_title',
+        'meta_description',
+        'keywords',
+        'views_count',
         'event_date',
         'location',
-        'user_id',
+        'schedule',
+        'image',
+        'priority',
+        'expires_at',
     ];
 
     protected $casts = [
         'event_date' => 'datetime',
         'published_at' => 'datetime',
+        'expires_at' => 'datetime',
+        'tags' => 'array',
+        'keywords' => 'array',
+        'views_count' => 'integer',
     ];
 
     public function user()

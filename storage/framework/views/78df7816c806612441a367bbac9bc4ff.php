@@ -1,0 +1,257 @@
+<?php $__env->startSection('title', $pageTitle); ?>
+
+<?php $__env->startSection('content'); ?>
+<div class="space-y-6">
+    <!-- Back Button -->
+    <div class="flex items-center space-x-4">
+        <a href="<?php echo e(route('student.materials.index')); ?>" 
+           class="flex items-center text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 transition-colors duration-200">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Kembali ke Daftar Materi
+        </a>
+    </div>
+
+    <!-- Material Detail Card -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+        <div class="p-8">
+            <!-- Header Section -->
+            <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between mb-8">
+                <div class="flex-1">
+                    <!-- Type and Status -->
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="text-4xl"><?php echo e($material->type_icon); ?></div>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 text-sm font-medium rounded-full 
+                                <?php echo e($material->type == 'document' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : ''); ?>
+
+                                <?php echo e($material->type == 'video' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' : ''); ?>
+
+                                <?php echo e($material->type == 'presentation' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200' : ''); ?>
+
+                                <?php echo e($material->type == 'exercise' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : ''); ?>
+
+                                <?php echo e($material->type == 'audio' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' : ''); ?>">
+                                <?php echo e(ucfirst($material->type)); ?>
+
+                            </span>
+                            <span class="px-3 py-1 text-sm font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 rounded-full">
+                                Published
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Title -->
+                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+                        <?php echo e($material->title); ?>
+
+                    </h1>
+
+                    <!-- Subject and Class -->
+                    <div class="flex flex-wrap items-center gap-3 mb-6">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                            <span class="text-lg font-medium text-emerald-600 dark:text-emerald-400"><?php echo e($material->subject); ?></span>
+                        </div>
+                        <span class="text-gray-400">•</span>
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 text-gray-600 dark:text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                            <span class="text-lg font-medium text-gray-600 dark:text-gray-400">Kelas <?php echo e($material->class); ?></span>
+                        </div>
+                    </div>
+
+                    <!-- Teacher Info -->
+                    <div class="flex items-center mb-6">
+                        <img class="w-12 h-12 rounded-full mr-4" 
+                             src="<?php echo e($material->teacher->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($material->teacher->name ?? 'Teacher').'&color=10B981&background=D1FAE5'); ?>" 
+                             alt="<?php echo e($material->teacher->name ?? 'Teacher'); ?>">
+                        <div>
+                            <p class="text-lg font-medium text-gray-900 dark:text-white"><?php echo e($material->teacher->name ?? 'Unknown Teacher'); ?></p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Guru Mata Pelajaran <?php echo e($material->subject); ?></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Download Section -->
+                <div class="lg:ml-8 mt-6 lg:mt-0">
+                    <div class="bg-emerald-50 dark:bg-emerald-900/20 rounded-xl p-6 text-center">
+                        <div class="text-emerald-600 dark:text-emerald-400 mb-4">
+                            <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Download Materi</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                            File: <?php echo e($material->original_name ?? $material->file_name); ?><br>
+                            Ukuran: <?php echo e($material->formatted_file_size); ?>
+
+                        </p>
+                        <a href="<?php echo e(route('student.materials.download', $material->id)); ?>" 
+                           class="inline-flex items-center bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            Download Sekarang
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <?php if($material->description): ?>
+                <div class="mb-8">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Deskripsi Materi</h2>
+                    <div class="prose prose-emerald dark:prose-invert max-w-none">
+                        <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                            <?php echo e($material->description); ?>
+
+                        </p>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <!-- Material Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-emerald-600 dark:text-emerald-400"><?php echo e($material->downloads); ?></div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">Total Download</div>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-blue-600 dark:text-blue-400"><?php echo e($material->formatted_file_size); ?></div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">Ukuran File</div>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-purple-600 dark:text-purple-400"><?php echo e($material->created_at->format('d M Y')); ?></div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">Tanggal Upload</div>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-orange-600 dark:text-orange-400"><?php echo e(ucfirst($material->type)); ?></div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">Jenis Materi</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Materials -->
+    <?php if($relatedMaterials->count() > 0): ?>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+            <div class="p-6">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Materi Terkait - <?php echo e($material->subject); ?></h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <?php $__currentLoopData = $relatedMaterials; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $related): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                            <div class="flex items-start space-x-3">
+                                <div class="text-2xl"><?php echo e($related->type_icon); ?></div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="text-sm font-medium text-gray-900 dark:text-white line-clamp-2 mb-1">
+                                        <?php echo e($related->title); ?>
+
+                                    </h3>
+                                    <p class="text-xs text-gray-600 dark:text-gray-400 mb-2">
+                                        Kelas <?php echo e($related->class); ?> • <?php echo e($related->formatted_file_size); ?>
+
+                                    </p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">
+                                            <?php echo e($related->downloads); ?> downloads
+                                        </span>
+                                        <a href="<?php echo e(route('student.materials.show', $related->id)); ?>" 
+                                           class="text-xs text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-medium">
+                                            Lihat
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <!-- Teacher's Other Materials -->
+    <?php if($teacherMaterials->count() > 0): ?>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+            <div class="p-6">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Materi Lain dari <?php echo e($material->teacher->name ?? 'Guru Ini'); ?></h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <?php $__currentLoopData = $teacherMaterials; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $teacherMaterial): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                            <div class="flex items-start space-x-3">
+                                <div class="text-2xl"><?php echo e($teacherMaterial->type_icon); ?></div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="text-sm font-medium text-gray-900 dark:text-white line-clamp-2 mb-1">
+                                        <?php echo e($teacherMaterial->title); ?>
+
+                                    </h3>
+                                    <p class="text-xs text-gray-600 dark:text-gray-400 mb-2">
+                                        <?php echo e($teacherMaterial->subject); ?> • Kelas <?php echo e($teacherMaterial->class); ?>
+
+                                    </p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">
+                                            <?php echo e($teacherMaterial->downloads); ?> downloads • <?php echo e($teacherMaterial->formatted_file_size); ?>
+
+                                        </span>
+                                        <a href="<?php echo e(route('student.materials.show', $teacherMaterial->id)); ?>" 
+                                           class="text-xs text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-medium">
+                                            Lihat
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-col sm:flex-row gap-4">
+        <a href="<?php echo e(route('student.materials.download', $material->id)); ?>" 
+           class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-center py-3 px-6 rounded-lg font-medium transition-colors duration-200">
+            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            Download Materi
+        </a>
+        <a href="<?php echo e(route('student.materials.index', ['subject' => $material->subject])); ?>" 
+           class="flex-1 bg-gray-600 hover:bg-gray-700 text-white text-center py-3 px-6 rounded-lg font-medium transition-colors duration-200">
+            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+            </svg>
+            Lihat Materi <?php echo e($material->subject); ?> Lainnya
+        </a>
+        <a href="<?php echo e(route('student.materials.index')); ?>" 
+           class="bg-blue-600 hover:bg-blue-700 text-white text-center py-3 px-6 rounded-lg font-medium transition-colors duration-200">
+            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+            </svg>
+            Semua Materi
+        </a>
+    </div>
+</div>
+
+<?php $__env->startPush('scripts'); ?>
+<script>
+// Track download clicks for analytics
+document.addEventListener('DOMContentLoaded', function() {
+    const downloadButtons = document.querySelectorAll('a[href*="/download"]');
+    
+    downloadButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // You can add analytics tracking here
+            console.log('Material download initiated:', '<?php echo e($material->title); ?>');
+        });
+    });
+});
+</script>
+<?php $__env->stopPush(); ?>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.student', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\sekolah-web\resources\views/student/materials/show.blade.php ENDPATH**/ ?>

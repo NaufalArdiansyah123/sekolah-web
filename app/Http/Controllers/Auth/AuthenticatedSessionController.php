@@ -8,6 +8,7 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
@@ -29,7 +30,32 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        // Redirect based on user role
+        $user = auth()->user();
+        
+        // Log for debugging
+        Log::info('Login redirect for user: ' . $user->email, [
+            'roles' => $user->roles->pluck('name')->toArray(),
+            'has_super_admin' => $user->hasRole('super_admin'),
+            'has_admin' => $user->hasRole('admin'),
+            'has_teacher' => $user->hasRole('teacher'),
+            'has_student' => $user->hasRole('student')
+        ]);
+        
+        if ($user->hasRole('super_admin') || $user->hasRole('admin')) {
+            Log::info('Login: Redirecting to admin dashboard');
+            return redirect()->route('admin.dashboard');
+        } elseif ($user->hasRole('teacher') || $user->hasRole('Teacher')) {
+            Log::info('Login: Redirecting to teacher dashboard');
+            return redirect()->route('teacher.dashboard');
+        } elseif ($user->hasRole('student') || $user->hasRole('Student')) {
+            Log::info('Login: Redirecting to student dashboard');
+            return redirect()->route('student.dashboard');
+        }
+        
+        // Default redirect for users without specific roles
+        Log::info('Login: Redirecting to default home');
+        return redirect()->route('home');
     }
 
     /**

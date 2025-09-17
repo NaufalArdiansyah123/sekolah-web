@@ -7,6 +7,7 @@
         background: var(--bg-secondary);
         min-height: calc(100vh - 200px);
         transition: all 0.3s ease;
+        padding: 1.5rem;
     }
     
     /* Welcome Section */
@@ -69,12 +70,25 @@
         font-size: 0.875rem;
     }
     
-    /* Stats Cards */
+    /* Stats Cards - 4 Cards in a Row */
     .stats-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        grid-template-columns: repeat(4, 1fr);
         gap: 1.5rem;
         margin-bottom: 2rem;
+    }
+    
+    /* Responsive breakpoints for stats grid */
+    @media (max-width: 1200px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
     }
     
     .stat-card {
@@ -86,6 +100,10 @@
         overflow: hidden;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        min-height: 140px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
     
     .dark .stat-card {
@@ -111,6 +129,23 @@
         height: 4px;
         background: linear-gradient(90deg, var(--accent-color), #8b5cf6);
         border-radius: 16px 16px 0 0;
+    }
+    
+    /* Different colors for each card */
+    .stat-card:nth-child(1)::before {
+        background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+    }
+    
+    .stat-card:nth-child(2)::before {
+        background: linear-gradient(90deg, #10b981, #059669);
+    }
+    
+    .stat-card:nth-child(3)::before {
+        background: linear-gradient(90deg, #8b5cf6, #7c3aed);
+    }
+    
+    .stat-card:nth-child(4)::before {
+        background: linear-gradient(90deg, #f59e0b, #d97706);
     }
     
     .stat-header {
@@ -345,12 +380,12 @@
     
     /* Responsive Design */
     @media (max-width: 768px) {
-        .welcome-title {
-            font-size: 1.5rem;
+        .dashboard-container {
+            padding: 1rem;
         }
         
-        .stats-grid {
-            grid-template-columns: 1fr;
+        .welcome-title {
+            font-size: 1.5rem;
         }
         
         .quick-actions {
@@ -384,8 +419,9 @@
         </div>
     </div>
 
-    <!-- Statistics Cards -->
+    <!-- Statistics Cards - 4 Cards in a Row -->
     <div class="stats-grid">
+        <!-- Card 1: Total Siswa -->
         <div class="stat-card">
             <div class="stat-header">
                 <div class="stat-icon bg-blue-100">
@@ -394,16 +430,17 @@
                     </svg>
                 </div>
             </div>
-            <div class="stat-value">1,247</div>
+            <div class="stat-value">{{ number_format($stats['total_students']) }}</div>
             <div class="stat-label">Total Siswa</div>
             <div class="stat-change positive">
                 <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                 </svg>
-                +12% dari bulan lalu
+                {{ $stats['active_students'] }} siswa aktif
             </div>
         </div>
 
+        <!-- Card 2: Total Guru -->
         <div class="stat-card">
             <div class="stat-header">
                 <div class="stat-icon bg-green-100">
@@ -412,16 +449,17 @@
                     </svg>
                 </div>
             </div>
-            <div class="stat-value">87</div>
+            <div class="stat-value">{{ number_format($stats['total_teachers']) }}</div>
             <div class="stat-label">Total Guru & Staff</div>
             <div class="stat-change positive">
                 <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                 </svg>
-                +3 guru baru
+                {{ $stats['active_teachers'] }} guru aktif
             </div>
         </div>
 
+        <!-- Card 3: Total Artikel -->
         <div class="stat-card">
             <div class="stat-header">
                 <div class="stat-icon bg-purple-100">
@@ -430,21 +468,22 @@
                     </svg>
                 </div>
             </div>
-            <div class="stat-value">156</div>
+            <div class="stat-value">{{ number_format($stats['total_posts']) }}</div>
             <div class="stat-label">Artikel & Berita</div>
             <div class="stat-change positive">
                 <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                 </svg>
-                +8 artikel baru
+                {{ $stats['published_posts'] }} dipublikasi
             </div>
         </div>
 
+        <!-- Card 4: Prestasi Siswa -->
         <div class="stat-card">
             <div class="stat-header">
                 <div class="stat-icon bg-yellow-100">
                     <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
                     </svg>
                 </div>
             </div>
@@ -527,73 +566,54 @@
         <div class="chart-card">
             <div class="chart-header">
                 <h3 class="chart-title">Aktivitas Terbaru</h3>
-                <p class="chart-subtitle">Update sistem terkini</p>
             </div>
             <div class="space-y-1">
-                <div class="activity-item">
-                    <div class="activity-icon bg-blue-100">
-                        <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
+                @if($notifications->count() > 0)
+                    @foreach($notifications as $notification)
+                        <div class="activity-item">
+                            <div class="activity-icon 
+                                @if($notification->action == 'create') bg-green-100
+                                @elseif($notification->action == 'update') bg-yellow-100
+                                @elseif($notification->action == 'delete') bg-red-100
+                                @elseif($notification->action == 'upload') bg-blue-100
+                                @else bg-gray-100
+                                @endif">
+                                <i class="{{ $notification->icon }} text-sm"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">{{ $notification->title }}</div>
+                                <div class="activity-description">{{ Str::limit($notification->message, 50) }}</div>
+                            </div>
+                            <div class="activity-time">{{ $notification->time_ago }}</div>
+                        </div>
+                    @endforeach
+                @else
+                    <div class="activity-item">
+                        <div class="activity-icon bg-blue-100">
+                            <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">Sistem siap digunakan</div>
+                            <div class="activity-description">Dashboard admin telah berhasil dimuat</div>
+                        </div>
+                        <div class="activity-time">sekarang</div>
                     </div>
-                    <div class="activity-content">
-                        <div class="activity-title">Artikel baru dipublikasi</div>
-                        <div class="activity-description">"Prestasi Siswa di Olimpiade Sains"</div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon bg-green-100">
+                            <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">Mulai kelola data</div>
+                            <div class="activity-description">Tambah siswa, guru, atau konten baru</div>
+                        </div>
+                        <div class="activity-time">-</div>
                     </div>
-                    <div class="activity-time">2m</div>
-                </div>
-
-                <div class="activity-item">
-                    <div class="activity-icon bg-green-100">
-                        <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
-                        </svg>
-                    </div>
-                    <div class="activity-content">
-                        <div class="activity-title">Data siswa baru ditambahkan</div>
-                        <div class="activity-description">5 siswa kelas X terdaftar</div>
-                    </div>
-                    <div class="activity-time">1h</div>
-                </div>
-
-                <div class="activity-item">
-                    <div class="activity-icon bg-purple-100">
-                        <svg class="w-4 h-4 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
-                        </svg>
-                    </div>
-                    <div class="activity-content">
-                        <div class="activity-title">Foto galeri diupload</div>
-                        <div class="activity-description">15 foto kegiatan ekstrakurikuler</div>
-                    </div>
-                    <div class="activity-time">3h</div>
-                </div>
-
-                <div class="activity-item">
-                    <div class="activity-icon bg-yellow-100">
-                        <svg class="w-4 h-4 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                        </svg>
-                    </div>
-                    <div class="activity-content">
-                        <div class="activity-title">Prestasi baru dicatat</div>
-                        <div class="activity-description">Juara 1 Lomba Debat Bahasa Inggris</div>
-                    </div>
-                    <div class="activity-time">1d</div>
-                </div>
-
-                <div class="activity-item">
-                    <div class="activity-icon bg-red-100">
-                        <svg class="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-                        </svg>
-                    </div>
-                    <div class="activity-content">
-                        <div class="activity-title">Pengumuman penting</div>
-                        <div class="activity-description">Jadwal ujian tengah semester</div>
-                    </div>
-                    <div class="activity-time">2d</div>
-                </div>
+                @endif
             </div>
         </div>
     </div>
@@ -604,20 +624,36 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Animate stats on load
         const statValues = document.querySelectorAll('.stat-value');
-        statValues.forEach(stat => {
-            const finalValue = parseInt(stat.textContent);
+        statValues.forEach((stat, index) => {
+            const finalValue = parseInt(stat.textContent.replace(/,/g, ''));
             let currentValue = 0;
             const increment = finalValue / 50;
             
-            const timer = setInterval(() => {
-                currentValue += increment;
-                if (currentValue >= finalValue) {
-                    stat.textContent = finalValue.toLocaleString();
-                    clearInterval(timer);
-                } else {
-                    stat.textContent = Math.floor(currentValue).toLocaleString();
-                }
-            }, 30);
+            // Delay animation for each card
+            setTimeout(() => {
+                const timer = setInterval(() => {
+                    currentValue += increment;
+                    if (currentValue >= finalValue) {
+                        stat.textContent = finalValue.toLocaleString();
+                        clearInterval(timer);
+                    } else {
+                        stat.textContent = Math.floor(currentValue).toLocaleString();
+                    }
+                }, 30);
+            }, index * 200);
+        });
+
+        // Add entrance animation to cards
+        const statCards = document.querySelectorAll('.stat-card');
+        statCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
         });
     });
 </script>

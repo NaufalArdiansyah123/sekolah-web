@@ -24,12 +24,8 @@ class Announcement extends Model
         'gambar'
     ];
 
-    protected $dates = [
-        'tanggal_publikasi'
-    ];
-
     protected $casts = [
-        'tanggal_publikasi' => 'date',
+        'tanggal_publikasi' => 'datetime',
         'views' => 'integer'
     ];
 

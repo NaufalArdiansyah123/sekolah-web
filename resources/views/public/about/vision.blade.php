@@ -3,40 +3,18 @@
 @section('title', 'Visi & Misi')
 
 @section('content')
+<link rel="stylesheet" href="{{ asset('css/public-template.css') }}">
 <style>
-    :root {
-        --primary-color: #1a202c;
-        --secondary-color: #3182ce;
-        --accent-color: #4299e1;
-        --light-gray: #f7fafc;
-        --dark-gray: #718096;
-        --glass-bg: rgba(26, 32, 44, 0.95);
-        --gradient-primary: linear-gradient(135deg, #1a202c, #3182ce);
-        --gradient-light: linear-gradient(135deg, rgba(49, 130, 206, 0.1), rgba(66, 153, 225, 0.05));
-    }
+    /* Page-specific styles for Vision & Mission */
     
-    body {
-        font-family: 'Poppins', sans-serif;
-        color: #333;
-        line-height: 1.6;
-    }
-    
-    /* Enhanced Hero Section matching home page */
     .hero-section {
-        background: linear-gradient(
+        background-image: linear-gradient(
             135deg, 
             rgba(26, 32, 44, 0.85) 0%, 
             rgba(49, 130, 206, 0.7) 50%, 
             rgba(26, 32, 44, 0.85) 100%
         ),
-        url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat;
-        color: white;
-        padding: 100px 0;
-        min-height: 70vh;
-        display: flex;
-        align-items: center;
-        position: relative;
-        overflow: hidden;
+        url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
     }
     
     .hero-section::before {
@@ -955,42 +933,10 @@
 </section>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ asset('js/public-template.js') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // Enhanced Intersection Observer for animations
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-    
-    const observer = new IntersectionObserver(function(entries) {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('animate');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, observerOptions);
-    
-    // Observe all animated elements
-    const animatedElements = document.querySelectorAll('.fade-in-up, .fade-in-left, .fade-in-right, .fade-in, .scale-in, .slide-in-bottom');
-    animatedElements.forEach(element => {
-        observer.observe(element);
-    });
-    
-    // Enhanced card hover effects
-    const cards = document.querySelectorAll('.card, .value-card, .vision-mission-card');
-    cards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            if (!this.style.transform.includes('scale')) {
-                this.style.transform = this.style.transform + ' scale(1.02)';
-            }
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = this.style.transform.replace(' scale(1.02)', '');
-        });
-    });
+    // Page-specific enhancements for Vision & Mission
     
     // Mission items hover effect
     const missionItems = document.querySelectorAll('.mission-item');
@@ -1022,38 +968,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
     
-    // Add loading animation to buttons
-    document.querySelectorAll('.btn').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            if (this.href && !this.href.includes('#')) {
-                const originalText = this.innerHTML;
-                this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
-                
-                setTimeout(() => {
-                    this.innerHTML = originalText;
-                }, 2000);
-            }
-        });
-    });
-    
-    // Parallax effect for hero section
-    let ticking = false;
-    
-    function updateParallax() {
-        const scrolled = window.pageYOffset;
-        const hero = document.querySelector('.hero-section');
-        if (hero && scrolled < hero.offsetHeight) {
-            hero.style.transform = `translateY(${scrolled * 0.3}px)`;
-        }
-        ticking = false;
-    }
-    
-    window.addEventListener('scroll', function() {
-        if (!ticking) {
-            requestAnimationFrame(updateParallax);
-            ticking = true;
-        }
-    });
+
     
     // Enhanced number animation for roadmap years
     const timelineItems = document.querySelectorAll('.timeline-item');

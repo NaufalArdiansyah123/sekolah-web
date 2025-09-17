@@ -1,52 +1,70 @@
 <?php
-// database/seeders/UserSeeder.php
+
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\{User, Role};
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class UserSeeder extends Seeder
 {
-    public function run()
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
     {
-        // Create Super Admin User
-        $superAdmin = User::create([
-            'name' => 'Super Administrator',
-            'email' => 'admin@admin.com',
-            'password' => Hash::make('password'),
-            'phone' => '081234567890',
-            'status' => 'active',
-            'email_verified_at' => now(),
-        ]);
+        // Create roles if they don't exist
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $teacherRole = Role::firstOrCreate(['name' => 'teacher']);
+        $studentRole = Role::firstOrCreate(['name' => 'student']);
         
-        $superAdminRole = Role::where('name', 'Super Admin')->first();
-        $superAdmin->roles()->attach($superAdminRole);
+        $this->command->info('Roles created/verified successfully!');
 
-        // Create Sample Admin User
-        $admin = User::create([
-            'name' => 'Administrator',
-            'email' => 'admin2@admin.com',
-            'password' => Hash::make('password'),
-            'phone' => '081234567891',
-            'status' => 'active',
-            'email_verified_at' => now(),
-        ]);
-        
-        $adminRole = Role::where('name', 'Admin')->first();
-        $admin->roles()->attach($adminRole);
+        // Create admin user if not exists
+        if (!User::where('email', 'admin@sman99.sch.id')->exists()) {
+            $adminUser = User::create([
+                'name' => 'Administrator',
+                'email' => 'admin@sman99.sch.id',
+                'password' => Hash::make('password'),
+                'status' => 'active',
+                'email_verified_at' => now(),
+            ]);
+            $adminUser->assignRole('admin');
+            $this->command->info('Admin user created successfully!');
+        } else {
+            $this->command->info('Admin user already exists.');
+        }
 
-        // Create Sample Editor User
-        $editor = User::create([
-            'name' => 'Content Editor',
-            'email' => 'editor@admin.com',
-            'password' => Hash::make('password'),
-            'phone' => '081234567892',
-            'status' => 'active',
-            'email_verified_at' => now(),
-        ]);
-        
-        $editorRole = Role::where('name', 'Editor')->first();
-        $editor->roles()->attach($editorRole);
+        // Create teacher user if not exists
+        if (!User::where('email', 'teacher@sman99.sch.id')->exists()) {
+            $teacherUser = User::create([
+                'name' => 'Teacher Demo',
+                'email' => 'teacher@sman99.sch.id',
+                'password' => Hash::make('password'),
+                'status' => 'active',
+                'email_verified_at' => now(),
+            ]);
+            $teacherUser->assignRole('teacher');
+            $this->command->info('Teacher user created successfully!');
+        } else {
+            $this->command->info('Teacher user already exists.');
+        }
+
+        // Create student user if not exists
+        if (!User::where('email', 'student@sman99.sch.id')->exists()) {
+            $studentUser = User::create([
+                'name' => 'Student Demo',
+                'email' => 'student@sman99.sch.id',
+                'password' => Hash::make('password'),
+                'status' => 'active',
+                'email_verified_at' => now(),
+            ]);
+            $studentUser->assignRole('student');
+            $this->command->info('Student user created successfully!');
+        } else {
+            $this->command->info('Student user already exists.');
+        }
     }
 }

@@ -88,11 +88,43 @@ class PostController extends Controller
     }
 
     // Agenda Methods
-    public function agenda()
+    public function agenda(Request $request)
     {
-        $agendas = Post::where('type', 'agenda')
-                      ->latest()
-                      ->paginate(10);
+        $query = Post::where('type', 'agenda')
+                     ->with('user')
+                     ->latest('event_date');
+
+        // Search filter
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('content', 'like', "%{$search}%")
+                  ->orWhere('location', 'like', "%{$search}%");
+            });
+        }
+
+        // Status filter
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Period filter
+        if ($request->filled('period')) {
+            switch ($request->period) {
+                case 'upcoming':
+                    $query->where('event_date', '>', now());
+                    break;
+                case 'today':
+                    $query->whereDate('event_date', today());
+                    break;
+                case 'past':
+                    $query->where('event_date', '<', now());
+                    break;
+            }
+        }
+        
+        $agendas = $query->paginate(10);
         
         return view('admin.posts.agenda.index', compact('agendas'));
     }
@@ -114,6 +146,7 @@ class PostController extends Controller
 
         Post::create([
             'title' => $request->title,
+            'content' => $request->content,
             'type' => 'agenda',
             'event_date' => $request->event_date,
             'location' => $request->location,
@@ -145,6 +178,7 @@ class PostController extends Controller
 
         $agenda->update([
             'title' => $request->title,
+            'content' => $request->content,
             'event_date' => $request->event_date,
             'location' => $request->location,
             'status' => $request->status,
@@ -335,6 +369,12 @@ class PostController extends Controller
     {
         $post = Post::findOrFail($id);
         return view('admin.posts.show', compact('post'));
+    }
+    
+    public function showAgenda($id)
+    {
+        $agenda = Post::where('type', 'agenda')->findOrFail($id);
+        return view('admin.posts.agenda.show', compact('agenda'));
     }
 
 }
