@@ -399,7 +399,7 @@
                         </div>
                         
                         <div class="album-controls">
-                            <a href="{{ route('gallery.photos', $album['slug']) }}" 
+                            <a href="{{ route('gallery.index', $album['slug']) }}" 
                                target="_blank"
                                class="control-btn btn-view-public">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

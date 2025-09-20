@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('parent_phone')->nullable();
             $table->string('photo')->nullable();
             $table->enum('status', ['active', 'inactive', 'graduated'])->default('active');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

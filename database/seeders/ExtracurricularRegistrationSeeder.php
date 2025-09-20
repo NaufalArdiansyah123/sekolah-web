@@ -16,6 +16,14 @@ class ExtracurricularRegistrationSeeder extends Seeder
     {
         $faker = Faker::create('id_ID');
         
+        // Clear existing registrations first
+        $existingCount = ExtracurricularRegistration::count();
+        if ($existingCount > 0) {
+            $this->command->info("Found {$existingCount} existing registrations. Clearing existing data to create fresh seed data.");
+            ExtracurricularRegistration::truncate();
+            $this->command->info('Existing registrations cleared.');
+        }
+        
         // Get all extracurriculars
         $extracurriculars = Extracurricular::all();
         

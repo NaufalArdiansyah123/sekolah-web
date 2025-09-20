@@ -4,17 +4,27 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\{DB, Storage, Log, Cache};
+use Illuminate\Support\Facades\{DB, Storage, Log, Cache, Hash};
 use App\Models\{Extracurricular, Achievement, Teacher, Student, User, ExtracurricularRegistration};
-use App\Services\NotificationService;
+use App\Services\{NotificationService, QrCodeService};
+use App\Helpers\ClassHelper;
+use Spatie\Permission\Models\Role;
 
 // StudentController.php
 class StudentController extends Controller
 {
+    protected $qrCodeService;
+
+    public function __construct(QrCodeService $qrCodeService)
+    {
+        $this->qrCodeService = $qrCodeService;
+    }
     public function index()
     {
         // Get filter parameters
         $grade = request('grade');
+        $major = request('major');
+        $class = request('class');
         $status = request('status');
         $search = request('search');
         
@@ -24,6 +34,14 @@ class StudentController extends Controller
         // Apply filters
         if ($grade) {
             $query->where('class', 'like', $grade . '%');
+        }
+        
+        if ($major) {
+            $query->where('class', 'like', '%' . $major . '%');
+        }
+        
+        if ($class) {
+            $query->where('class', $class);
         }
         
         if ($status) {
@@ -45,49 +63,96 @@ class StudentController extends Controller
         // Get paginated results
         $students = $query->latest()->paginate(10);
         
+        // Get all unique classes for filter dropdown
+        $allClasses = Student::select('class')
+            ->distinct()
+            ->orderBy('class')
+            ->pluck('class')
+            ->toArray();
+        
         // Calculate statistics
         $stats = [
             'total' => Student::count(),
             'grade_10' => Student::where('class', 'like', '10%')->count(),
             'grade_11' => Student::where('class', 'like', '11%')->count(),
             'grade_12' => Student::where('class', 'like', '12%')->count(),
+            'tkj' => Student::where('class', 'like', '%TKJ%')->count(),
+            'rpl' => Student::where('class', 'like', '%RPL%')->count(),
+            'dkv' => Student::where('class', 'like', '%DKV%')->count(),
             'active' => Student::where('status', 'active')->count(),
             'inactive' => Student::where('status', 'inactive')->count(),
             'graduated' => Student::where('status', 'graduated')->count(),
         ];
         
-        return view('admin.students.index', compact('students', 'stats'));
+        return view('admin.students.index', compact('students', 'stats', 'allClasses'));
     }
 
     public function create()
     {
-        // Define class options for the form
-        $classOptions = [
-            '10' => ['10 IPA 1', '10 IPA 2', '10 IPS 1', '10 IPS 2'],
-            '11' => ['11 IPA 1', '11 IPA 2', '11 IPS 1', '11 IPS 2'],
-            '12' => ['12 IPA 1', '12 IPA 2', '12 IPS 1', '12 IPS 2']
-        ];
+        // Get class options using ClassHelper
+        $allClasses = ClassHelper::getAllClasses();
+        $classOptions = [];
+        
+        // Group classes by grade
+        foreach ($allClasses as $class) {
+            $parsed = ClassHelper::parseClass($class);
+            $grade = $parsed['grade'];
+            
+            if (!isset($classOptions[$grade])) {
+                $classOptions[$grade] = [];
+            }
+            
+            $classOptions[$grade][] = $class;
+        }
+        
+        // Sort by grade
+        ksort($classOptions);
         
         return view('admin.students.create', compact('classOptions'));
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validClasses = ClassHelper::getAllClasses();
+        
+        // Validation rules
+        $rules = [
             'name' => 'required|max:255',
-            'nis' => 'required|unique:students,nis',
-            'nisn' => 'nullable|unique:students,nisn',
-            'email' => 'nullable|email|unique:students,email',
+            'nis' => 'required|unique:students,nis|regex:/^[0-9]+$/|min:6|max:20',
+            'nisn' => 'nullable|unique:students,nisn|regex:/^[0-9]+$/|min:10|max:10',
+            'email' => 'nullable|email|unique:students,email|unique:users,email',
             'phone' => 'nullable|max:20',
             'address' => 'nullable',
-            'class' => 'required|max:50',
+            'class' => 'required|in:' . implode(',', $validClasses),
             'birth_date' => 'required|date',
             'birth_place' => 'required|max:255',
             'gender' => 'required|in:male,female',
+            'religion' => 'required|in:' . implode(',', array_keys(config('school.student.religions', ['Islam', 'Kristen', 'Katolik', 'Hindu', 'Buddha', 'Konghucu']))),
             'parent_name' => 'required|max:255',
             'parent_phone' => 'nullable|max:20',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:1024',
             'status' => 'required|in:active,inactive,graduated'
+        ];
+        
+        // Add validation for user account creation
+        if ($request->has('create_user_account') && $request->create_user_account) {
+            $rules['email'] = 'required|email|unique:students,email|unique:users,email';
+            $rules['password'] = 'required|min:8|confirmed';
+        }
+        
+        $request->validate($rules, [
+            'class.in' => 'Kelas yang dipilih tidak valid.',
+            'nis.required' => 'NIS wajib diisi.',
+            'nis.unique' => 'NIS sudah digunakan oleh siswa lain.',
+            'nis.regex' => 'NIS hanya boleh berisi angka.',
+            'nis.min' => 'NIS minimal 6 digit.',
+            'nis.max' => 'NIS maksimal 20 digit.',
+            'nisn.unique' => 'NISN sudah digunakan oleh siswa lain.',
+            'nisn.regex' => 'NISN hanya boleh berisi angka.',
+            'nisn.min' => 'NISN harus 10 digit.',
+            'nisn.max' => 'NISN harus 10 digit.',
+            'religion.required' => 'Agama wajib dipilih.',
+            'religion.in' => 'Agama yang dipilih tidak valid.',
         ]);
 
         $data = $request->except('photo');
@@ -97,13 +162,98 @@ class StudentController extends Controller
             $data['photo'] = $request->file('photo')->store('students', 'public');
         }
 
-        $student = Student::create($data);
+        DB::beginTransaction();
+        
+        try {
+            $student = Student::create($data);
+            
+            $successMessages = ['Data siswa berhasil ditambahkan!'];
+            
+            // Create user account if requested
+            if ($request->has('create_user_account') && $request->create_user_account) {
+                try {
+                    $user = User::create([
+                        'name' => $student->name,
+                        'email' => $student->email,
+                        'password' => Hash::make($request->password),
+                        'email_verified_at' => now(),
+                        'status' => 'active',
+                    ]);
+                    
+                    // Assign student role
+                    $studentRole = Role::where('name', 'student')->where('guard_name', 'web')->first();
+                    if ($studentRole) {
+                        $user->assignRole($studentRole);
+                    }
+                    
+                    Log::info('User account created for new student', [
+                        'student_id' => $student->id,
+                        'student_name' => $student->name,
+                        'user_id' => $user->id,
+                        'user_email' => $user->email,
+                        'created_by' => auth()->user()->name ?? 'System'
+                    ]);
+                    
+                    $successMessages[] = 'Akun pengguna berhasil dibuat!';
+                } catch (\Exception $e) {
+                    Log::error('Failed to create user account for new student', [
+                        'student_id' => $student->id,
+                        'student_name' => $student->name,
+                        'error' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString()
+                    ]);
+                    
+                    $successMessages[] = 'Akun pengguna gagal dibuat. Silakan buat manual di halaman manajemen user.';
+                }
+            }
+            
+            // Auto-generate QR Code for attendance if requested
+            if ($request->has('auto_generate_qr') && $request->auto_generate_qr) {
+                try {
+                    $qrAttendance = $this->qrCodeService->generateQrCodeForStudent($student);
+                    
+                    Log::info('QR Code auto-generated for new student', [
+                        'student_id' => $student->id,
+                        'student_name' => $student->name,
+                        'student_nis' => $student->nis,
+                        'qr_attendance_id' => $qrAttendance->id,
+                        'created_by' => auth()->user()->name ?? 'System'
+                    ]);
+                    
+                    $successMessages[] = 'QR Code absensi berhasil dibuat!';
+                } catch (\Exception $e) {
+                    Log::error('Failed to auto-generate QR Code for new student', [
+                        'student_id' => $student->id,
+                        'student_name' => $student->name,
+                        'error' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString()
+                    ]);
+                    
+                    $successMessages[] = 'QR Code absensi gagal dibuat. Silakan buat manual di halaman QR Attendance.';
+                }
+            }
+            
+            DB::commit();
+            
+            $successMessage = implode(' ', $successMessages);
+        } catch (\Exception $e) {
+            DB::rollback();
+            
+            Log::error('Failed to create student', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return redirect()->back()
+                            ->withInput()
+                            ->with('error', 'Gagal menyimpan data siswa: ' . $e->getMessage());
+        }
 
         // Send notification
         NotificationService::studentAction('create', $student);
 
         return redirect()->route('admin.students.index')
-                        ->with('success', 'Data siswa berhasil ditambahkan!');
+                        ->with('success', $successMessage);
     }
 
     public function show(Student $student)
@@ -113,26 +263,74 @@ class StudentController extends Controller
 
     public function edit(Student $student)
     {
-        return view('admin.students.edit', compact('student'));
+        // Get class options using ClassHelper
+        $allClasses = ClassHelper::getAllClasses();
+        $classOptions = [];
+        
+        // Group classes by grade
+        foreach ($allClasses as $class) {
+            $parsed = ClassHelper::parseClass($class);
+            $grade = $parsed['grade'];
+            
+            if (!isset($classOptions[$grade])) {
+                $classOptions[$grade] = [];
+            }
+            
+            $classOptions[$grade][] = $class;
+        }
+        
+        // Sort by grade
+        ksort($classOptions);
+        
+        return view('admin.students.edit', compact('student', 'classOptions'));
     }
 
     public function update(Request $request, Student $student)
     {
-        $request->validate([
+        $validClasses = ClassHelper::getAllClasses();
+        
+        // Validation rules
+        $rules = [
             'name' => 'required|max:255',
-            'nis' => 'required|unique:students,nis,' . $student->id,
-            'nisn' => 'nullable|unique:students,nisn,' . $student->id,
-            'email' => 'nullable|email|unique:students,email,' . $student->id,
+            'nis' => 'required|unique:students,nis,' . $student->id . '|regex:/^[0-9]+$/|min:6|max:20',
+            'nisn' => 'nullable|unique:students,nisn,' . $student->id . '|regex:/^[0-9]+$/|min:10|max:10',
+            'email' => 'nullable|email|unique:students,email,' . $student->id . '|unique:users,email',
             'phone' => 'nullable|max:20',
             'address' => 'nullable',
-            'class' => 'required|max:50',
+            'class' => 'required|in:' . implode(',', $validClasses),
             'birth_date' => 'required|date',
             'birth_place' => 'required|max:255',
             'gender' => 'required|in:male,female',
+            'religion' => 'required|in:' . implode(',', array_keys(config('school.student.religions', ['Islam', 'Kristen', 'Katolik', 'Hindu', 'Buddha', 'Konghucu']))),
             'parent_name' => 'required|max:255',
             'parent_phone' => 'nullable|max:20',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:1024',
             'status' => 'required|in:active,inactive,graduated'
+        ];
+        
+        // Add validation for user account creation
+        if ($request->has('create_user_account') && $request->create_user_account) {
+            // Check if user already exists for this student
+            $existingUser = User::where('email', $student->email)->first();
+            if (!$existingUser) {
+                $rules['email'] = 'required|email|unique:students,email,' . $student->id . '|unique:users,email';
+                $rules['password'] = 'required|min:8|confirmed';
+            }
+        }
+        
+        $request->validate($rules, [
+            'class.in' => 'Kelas yang dipilih tidak valid.',
+            'nis.required' => 'NIS wajib diisi.',
+            'nis.unique' => 'NIS sudah digunakan oleh siswa lain.',
+            'nis.regex' => 'NIS hanya boleh berisi angka.',
+            'nis.min' => 'NIS minimal 6 digit.',
+            'nis.max' => 'NIS maksimal 20 digit.',
+            'nisn.unique' => 'NISN sudah digunakan oleh siswa lain.',
+            'nisn.regex' => 'NISN hanya boleh berisi angka.',
+            'nisn.min' => 'NISN harus 10 digit.',
+            'nisn.max' => 'NISN harus 10 digit.',
+            'religion.required' => 'Agama wajib dipilih.',
+            'religion.in' => 'Agama yang dipilih tidak valid.',
         ]);
 
         $data = $request->except('photo');
@@ -141,13 +339,105 @@ class StudentController extends Controller
             $data['photo'] = $request->file('photo')->store('students', 'public');
         }
 
-        $student->update($data);
+        DB::beginTransaction();
+        
+        try {
+            $student->update($data);
+            
+            $successMessages = ['Data siswa berhasil diperbarui!'];
+            
+            // Create user account if requested and doesn't exist
+            if ($request->has('create_user_account') && $request->create_user_account) {
+                $existingUser = User::where('email', $student->email)->first();
+                
+                if (!$existingUser) {
+                    try {
+                        $user = User::create([
+                            'name' => $student->name,
+                            'email' => $student->email,
+                            'password' => Hash::make($request->password),
+                            'email_verified_at' => now(),
+                            'status' => 'active',
+                        ]);
+                        
+                        // Assign student role
+                        $studentRole = Role::where('name', 'student')->where('guard_name', 'web')->first();
+                        if ($studentRole) {
+                            $user->assignRole($studentRole);
+                        }
+                        
+                        Log::info('User account created for updated student', [
+                            'student_id' => $student->id,
+                            'student_name' => $student->name,
+                            'user_id' => $user->id,
+                            'user_email' => $user->email,
+                            'updated_by' => auth()->user()->name ?? 'System'
+                        ]);
+                        
+                        $successMessages[] = 'Akun pengguna berhasil dibuat!';
+                    } catch (\Exception $e) {
+                        Log::error('Failed to create user account for updated student', [
+                            'student_id' => $student->id,
+                            'student_name' => $student->name,
+                            'error' => $e->getMessage(),
+                            'trace' => $e->getTraceAsString()
+                        ]);
+                        
+                        $successMessages[] = 'Akun pengguna gagal dibuat. Silakan buat manual di halaman manajemen user.';
+                    }
+                } else {
+                    $successMessages[] = 'Akun pengguna sudah ada untuk email ini.';
+                }
+            }
+            
+            // Auto-generate QR Code for attendance if requested and not exists
+            if ($request->has('auto_generate_qr') && $request->auto_generate_qr && !$student->qrAttendance) {
+                try {
+                    $qrAttendance = $this->qrCodeService->generateQrCodeForStudent($student);
+                    
+                    Log::info('QR Code auto-generated for updated student', [
+                        'student_id' => $student->id,
+                        'student_name' => $student->name,
+                        'student_nis' => $student->nis,
+                        'qr_attendance_id' => $qrAttendance->id,
+                        'updated_by' => auth()->user()->name ?? 'System'
+                    ]);
+                    
+                    $successMessages[] = 'QR Code absensi berhasil dibuat!';
+                } catch (\Exception $e) {
+                    Log::error('Failed to auto-generate QR Code for updated student', [
+                        'student_id' => $student->id,
+                        'student_name' => $student->name,
+                        'error' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString()
+                    ]);
+                    
+                    $successMessages[] = 'QR Code absensi gagal dibuat. Silakan buat manual di halaman QR Attendance.';
+                }
+            }
+            
+            DB::commit();
+            
+            $successMessage = implode(' ', $successMessages);
+        } catch (\Exception $e) {
+            DB::rollback();
+            
+            Log::error('Failed to update student', [
+                'student_id' => $student->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return redirect()->back()
+                            ->withInput()
+                            ->with('error', 'Gagal memperbarui data siswa: ' . $e->getMessage());
+        }
 
         // Send notification
         NotificationService::studentAction('update', $student);
 
         return redirect()->route('admin.students.index')
-                        ->with('success', 'Data siswa berhasil diperbarui!');
+                        ->with('success', $successMessage);
     }
 
     public function destroy(Student $student)
@@ -383,6 +673,119 @@ class StudentController extends Controller
     }
 
     /**
+     * Check if NIS is available (AJAX)
+     */
+    public function checkNis(Request $request)
+    {
+        $nis = $request->get('nis');
+        $studentId = $request->get('student_id'); // For edit mode
+        
+        if (!$nis) {
+            return response()->json([
+                'available' => false,
+                'message' => 'NIS tidak boleh kosong.'
+            ]);
+        }
+        
+        // Validate NIS format
+        if (!preg_match('/^[0-9]+$/', $nis)) {
+            return response()->json([
+                'available' => false,
+                'message' => 'NIS hanya boleh berisi angka.'
+            ]);
+        }
+        
+        if (strlen($nis) < 6) {
+            return response()->json([
+                'available' => false,
+                'message' => 'NIS minimal 6 digit.'
+            ]);
+        }
+        
+        if (strlen($nis) > 20) {
+            return response()->json([
+                'available' => false,
+                'message' => 'NIS maksimal 20 digit.'
+            ]);
+        }
+        
+        // Check if NIS exists
+        $query = Student::where('nis', $nis);
+        
+        // Exclude current student when editing
+        if ($studentId) {
+            $query->where('id', '!=', $studentId);
+        }
+        
+        $exists = $query->exists();
+        
+        if ($exists) {
+            return response()->json([
+                'available' => false,
+                'message' => 'NIS sudah digunakan oleh siswa lain.'
+            ]);
+        }
+        
+        return response()->json([
+            'available' => true,
+            'message' => 'NIS tersedia.'
+        ]);
+    }
+    
+    /**
+     * Check if NISN is available (AJAX)
+     */
+    public function checkNisn(Request $request)
+    {
+        $nisn = $request->get('nisn');
+        $studentId = $request->get('student_id'); // For edit mode
+        
+        if (!$nisn) {
+            return response()->json([
+                'available' => true,
+                'message' => 'NISN boleh kosong.'
+            ]);
+        }
+        
+        // Validate NISN format
+        if (!preg_match('/^[0-9]+$/', $nisn)) {
+            return response()->json([
+                'available' => false,
+                'message' => 'NISN hanya boleh berisi angka.'
+            ]);
+        }
+        
+        if (strlen($nisn) !== 10) {
+            return response()->json([
+                'available' => false,
+                'message' => 'NISN harus 10 digit.'
+            ]);
+        }
+        
+        // Check if NISN exists
+        $query = Student::where('nisn', $nisn);
+        
+        // Exclude current student when editing
+        if ($studentId) {
+            $query->where('id', '!=', $studentId);
+        }
+        
+        $exists = $query->exists();
+        
+        if ($exists) {
+            return response()->json([
+                'available' => false,
+                'message' => 'NISN sudah digunakan oleh siswa lain.'
+            ]);
+        }
+        
+        return response()->json([
+            'available' => true,
+            'message' => 'NISN tersedia.'
+        ]);
+    }
+
+    /**
      * Hapus foto profil siswa
      */
     public function deletePhoto(Student $student)
@@ -428,5 +831,51 @@ class StudentController extends Controller
                 'message' => 'Gagal menghapus foto profil: ' . $e->getMessage()
             ], 500);
         }
+    }
+    
+    /**
+     * Generate unique NIS suggestion
+     */
+    public function generateNis(Request $request)
+    {
+        $class = $request->get('class');
+        $currentYear = date('Y');
+        
+        // Parse class to get grade
+        if ($class) {
+            $parsed = ClassHelper::parseClass($class);
+            $grade = $parsed['grade'];
+        } else {
+            $grade = 10; // Default to grade 10
+        }
+        
+        // Generate NIS pattern: YYYY + Grade + Sequential number
+        $baseNis = $currentYear . str_pad($grade, 2, '0', STR_PAD_LEFT);
+        
+        // Find the next available number
+        $lastStudent = Student::where('nis', 'like', $baseNis . '%')
+            ->orderBy('nis', 'desc')
+            ->first();
+        
+        if ($lastStudent) {
+            $lastNumber = (int) substr($lastStudent->nis, strlen($baseNis));
+            $nextNumber = $lastNumber + 1;
+        } else {
+            $nextNumber = 1;
+        }
+        
+        $suggestedNis = $baseNis . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+        
+        // Make sure it's unique
+        while (Student::where('nis', $suggestedNis)->exists()) {
+            $nextNumber++;
+            $suggestedNis = $baseNis . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+        }
+        
+        return response()->json([
+            'suggested_nis' => $suggestedNis,
+            'pattern' => 'Format: Tahun(4) + Kelas(2) + Urutan(3)',
+            'example' => $currentYear . '10001 untuk siswa kelas 10 pertama'
+        ]);
     }
 }

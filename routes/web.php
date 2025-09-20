@@ -17,7 +17,6 @@ use App\Http\Controllers\Admin\{
     DashboardController,
     PostController,
     BlogController,  // TAMBAHAN UNTUK BLOG
-    DownloadController,
     VideoController,  // TAMBAHAN UNTUK VIDEO
     ExtracurricularController,
     AchievementController,
@@ -58,13 +57,14 @@ Route::get('/extracurriculars/{slug}', [PublicController::class, 'extracurricula
 Route::post('/extracurriculars/{extracurricular}/register', [PublicController::class, 'registerExtracurricular'])->name('extracurriculars.register');
 Route::get('/announcements', [PublicController::class, 'announcements'])->name('announcements.index');
 Route::get('/announcements/{id}', [PublicController::class, 'announcementDetail'])->name('announcements.show');
-Route::get('/downloads', [PublicController::class, 'downloads'])->name('downloads.index');
+
 Route::get('/facilities', [PublicController::class, 'facilities'])->name('facilities.index');
 Route::get('/achievements', [PublicController::class, 'achievements'])->name('achievements.index');
 Route::get('/academic/programs', [PublicController::class, 'academicPrograms'])->name('public.academic.programs');
 Route::get('/academic/calendar', [PublicController::class, 'academicCalendar'])->name('academic.calendar');
 Route::get('/videos', [PublicController::class, 'videos'])->name('public.videos.index');
 Route::get('/videos/{id}', [PublicController::class, 'videoDetail'])->name('public.videos.show');
+Route::post('/videos/{id}/increment-view', [PublicController::class, 'incrementVideoView'])->name('public.videos.increment-view');
 Route::get('/videos/{id}/download', [PublicController::class, 'videoDownload'])->name('public.videos.download');
 Route::get('/blog', [PublicBlogController::class, 'index'])->name('public.blog.index');
 Route::get('/contact', [PublicController::class, 'contact'])->name('contact');
@@ -105,6 +105,11 @@ Route::post('/student/register', [App\Http\Controllers\Auth\StudentRegisterContr
 Route::get('/student/registration/pending', [App\Http\Controllers\Auth\StudentRegisterController::class, 'showPendingPage'])->name('student.registration.pending');
 Route::get('/student/check-nis', [App\Http\Controllers\Auth\StudentRegisterController::class, 'checkNis'])->name('student.check-nis');
 Route::get('/student/check-email', [App\Http\Controllers\Auth\StudentRegisterController::class, 'checkEmail'])->name('student.check-email');
+Route::get('/student/check-data', [App\Http\Controllers\Auth\StudentRegisterController::class, 'checkStudentData'])->name('student.check-data');
+
+// Student Registration Rejection Routes
+Route::get('/auth/rejection', [App\Http\Controllers\Auth\RejectionController::class, 'show'])->name('auth.rejection.show');
+Route::post('/auth/rejection/contact', [App\Http\Controllers\Auth\RejectionController::class, 'contact'])->name('auth.rejection.contact');
 
 /*
 |--------------------------------------------------------------------------
@@ -206,10 +211,6 @@ Route::middleware(['auth', 'role:superadministrator,super_admin,admin'])->prefix
     });
     
     // Media & Files Routes
-    Route::resource('downloads', DownloadController::class);
-    Route::post('downloads/bulk-action', [DownloadController::class, 'bulkAction'])->name('downloads.bulk-action');
-    Route::post('downloads/{download}/toggle-featured', [DownloadController::class, 'toggleFeatured'])->name('downloads.toggle-featured');
-    
     Route::resource('videos', VideoController::class);
     Route::post('videos/bulk-action', [VideoController::class, 'bulkAction'])->name('videos.bulk-action');
     Route::post('videos/{video}/toggle-featured', [VideoController::class, 'toggleFeatured'])->name('videos.toggle-featured');
@@ -224,6 +225,13 @@ Route::middleware(['auth', 'role:superadministrator,super_admin,admin'])->prefix
     Route::post('extracurriculars/registration/{registration}/reject', [ExtracurricularController::class, 'rejectRegistration'])->name('extracurriculars.registration.reject');
     Route::get('extracurriculars/registration/{registration}', [ExtracurricularController::class, 'showRegistrationDetail'])->name('extracurriculars.registration.detail');
     Route::get('pending-registrations', [ExtracurricularController::class, 'pendingRegistrations'])->name('extracurriculars.pending-registrations');
+    
+    // API endpoints for AJAX calls
+    Route::get('extracurriculars/{extracurricular}/members-json', [ExtracurricularController::class, 'getMembersJson'])->name('extracurriculars.members.json');
+    Route::get('extracurriculars/{extracurricular}/registrations-json', [ExtracurricularController::class, 'getRegistrationsJson'])->name('extracurriculars.registrations.json');
+    Route::get('extracurriculars/all-pending-registrations', [ExtracurricularController::class, 'getAllPendingRegistrations'])->name('extracurriculars.all-pending-registrations');
+    Route::post('extracurriculars/member/{registration}/status', [ExtracurricularController::class, 'updateMemberStatus'])->name('extracurriculars.member.status');
+    Route::post('extracurriculars/registration/{registration}/status', [ExtracurricularController::class, 'updateRegistrationStatus'])->name('extracurriculars.registration.status');
     
     // Achievements management
     Route::resource('achievements', AchievementController::class);
@@ -241,12 +249,20 @@ Route::middleware(['auth', 'role:superadministrator,super_admin,admin'])->prefix
     Route::post('students/{student}/toggle-status', [StudentController::class, 'toggleStatus'])->name('students.toggle-status');
     Route::get('students/export', [StudentController::class, 'export'])->name('students.export');
     Route::post('students/import', [StudentController::class, 'import'])->name('students.import');
+    Route::delete('students/{student}/photo', [StudentController::class, 'deletePhoto'])->name('students.delete-photo');
+    
+    // AJAX validation routes for students
+    Route::get('students/check-nis', [StudentController::class, 'checkNis'])->name('students.check-nis');
+    Route::get('students/check-nisn', [StudentController::class, 'checkNisn'])->name('students.check-nisn');
+    Route::get('students/generate-nis', [StudentController::class, 'generateNis'])->name('students.generate-nis');
     
     // System Routes
     Route::resource('users', UserController::class);
     Route::post('users/bulk-action', [UserController::class, 'bulkAction'])->name('users.bulk-action');
     Route::post('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
-    Route::post('users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.reset-password');
+    Route::get('users/{user}/reset-password', [UserController::class, 'showResetPassword'])->name('users.reset-password');
+    Route::post('users/{user}/reset-password', [UserController::class, 'processResetPassword'])->name('users.reset-password.store');
+    Route::post('users/{user}/reset-password-ajax', [UserController::class, 'resetPassword'])->name('users.reset-password-ajax');
     
     Route::resource('roles', RoleController::class);
     Route::post('roles/bulk-action', [RoleController::class, 'bulkAction'])->name('roles.bulk-action');
@@ -378,18 +394,7 @@ Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')
         });
     });
 
-    // Teacher Assessment Routes
-    Route::prefix('assessment')->name('assessment.')->group(function () {
-        Route::get('/', [App\Http\Controllers\Teacher\AssessmentController::class, 'index'])->name('index');
-        Route::get('/create', [App\Http\Controllers\Teacher\AssessmentController::class, 'create'])->name('create');
-        Route::post('/', [App\Http\Controllers\Teacher\AssessmentController::class, 'store'])->name('store');
-        Route::get('/{id}', [App\Http\Controllers\Teacher\AssessmentController::class, 'show'])->name('show');
-        Route::get('/{id}/edit', [App\Http\Controllers\Teacher\AssessmentController::class, 'edit'])->name('edit');
-        Route::put('/{id}', [App\Http\Controllers\Teacher\AssessmentController::class, 'update'])->name('update');
-        Route::delete('/{id}', [App\Http\Controllers\Teacher\AssessmentController::class, 'destroy'])->name('destroy');
-        Route::get('/grades/overview', [App\Http\Controllers\Teacher\AssessmentController::class, 'grades'])->name('grades');
-        Route::get('/reports/analytics', [App\Http\Controllers\Teacher\AssessmentController::class, 'reports'])->name('reports');
-    });
+
 
     // Teacher Student Management Routes
     Route::prefix('students')->name('students.')->group(function () {
@@ -428,6 +433,36 @@ Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')
         Route::get('/{id}/attempts', [App\Http\Controllers\Teacher\QuizController::class, 'attempts'])->name('attempts');
         Route::get('/{quizId}/attempts/{attemptId}', [App\Http\Controllers\Teacher\QuizController::class, 'attemptDetail'])->name('attempt-detail');
         Route::post('/{quizId}/attempts/{attemptId}/grade-essay', [App\Http\Controllers\Teacher\QuizController::class, 'gradeEssay'])->name('grade-essay');
+    });
+
+    // Teacher Daily Tests Management Routes
+    Route::prefix('daily-tests')->name('daily-tests.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Teacher\DailyTestController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\Teacher\DailyTestController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\Teacher\DailyTestController::class, 'store'])->name('store');
+        Route::get('/{id}', [App\Http\Controllers\Teacher\DailyTestController::class, 'show'])->name('show');
+        Route::get('/{id}/edit', [App\Http\Controllers\Teacher\DailyTestController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [App\Http\Controllers\Teacher\DailyTestController::class, 'update'])->name('update');
+        Route::delete('/{id}', [App\Http\Controllers\Teacher\DailyTestController::class, 'destroy'])->name('destroy');
+        Route::post('/{id}/publish', [App\Http\Controllers\Teacher\DailyTestController::class, 'publish'])->name('publish');
+        Route::post('/{id}/unpublish', [App\Http\Controllers\Teacher\DailyTestController::class, 'unpublish'])->name('unpublish');
+        Route::get('/{id}/attempts', [App\Http\Controllers\Teacher\DailyTestController::class, 'attempts'])->name('attempts');
+        Route::get('/{testId}/attempts/{attemptId}', [App\Http\Controllers\Teacher\DailyTestController::class, 'attemptDetail'])->name('attempt-detail');
+        Route::post('/{testId}/attempts/{attemptId}/grade-essay', [App\Http\Controllers\Teacher\DailyTestController::class, 'gradeEssay'])->name('grade-essay');
+        Route::get('/analytics', [App\Http\Controllers\Teacher\DailyTestController::class, 'analytics'])->name('analytics');
+    });
+
+    // Teacher Grades Management Routes
+    Route::prefix('grades')->name('grades.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Teacher\GradeController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\Teacher\GradeController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\Teacher\GradeController::class, 'store'])->name('store');
+        Route::get('/{id}', [App\Http\Controllers\Teacher\GradeController::class, 'show'])->name('show');
+        Route::get('/{id}/edit', [App\Http\Controllers\Teacher\GradeController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [App\Http\Controllers\Teacher\GradeController::class, 'update'])->name('update');
+        Route::delete('/{id}', [App\Http\Controllers\Teacher\GradeController::class, 'destroy'])->name('destroy');
+        Route::get('/report', [App\Http\Controllers\Teacher\GradeController::class, 'report'])->name('report');
+        Route::get('/recap', [App\Http\Controllers\Teacher\GradeController::class, 'recap'])->name('recap');
     });
 });
 
@@ -470,6 +505,17 @@ Route::group([
     Route::post('/quiz-attempts/{attemptId}/submit', [QuizController::class, 'submit'])->name('quizzes.submit');
     Route::get('/quiz-attempts/{attemptId}/result', [QuizController::class, 'result'])->name('quizzes.result');
     
+    // Student Daily Tests Routes
+    Route::prefix('daily-tests')->name('daily-tests.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Student\DailyTestController::class, 'index'])->name('index');
+        Route::get('/{id}', [App\Http\Controllers\Student\DailyTestController::class, 'show'])->name('show');
+        Route::post('/{id}/start', [App\Http\Controllers\Student\DailyTestController::class, 'start'])->name('start');
+        Route::get('/attempts/{attemptId}/continue', [App\Http\Controllers\Student\DailyTestController::class, 'continue'])->name('continue');
+        Route::get('/attempts/{attemptId}/take', [App\Http\Controllers\Student\DailyTestController::class, 'take'])->name('take');
+        Route::post('/attempts/{attemptId}/submit', [App\Http\Controllers\Student\DailyTestController::class, 'submit'])->name('submit');
+        Route::get('/attempts/{attemptId}/result', [App\Http\Controllers\Student\DailyTestController::class, 'result'])->name('result');
+    });
+    
     // Student Attendance Routes
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
     Route::get('/attendance/history', [AttendanceController::class, 'history'])->name('attendance.history');
@@ -481,6 +527,17 @@ Route::group([
     Route::get('/grades/subject/{subject}', [GradeController::class, 'subject'])->name('grades.subject');
     Route::get('/grades/report', [GradeController::class, 'report'])->name('grades.report');
     Route::get('/grades/{id}', [GradeController::class, 'show'])->name('grades.show');
+    
+    // Student QR Attendance Routes
+    Route::prefix('attendance')->name('attendance.')->group(function () {
+        Route::get('/qr-scanner', [App\Http\Controllers\Student\AttendanceController::class, 'index'])->name('qr-scanner');
+        Route::post('/scan', [App\Http\Controllers\Student\AttendanceController::class, 'scanQr'])->name('scan');
+        Route::get('/my-qr', [App\Http\Controllers\Student\AttendanceController::class, 'getMyQrCode'])->name('my-qr');
+        Route::get('/download-qr', [App\Http\Controllers\Student\AttendanceController::class, 'downloadMyQrCode'])->name('download-qr');
+        Route::get('/history', [App\Http\Controllers\Student\AttendanceHistoryController::class, 'index'])->name('history');
+        Route::get('/realtime-data', [App\Http\Controllers\Student\AttendanceHistoryController::class, 'getRealTimeData'])->name('realtime-data');
+        Route::get('/export', [App\Http\Controllers\Student\AttendanceHistoryController::class, 'export'])->name('export');
+    });
     
     // Legacy route for backward compatibility
     Route::get('/materials-legacy', [MaterialController::class, 'index'])->name('materials');
@@ -509,13 +566,26 @@ Route::middleware(['auth', 'role:superadministrator,super_admin,admin'])->prefix
 |--------------------------------------------------------------------------
 */
 
-// Admin Gallery Routes (Protected by role middleware)
+    // Admin Gallery Routes (Protected by role middleware)
 Route::middleware(['auth', 'role:superadministrator,super_admin,admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::prefix('gallery')->name('gallery.')->group(function () {
         Route::get('/', [App\Http\Controllers\Admin\GalleryController::class, 'index'])->name('index');
         Route::get('/upload', [App\Http\Controllers\Admin\GalleryController::class, 'upload'])->name('upload');
         Route::post('/store', [App\Http\Controllers\Admin\GalleryController::class, 'store'])->name('store');
         Route::delete('/{albumId}', [App\Http\Controllers\Admin\GalleryController::class, 'destroy'])->name('destroy');
+    });
+    
+    // QR Attendance Management Routes
+    Route::prefix('qr-attendance')->name('qr-attendance.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\QrAttendanceController::class, 'index'])->name('index');
+        Route::post('/generate/{student}', [App\Http\Controllers\Admin\QrAttendanceController::class, 'generateQr'])->name('generate');
+        Route::post('/regenerate/{student}', [App\Http\Controllers\Admin\QrAttendanceController::class, 'regenerateQr'])->name('regenerate');
+        Route::post('/generate-bulk', [App\Http\Controllers\Admin\QrAttendanceController::class, 'generateBulkQr'])->name('generate-bulk');
+        Route::get('/view/{student}', [App\Http\Controllers\Admin\QrAttendanceController::class, 'viewQr'])->name('view');
+        Route::get('/logs', [App\Http\Controllers\Admin\QrAttendanceController::class, 'attendanceLogs'])->name('logs');
+        Route::get('/statistics', [App\Http\Controllers\Admin\QrAttendanceController::class, 'statistics'])->name('statistics');
+        Route::get('/download/{student}', [App\Http\Controllers\Admin\QrAttendanceController::class, 'downloadQr'])->name('download');
+        Route::get('/debug', function() { return view('admin.qr-attendance.debug'); })->name('debug');
     });
 });
 

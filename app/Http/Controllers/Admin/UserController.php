@@ -75,13 +75,42 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'email_verified_at' => now(), // Auto verify for admin created users
+            'status' => 'active', // Set status to active immediately
         ]);
 
-        // Assign role
+        // Assign role - ensure clean assignment
+        $user->syncRoles([]); // Clear any existing roles first
         $user->assignRole($request->role);
+        
+        // Verify role assignment
+        $user = $user->fresh(); // Reload user with fresh data
+        
+        // Debug: Log role assignment
+        \Log::info('User created with role assignment', [
+            'user_id' => $user->id,
+            'user_email' => $user->email,
+            'requested_role' => $request->role,
+            'assigned_roles' => $user->roles->pluck('name')->toArray(),
+            'roles_count' => $user->roles->count(),
+            'has_teacher_role' => $user->hasRole('teacher'),
+            'has_student_role' => $user->hasRole('student'),
+            'role_assignment_success' => $user->hasRole($request->role)
+        ]);
+        
+        // Verify the role was assigned correctly
+        if (!$user->hasRole($request->role)) {
+            \Log::error('Role assignment failed', [
+                'user_id' => $user->id,
+                'requested_role' => $request->role,
+                'actual_roles' => $user->roles->pluck('name')->toArray()
+            ]);
+            
+            return redirect()->route('admin.users.index')
+                ->with('error', 'User dibuat tetapi role assignment gagal. Silakan edit user untuk mengatur role.');
+        }
 
         return redirect()->route('admin.users.index')
-            ->with('success', 'User berhasil ditambahkan!');
+            ->with('success', 'User berhasil ditambahkan dan dapat langsung digunakan untuk login!');
     }
 
     /**
@@ -170,19 +199,87 @@ class UserController extends Controller
             ], 403);
         }
 
+        // Toggle both email_verified_at and status
+        $isActive = $user->email_verified_at && $user->status === 'active';
+        
         $user->update([
-            'email_verified_at' => $user->email_verified_at ? null : now()
+            'email_verified_at' => $isActive ? null : now(),
+            'status' => $isActive ? 'inactive' : 'active'
         ]);
 
         return response()->json([
             'success' => true,
-            'status' => $user->email_verified_at ? 'active' : 'inactive',
+            'status' => $user->email_verified_at && $user->status === 'active' ? 'active' : 'inactive',
             'message' => 'Status user berhasil diubah!'
         ]);
     }
 
     /**
-     * Reset user password
+     * Show reset password form
+     */
+    public function showResetPassword(User $user)
+    {
+        return view('admin.users.reset-password', compact('user'));
+    }
+
+    /**
+     * Process password reset
+     */
+    public function processResetPassword(Request $request, User $user)
+    {
+        $request->validate([
+            'reset_type' => 'required|in:default,custom,generate',
+            'custom_password' => 'required_if:reset_type,custom|min:8'
+        ]);
+
+        $newPassword = '';
+        
+        switch ($request->reset_type) {
+            case 'default':
+                $newPassword = 'password123';
+                break;
+            case 'custom':
+                $newPassword = $request->custom_password;
+                break;
+            case 'generate':
+                $newPassword = $this->generateRandomPassword();
+                break;
+        }
+        
+        $user->update([
+            'password' => Hash::make($newPassword)
+        ]);
+
+        // Log the password reset
+        \Log::info('Password reset for user', [
+            'user_id' => $user->id,
+            'user_email' => $user->email,
+            'reset_by' => auth()->user()->email,
+            'reset_type' => $request->reset_type,
+            'timestamp' => now()
+        ]);
+
+        return redirect()->route('admin.users.index')
+            ->with('success', "Password for {$user->name} has been reset successfully! New password: {$newPassword}");
+    }
+
+    /**
+     * Generate a random password
+     */
+    private function generateRandomPassword($length = 12)
+    {
+        $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+        $password = '';
+        
+        for ($i = 0; $i < $length; $i++) {
+            $password .= $characters[rand(0, strlen($characters) - 1)];
+        }
+        
+        return $password;
+    }
+
+    /**
+     * Reset user password (Legacy AJAX endpoint)
      */
     public function resetPassword(User $user)
     {

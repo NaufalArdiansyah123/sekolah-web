@@ -294,9 +294,10 @@
     .badge-kegiatan { background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.2); }
     .badge-administrasi { background: rgba(245, 158, 11, 0.1); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.2); }
 
-    .badge-tinggi { background: rgba(239, 68, 68, 0.1); color: #dc2626; border: 1px solid rgba(239, 68, 68, 0.2); }
-    .badge-sedang { background: rgba(245, 158, 11, 0.1); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.2); }
+    .badge-urgent { background: rgba(239, 68, 68, 0.1); color: #dc2626; border: 1px solid rgba(239, 68, 68, 0.2); }
+    .badge-high { background: rgba(245, 158, 11, 0.1); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.2); }
     .badge-normal { background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.2); }
+    .badge-low { background: rgba(107, 114, 128, 0.1); color: #374151; border: 1px solid rgba(107, 114, 128, 0.2); }
 
     .badge-published { background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.2); }
     .badge-draft { background: rgba(107, 114, 128, 0.1); color: #374151; border: 1px solid rgba(107, 114, 128, 0.2); }
@@ -342,12 +343,40 @@
         right: 0;
         top: 100%;
         min-width: 150px;
-        z-index: 10;
+        z-index: 1000;
         display: none;
+        margin-top: 2px;
     }
 
     .dropdown-menu.show {
         display: block;
+    }
+
+    /* Fix table row stacking context */
+    .table tbody tr {
+        position: relative;
+        z-index: 1;
+        transition: all 0.3s ease;
+    }
+
+    .table tbody tr:hover {
+        background: var(--bg-secondary);
+        transform: scale(1.001);
+        z-index: 2;
+    }
+
+    /* Ensure dropdown appears above everything */
+    .action-dropdown.show {
+        z-index: 1001;
+    }
+
+    .table tbody tr:has(.action-dropdown.show) {
+        z-index: 1001;
+    }
+
+    /* Alternative approach for browsers that don't support :has() */
+    .table tbody tr.dropdown-open {
+        z-index: 1001;
     }
 
     .dropdown-item {
@@ -579,7 +608,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                 </svg>
             </div>
-            <div class="stat-value">{{ $announcements->sum('views') }}</div>
+            <div class="stat-value">{{ $announcements->sum('views_count') }}</div>
             <div class="stat-title">Total Views</div>
         </div>
     </div>
@@ -618,9 +647,10 @@
                     <label class="filter-label">Priority</label>
                     <select name="priority" class="filter-input">
                         <option value="">All Priorities</option>
-                        <option value="tinggi" {{ request('priority') == 'tinggi' ? 'selected' : '' }}>High</option>
-                        <option value="sedang" {{ request('priority') == 'sedang' ? 'selected' : '' }}>Medium</option>
+                        <option value="urgent" {{ request('priority') == 'urgent' ? 'selected' : '' }}>Urgent</option>
+                        <option value="high" {{ request('priority') == 'high' ? 'selected' : '' }}>High</option>
                         <option value="normal" {{ request('priority') == 'normal' ? 'selected' : '' }}>Normal</option>
+                        <option value="low" {{ request('priority') == 'low' ? 'selected' : '' }}>Low</option>
                     </select>
                 </div>
                 <div class="filter-group">
@@ -677,9 +707,9 @@
                     <tr>
                         <td>{{ $announcements->firstItem() + $index }}</td>
                         <td>
-                            <div class="announcement-title">{{ Str::limit($announcement->judul, 40) }}</div>
-                            <div class="announcement-excerpt">{{ Str::limit(strip_tags($announcement->isi), 60) }}</div>
-                            @if($announcement->gambar)
+                            <div class="announcement-title">{{ Str::limit($announcement->title, 40) }}</div>
+                            <div class="announcement-excerpt">{{ Str::limit(strip_tags($announcement->content), 60) }}</div>
+                            @if($announcement->image)
                                 <small style="color: #f59e0b; font-size: 0.75rem;">
                                     <svg class="w-3 h-3" style="display: inline;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
@@ -689,30 +719,35 @@
                             @endif
                         </td>
                         <td>
-                            <span class="badge badge-{{ $announcement->kategori }}">
-                                {{ ucfirst($announcement->kategori) }}
+                            <span class="badge badge-{{ $announcement->category }}">
+                                {{ ucfirst($announcement->category) }}
                             </span>
                         </td>
                         <td>
-                            <span class="badge badge-{{ $announcement->prioritas }}">
-                                {{ ucfirst($announcement->prioritas) }}
+                            <span class="badge badge-{{ $announcement->priority }}">
+                                {{ ucfirst($announcement->priority) }}
                             </span>
                         </td>
-                        <td>{{ $announcement->penulis }}</td>
+                        <td>
+                            {{ $announcement->author }}
+                            @if($announcement->user)
+                                <br><small class="text-muted">({{ $announcement->user->name }})</small>
+                            @endif
+                        </td>
                         <td>
                             <span class="badge badge-{{ $announcement->status }}">
                                 {{ ucfirst($announcement->status) }}
                             </span>
                         </td>
                         <td>
-                            <span class="views-badge">{{ $announcement->views ?? 0 }}</span>
+                            <span class="views-badge">{{ $announcement->views_count ?? 0 }}</span>
                         </td>
                         <td>
                             <div style="font-size: 0.8rem; color: var(--text-secondary);">
-                                {{ \Carbon\Carbon::parse($announcement->tanggal_publikasi)->format('M d, Y') }}
+                                {{ $announcement->published_at ? $announcement->published_at->format('M d, Y') : $announcement->created_at->format('M d, Y') }}
                             </div>
                             <div style="font-size: 0.75rem; color: var(--text-tertiary);">
-                                {{ \Carbon\Carbon::parse($announcement->tanggal_publikasi)->format('H:i') }}
+                                {{ $announcement->published_at ? $announcement->published_at->format('H:i') : $announcement->created_at->format('H:i') }}
                             </div>
                         </td>
                         <td>
@@ -874,6 +909,16 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!event.target.closest('.action-dropdown')) {
             document.querySelectorAll('.dropdown-menu').forEach(function(menu) {
                 menu.classList.remove('show');
+                const parentDropdown = menu.closest('.action-dropdown');
+                const parentRow = menu.closest('tr');
+                if (parentDropdown) parentDropdown.classList.remove('show');
+                if (parentRow) parentRow.classList.remove('dropdown-open');
+                
+                // Reset positioning styles
+                menu.style.top = '';
+                menu.style.bottom = '';
+                menu.style.marginTop = '';
+                menu.style.marginBottom = '';
             });
         }
     });
@@ -896,15 +941,41 @@ document.addEventListener('DOMContentLoaded', function() {
 function toggleDropdown(id) {
     const dropdown = document.getElementById('dropdown-' + id);
     const isShown = dropdown.classList.contains('show');
+    const actionDropdown = dropdown.closest('.action-dropdown');
+    const tableRow = dropdown.closest('tr');
     
-    // Close all dropdowns
+    // Close all dropdowns and remove classes
     document.querySelectorAll('.dropdown-menu').forEach(function(menu) {
         menu.classList.remove('show');
+        const parentDropdown = menu.closest('.action-dropdown');
+        const parentRow = menu.closest('tr');
+        if (parentDropdown) parentDropdown.classList.remove('show');
+        if (parentRow) parentRow.classList.remove('dropdown-open');
     });
     
     // Toggle current dropdown
     if (!isShown) {
         dropdown.classList.add('show');
+        if (actionDropdown) actionDropdown.classList.add('show');
+        if (tableRow) tableRow.classList.add('dropdown-open');
+        
+        // Check if dropdown would go off-screen and adjust position
+        const rect = dropdown.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const dropdownHeight = dropdown.offsetHeight;
+        
+        // If dropdown goes below viewport, show it above the button instead
+        if (rect.bottom > viewportHeight) {
+            dropdown.style.top = 'auto';
+            dropdown.style.bottom = '100%';
+            dropdown.style.marginTop = '0';
+            dropdown.style.marginBottom = '2px';
+        } else {
+            dropdown.style.top = '100%';
+            dropdown.style.bottom = 'auto';
+            dropdown.style.marginTop = '2px';
+            dropdown.style.marginBottom = '0';
+        }
     }
 }
 </script>

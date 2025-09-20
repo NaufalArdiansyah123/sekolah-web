@@ -378,7 +378,7 @@
                         <!-- Stats -->
                         <div class="video-stats">
                             <span>👁️ {{ number_format($video->views) }} views</span>
-                            <span>📥 {{ number_format($video->downloads) }} downloads</span>
+
                             <span>📁 {{ $video->formatted_file_size }}</span>
                         </div>
 

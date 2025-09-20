@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Slideshow; // Tambahkan ini untuk menggunakan model Slideshow
-use App\Models\Download;
+
 use App\Models\BlogPost;
 use App\Models\Video;
 use App\Models\Post;
@@ -366,6 +366,14 @@ class PublicController extends Controller
         ]);
     }
     
+    public function incrementVideoView($id)
+    {
+        $video = Video::active()->findOrFail($id);
+        $video->increment('views');
+        
+        return response()->json(['success' => true, 'views' => $video->views]);
+    }
+    
     public function videoDownload($id)
     {
         $video = Video::active()->findOrFail($id);
@@ -374,12 +382,12 @@ class PublicController extends Controller
         $video->increment('downloads');
         
         // Check if video file exists
-        if (!$video->file_path || !file_exists(storage_path('app/public/' . $video->file_path))) {
+        if (!$video->filename || !file_exists(storage_path('app/public/videos/' . $video->filename))) {
             abort(404, 'Video file not found');
         }
         
-        $filePath = storage_path('app/public/' . $video->file_path);
-        $fileName = $video->original_name ?: ($video->title . '.' . pathinfo($video->file_path, PATHINFO_EXTENSION));
+        $filePath = storage_path('app/public/videos/' . $video->filename);
+        $fileName = $video->original_name ?: ($video->title . '.' . pathinfo($video->filename, PATHINFO_EXTENSION));
         
         return response()->download($filePath, $fileName, [
             'Content-Type' => 'application/octet-stream',
@@ -392,44 +400,7 @@ class PublicController extends Controller
         return redirect()->route('gallery.index');
     }
 
-    public function downloads(Request $request)
-    {
-        $query = Download::where('status', 'active');
 
-        // Search filter
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%")
-                  ->orWhere('file_name', 'like', "%{$search}%");
-            });
-        }
-
-        // Category filter
-        if ($request->filled('category')) {
-            $query->where('category', $request->category);
-        }
-
-        // Sorting
-        switch ($request->get('sort', 'latest')) {
-            case 'name':
-                $query->orderBy('title');
-                break;
-            case 'downloads':
-                $query->orderBy('download_count', 'desc');
-                break;
-            default:
-                $query->latest();
-        }
-
-        $downloads = $query->paginate(12);
-        
-        return view('public.downloads', [
-            'title' => 'Download Center',
-            'downloads' => $downloads
-        ]);
-    }
 
     public function contact()
     {
@@ -542,13 +513,5 @@ class PublicController extends Controller
         return back()->with('success', 'Thank you for your message. We will get back to you soon!');
     }
 
-    public function incrementDownload(Download $download)
-    {
-        $download->incrementDownloadCount();
-        
-        return response()->json([
-            'success' => true,
-            'download_count' => $download->download_count
-        ]);
-    }
+
 }

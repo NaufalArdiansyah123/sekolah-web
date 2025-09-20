@@ -4,8 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\{DB, Log};
 use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 
 class RoleSeeder extends Seeder
 {
@@ -14,80 +14,73 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create roles
+        Log::info('Starting RoleSeeder...');
+        
+        // Original roles from the existing system + new superadministrator
         $roles = [
-            'super_admin' => 'Super Administrator',
-            'admin' => 'Administrator', 
-            'teacher' => 'Teacher',
-            'student' => 'Student'
+            [
+                'name' => 'admin',
+                'guard_name' => 'web',
+                'display_name' => 'Administrator',
+                'description' => 'Administrator dengan akses ke fitur manajemen sekolah',
+            ],
+            [
+                'name' => 'teacher',
+                'guard_name' => 'web',
+                'display_name' => 'Teacher',
+                'description' => 'Guru dengan akses ke fitur pembelajaran dan penilaian',
+            ],
+            [
+                'name' => 'student',
+                'guard_name' => 'web',
+                'display_name' => 'Student',
+                'description' => 'Siswa dengan akses ke fitur pembelajaran dan absensi',
+            ],
+            [
+                'name' => 'superadministrator',
+                'guard_name' => 'web',
+                'display_name' => 'Super Administrator',
+                'description' => 'Super Administrator dengan akses penuh ke semua fitur sistem',
+            ],
         ];
-
-        foreach ($roles as $name => $displayName) {
-            Role::firstOrCreate(['name' => $name], [
-                'guard_name' => 'web'
+        
+        try {
+            foreach ($roles as $roleData) {
+                // Check if role already exists
+                $existingRole = Role::where('name', $roleData['name'])->where('guard_name', $roleData['guard_name'])->first();
+                
+                if (!$existingRole) {
+                    // Create role using Spatie Permission model
+                    $role = Role::create([
+                        'name' => $roleData['name'],
+                        'guard_name' => $roleData['guard_name'],
+                    ]);
+                    
+                    $this->command->info("✅ Created role: {$roleData['display_name']} (ID: {$role->id})");
+                    Log::info("Created role: {$roleData['name']} with ID: {$role->id}");
+                } else {
+                    $this->command->info("⚠️  Role already exists: {$roleData['display_name']} (ID: {$existingRole->id})");
+                    Log::info("Role already exists: {$roleData['name']} with ID: {$existingRole->id}");
+                }
+            }
+            
+            $this->command->info("🎭 RoleSeeder completed successfully!");
+            $this->command->info("📋 Available roles:");
+            $this->command->info("   1. admin (Administrator) - Original");
+            $this->command->info("   2. teacher (Teacher) - Original");
+            $this->command->info("   3. student (Student) - Original");
+            $this->command->info("   4. superadministrator (Super Administrator) - New");
+            
+            Log::info("RoleSeeder completed successfully");
+            
+        } catch (\Exception $e) {
+            $this->command->error("❌ RoleSeeder failed: " . $e->getMessage());
+            Log::error("RoleSeeder failed", [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
-        }
-
-        // Create permissions (optional)
-        $permissions = [
-            'users.view',
-            'users.create',
-            'users.edit',
-            'users.delete',
-            'posts.view',
-            'posts.create',
-            'posts.edit',
-            'posts.delete',
-            'media.view',
-            'media.create',
-            'media.edit',
-            'media.delete',
-            'academic.view',
-            'academic.create',
-            'academic.edit',
-            'academic.delete',
-        ];
-
-        foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission], [
-                'guard_name' => 'web'
-            ]);
-        }
-
-        // Assign permissions to roles
-        $superAdmin = Role::where('name', 'super_admin')->first();
-        $admin = Role::where('name', 'admin')->first();
-        $teacher = Role::where('name', 'teacher')->first();
-        $student = Role::where('name', 'student')->first();
-
-        // Super Admin gets all permissions
-        if ($superAdmin) {
-            $superAdmin->givePermissionTo(Permission::all());
-        }
-
-        // Admin gets most permissions except user management
-        if ($admin) {
-            $admin->givePermissionTo([
-                'posts.view', 'posts.create', 'posts.edit', 'posts.delete',
-                'media.view', 'media.create', 'media.edit', 'media.delete',
-                'academic.view', 'academic.create', 'academic.edit', 'academic.delete',
-            ]);
-        }
-
-        // Teacher gets limited permissions
-        if ($teacher) {
-            $teacher->givePermissionTo([
-                'posts.view', 'posts.create', 'posts.edit',
-                'academic.view', 'academic.create', 'academic.edit',
-            ]);
-        }
-
-        // Student gets view permissions only
-        if ($student) {
-            $student->givePermissionTo([
-                'posts.view',
-                'academic.view',
-            ]);
+            
+            throw $e;
         }
     }
 }

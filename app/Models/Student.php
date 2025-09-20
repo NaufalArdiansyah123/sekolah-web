@@ -20,6 +20,7 @@ class Student extends Model
         'birth_date',
         'birth_place',
         'gender',
+        'religion',
         'parent_name',
         'parent_phone',
         'photo',
@@ -106,5 +107,39 @@ class Student extends Model
             default:
                 return ucfirst($this->status);
         }
+    }
+
+    /**
+     * Relasi ke QR Attendance
+     */
+    public function qrAttendance()
+    {
+        return $this->hasOne(QrAttendance::class);
+    }
+
+    /**
+     * Relasi ke Attendance Logs
+     */
+    public function attendanceLogs()
+    {
+        return $this->hasMany(AttendanceLog::class);
+    }
+
+    /**
+     * Get today's attendance
+     */
+    public function getTodayAttendanceAttribute()
+    {
+        return $this->attendanceLogs()
+                   ->whereDate('attendance_date', today())
+                   ->first();
+    }
+
+    /**
+     * Check if student has QR code
+     */
+    public function hasQrCodeAttribute(): bool
+    {
+        return $this->qrAttendance !== null;
     }
 }

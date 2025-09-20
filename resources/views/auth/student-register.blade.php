@@ -466,6 +466,8 @@
                                    value="{{ old('name') }}" 
                                    class="form-input @error('name') error @enderror"
                                    placeholder="Masukkan nama lengkap"
+                                   x-model="form.name"
+                                   :readonly="studentDataFound"
                                    required>
                             @error('name')
                                 <div class="error-message">
@@ -487,14 +489,19 @@
                                        class="form-input @error('nis') error @enderror"
                                        placeholder="Masukkan NIS"
                                        x-model="form.nis"
-                                       @input="checkNis()"
+                                       @input="checkNisAndData()"
                                        required>
                                 <div x-show="nisChecking" class="validation-icon">
                                     <div class="loading"></div>
                                 </div>
-                                <div x-show="nisStatus === 'available'" class="validation-icon">
+                                <div x-show="nisStatus === 'available' && !studentDataFound" class="validation-icon">
                                     <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <div x-show="studentDataFound" class="validation-icon">
+                                    <svg class="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                                     </svg>
                                 </div>
                                 <div x-show="nisStatus === 'taken'" class="validation-icon">
@@ -503,7 +510,17 @@
                                     </svg>
                                 </div>
                             </div>
-                            <div x-show="nisMessage" x-text="nisMessage" :class="nisStatus === 'available' ? 'success-message' : 'error-message'"></div>
+                            <div x-show="nisMessage" x-text="nisMessage" :class="{
+                                'success-message': nisStatus === 'available' && !studentDataFound,
+                                'error-message': nisStatus === 'taken',
+                                'text-blue-600': studentDataFound
+                            }"></div>
+                            <div x-show="studentDataFound" class="success-message">
+                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                Data siswa ditemukan! Form akan diisi otomatis.
+                            </div>
                             @error('nis')
                                 <div class="error-message">
                                     <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -524,23 +541,24 @@
                                        class="form-input @error('email') error @enderror"
                                        placeholder="contoh@email.com"
                                        x-model="form.email"
-                                       @input="checkEmail()"
+                                       @input="!studentDataFound && checkEmail()"
+                                       :readonly="studentDataFound"
                                        required>
-                                <div x-show="emailChecking" class="validation-icon">
+                                <div x-show="emailChecking && !studentDataFound" class="validation-icon">
                                     <div class="loading"></div>
                                 </div>
-                                <div x-show="emailStatus === 'available'" class="validation-icon">
+                                <div x-show="emailStatus === 'available' && !studentDataFound" class="validation-icon">
                                     <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                     </svg>
                                 </div>
-                                <div x-show="emailStatus === 'taken'" class="validation-icon">
+                                <div x-show="emailStatus === 'taken' && !studentDataFound" class="validation-icon">
                                     <svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
                                     </svg>
                                 </div>
                             </div>
-                            <div x-show="emailMessage" x-text="emailMessage" :class="emailStatus === 'available' ? 'success-message' : 'error-message'"></div>
+                            <div x-show="emailMessage && !studentDataFound" x-text="emailMessage" :class="emailStatus === 'available' ? 'success-message' : 'error-message'"></div>
                             @error('email')
                                 <div class="error-message">
                                     <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -558,7 +576,9 @@
                                    name="phone" 
                                    value="{{ old('phone') }}" 
                                    class="form-input @error('phone') error @enderror"
-                                   placeholder="08xxxxxxxxxx">
+                                   placeholder="08xxxxxxxxxx"
+                                   x-model="form.phone"
+                                   :readonly="studentDataFound">
                             @error('phone')
                                 <div class="error-message">
                                     <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -577,6 +597,8 @@
                                    value="{{ old('birth_place') }}" 
                                    class="form-input @error('birth_place') error @enderror"
                                    placeholder="Kota tempat lahir"
+                                   x-model="form.birth_place"
+                                   :readonly="studentDataFound"
                                    required>
                             @error('birth_place')
                                 <div class="error-message">
@@ -595,6 +617,8 @@
                                    name="birth_date" 
                                    value="{{ old('birth_date') }}" 
                                    class="form-input @error('birth_date') error @enderror"
+                                   x-model="form.birth_date"
+                                   :readonly="studentDataFound"
                                    required>
                             @error('birth_date')
                                 <div class="error-message">
@@ -611,11 +635,15 @@
                             <select id="gender" 
                                     name="gender" 
                                     class="form-select @error('gender') error @enderror"
+                                    x-model="form.gender"
+                                    :style="studentDataFound ? 'pointer-events: none; background-color: #f3f4f6;' : ''"
                                     required>
                                 <option value="">Pilih Jenis Kelamin</option>
                                 <option value="male" {{ old('gender') == 'male' ? 'selected' : '' }}>Laki-laki</option>
                                 <option value="female" {{ old('gender') == 'female' ? 'selected' : '' }}>Perempuan</option>
                             </select>
+                            <!-- Hidden input to ensure value is submitted when auto-filled -->
+                            <input x-show="studentDataFound" type="hidden" name="gender" :value="form.gender">
                             @error('gender')
                                 <div class="error-message">
                                     <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -631,6 +659,8 @@
                             <select id="religion" 
                                     name="religion" 
                                     class="form-select @error('religion') error @enderror"
+                                    x-model="form.religion"
+                                    :style="studentDataFound ? 'pointer-events: none; background-color: #f3f4f6;' : ''"
                                     required>
                                 <option value="">Pilih Agama</option>
                                 <option value="Islam" {{ old('religion') == 'Islam' ? 'selected' : '' }}>Islam</option>
@@ -640,6 +670,8 @@
                                 <option value="Buddha" {{ old('religion') == 'Buddha' ? 'selected' : '' }}>Buddha</option>
                                 <option value="Konghucu" {{ old('religion') == 'Konghucu' ? 'selected' : '' }}>Konghucu</option>
                             </select>
+                            <!-- Hidden input to ensure value is submitted when auto-filled -->
+                            <input x-show="studentDataFound" type="hidden" name="religion" :value="form.religion">
                             @error('religion')
                                 <div class="error-message">
                                     <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -656,6 +688,8 @@
                                       name="address" 
                                       class="form-textarea @error('address') error @enderror"
                                       placeholder="Masukkan alamat lengkap"
+                                      x-model="form.address"
+                                      :readonly="studentDataFound"
                                       required>{{ old('address') }}</textarea>
                             @error('address')
                                 <div class="error-message">
@@ -682,14 +716,18 @@
                             <select id="class" 
                                     name="class" 
                                     class="form-select @error('class') error @enderror"
+                                    x-model="form.class"
+                                    :style="studentDataFound ? 'pointer-events: none; background-color: #f3f4f6;' : ''"
                                     required>
                                 <option value="">Pilih Kelas</option>
-                                <option value="X IPA 1" {{ old('class') == 'X IPA 1' ? 'selected' : '' }}>X IPA 1</option>
-                                <option value="X IPA 2" {{ old('class') == 'X IPA 2' ? 'selected' : '' }}>X IPA 2</option>
-                                <option value="X IPS 1" {{ old('class') == 'X IPS 1' ? 'selected' : '' }}>X IPS 1</option>
-                                <option value="X IPS 2" {{ old('class') == 'X IPS 2' ? 'selected' : '' }}>X IPS 2</option>
-                                <option value="X Bahasa" {{ old('class') == 'X Bahasa' ? 'selected' : '' }}>X Bahasa</option>
+                                <option value="10 TKJ 1" {{ old('class') == '10 TKJ 1' ? 'selected' : '' }}>Kelas 10 TKJ 1 - Teknik Komputer dan Jaringan</option>
+                                <option value="10 TKJ 2" {{ old('class') == '10 TKJ 2' ? 'selected' : '' }}>Kelas 10 TKJ 2 - Teknik Komputer dan Jaringan</option>
+                                <option value="10 RPL 1" {{ old('class') == '10 RPL 1' ? 'selected' : '' }}>Kelas 10 RPL 1 - Rekayasa Perangkat Lunak</option>
+                                <option value="10 RPL 2" {{ old('class') == '10 RPL 2' ? 'selected' : '' }}>Kelas 10 RPL 2 - Rekayasa Perangkat Lunak</option>
+                                <option value="10 DKV 1" {{ old('class') == '10 DKV 1' ? 'selected' : '' }}>Kelas 10 DKV 1 - Desain Komunikasi Visual</option>
                             </select>
+                            <!-- Hidden input to ensure value is submitted when auto-filled -->
+                            <input x-show="studentDataFound" type="hidden" name="class" :value="form.class">
                             @error('class')
                                 <div class="error-message">
                                     <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -716,6 +754,8 @@
                                    value="{{ old('parent_name') }}" 
                                    class="form-input @error('parent_name') error @enderror"
                                    placeholder="Nama lengkap orang tua/wali"
+                                   x-model="form.parent_name"
+                                   :readonly="studentDataFound"
                                    required>
                             @error('parent_name')
                                 <div class="error-message">
@@ -735,6 +775,8 @@
                                    value="{{ old('parent_phone') }}" 
                                    class="form-input @error('parent_phone') error @enderror"
                                    placeholder="08xxxxxxxxxx"
+                                   x-model="form.parent_phone"
+                                   :readonly="studentDataFound"
                                    required>
                             @error('parent_phone')
                                 <div class="error-message">
@@ -822,7 +864,17 @@
             return {
                 form: {
                     nis: '',
-                    email: ''
+                    name: '',
+                    email: '',
+                    phone: '',
+                    address: '',
+                    class: '',
+                    birth_date: '',
+                    birth_place: '',
+                    gender: '',
+                    religion: '',
+                    parent_name: '',
+                    parent_phone: ''
                 },
                 nisStatus: '',
                 nisMessage: '',
@@ -831,27 +883,163 @@
                 emailMessage: '',
                 emailChecking: false,
                 isSubmitting: false,
+                studentDataFound: false,
 
-                async checkNis() {
+                async checkNisAndData() {
                     if (this.form.nis.length < 3) {
                         this.nisStatus = '';
                         this.nisMessage = '';
+                        this.studentDataFound = false;
                         return;
                     }
 
                     this.nisChecking = true;
                     
                     try {
-                        const response = await fetch(`{{ route('student.check-nis') }}?nis=${this.form.nis}`);
-                        const data = await response.json();
+                        // First check NIS availability
+                        const nisResponse = await fetch(`{{ route('student.check-nis') }}?nis=${this.form.nis}`);
+                        const nisData = await nisResponse.json();
                         
-                        this.nisStatus = data.available ? 'available' : 'taken';
-                        this.nisMessage = data.message;
+                        this.nisStatus = nisData.available ? 'available' : 'taken';
+                        this.nisMessage = nisData.message;
+                        
+                        // If NIS is available, check for student data
+                        if (nisData.available) {
+                            const dataResponse = await fetch(`{{ route('student.check-data') }}?nis=${this.form.nis}`);
+                            const dataResult = await dataResponse.json();
+                            
+                            if (dataResult.exists && !dataResult.hasAccount && dataResult.data) {
+                                this.studentDataFound = true;
+                                this.fillFormWithStudentData(dataResult.data);
+                            } else {
+                                this.studentDataFound = false;
+                                this.clearFormData();
+                            }
+                        } else {
+                            this.studentDataFound = false;
+                        }
                     } catch (error) {
                         console.error('Error checking NIS:', error);
                     } finally {
                         this.nisChecking = false;
                     }
+                },
+
+                fillFormWithStudentData(data) {
+                    // Fill form fields with student data
+                    this.form.name = data.name || '';
+                    this.form.email = data.email || '';
+                    this.form.phone = data.phone || '';
+                    this.form.address = data.address || '';
+                    this.form.class = data.class || '';
+                    this.form.birth_date = data.birth_date || '';
+                    this.form.birth_place = data.birth_place || '';
+                    this.form.gender = data.gender || '';
+                    this.form.religion = data.religion || '';
+                    this.form.parent_name = data.parent_name || '';
+                    this.form.parent_phone = data.parent_phone || '';
+                    
+                    // Use setTimeout to ensure DOM is ready and Alpine.js has processed the data
+                    setTimeout(() => {
+                        // Update actual form inputs
+                        document.getElementById('name').value = this.form.name;
+                        document.getElementById('email').value = this.form.email;
+                        document.getElementById('phone').value = this.form.phone;
+                        document.getElementById('address').value = this.form.address;
+                        document.getElementById('birth_date').value = this.form.birth_date;
+                        document.getElementById('birth_place').value = this.form.birth_place;
+                        document.getElementById('parent_name').value = this.form.parent_name;
+                        document.getElementById('parent_phone').value = this.form.parent_phone;
+                        
+                        // For select elements, we need to set both the value and trigger change event
+                        const classSelect = document.getElementById('class');
+                        const genderSelect = document.getElementById('gender');
+                        const religionSelect = document.getElementById('religion');
+                        
+                        if (classSelect && this.form.class) {
+                            classSelect.value = this.form.class;
+                            // Force update the Alpine.js model
+                            this.form.class = this.form.class;
+                            // Trigger change event to ensure Alpine.js detects the change
+                            classSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                            classSelect.dispatchEvent(new Event('input', { bubbles: true }));
+                        }
+                        
+                        if (genderSelect && this.form.gender) {
+                            genderSelect.value = this.form.gender;
+                            // Force update the Alpine.js model
+                            this.form.gender = this.form.gender;
+                            // Trigger change event to ensure Alpine.js detects the change
+                            genderSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                            genderSelect.dispatchEvent(new Event('input', { bubbles: true }));
+                        }
+                        
+                        if (religionSelect && this.form.religion) {
+                            religionSelect.value = this.form.religion;
+                            // Force update the Alpine.js model
+                            this.form.religion = this.form.religion;
+                            // Trigger change event to ensure Alpine.js detects the change
+                            religionSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                            religionSelect.dispatchEvent(new Event('input', { bubbles: true }));
+                        }
+                        
+                        // Update textarea
+                        const addressTextarea = document.getElementById('address');
+                        if (addressTextarea) {
+                            addressTextarea.value = this.form.address;
+                        }
+                        
+                        // Force Alpine.js to re-evaluate the form state
+                        this.$nextTick(() => {
+                            // Trigger a manual update to ensure all bindings are correct
+                            this.form = { ...this.form };
+                        });
+                    }, 100);
+                },
+
+                clearFormData() {
+                    // Clear form fields except NIS
+                    const fieldsToKeep = ['nis'];
+                    Object.keys(this.form).forEach(key => {
+                        if (!fieldsToKeep.includes(key)) {
+                            this.form[key] = '';
+                        }
+                    });
+                    
+                    // Also clear the actual form elements
+                    setTimeout(() => {
+                        const formElements = [
+                            'name', 'email', 'phone', 'address', 'birth_date', 
+                            'birth_place', 'parent_name', 'parent_phone'
+                        ];
+                        
+                        formElements.forEach(elementId => {
+                            const element = document.getElementById(elementId);
+                            if (element) {
+                                element.value = '';
+                            }
+                        });
+                        
+                        // Clear select elements
+                        const classSelect = document.getElementById('class');
+                        const genderSelect = document.getElementById('gender');
+                        const religionSelect = document.getElementById('religion');
+                        
+                        if (classSelect) {
+                            classSelect.value = '';
+                            classSelect.dispatchEvent(new Event('change'));
+                        }
+                        
+                        if (genderSelect) {
+                            genderSelect.value = '';
+                            genderSelect.dispatchEvent(new Event('change'));
+                        }
+                        
+                        if (religionSelect) {
+                            religionSelect.value = '';
+                            religionSelect.dispatchEvent(new Event('change'));
+                        }
+                    }, 50);
                 },
 
                 async checkEmail() {
@@ -874,6 +1062,50 @@
                     } finally {
                         this.emailChecking = false;
                     }
+                },
+                
+                // Initialize form and add submit handler
+                init() {
+                    // Add form submit handler to ensure all values are synced
+                    const form = this.$el.querySelector('form');
+                    if (form) {
+                        form.addEventListener('submit', (e) => {
+                            // Sync Alpine.js model values to DOM elements before submit
+                            this.syncFormValues();
+                            
+                            // Debug: Log form values before submit
+                            console.log('Form submission - Alpine.js model:', this.form);
+                            console.log('Form submission - DOM values:', {
+                                class: document.getElementById('class')?.value,
+                                gender: document.getElementById('gender')?.value,
+                                religion: document.getElementById('religion')?.value
+                            });
+                        });
+                    }
+                },
+                
+                syncFormValues() {
+                    // Ensure all form values are synced from Alpine.js model to DOM
+                    const elements = {
+                        'class': this.form.class,
+                        'gender': this.form.gender,
+                        'religion': this.form.religion,
+                        'name': this.form.name,
+                        'email': this.form.email,
+                        'phone': this.form.phone,
+                        'birth_date': this.form.birth_date,
+                        'birth_place': this.form.birth_place,
+                        'address': this.form.address,
+                        'parent_name': this.form.parent_name,
+                        'parent_phone': this.form.parent_phone
+                    };
+                    
+                    Object.keys(elements).forEach(id => {
+                        const element = document.getElementById(id);
+                        if (element && elements[id] !== undefined && elements[id] !== null) {
+                            element.value = elements[id];
+                        }
+                    });
                 }
             }
         }

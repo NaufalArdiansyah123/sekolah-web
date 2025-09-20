@@ -506,6 +506,10 @@
                             <img src="{{ asset('storage/' . $announcement->featured_image) }}" 
                                  alt="{{ $announcement->title }}" 
                                  class="featured-image">
+                        @elseif($announcement->image)
+                            <img src="{{ $announcement->image }}" 
+                                 alt="{{ $announcement->title }}" 
+                                 class="featured-image">
                         @endif
                         
                         <!-- Content -->

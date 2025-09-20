@@ -72,7 +72,7 @@
                         'children' => [
                             ['title' => 'Galeri Foto', 'route' => 'gallery.photos'],
                             ['title' => 'Galeri Video', 'route' => 'gallery.videos'],
-                            ['title' => 'Download', 'route' => 'downloads.index'],
+
                         ]
                     ],
                     ['title' => 'Kontak', 'route' => 'contact'],

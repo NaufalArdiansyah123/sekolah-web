@@ -466,8 +466,20 @@
     <div class="container">
         <div class="video-player-container fade-in-up">
             <div class="video-player">
-                @if($video->thumbnail_url)
-                    <img src="{{ $video->thumbnail_url }}" alt="{{ $video->title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                @if($video->filename && file_exists(storage_path('app/public/videos/' . $video->filename)))
+                    <video controls style="width: 100%; height: 100%; object-fit: contain;" preload="metadata"
+                           @if($video->thumbnail_url) poster="{{ $video->thumbnail_url }}" @endif>
+                        <source src="{{ asset('storage/videos/' . $video->filename) }}" type="{{ $video->mime_type }}">
+                        <p>Your browser does not support the video tag.</p>
+                    </video>
+                @elseif($video->thumbnail_url)
+                    <div style="position: relative; width: 100%; height: 100%;">
+                        <img src="{{ $video->thumbnail_url }}" alt="{{ $video->title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; text-align: center;">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                            <p>Video file not found</p>
+                        </div>
+                    </div>
                 @else
                     <div class="video-placeholder">
                         <i class="fas fa-video"></i>
@@ -683,6 +695,25 @@ document.addEventListener('DOMContentLoaded', function () {
             this.style.transform = this.style.transform.replace(' scale(1.02)', '');
         });
     });
+    
+    // Video play tracking
+    const videoElement = document.querySelector('video');
+    if (videoElement) {
+        let hasPlayed = false;
+        videoElement.addEventListener('play', function() {
+            if (!hasPlayed) {
+                hasPlayed = true;
+                // Increment view count
+                fetch('{{ route("public.videos.show", $video) }}/increment-view', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                    },
+                }).catch(error => console.log('Error incrementing view:', error));
+            }
+        });
+    }
     
     // Download button click tracking
     document.querySelector('.btn-download')?.addEventListener('click', function() {

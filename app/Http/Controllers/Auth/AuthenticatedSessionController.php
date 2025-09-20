@@ -35,26 +35,38 @@ class AuthenticatedSessionController extends Controller
         
         // Log for debugging
         Log::info('Login redirect for user: ' . $user->email, [
+            'user_id' => $user->id,
             'roles' => $user->roles->pluck('name')->toArray(),
+            'roles_count' => $user->roles->count(),
             'has_super_admin' => $user->hasRole('super_admin'),
             'has_admin' => $user->hasRole('admin'),
             'has_teacher' => $user->hasRole('teacher'),
-            'has_student' => $user->hasRole('student')
+            'has_student' => $user->hasRole('student'),
+            'all_role_checks' => [
+                'super_admin' => $user->hasRole('super_admin'),
+                'admin' => $user->hasRole('admin'),
+                'teacher' => $user->hasRole('teacher'),
+                'student' => $user->hasRole('student')
+            ]
         ]);
         
-        if ($user->hasRole('super_admin') || $user->hasRole('admin')) {
-            Log::info('Login: Redirecting to admin dashboard');
+        // Check roles in priority order
+        if ($user->hasRole('super_admin')) {
+            Log::info('Login: Redirecting to admin dashboard (super_admin)');
             return redirect()->route('admin.dashboard');
-        } elseif ($user->hasRole('teacher') || $user->hasRole('Teacher')) {
+        } elseif ($user->hasRole('admin')) {
+            Log::info('Login: Redirecting to admin dashboard (admin)');
+            return redirect()->route('admin.dashboard');
+        } elseif ($user->hasRole('teacher')) {
             Log::info('Login: Redirecting to teacher dashboard');
             return redirect()->route('teacher.dashboard');
-        } elseif ($user->hasRole('student') || $user->hasRole('Student')) {
+        } elseif ($user->hasRole('student')) {
             Log::info('Login: Redirecting to student dashboard');
             return redirect()->route('student.dashboard');
         }
         
         // Default redirect for users without specific roles
-        Log::info('Login: Redirecting to default home');
+        Log::info('Login: Redirecting to default home - no matching roles found');
         return redirect()->route('home');
     }
 

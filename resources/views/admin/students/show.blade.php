@@ -569,6 +569,17 @@
                     </div>
                     
                     <div class="info-item">
+                        <div class="info-label">Agama</div>
+                        <div class="info-value {{ !$student->religion ? 'empty' : '' }}">
+                            @if($student->religion)
+                                <i class="fas fa-pray text-primary me-2"></i>{{ $student->religion }}
+                            @else
+                                Tidak ada data
+                            @endif
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
                         <div class="info-label">Alamat</div>
                         <div class="info-value {{ !$student->address ? 'empty' : '' }}">
                             {{ $student->address ?: 'Tidak ada data' }}

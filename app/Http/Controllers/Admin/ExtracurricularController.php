@@ -412,4 +412,161 @@ class ExtracurricularController extends Controller
             return redirect()->back()->with('error', 'Gagal mengeluarkan siswa: ' . $e->getMessage());
         }
     }
+    
+    // API Methods for AJAX calls
+    public function getMembersJson(Extracurricular $extracurricular)
+    {
+        try {
+            $members = $extracurricular->registrations()
+                ->where('status', 'approved')
+                ->latest()
+                ->get()
+                ->map(function ($registration) {
+                    return [
+                        'id' => $registration->id,
+                        'name' => $registration->student_name,
+                        'student_nis' => $registration->student_nis,
+                        'class' => $registration->student_class . ' ' . $registration->student_major,
+                        'status' => $registration->status,
+                        'joined_at' => $registration->approved_at ? $registration->approved_at->format('Y-m-d') : $registration->created_at->format('Y-m-d'),
+                        'email' => $registration->email,
+                        'phone' => $registration->phone
+                    ];
+                });
+                
+            return response()->json([
+                'success' => true,
+                'members' => $members
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error loading members: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to load members: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    public function getRegistrationsJson(Extracurricular $extracurricular)
+    {
+        try {
+            $registrations = $extracurricular->registrations()
+                ->where('status', 'pending')
+                ->latest()
+                ->get()
+                ->map(function ($registration) {
+                    return [
+                        'id' => $registration->id,
+                        'student_name' => $registration->student_name,
+                        'student_nis' => $registration->student_nis,
+                        'student_class' => $registration->student_class . ' ' . $registration->student_major,
+                        'email' => $registration->email,
+                        'phone' => $registration->phone,
+                        'status' => $registration->status,
+                        'created_at' => $registration->created_at->format('Y-m-d'),
+                        'reason' => $registration->reason,
+                        'experience' => $registration->experience
+                    ];
+                });
+                
+            return response()->json([
+                'success' => true,
+                'registrations' => $registrations
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error loading registrations: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to load registrations: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    public function updateMemberStatus(ExtracurricularRegistration $registration, Request $request)
+    {
+        try {
+            $request->validate([
+                'status' => 'required|in:approved,rejected,removed'
+            ]);
+            
+            $registration->update([
+                'status' => $request->status,
+                'approved_by' => auth()->id(),
+                'approved_at' => now(),
+                'notes' => $request->reason
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Status anggota berhasil diperbarui!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memperbarui status: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    public function updateRegistrationStatus(ExtracurricularRegistration $registration, Request $request)
+    {
+        try {
+            $request->validate([
+                'status' => 'required|in:approved,rejected'
+            ]);
+            
+            $registration->update([
+                'status' => $request->status,
+                'approved_by' => auth()->id(),
+                'approved_at' => now(),
+                'notes' => $request->reason
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Status pendaftaran berhasil diperbarui!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memperbarui status: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    public function getAllPendingRegistrations()
+    {
+        try {
+            $registrations = ExtracurricularRegistration::with(['extracurricular'])
+                ->where('status', 'pending')
+                ->latest()
+                ->get()
+                ->map(function ($registration) {
+                    return [
+                        'id' => $registration->id,
+                        'student_name' => $registration->student_name,
+                        'student_nis' => $registration->student_nis,
+                        'student_class' => $registration->student_class . ' ' . $registration->student_major,
+                        'email' => $registration->email,
+                        'phone' => $registration->phone,
+                        'status' => $registration->status,
+                        'created_at' => $registration->created_at->format('Y-m-d'),
+                        'reason' => $registration->reason,
+                        'experience' => $registration->experience,
+                        'extracurricular_name' => $registration->extracurricular ? $registration->extracurricular->name : 'N/A'
+                    ];
+                });
+                
+            return response()->json([
+                'success' => true,
+                'registrations' => $registrations
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error loading all pending registrations: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to load pending registrations: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

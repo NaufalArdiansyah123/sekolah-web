@@ -5,8 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use App\Models\Announcement;
+use App\Models\Post;
 use Carbon\Carbon;
 
 class AnnouncementController extends Controller
@@ -18,20 +19,20 @@ class AnnouncementController extends Controller
      */
     public function publicIndex(Request $request)
     {
-        // Query menggunakan Eloquent Model untuk konsistensi
-        $query = Announcement::where('status', 'published')->latest();
+        // Query menggunakan Post Model untuk konsistensi
+        $query = Post::where('type', 'announcement')->where('status', 'published')->latest();
         
         // Filter berdasarkan pencarian
         if ($request->filled('search')) {
             $query->where(function($q) use ($request) {
-                $q->where('judul', 'LIKE', '%' . $request->search . '%')
-                  ->orWhere('isi', 'LIKE', '%' . $request->search . '%');
+                $q->where('title', 'LIKE', '%' . $request->search . '%')
+                  ->orWhere('content', 'LIKE', '%' . $request->search . '%');
             });
         }
         
         // Filter berdasarkan kategori
         if ($request->filled('category') && $request->category !== 'all') {
-            $query->where('kategori', $request->category);
+            $query->where('category', $request->category);
         }
         
         // Filter berdasarkan bulan
@@ -45,31 +46,34 @@ class AnnouncementController extends Controller
         $announcements = $query->paginate(10);
         
         // Announcements terpopuler berdasarkan views
-        $popularAnnouncements = Announcement::where('status', 'published')
-                                           ->orderBy('views', 'desc')
-                                           ->limit(5)
-                                           ->get();
+        $popularAnnouncements = Post::where('type', 'announcement')
+                                   ->where('status', 'published')
+                                   ->orderBy('views_count', 'desc')
+                                   ->limit(5)
+                                   ->get();
         
         // Hitung jumlah announcements per kategori
-        $kategoriCounts = Announcement::where('status', 'published')
-                                    ->selectRaw('kategori, COUNT(*) as count')
-                                    ->groupBy('kategori')
-                                    ->pluck('count', 'kategori')
-                                    ->toArray();
+        $kategoriCounts = Post::where('type', 'announcement')
+                             ->where('status', 'published')
+                             ->selectRaw('category, COUNT(*) as count')
+                             ->groupBy('category')
+                             ->pluck('count', 'category')
+                             ->toArray();
         
         // Bulan-bulan yang tersedia untuk arsip
-        $availableMonths = Announcement::where('status', 'published')
-                                     ->selectRaw('YEAR(created_at) as year, MONTH(created_at) as month')
-                                     ->distinct()
-                                     ->orderBy('year', 'desc')
-                                     ->orderBy('month', 'desc')
-                                     ->get()
-                                     ->map(function ($item) {
-                                         return [
-                                             'value' => $item->year . '-' . str_pad($item->month, 2, '0', STR_PAD_LEFT),
-                                             'text' => Carbon::createFromDate($item->year, $item->month, 1)->format('F Y')
-                                         ];
-                                     });
+        $availableMonths = Post::where('type', 'announcement')
+                              ->where('status', 'published')
+                              ->selectRaw('YEAR(created_at) as year, MONTH(created_at) as month')
+                              ->distinct()
+                              ->orderBy('year', 'desc')
+                              ->orderBy('month', 'desc')
+                              ->get()
+                              ->map(function ($item) {
+                                  return [
+                                      'value' => $item->year . '-' . str_pad($item->month, 2, '0', STR_PAD_LEFT),
+                                      'text' => Carbon::createFromDate($item->year, $item->month, 1)->format('F Y')
+                                  ];
+                              });
         
         return view('public.announcements.index', compact(
             'announcements',
@@ -84,27 +88,29 @@ class AnnouncementController extends Controller
      */
     public function publicShow($id)
     {
-        $announcement = Announcement::where('status', 'published')->findOrFail($id);
+        $announcement = Post::where('type', 'announcement')->where('status', 'published')->findOrFail($id);
         
         // Increment views
-        $announcement->increment('views');
+        $announcement->increment('views_count');
         
         // Get related announcements from same category
-        $relatedAnnouncements = Announcement::where('status', 'published')
-                                           ->where('id', '!=', $id)
-                                           ->where('kategori', $announcement->kategori)
-                                           ->latest()
-                                           ->limit(5)
-                                           ->get();
+        $relatedAnnouncements = Post::where('type', 'announcement')
+                                   ->where('status', 'published')
+                                   ->where('id', '!=', $id)
+                                   ->where('category', $announcement->category)
+                                   ->latest()
+                                   ->limit(5)
+                                   ->get();
         
         // If not enough related announcements, get more from other categories
         if ($relatedAnnouncements->count() < 5) {
-            $additionalAnnouncements = Announcement::where('status', 'published')
-                                                 ->where('id', '!=', $id)
-                                                 ->whereNotIn('id', $relatedAnnouncements->pluck('id'))
-                                                 ->latest()
-                                                 ->limit(5 - $relatedAnnouncements->count())
-                                                 ->get();
+            $additionalAnnouncements = Post::where('type', 'announcement')
+                                          ->where('status', 'published')
+                                          ->where('id', '!=', $id)
+                                          ->whereNotIn('id', $relatedAnnouncements->pluck('id'))
+                                          ->latest()
+                                          ->limit(5 - $relatedAnnouncements->count())
+                                          ->get();
             $relatedAnnouncements = $relatedAnnouncements->merge($additionalAnnouncements);
         }
         
@@ -118,21 +124,21 @@ class AnnouncementController extends Controller
      */
     public function index(Request $request)
     {
-        // Menggunakan Eloquent untuk konsistensi dengan filtering
-        $query = Announcement::query();
+        // Use Post model with type = 'announcement' for consistency with public page
+        $query = Post::where('type', 'announcement')->with('user');
         
         // Filter berdasarkan pencarian
         if ($request->filled('search')) {
             $query->where(function($q) use ($request) {
-                $q->where('judul', 'LIKE', '%' . $request->search . '%')
-                  ->orWhere('isi', 'LIKE', '%' . $request->search . '%')
-                  ->orWhere('penulis', 'LIKE', '%' . $request->search . '%');
+                $q->where('title', 'LIKE', '%' . $request->search . '%')
+                  ->orWhere('content', 'LIKE', '%' . $request->search . '%')
+                  ->orWhere('author', 'LIKE', '%' . $request->search . '%');
             });
         }
         
         // Filter berdasarkan kategori
         if ($request->filled('category')) {
-            $query->where('kategori', $request->category);
+            $query->where('category', $request->category);
         }
         
         // Filter berdasarkan status
@@ -142,7 +148,7 @@ class AnnouncementController extends Controller
         
         // Filter berdasarkan prioritas
         if ($request->filled('priority')) {
-            $query->where('prioritas', $request->priority);
+            $query->where('priority', $request->priority);
         }
         
         $announcements = $query->orderBy('created_at', 'desc')->paginate(10);
@@ -153,9 +159,10 @@ class AnnouncementController extends Controller
     public function announcements()
     {
         // Method ini tetap ada untuk backward compatibility
-        $announcements = Announcement::where('status', 'published')
-                                   ->orderBy('created_at', 'desc')
-                                   ->paginate(10);
+        $announcements = Post::where('type', 'announcement')
+                            ->where('status', 'published')
+                            ->orderBy('created_at', 'desc')
+                            ->paginate(10);
 
         return view('public.announcements.index', compact('announcements'));
     }
@@ -173,25 +180,74 @@ class AnnouncementController extends Controller
         $request->validate([
             'judul' => 'required|string|max:255',
             'isi' => 'required',
-            'kategori' => 'required|in:akademik,kegiatan,administrasi',
-            'prioritas' => 'required|in:normal,sedang,tinggi',
+            'kategori' => 'required|in:akademik,kegiatan,administrasi,umum',
+            'prioritas' => 'required|in:low,normal,high,urgent',
             'penulis' => 'required|string|max:100',
             'status' => 'required|in:draft,published,archived',
             'tanggal_publikasi' => 'nullable|date',
-            'gambar' => 'nullable|string|max:255'
+            'gambar' => 'nullable|string',
+            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120' // 5MB max
         ]);
 
-        // Menggunakan Eloquent Model untuk auto-generate slug
-        Announcement::create([
-            'judul' => $request->judul,
-            'isi' => $request->isi,
-            'kategori' => $request->kategori,
-            'prioritas' => $request->prioritas,
-            'penulis' => $request->penulis,
+        $imagePath = null;
+        
+        // Handle file upload
+        if ($request->hasFile('featured_image')) {
+            $file = $request->file('featured_image');
+            $filename = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
+            $imagePath = $file->storeAs('announcements', $filename, 'public');
+            $imagePath = 'storage/' . $imagePath;
+        }
+        // Handle URL input
+        elseif ($request->filled('gambar')) {
+            // Validate URL length
+            if (strlen($request->gambar) > 255) {
+                return back()->withErrors(['gambar' => 'Image URL must not exceed 255 characters.'])->withInput();
+            }
+            
+            // Validate if it's a proper URL
+            if (!filter_var($request->gambar, FILTER_VALIDATE_URL)) {
+                return back()->withErrors(['gambar' => 'Please enter a valid image URL.'])->withInput();
+            }
+            
+            $imagePath = $request->gambar;
+        }
+        // Handle base64 data (from drag & drop)
+        elseif ($request->filled('gambar') && str_starts_with($request->gambar, 'data:image/')) {
+            try {
+                // Extract base64 data
+                $imageData = $request->gambar;
+                $image = str_replace('data:image/', '', $imageData);
+                $image = explode(';base64,', $image);
+                $imageType = $image[0];
+                $imageData = base64_decode($image[1]);
+                
+                // Generate filename
+                $filename = time() . '_' . Str::random(10) . '.' . $imageType;
+                $path = 'announcements/' . $filename;
+                
+                // Store file
+                Storage::disk('public')->put($path, $imageData);
+                $imagePath = 'storage/' . $path;
+            } catch (\Exception $e) {
+                return back()->withErrors(['gambar' => 'Failed to process uploaded image.'])->withInput();
+            }
+        }
+
+        // Create announcement using Post model for consistency with public page
+        Post::create([
+            'title' => $request->judul,
+            'slug' => Str::slug($request->judul . '-' . time()),
+            'content' => $request->isi,
+            'type' => 'announcement',
+            'category' => $request->kategori,
+            'priority' => $request->prioritas,
+            'author' => $request->penulis,
+            'user_id' => auth()->id(),
             'status' => $request->status,
-            'views' => 0,
-            'tanggal_publikasi' => $request->tanggal_publikasi ?: now(),
-            'gambar' => $request->gambar,
+            'views_count' => 0,
+            'published_at' => $request->status === 'published' ? ($request->tanggal_publikasi ?: now()) : null,
+            'image' => $imagePath,
         ]);
 
         return redirect()->route('admin.announcements.index')
@@ -203,10 +259,10 @@ class AnnouncementController extends Controller
      */
     public function show($id)
     {
-        $announcement = Announcement::findOrFail($id);
+        $announcement = Post::where('type', 'announcement')->with('user')->findOrFail($id);
 
         // Increment views untuk admin juga (optional, bisa dihilangkan)
-        $announcement->increment('views');
+        $announcement->increment('views_count');
 
         return view('admin.posts.announcement.show', compact('announcement'));
     }
@@ -216,7 +272,7 @@ class AnnouncementController extends Controller
      */
     public function edit($id)
     {
-        $announcement = Announcement::findOrFail($id);
+        $announcement = Post::where('type', 'announcement')->findOrFail($id);
 
         return view('admin.posts.announcement.edit', compact('announcement'));
     }
@@ -229,25 +285,89 @@ class AnnouncementController extends Controller
         $request->validate([
             'judul' => 'required|string|max:255',
             'isi' => 'required',
-            'kategori' => 'required|in:akademik,kegiatan,administrasi',
-            'prioritas' => 'required|in:normal,sedang,tinggi',
+            'kategori' => 'required|in:akademik,kegiatan,administrasi,umum',
+            'prioritas' => 'required|in:low,normal,high,urgent',
             'penulis' => 'required|string|max:100',
             'status' => 'required|in:draft,published,archived',
             'tanggal_publikasi' => 'nullable|date',
-            'gambar' => 'nullable|string|max:255'
+            'gambar' => 'nullable|string',
+            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120' // 5MB max
         ]);
 
-        $announcement = Announcement::findOrFail($id);
+        $announcement = Post::where('type', 'announcement')->findOrFail($id);
+        $imagePath = $announcement->image; // Keep existing image by default
+        
+        // Handle file upload
+        if ($request->hasFile('featured_image')) {
+            // Delete old image if it exists and is stored locally
+            if ($announcement->image && str_starts_with($announcement->image, 'storage/')) {
+                $oldPath = str_replace('storage/', '', $announcement->image);
+                Storage::disk('public')->delete($oldPath);
+            }
+            
+            $file = $request->file('featured_image');
+            $filename = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
+            $imagePath = $file->storeAs('announcements', $filename, 'public');
+            $imagePath = 'storage/' . $imagePath;
+        }
+        // Handle URL input
+        elseif ($request->filled('gambar')) {
+            // Validate URL length
+            if (strlen($request->gambar) > 255) {
+                return back()->withErrors(['gambar' => 'Image URL must not exceed 255 characters.'])->withInput();
+            }
+            
+            // Validate if it's a proper URL
+            if (!filter_var($request->gambar, FILTER_VALIDATE_URL)) {
+                return back()->withErrors(['gambar' => 'Please enter a valid image URL.'])->withInput();
+            }
+            
+            // Delete old local image if switching to URL
+            if ($announcement->image && str_starts_with($announcement->image, 'storage/')) {
+                $oldPath = str_replace('storage/', '', $announcement->image);
+                Storage::disk('public')->delete($oldPath);
+            }
+            
+            $imagePath = $request->gambar;
+        }
+        // Handle base64 data (from drag & drop)
+        elseif ($request->filled('gambar') && str_starts_with($request->gambar, 'data:image/')) {
+            try {
+                // Delete old image if it exists and is stored locally
+                if ($announcement->image && str_starts_with($announcement->image, 'storage/')) {
+                    $oldPath = str_replace('storage/', '', $announcement->image);
+                    Storage::disk('public')->delete($oldPath);
+                }
+                
+                // Extract base64 data
+                $imageData = $request->gambar;
+                $image = str_replace('data:image/', '', $imageData);
+                $image = explode(';base64,', $image);
+                $imageType = $image[0];
+                $imageData = base64_decode($image[1]);
+                
+                // Generate filename
+                $filename = time() . '_' . Str::random(10) . '.' . $imageType;
+                $path = 'announcements/' . $filename;
+                
+                // Store file
+                Storage::disk('public')->put($path, $imageData);
+                $imagePath = 'storage/' . $path;
+            } catch (\Exception $e) {
+                return back()->withErrors(['gambar' => 'Failed to process uploaded image.'])->withInput();
+            }
+        }
 
         $announcement->update([
-            'judul' => $request->judul,
-            'isi' => $request->isi,
-            'kategori' => $request->kategori,
-            'prioritas' => $request->prioritas,
-            'penulis' => $request->penulis,
+            'title' => $request->judul,
+            'slug' => Str::slug($request->judul . '-' . time()),
+            'content' => $request->isi,
+            'category' => $request->kategori,
+            'priority' => $request->prioritas,
+            'author' => $request->penulis,
             'status' => $request->status,
-            'tanggal_publikasi' => $request->tanggal_publikasi,
-            'gambar' => $request->gambar,
+            'published_at' => $request->status === 'published' ? ($request->tanggal_publikasi ?: now()) : null,
+            'image' => $imagePath,
         ]);
 
         return redirect()->route('admin.announcements.index')
@@ -259,7 +379,7 @@ class AnnouncementController extends Controller
      */
     public function destroy($id)
     {
-        $announcement = Announcement::findOrFail($id);
+        $announcement = Post::where('type', 'announcement')->findOrFail($id);
         $announcement->delete();
 
         return redirect()->route('admin.announcements.index')
@@ -271,10 +391,13 @@ class AnnouncementController extends Controller
      */
     public function toggleStatus($id)
     {
-        $announcement = Announcement::findOrFail($id);
+        $announcement = Post::where('type', 'announcement')->findOrFail($id);
 
         $newStatus = $announcement->status === 'published' ? 'draft' : 'published';
-        $announcement->update(['status' => $newStatus]);
+        $announcement->update([
+            'status' => $newStatus,
+            'published_at' => $newStatus === 'published' ? now() : null
+        ]);
 
         return response()->json(['success' => true, 'status' => $newStatus]);
     }

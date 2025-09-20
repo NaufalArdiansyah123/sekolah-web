@@ -620,14 +620,18 @@
                                 <img src="{{ asset('storage/' . $announcement->featured_image) }}" 
                                      alt="{{ $announcement->title }}" 
                                      class="announcement-image w-100">
+                            @elseif($announcement->image)
+                                <img src="{{ $announcement->image }}" 
+                                     alt="{{ $announcement->title }}" 
+                                     class="announcement-image w-100">
                             @endif
                             
                             <!-- Priority Badge -->
                             <div class="priority-badge priority-{{ $announcement->priority ?? 'normal' }}">
                                 @if($announcement->priority === 'urgent') 🚨 Urgent
-                                @elseif($announcement->priority === 'high') ⚠️ Tinggi
+                                @elseif($announcement->priority === 'high') ⚠️ High
                                 @elseif($announcement->priority === 'normal') ✅ Normal
-                                @else 📝 Rendah
+                                @else 📝 Low
                                 @endif
                             </div>
                             
@@ -652,7 +656,7 @@
                                         <span>{{ $announcement->author }}</span>
                                         @if($announcement->user)
                                             <small class="text-muted">
-                                                ({{ $announcement->user->hasRole('admin') ? 'Admin' : 'Guru' }})
+                                                ({{ $announcement->user->name }})
                                             </small>
                                         @endif
                                     </div>

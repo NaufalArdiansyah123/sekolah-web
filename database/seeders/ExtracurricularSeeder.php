@@ -13,12 +13,25 @@ class ExtracurricularSeeder extends Seeder
      */
     public function run(): void
     {
-        // Clear existing data
+        // Clear existing data safely
         $existingCount = Extracurricular::count();
         if ($existingCount > 0) {
             $this->command->info("Found {$existingCount} existing extracurriculars. Clearing existing data to create fresh seed data.");
-            Extracurricular::truncate();
-            $this->command->info('Existing extracurriculars cleared.');
+            
+            // Disable foreign key checks temporarily
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+            
+            // Clear related tables first
+            DB::table('extracurricular_registrations')->delete();
+            DB::table('broadcast_messages')->where('extracurricular_id', '!=', null)->delete();
+            
+            // Now clear extracurriculars
+            DB::table('extracurriculars')->delete();
+            
+            // Re-enable foreign key checks
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+            
+            $this->command->info('Existing extracurriculars and related data cleared.');
         }
 
         $extracurriculars = [

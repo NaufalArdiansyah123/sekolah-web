@@ -537,20 +537,64 @@
             <span>Kuis & Ujian</span>
         </a>
 
+        <!-- Ulangan Harian -->
+        <a href="{{ route('student.daily-tests.index') }}" 
+           class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('student.daily-tests*') ? 'active' : '' }}"
+           @click="isMobile && (sidebarOpen = false)">
+            <svg class="student-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span>Ulangan Harian</span>
+        </a>
+
         <!-- Section Divider -->
         <div class="student-nav-section-divider"></div>
         <div class="student-nav-section-title">
             <span>Academic Records</span>
         </div>
 
-        <!-- Absensi -->
-        <a href="{{ route('student.attendance.index') }}" 
-           class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('student.attendance*') ? 'active' : '' }}"
+        <!-- QR Scanner -->
+        <a href="{{ route('student.attendance.qr-scanner') }}" 
+           class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('student.attendance.qr-scanner') ? 'active' : '' }}"
            @click="isMobile && (sidebarOpen = false)">
             <svg class="student-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
             </svg>
-            <span>Absensi</span>
+            <span>QR Scanner</span>
+            @php
+                $student = auth()->user()->student ?? \App\Models\Student::where('user_id', auth()->id())->first();
+                $todayAttendance = $student ? \App\Models\AttendanceLog::where('student_id', $student->id)->whereDate('attendance_date', today())->first() : null;
+            @endphp
+            @if($todayAttendance)
+                <span class="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                    ✓
+                </span>
+            @else
+                <span class="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                    !
+                </span>
+            @endif
+        </a>
+        
+        <!-- Riwayat Absensi -->
+        <a href="{{ route('student.attendance.history') }}" 
+           class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('student.attendance.history') ? 'active' : '' }}"
+           @click="isMobile && (sidebarOpen = false)">
+            <svg class="student-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Riwayat Absensi</span>
+            @php
+                $monthlyCount = $student ? \App\Models\AttendanceLog::where('student_id', $student->id)
+                    ->whereMonth('attendance_date', date('m'))
+                    ->whereYear('attendance_date', date('Y'))
+                    ->count() : 0;
+            @endphp
+            @if($monthlyCount > 0)
+                <span class="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                    {{ $monthlyCount }}
+                </span>
+            @endif
         </a>
 
         <!-- Nilai Akademik -->

@@ -1,6 +1,9 @@
 @extends('layouts.admin')
 
 @section('content')
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
 <style>
     /* Enhanced Video Detail Styles */
     .video-detail-container {
@@ -261,8 +264,20 @@
     <div class="video-detail-container">
         <!-- Video Player -->
         <div class="video-player">
-            @if($video->thumbnail_url)
-                <img src="{{ $video->thumbnail_url }}" alt="{{ $video->title }}" style="width: 100%; height: 100%; object-fit: cover;">
+            @if($video->filename && Storage::disk('public')->exists('videos/' . $video->filename))
+                <video controls style="width: 100%; height: 100%; object-fit: contain;" preload="metadata"
+                       @if($video->thumbnail_url) poster="{{ $video->thumbnail_url }}" @endif>
+                    <source src="{{ asset('storage/videos/' . $video->filename) }}" type="{{ $video->mime_type }}">
+                    <p>Your browser does not support the video tag.</p>
+                </video>
+            @elseif($video->thumbnail_url)
+                <div style="position: relative; width: 100%; height: 100%;">
+                    <img src="{{ $video->thumbnail_url }}" alt="{{ $video->title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; text-align: center;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                        <p>Video file not found</p>
+                    </div>
+                </div>
             @else
                 <div class="video-placeholder">
                     <i class="fas fa-video"></i>
@@ -290,10 +305,7 @@
                 <h3>Views</h3>
                 <div class="value">{{ number_format($video->views) }}</div>
             </div>
-            <div class="info-card">
-                <h3>Downloads</h3>
-                <div class="value">{{ number_format($video->downloads) }}</div>
-            </div>
+
             <div class="info-card">
                 <h3>File Size</h3>
                 <div class="value">{{ $video->formatted_file_size }}</div>
@@ -371,14 +383,7 @@
                 Edit Video
             </a>
             
-            <a href="{{ route('admin.videos.download', $video) }}" 
-               class="btn btn-success">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
-                Download
-            </a>
-            
+
             <form method="POST" 
                   action="{{ route('admin.videos.toggle-featured', $video) }}" 
                   class="inline">

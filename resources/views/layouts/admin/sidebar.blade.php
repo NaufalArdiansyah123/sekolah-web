@@ -607,7 +607,7 @@
         </div>
 
         <!-- Media & Files -->
-        <div class="nav-dropdown" x-data="{ open: {{ request()->routeIs('admin.downloads.*', 'admin.gallery.*') ? 'true' : 'false' }} }">
+        <div class="nav-dropdown" x-data="{ open: {{ request()->routeIs('admin.gallery.*', 'admin.videos.*') ? 'true' : 'false' }} }">
             <button @click="open = !open" 
                     class="nav-dropdown-btn group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg w-full"
                     :class="{ 'active': open }">
@@ -630,11 +630,6 @@
                  x-transition:leave-start="opacity-100 transform scale-100"
                  x-transition:leave-end="opacity-0 transform scale-95"
                  class="nav-dropdown-content">
-                <a href="{{ route('admin.downloads.index') }}" 
-                   class="nav-dropdown-item {{ request()->routeIs('admin.downloads.*') ? 'active' : '' }}"
-                   @click="sidebarOpen = false">
-                    📥 Downloads
-                </a>
                 <a href="{{ route('admin.gallery.index') }}" 
                    class="nav-dropdown-item {{ request()->routeIs('admin.gallery.index*') ? 'active' : '' }}"
                    @click="sidebarOpen = false">
@@ -692,6 +687,56 @@
                    class="nav-dropdown-item {{ request()->routeIs('admin.students.*') ? 'active' : '' }}"
                    @click="sidebarOpen = false">
                     👨‍🎓 Siswa
+                </a>
+            </div>
+        </div>
+
+        <!-- QR Attendance Management -->
+        <div class="nav-dropdown" x-data="{ open: {{ request()->routeIs('admin.qr-attendance.*') ? 'true' : 'false' }} }">
+            <button @click="open = !open" 
+                    class="nav-dropdown-btn group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg w-full"
+                    :class="{ 'active': open }">
+                <div class="flex items-center">
+                    <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                    </svg>
+                    <span>Absensi QR Code</span>
+                </div>
+                <svg class="dropdown-icon h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                </svg>
+            </button>
+            
+            <div x-show="open" 
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 transform scale-95"
+                 x-transition:enter-end="opacity-100 transform scale-100"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100 transform scale-100"
+                 x-transition:leave-end="opacity-0 transform scale-95"
+                 class="nav-dropdown-content">
+                <a href="{{ route('admin.qr-attendance.index') }}" 
+                   class="nav-dropdown-item {{ request()->routeIs('admin.qr-attendance.index') ? 'active' : '' }}"
+                   @click="sidebarOpen = false">
+                    🔲 Kelola QR Code
+                </a>
+                <a href="{{ route('admin.qr-attendance.logs') }}" 
+                   class="nav-dropdown-item {{ request()->routeIs('admin.qr-attendance.logs') ? 'active' : '' }}"
+                   @click="sidebarOpen = false">
+                    📋 Log Absensi
+                    @php
+                        $todayAttendanceCount = \App\Models\AttendanceLog::whereDate('attendance_date', today())->count();
+                    @endphp
+                    @if($todayAttendanceCount > 0)
+                        <span class="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                            {{ $todayAttendanceCount }}
+                        </span>
+                    @endif
+                </a>
+                <a href="{{ route('admin.qr-attendance.statistics') }}" 
+                   class="nav-dropdown-item {{ request()->routeIs('admin.qr-attendance.statistics') ? 'active' : '' }}"
+                   @click="sidebarOpen = false">
+                    📊 Statistik Absensi
                 </a>
             </div>
         </div>

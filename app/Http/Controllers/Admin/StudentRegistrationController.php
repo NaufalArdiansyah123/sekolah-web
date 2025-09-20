@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class StudentRegistrationController extends Controller
 {
@@ -154,22 +155,43 @@ class StudentRegistrationController extends Controller
      */
     public function reject(Request $request, $id)
     {
-        $request->validate([
-            'rejection_reason' => 'required|string|max:500'
-        ]);
-
         try {
+            // Validate input
+            $validator = Validator::make($request->all(), [
+                'rejection_reason' => 'required|string|min:10|max:500'
+            ], [
+                'rejection_reason.required' => 'Alasan penolakan wajib diisi.',
+                'rejection_reason.min' => 'Alasan penolakan minimal 10 karakter.',
+                'rejection_reason.max' => 'Alasan penolakan maksimal 500 karakter.'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data tidak valid: ' . $validator->errors()->first(),
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
             DB::beginTransaction();
 
+            // Find student
             $student = User::whereHas('roles', function($q) {
                 $q->where('name', 'student');
-            })->findOrFail($id);
+            })->find($id);
+
+            if (!$student) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Pendaftaran siswa tidak ditemukan.'
+                ], 404);
+            }
 
             if ($student->status !== 'pending') {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Pendaftaran ini sudah diproses sebelumnya.'
-                ]);
+                    'message' => 'Pendaftaran ini sudah diproses sebelumnya. Status saat ini: ' . ucfirst($student->status)
+                ], 400);
             }
 
             // Prepare update data
@@ -180,16 +202,35 @@ class StudentRegistrationController extends Controller
             // Add rejection fields if columns exist
             if (Schema::hasColumn('users', 'rejection_reason')) {
                 $updateData['rejection_reason'] = $request->rejection_reason;
+            } else {
+                Log::warning('Column rejection_reason does not exist in users table');
             }
+            
             if (Schema::hasColumn('users', 'rejected_at')) {
                 $updateData['rejected_at'] = now();
+            } else {
+                Log::warning('Column rejected_at does not exist in users table');
             }
+            
             if (Schema::hasColumn('users', 'rejected_by')) {
                 $updateData['rejected_by'] = auth()->id();
+            } else {
+                Log::warning('Column rejected_by does not exist in users table');
             }
+
+            // Log the update data for debugging
+            Log::info('Updating student with data:', $updateData);
 
             // Update status to rejected
             $student->update($updateData);
+
+            // Verify the update
+            $student->refresh();
+            Log::info('Student after update:', [
+                'id' => $student->id,
+                'status' => $student->status,
+                'rejection_reason' => $student->rejection_reason ?? 'N/A'
+            ]);
 
             // Create notification safely
             $this->createNotificationSafely(
@@ -201,7 +242,7 @@ class StudentRegistrationController extends Controller
 
             DB::commit();
 
-            Log::info("Student registration rejected", [
+            Log::info("Student registration rejected successfully", [
                 'student_id' => $student->id,
                 'student_name' => $student->name,
                 'rejected_by' => auth()->id(),
@@ -210,21 +251,51 @@ class StudentRegistrationController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Pendaftaran siswa berhasil ditolak.'
+                'message' => 'Pendaftaran siswa berhasil ditolak.',
+                'data' => [
+                    'student_id' => $student->id,
+                    'status' => $student->status
+                ]
             ]);
 
-        } catch (\Exception $e) {
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             DB::rollback();
-            Log::error('Error rejecting student registration', [
+            Log::error('Student not found for rejection', [
                 'student_id' => $id,
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'error' => $e->getMessage()
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menolak pendaftaran: ' . $e->getMessage()
+                'message' => 'Pendaftaran siswa tidak ditemukan.'
+            ], 404);
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollback();
+            Log::error('Database error during rejection', [
+                'student_id' => $id,
+                'error' => $e->getMessage(),
+                'sql' => $e->getSql() ?? 'N/A'
             ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan database. Silakan coba lagi atau hubungi administrator.'
+            ], 500);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('Unexpected error during student registration rejection', [
+                'student_id' => $id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->all()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan tidak terduga: ' . $e->getMessage()
+            ], 500);
         }
     }
 

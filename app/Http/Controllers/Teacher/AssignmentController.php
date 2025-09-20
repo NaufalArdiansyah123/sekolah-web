@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Assignment;
 use App\Models\AssignmentSubmission;
 use App\Models\Grade;
+use App\Helpers\ClassHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -205,16 +206,20 @@ class AssignmentController extends Controller
      */
     public function store(Request $request)
     {
+        $validClasses = ClassHelper::getAllClasses();
+        
         $request->validate([
             'title' => 'required|string|max:255',
             'subject' => 'required|string|max:100',
-            'class' => 'required|string|max:50',
+            'class' => 'required|string|in:' . implode(',', $validClasses),
             'type' => 'required|in:homework,project,essay,quiz,presentation',
             'description' => 'required|string',
             'instructions' => 'nullable|string',
             'due_date' => 'required|date|after:now',
             'max_score' => 'required|integer|min:1|max:1000',
             'attachment' => 'nullable|file|max:10240|mimes:pdf,doc,docx,txt,jpg,jpeg,png'
+        ], [
+            'class.in' => 'Kelas yang dipilih tidak valid.'
         ]);
 
         $assignment = new Assignment();
@@ -319,17 +324,20 @@ class AssignmentController extends Controller
     public function update(Request $request, $id)
     {
         $assignment = Assignment::where('teacher_id', Auth::id())->findOrFail($id);
+        $validClasses = ClassHelper::getAllClasses();
 
         $request->validate([
             'title' => 'required|string|max:255',
             'subject' => 'required|string|max:100',
-            'class' => 'required|string|max:50',
+            'class' => 'required|string|in:' . implode(',', $validClasses),
             'type' => 'required|in:homework,project,essay,quiz,presentation',
             'description' => 'required|string',
             'instructions' => 'nullable|string',
             'due_date' => 'required|date',
             'max_score' => 'required|integer|min:1|max:1000',
             'attachment' => 'nullable|file|max:10240|mimes:pdf,doc,docx,txt,jpg,jpeg,png'
+        ], [
+            'class.in' => 'Kelas yang dipilih tidak valid.'
         ]);
 
         $assignment->title = $request->title;

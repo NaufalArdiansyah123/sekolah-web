@@ -1,0 +1,492 @@
+{
+  "analysis": {
+    "timestamp": "2024-01-20T10:30:00Z",
+    "project": {
+      "name": "sekolah-web",
+      "type": "laravel",
+      "version": "10.x",
+      "description": "Laravel School Management System"
+    },
+    "summary": {
+      "total_files_analyzed": 127,
+      "total_issues": 35,
+      "security_issues": 8,
+      "performance_issues": 12,
+      "quality_issues": 15,
+      "overall_score": 78
+    },
+    "scores": {
+      "security": 72,
+      "performance": 68,
+      "maintainability": 82,
+      "reliability": 85,
+      "overall": 78
+    }
+  },
+  "security": {
+    "summary": {
+      "critical": 2,
+      "high": 3,
+      "medium": 3,
+      "low": 0,
+      "total": 8
+    },
+    "issues": [
+      {
+        "id": "SEC-001",
+        "severity": "critical",
+        "type": "sql_injection",
+        "title": "SQL Injection Vulnerability in Student Controller",
+        "description": "Direct concatenation of user input in database queries",
+        "file": "app/Http/Controllers/Admin/StudentController.php",
+        "line": 26,
+        "cvss_score": 8.1,
+        "cwe": "CWE-89",
+        "recommendation": "Use Laravel's query builder parameter binding",
+        "code_snippet": "if ($grade) {\n    $query->where('class', 'like', $grade . '%');\n}",
+        "fixed_code": "if ($grade) {\n    $query->where('class', 'like', DB::raw('CONCAT(?, \"%\")'), [$grade]);\n}"
+      },
+      {
+        "id": "SEC-002",
+        "severity": "critical",
+        "type": "file_upload",
+        "title": "File Upload Security Vulnerability",
+        "description": "Insufficient file type validation for photo uploads",
+        "file": "app/Http/Controllers/Admin/StudentController.php",
+        "line": 89,
+        "cvss_score": 7.8,
+        "cwe": "CWE-434",
+        "recommendation": "Implement strict MIME type checking and file content verification"
+      },
+      {
+        "id": "SEC-003",
+        "severity": "high",
+        "type": "xss",
+        "title": "Cross-Site Scripting (XSS) Vulnerability",
+        "description": "Unescaped output in student name display",
+        "file": "resources/views/admin/students/index.blade.php",
+        "line": 1245,
+        "cvss_score": 6.9,
+        "cwe": "CWE-79",
+        "recommendation": "Use proper escaping for all user-controlled data"
+      },
+      {
+        "id": "SEC-004",
+        "severity": "high",
+        "type": "csrf",
+        "title": "CSRF Protection Missing",
+        "description": "AJAX requests without CSRF token",
+        "file": "resources/views/admin/students/index.blade.php",
+        "line": 1350,
+        "cvss_score": 6.5,
+        "cwe": "CWE-352",
+        "recommendation": "Include CSRF token in all AJAX requests"
+      },
+      {
+        "id": "SEC-005",
+        "severity": "high",
+        "type": "authentication",
+        "title": "Authentication Bypass Risk",
+        "description": "Admin routes accessible without proper middleware",
+        "file": "routes/web.php",
+        "line": 45,
+        "cvss_score": 7.2,
+        "cwe": "CWE-287",
+        "recommendation": "Apply auth and role middleware to all admin routes"
+      },
+      {
+        "id": "SEC-006",
+        "severity": "medium",
+        "type": "session",
+        "title": "Session Security Configuration",
+        "description": "Session timeout not configured for sensitive operations",
+        "file": "config/session.php",
+        "line": 31,
+        "cvss_score": 5.3,
+        "cwe": "CWE-613",
+        "recommendation": "Implement shorter session timeout for admin users"
+      },
+      {
+        "id": "SEC-007",
+        "severity": "medium",
+        "type": "password",
+        "title": "Weak Password Policy",
+        "description": "No password complexity requirements",
+        "file": "app/Models/User.php",
+        "line": 67,
+        "cvss_score": 5.1,
+        "cwe": "CWE-521",
+        "recommendation": "Enforce stronger password policy with complexity rules"
+      },
+      {
+        "id": "SEC-008",
+        "severity": "medium",
+        "type": "data_exposure",
+        "title": "Sensitive Data Exposure",
+        "description": "Sensitive student data in API responses",
+        "file": "app/Http/Controllers/Admin/StudentController.php",
+        "line": 156,
+        "cvss_score": 4.8,
+        "cwe": "CWE-200",
+        "recommendation": "Use API resources to filter sensitive data"
+      }
+    ]
+  },
+  "performance": {
+    "summary": {
+      "critical": 1,
+      "high": 4,
+      "medium": 5,
+      "low": 2,
+      "total": 12
+    },
+    "metrics": {
+      "database_performance": 65,
+      "frontend_performance": 68,
+      "memory_usage": 78,
+      "response_time": 82,
+      "caching_strategy": 45,
+      "asset_optimization": 60
+    },
+    "issues": [
+      {
+        "id": "PERF-001",
+        "severity": "high",
+        "type": "n_plus_one",
+        "title": "N+1 Query Problem",
+        "description": "Missing eager loading for student relationships",
+        "file": "app/Http/Controllers/Admin/StudentController.php",
+        "line": 48,
+        "impact": "high",
+        "performance_cost": "+2.5s per request",
+        "recommendation": "Use with() to eager load relationships"
+      },
+      {
+        "id": "PERF-002",
+        "severity": "high",
+        "type": "database_index",
+        "title": "Missing Database Indexes",
+        "description": "No indexes on frequently queried columns",
+        "file": "database/migrations/",
+        "impact": "high",
+        "performance_cost": "+1.8s per filtered query",
+        "recommendation": "Add database indexes for better query performance"
+      },
+      {
+        "id": "PERF-003",
+        "severity": "medium",
+        "type": "pagination",
+        "title": "Large Dataset Pagination",
+        "description": "Loading all students without proper pagination limits",
+        "file": "app/Http/Controllers/Admin/StudentController.php",
+        "line": 55,
+        "impact": "medium",
+        "performance_cost": "+0.5s for large datasets",
+        "recommendation": "Implement cursor-based pagination for large datasets"
+      },
+      {
+        "id": "PERF-004",
+        "severity": "medium",
+        "type": "query_optimization",
+        "title": "Inefficient Statistics Calculation",
+        "description": "Multiple separate queries for statistics",
+        "file": "app/Http/Controllers/Admin/StudentController.php",
+        "line": 47,
+        "impact": "medium",
+        "performance_cost": "+0.8s per page load",
+        "recommendation": "Combine statistics into single optimized query"
+      },
+      {
+        "id": "PERF-005",
+        "severity": "medium",
+        "type": "caching",
+        "title": "Missing Query Caching",
+        "description": "Statistics calculated on every request",
+        "file": "app/Http/Controllers/Admin/StudentController.php",
+        "line": 47,
+        "impact": "medium",
+        "performance_cost": "+0.8s per request",
+        "recommendation": "Cache frequently accessed statistics"
+      },
+      {
+        "id": "PERF-006",
+        "severity": "medium",
+        "type": "javascript",
+        "title": "Large JavaScript Bundle",
+        "description": "All JavaScript loaded on every page",
+        "file": "resources/js/app.js",
+        "impact": "medium",
+        "bundle_size": "2.3MB",
+        "target_size": "<500KB",
+        "recommendation": "Implement code splitting and lazy loading"
+      },
+      {
+        "id": "PERF-007",
+        "severity": "medium",
+        "type": "images",
+        "title": "Unoptimized Images",
+        "description": "Large image files without compression",
+        "file": "public/images/",
+        "impact": "medium",
+        "total_size": "15.7MB",
+        "target_size": "<5MB",
+        "recommendation": "Implement image optimization and WebP format"
+      },
+      {
+        "id": "PERF-008",
+        "severity": "medium",
+        "type": "css",
+        "title": "CSS Bloat",
+        "description": "Unused Tailwind CSS classes included in build",
+        "file": "public/build/assets/app.css",
+        "impact": "medium",
+        "file_size": "1.8MB",
+        "target_size": "<200KB",
+        "recommendation": "Configure Tailwind purging for production"
+      },
+      {
+        "id": "PERF-009",
+        "severity": "low",
+        "type": "memory",
+        "title": "Large Collection Processing",
+        "description": "Processing large arrays in memory",
+        "file": "database/seeders/AdditionalStudentSeeder.php",
+        "line": 55,
+        "impact": "low",
+        "memory_usage": "256MB",
+        "target_usage": "<128MB",
+        "recommendation": "Use chunk processing for large datasets"
+      }
+    ]
+  },
+  "quality": {
+    "summary": {
+      "critical": 0,
+      "high": 2,
+      "medium": 8,
+      "low": 5,
+      "total": 15
+    },
+    "metrics": {
+      "code_complexity": 75,
+      "duplication": 82,
+      "naming_conventions": 88,
+      "documentation": 65,
+      "test_coverage": 45,
+      "maintainability": 78
+    },
+    "issues": [
+      {
+        "id": "QUAL-001",
+        "severity": "high",
+        "type": "controller_bloat",
+        "title": "Controller Bloat",
+        "description": "Controller has too many responsibilities",
+        "file": "app/Http/Controllers/Admin/StudentController.php",
+        "lines": 450,
+        "complexity": 15,
+        "recommendation": "Extract business logic to service classes"
+      },
+      {
+        "id": "QUAL-002",
+        "severity": "high",
+        "type": "missing_tests",
+        "title": "Missing Unit Tests",
+        "description": "No unit tests for core business logic",
+        "file": "tests/Unit/",
+        "coverage": 0,
+        "recommendation": "Implement comprehensive unit test suite"
+      },
+      {
+        "id": "QUAL-003",
+        "severity": "medium",
+        "type": "form_requests",
+        "title": "Missing Form Requests",
+        "description": "Validation logic in controller instead of form requests",
+        "file": "app/Http/Controllers/Admin/StudentController.php",
+        "line": 76,
+        "recommendation": "Create dedicated form request classes"
+      },
+      {
+        "id": "QUAL-004",
+        "severity": "medium",
+        "type": "hardcoded_values",
+        "title": "Hardcoded Values",
+        "description": "Magic numbers and strings throughout the code",
+        "file": "app/Http/Controllers/Admin/StudentController.php",
+        "line": 55,
+        "recommendation": "Move constants to configuration files"
+      },
+      {
+        "id": "QUAL-005",
+        "severity": "medium",
+        "type": "type_hints",
+        "title": "Missing Type Hints",
+        "description": "Method parameters without type hints",
+        "file": "app/Models/Student.php",
+        "line": 45,
+        "recommendation": "Add proper type hints for better IDE support"
+      }
+    ]
+  },
+  "recommendations": {
+    "immediate": [
+      {
+        "priority": "critical",
+        "action": "Fix SQL Injection vulnerabilities in StudentController",
+        "timeline": "1 week",
+        "effort": "medium"
+      },
+      {
+        "priority": "critical",
+        "action": "Implement proper file upload validation for security",
+        "timeline": "1 week",
+        "effort": "medium"
+      },
+      {
+        "priority": "high",
+        "action": "Add CSRF protection to all AJAX requests",
+        "timeline": "1 week",
+        "effort": "low"
+      },
+      {
+        "priority": "high",
+        "action": "Secure admin routes with proper middleware",
+        "timeline": "1 week",
+        "effort": "low"
+      }
+    ],
+    "short_term": [
+      {
+        "priority": "high",
+        "action": "Implement database indexing for performance",
+        "timeline": "1 month",
+        "effort": "medium"
+      },
+      {
+        "priority": "high",
+        "action": "Add comprehensive input validation using Form Requests",
+        "timeline": "1 month",
+        "effort": "medium"
+      },
+      {
+        "priority": "medium",
+        "action": "Extract business logic to service classes",
+        "timeline": "1 month",
+        "effort": "high"
+      },
+      {
+        "priority": "medium",
+        "action": "Implement proper error handling and logging",
+        "timeline": "1 month",
+        "effort": "medium"
+      }
+    ],
+    "long_term": [
+      {
+        "priority": "medium",
+        "action": "Add comprehensive test suite (unit + feature tests)",
+        "timeline": "3 months",
+        "effort": "high"
+      },
+      {
+        "priority": "medium",
+        "action": "Implement caching strategy for better performance",
+        "timeline": "3 months",
+        "effort": "medium"
+      },
+      {
+        "priority": "low",
+        "action": "Optimize frontend assets and implement lazy loading",
+        "timeline": "3 months",
+        "effort": "medium"
+      },
+      {
+        "priority": "low",
+        "action": "Add audit logging for sensitive operations",
+        "timeline": "6 months",
+        "effort": "medium"
+      }
+    ]
+  },
+  "metrics": {
+    "files_by_type": {
+      "php": 89,
+      "blade": 23,
+      "javascript": 8,
+      "css": 4,
+      "json": 3
+    },
+    "lines_of_code": {
+      "total": 15420,
+      "php": 12340,
+      "blade": 2180,
+      "javascript": 650,
+      "css": 250
+    },
+    "complexity": {
+      "average_cyclomatic": 8.2,
+      "highest_complexity": 15,
+      "files_with_high_complexity": 3
+    },
+    "dependencies": {
+      "total": 67,
+      "outdated": 3,
+      "vulnerable": 1
+    }
+  },
+  "trends": {
+    "security_score": {
+      "current": 72,
+      "previous": 68,
+      "trend": "improving"
+    },
+    "performance_score": {
+      "current": 68,
+      "previous": 65,
+      "trend": "improving"
+    },
+    "quality_score": {
+      "current": 82,
+      "previous": 79,
+      "trend": "improving"
+    }
+  },
+  "school_management_specific": {
+    "student_data_protection": {
+      "gdpr_compliance": "partial",
+      "data_encryption": "missing",
+      "access_logging": "missing",
+      "role_based_access": "implemented"
+    },
+    "academic_integrity": {
+      "grade_security": "implemented",
+      "audit_trail": "missing",
+      "backup_systems": "implemented",
+      "data_validation": "partial"
+    },
+    "system_scalability": {
+      "multi_school_support": "missing",
+      "class_management": "flexible",
+      "user_capacity": "needs_optimization",
+      "data_growth": "handled"
+    },
+    "features": {
+      "implemented": [
+        "role_based_access_control",
+        "student_data_management",
+        "class_management",
+        "file_upload",
+        "responsive_design"
+      ],
+      "missing": [
+        "parent_portal",
+        "attendance_tracking",
+        "grade_book",
+        "messaging_system",
+        "report_generation",
+        "academic_calendar"
+      ]
+    }
+  }
+}

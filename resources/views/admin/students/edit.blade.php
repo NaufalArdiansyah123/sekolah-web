@@ -535,9 +535,83 @@
     @keyframes fadeInUp {
         to {
             opacity: 1;
-            transform: translateY(0);
         }
     }
+    
+    /* Validation Styles */
+    .input-wrapper {
+        position: relative;
+    }
+    
+    .validation-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        z-index: 5;
+    }
+    
+    .validation-message {
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    
+    .validation-message.success {
+        color: #166534;
+        background: #dcfce7;
+        border: 1px solid #bbf7d0;
+    }
+    
+    .validation-message.error {
+        color: #991b1b;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+    }
+    
+    .validation-message.loading {
+        color: #1d4ed8;
+        background: #dbeafe;
+        border: 1px solid #bfdbfe;
+    }
+    
+    .validation-icon.success {
+        color: #16a34a;
+    }
+    
+    .validation-icon.error {
+        color: #dc2626;
+    }
+    
+    .validation-icon.loading {
+        color: #2563eb;
+    }
+    
+    .form-control.is-valid {
+        border-color: #16a34a;
+        box-shadow: 0 0 0 0.2rem rgba(22, 163, 74, 0.25);
+    }
+    
+    .form-control.is-invalid {
+        border-color: #dc2626;
+        box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25);
+    }
+    
+    .spinner {
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+</style>
 </style>
 @endpush
 
@@ -602,24 +676,41 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="nis" class="form-label">NIS <span class="required">*</span></label>
-                                <input type="text" class="form-control @error('nis') is-invalid @enderror" 
-                                       id="nis" name="nis" value="{{ old('nis', $student->nis) }}" 
-                                       placeholder="Nomor Induk Siswa" required>
+                                <div class="input-wrapper">
+                                    <input type="text" class="form-control @error('nis') is-invalid @enderror" 
+                                           id="nis" name="nis" value="{{ old('nis', $student->nis) }}" 
+                                           placeholder="Nomor Induk Siswa" 
+                                           pattern="[0-9]+" 
+                                           minlength="6" 
+                                           maxlength="20" 
+                                           required>
+                                    <div class="validation-icon" id="nisValidationIcon" style="display: none;"></div>
+                                </div>
+                                <div id="nisValidationMessage" class="validation-message" style="display: none;"></div>
                                 @error('nis')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                                <small class="form-text text-muted">NIS harus unik dan hanya berisi angka (6-20 digit)</small>
                             </div>
                         </div>
                         
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="nisn" class="form-label">NISN</label>
-                                <input type="text" class="form-control @error('nisn') is-invalid @enderror" 
-                                       id="nisn" name="nisn" value="{{ old('nisn', $student->nisn) }}" 
-                                       placeholder="Nomor Induk Siswa Nasional">
+                                <div class="input-wrapper">
+                                    <input type="text" class="form-control @error('nisn') is-invalid @enderror" 
+                                           id="nisn" name="nisn" value="{{ old('nisn', $student->nisn) }}" 
+                                           placeholder="10 digit angka" 
+                                           pattern="[0-9]{10}" 
+                                           minlength="10" 
+                                           maxlength="10">
+                                    <div class="validation-icon" id="nisnValidationIcon" style="display: none;"></div>
+                                </div>
+                                <div id="nisnValidationMessage" class="validation-message" style="display: none;"></div>
                                 @error('nisn')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                                <small class="form-text text-muted">NISN harus 10 digit angka (opsional)</small>
                             </div>
                         </div>
                     </div>
@@ -648,7 +739,7 @@
                             </div>
                         </div>
                         
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label class="form-label">Jenis Kelamin <span class="required">*</span></label>
                                 <div class="mt-2">
@@ -669,6 +760,21 @@
                                 </div>
                                 @error('gender')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="religion" class="form-label">Agama <span class="required">*</span></label>
+                                <select class="form-control form-select @error('religion') is-invalid @enderror" id="religion" name="religion" required>
+                                    <option value="">Pilih Agama</option>
+                                    @foreach(config('school.student.religions', ['Islam' => 'Islam', 'Kristen' => 'Kristen', 'Katolik' => 'Katolik', 'Hindu' => 'Hindu', 'Buddha' => 'Buddha', 'Konghucu' => 'Konghucu']) as $value => $label)
+                                        <option value="{{ $value }}" {{ old('religion', $student->religion) == $value ? 'selected' : '' }}>{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                                @error('religion')
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -762,10 +868,18 @@
                                 <label for="class" class="form-label">Kelas <span class="required">*</span></label>
                                 <select class="form-control form-select @error('class') is-invalid @enderror" id="class" name="class" required>
                                     <option value="">Pilih Kelas</option>
-                                    @foreach(['10 IPA 1', '10 IPA 2', '10 IPS 1', '10 IPS 2', '11 IPA 1', '11 IPA 2', '11 IPS 1', '11 IPS 2', '12 IPA 1', '12 IPA 2', '12 IPS 1', '12 IPS 2'] as $class)
-                                        <option value="{{ $class }}" {{ old('class', $student->class) == $class ? 'selected' : '' }}>
-                                            {{ $class }}
-                                        </option>
+                                    @foreach($classOptions as $grade => $classes)
+                                        <optgroup label="Kelas {{ $grade }}">
+                                            @foreach($classes as $class)
+                                                @php
+                                                    $parsed = \App\Helpers\ClassHelper::parseClass($class);
+                                                    $majorName = \App\Helpers\ClassHelper::getMajors()[$parsed['major']] ?? $parsed['major'];
+                                                @endphp
+                                                <option value="{{ $class }}" {{ old('class', $student->class) == $class ? 'selected' : '' }}>
+                                                    {{ $class }} - {{ $majorName }}
+                                                </option>
+                                            @endforeach
+                                        </optgroup>
                                     @endforeach
                                 </select>
                                 @error('class')
@@ -789,6 +903,86 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- QR Code Section -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-qrcode"></i>
+                        </div>
+                        QR Code Absensi
+                    </h3>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Status QR Code</label>
+                                <div class="d-flex align-items-center gap-3">
+                                    @if($student->qrAttendance)
+                                        <div class="d-flex align-items-center text-success">
+                                            <i class="fas fa-check-circle me-2"></i>
+                                            <span class="fw-bold">QR Code Sudah Ada</span>
+                                        </div>
+                                        <a href="{{ route('admin.qr-attendance.index', ['search' => $student->nis]) }}" 
+                                           class="btn btn-sm btn-outline-primary" target="_blank">
+                                            <i class="fas fa-eye"></i> Lihat QR
+                                        </a>
+                                    @else
+                                        <div class="d-flex align-items-center text-warning">
+                                            <i class="fas fa-exclamation-triangle me-2"></i>
+                                            <span class="fw-bold">QR Code Belum Ada</span>
+                                        </div>
+                                    @endif
+                                </div>
+                                <small class="form-text text-muted">
+                                    QR Code digunakan untuk absensi siswa. 
+                                    @if($student->qrAttendance)
+                                        Anda dapat mengelola QR Code di halaman manajemen QR.
+                                    @else
+                                        Centang opsi di bawah untuk membuat QR Code baru.
+                                    @endif
+                                </small>
+                            </div>
+                        </div>
+                        
+                        @if(!$student->qrAttendance)
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Buat QR Code</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="auto_generate_qr" name="auto_generate_qr" value="1">
+                                    <label class="form-check-label" for="auto_generate_qr">
+                                        <i class="fas fa-qrcode text-primary me-2"></i>
+                                        Buat QR Code absensi untuk siswa ini
+                                    </label>
+                                </div>
+                                <small class="form-text text-muted">
+                                    Jika dicentang, sistem akan membuat QR Code baru saat data disimpan.
+                                </small>
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+                    
+                    @if($student->qrAttendance)
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <small>
+                            <strong>QR Code sudah tersedia.</strong> Anda dapat mengelola QR Code (regenerate, download, dll) 
+                            melalui halaman <a href="{{ route('admin.qr-attendance.index') }}" target="_blank" class="alert-link">Manajemen QR Attendance</a>.
+                        </small>
+                    </div>
+                    @else
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <small>
+                            <strong>QR Code belum dibuat.</strong> Siswa ini belum memiliki QR Code untuk absensi. 
+                            Centang opsi di atas untuk membuat QR Code baru, atau buat manual di halaman 
+                            <a href="{{ route('admin.qr-attendance.index') }}" target="_blank" class="alert-link">Manajemen QR Attendance</a>.
+                        </small>
+                    </div>
+                    @endif
                 </div>
 
                 <!-- Photo Section -->
@@ -979,7 +1173,126 @@
         sections.forEach((section, index) => {
             section.style.animationDelay = `${index * 0.1}s`;
         });
+        
+        // Initialize NIS/NISN validation
+        initializeValidation();
     });
+    
+    // NIS/NISN Validation Functions
+    function initializeValidation() {
+        const studentId = {{ $student->id }};
+        
+        // NIS Validation
+        let nisTimeout;
+        const nisInput = document.getElementById('nis');
+        const nisIcon = document.getElementById('nisValidationIcon');
+        const nisMessage = document.getElementById('nisValidationMessage');
+        
+        nisInput.addEventListener('input', function() {
+            clearTimeout(nisTimeout);
+            const nis = this.value.trim();
+            
+            if (nis.length === 0) {
+                hideValidation('nis');
+                return;
+            }
+            
+            // Show loading state
+            showValidation('nis', 'loading', 'Memeriksa NIS...', '<i class="fas fa-spinner spinner"></i>');
+            
+            nisTimeout = setTimeout(() => {
+                validateNis(nis, studentId);
+            }, 500);
+        });
+        
+        // NISN Validation
+        let nisnTimeout;
+        const nisnInput = document.getElementById('nisn');
+        const nisnIcon = document.getElementById('nisnValidationIcon');
+        const nisnMessage = document.getElementById('nisnValidationMessage');
+        
+        nisnInput.addEventListener('input', function() {
+            clearTimeout(nisnTimeout);
+            const nisn = this.value.trim();
+            
+            if (nisn.length === 0) {
+                hideValidation('nisn');
+                return;
+            }
+            
+            // Show loading state
+            showValidation('nisn', 'loading', 'Memeriksa NISN...', '<i class="fas fa-spinner spinner"></i>');
+            
+            nisnTimeout = setTimeout(() => {
+                validateNisn(nisn, studentId);
+            }, 500);
+        });
+    }
+    
+    function validateNis(nis, studentId) {
+        fetch(`{{ route('admin.students.check-nis') }}?nis=${nis}&student_id=${studentId}`)
+            .then(response => response.json())
+            .then(data => {
+                const nisInput = document.getElementById('nis');
+                if (data.available) {
+                    showValidation('nis', 'success', data.message, '<i class="fas fa-check-circle"></i>');
+                    nisInput.classList.remove('is-invalid');
+                    nisInput.classList.add('is-valid');
+                } else {
+                    showValidation('nis', 'error', data.message, '<i class="fas fa-times-circle"></i>');
+                    nisInput.classList.remove('is-valid');
+                    nisInput.classList.add('is-invalid');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showValidation('nis', 'error', 'Gagal memeriksa NIS', '<i class="fas fa-exclamation-triangle"></i>');
+            });
+    }
+    
+    function validateNisn(nisn, studentId) {
+        fetch(`{{ route('admin.students.check-nisn') }}?nisn=${nisn}&student_id=${studentId}`)
+            .then(response => response.json())
+            .then(data => {
+                const nisnInput = document.getElementById('nisn');
+                if (data.available) {
+                    showValidation('nisn', 'success', data.message, '<i class="fas fa-check-circle"></i>');
+                    nisnInput.classList.remove('is-invalid');
+                    nisnInput.classList.add('is-valid');
+                } else {
+                    showValidation('nisn', 'error', data.message, '<i class="fas fa-times-circle"></i>');
+                    nisnInput.classList.remove('is-valid');
+                    nisnInput.classList.add('is-invalid');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showValidation('nisn', 'error', 'Gagal memeriksa NISN', '<i class="fas fa-exclamation-triangle"></i>');
+            });
+    }
+    
+    function showValidation(field, type, message, icon) {
+        const iconElement = document.getElementById(field + 'ValidationIcon');
+        const messageElement = document.getElementById(field + 'ValidationMessage');
+        
+        iconElement.innerHTML = icon;
+        iconElement.className = `validation-icon ${type}`;
+        iconElement.style.display = 'block';
+        
+        messageElement.innerHTML = `${icon} ${message}`;
+        messageElement.className = `validation-message ${type}`;
+        messageElement.style.display = 'block';
+    }
+    
+    function hideValidation(field) {
+        const iconElement = document.getElementById(field + 'ValidationIcon');
+        const messageElement = document.getElementById(field + 'ValidationMessage');
+        const inputElement = document.getElementById(field);
+        
+        iconElement.style.display = 'none';
+        messageElement.style.display = 'none';
+        inputElement.classList.remove('is-valid', 'is-invalid');
+    }
     
     // Delete photo function
     function deletePhoto(studentId) {

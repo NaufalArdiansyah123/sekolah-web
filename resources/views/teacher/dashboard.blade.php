@@ -478,6 +478,248 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 0.75rem;
         }
+        
+        /* Main Menu Cards Hover Effects */
+        .main-menu-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px !important;
+            border: 1px solid var(--border-color);
+            background: var(--bg-primary);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .main-menu-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .main-menu-card:hover::before {
+            left: 100%;
+        }
+        
+        .main-menu-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .dark .main-menu-card {
+            background: var(--bg-primary);
+            border-color: var(--border-color);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .dark .main-menu-card:hover {
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .main-menu-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .main-menu-icon::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.4s ease;
+        }
+        
+        .main-menu-card:hover .main-menu-icon::after {
+            width: 100px;
+            height: 100px;
+        }
+        
+        .main-menu-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            transition: color 0.3s ease;
+        }
+        
+        .main-menu-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+        
+        .main-menu-card:hover .main-menu-subtitle {
+            opacity: 1;
+            color: var(--text-primary);
+        }
+        
+        /* Content Management Section */
+        .content-management-section {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        .content-management-title {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .content-btn {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: 10px;
+            padding: 0.75rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .content-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .content-btn:hover::before {
+            left: 100%;
+        }
+        
+        .content-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.15);
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+        
+        .dark .content-btn:hover {
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+        }
+        
+        .content-btn i {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .content-btn:hover i {
+            transform: scale(1.1);
+        }
+        
+        .content-btn span {
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        /* Enhanced Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            border: 2px dashed var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        .empty-state:hover {
+            border-color: #3b82f6;
+            background: var(--bg-primary);
+        }
+        
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+        
+        .dark .empty-icon {
+            background: linear-gradient(135deg, #374151, #4b5563);
+        }
+        
+        .empty-state:hover .empty-icon {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .empty-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .empty-text {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .empty-state .btn {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+        
+        .empty-state .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+            background: linear-gradient(135deg, #1d4ed8, #1e40af);
+        }
 
         .quick-action-btn {
             background: var(--bg-secondary);
@@ -862,6 +1104,46 @@
                 grid-template-columns: 1fr;
                 gap: 0.5rem;
             }
+            
+            .quick-actions-grid[style*="repeat(3, 1fr)"] {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            
+            /* Main menu cards responsive */
+            .row.g-4 .col-6 {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+            
+            .main-menu-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+            
+            .main-menu-title {
+                font-size: 0.9rem;
+            }
+            
+            .main-menu-subtitle {
+                font-size: 0.75rem;
+            }
+            
+            .content-management-section {
+                padding: 1rem;
+            }
+            
+            .content-btn {
+                padding: 0.5rem;
+            }
+            
+            .content-btn i {
+                font-size: 1rem;
+            }
+            
+            .content-btn span {
+                font-size: 0.7rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1027,9 +1309,9 @@
                     <i class="fas fa-edit"></i>
                 </div>
                 <div class="stat-content">
-                    <div class="stat-number">24</div>
+                    <div class="stat-number">{{ $stats['total_posts'] ?? 0 }}</div>
                     <div class="stat-label">Total Post</div>
-                    <div class="stat-sublabel">18 dipublikasikan</div>
+                    <div class="stat-sublabel">{{ $stats['published_posts'] ?? 0 }} dipublikasikan</div>
                 </div>
             </div>
 
@@ -1038,20 +1320,20 @@
                     <i class="fas fa-users"></i>
                 </div>
                 <div class="stat-content">
-                    <div class="stat-number">156</div>
-                    <div class="stat-label">Anggota Ekskul</div>
-                    <div class="stat-sublabel">Yang dikelola</div>
+                    <div class="stat-number">{{ $stats['total_students'] ?? 0 }}</div>
+                    <div class="stat-label">Total Siswa</div>
+                    <div class="stat-sublabel">Di sekolah</div>
                 </div>
             </div>
 
             <div class="stat-card stat-warning" data-aos="fade-up" data-aos-delay="300">
                 <div class="stat-icon">
-                    <i class="fas fa-clock"></i>
+                    <i class="fas fa-clipboard-check"></i>
                 </div>
                 <div class="stat-content">
-                    <div class="stat-number">8</div>
-                    <div class="stat-label">Pendaftaran Pending</div>
-                    <div class="stat-sublabel">Menunggu persetujuan</div>
+                    <div class="stat-number">{{ $recentActivities ? $recentActivities->count() : 0 }}</div>
+                    <div class="stat-label">Aktivitas Terbaru</div>
+                    <div class="stat-sublabel">Dalam 30 hari</div>
                 </div>
             </div>
 
@@ -1060,7 +1342,7 @@
                     <i class="fas fa-graduation-cap"></i>
                 </div>
                 <div class="stat-content">
-                    <div class="stat-number">3</div>
+                    <div class="stat-number">{{ $stats['extracurriculars_managed'] ?? 0 }}</div>
                     <div class="stat-label">Ekstrakurikuler</div>
                     <div class="stat-sublabel">Yang dikelola</div>
                 </div>
@@ -1085,220 +1367,180 @@
                     </div>
                     <div class="card-body">
                         <div class="activity-timeline">
-                            <div class="activity-item">
-                                <div class="activity-icon" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">
-                                    <i class="fas fa-edit"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-title">Membuat post baru: "Tips Belajar Efektif"</div>
-                                    <div class="activity-time">
-                                        <i class="fas fa-clock me-1"></i>
-                                        2 jam yang lalu
+                            @if($recentActivities && $recentActivities->count() > 0)
+                                @foreach($recentActivities as $activity)
+                                <div class="activity-item">
+                                    <div class="activity-icon" style="background: linear-gradient(135deg, {{ $activity['color'] }}, {{ $activity['color'] }}dd);">
+                                        <i class="{{ $activity['icon'] }}"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-title">{{ $activity['title'] }}</div>
+                                        <div class="activity-time">
+                                            <i class="fas fa-clock me-1"></i>
+                                            {{ $activity['date']->diffForHumans() }}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="activity-item">
-                                <div class="activity-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-                                    <i class="fas fa-calendar-plus"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-title">Menambahkan agenda: "Rapat Koordinasi"</div>
-                                    <div class="activity-time">
-                                        <i class="fas fa-clock me-1"></i>
-                                        1 hari yang lalu
+                                @endforeach
+                            @else
+                                <div class="empty-state">
+                                    <div class="empty-icon">
+                                        <i class="fas fa-history"></i>
+                                    </div>
+                                    <div class="empty-title">Belum Ada Aktivitas</div>
+                                    <div class="empty-text">Mulai membuat konten untuk melihat aktivitas terbaru Anda di sini.</div>
+                                    <div class="mt-3">
+                                        <a href="{{ route('teacher.posts.blog.create') }}" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-plus me-1"></i>Buat Post Pertama
+                                        </a>
                                     </div>
                                 </div>
-                            </div>
+                            @endif
                         </div>
                     </div>
                 </div>
 
-                <!-- Extracurriculars Management -->
+                <!-- Learning Materials Management -->
                 <div class="dashboard-card" data-aos="fade-right" data-aos-delay="200">
                     <div class="card-header">
                         <div class="header-content">
                             <h5 class="card-title">
-                                <i class="fas fa-users me-2"></i>Ekstrakurikuler yang Dikelola
+                                <i class="fas fa-book-open me-2"></i>Materi Pembelajaran
                             </h5>
-                            <span class="badge bg-primary">3</span>
+                            <a href="{{ route('teacher.learning.materials.create') }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-plus me-1"></i>Tambah
+                            </a>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="extracurricular-grid">
-                            <div class="extracurricular-item">
-                                <div class="extracurricular-header">
-                                    <div class="extracurricular-icon">
-                                        <i class="fas fa-basketball-ball"></i>
+                            @if($learningMaterials && $learningMaterials->count() > 0)
+                                @foreach($learningMaterials as $material)
+                                <div class="extracurricular-item">
+                                    <div class="extracurricular-header">
+                                        <div class="extracurricular-icon">
+                                            @if($material['type'] == 'pdf')
+                                                <i class="fas fa-file-pdf"></i>
+                                            @elseif($material['type'] == 'video')
+                                                <i class="fas fa-video"></i>
+                                            @elseif($material['type'] == 'powerpoint')
+                                                <i class="fas fa-file-powerpoint"></i>
+                                            @else
+                                                <i class="fas fa-file-alt"></i>
+                                            @endif
+                                        </div>
+                                        <div class="extracurricular-info">
+                                            <div class="extracurricular-name">{{ $material['title'] }}</div>
+                                            <div class="extracurricular-desc">{{ $material['description'] }}</div>
+                                        </div>
                                     </div>
-                                    <div class="extracurricular-info">
-                                        <div class="extracurricular-name">Basketball</div>
-                                        <div class="extracurricular-desc">Olahraga bola basket untuk meningkatkan kebugaran</div>
+                                    <div class="extracurricular-stats">
+                                        <div class="stat-item">
+                                            @if($material['type'] == 'video')
+                                                <i class="fas fa-play me-1"></i>
+                                                <span>{{ $material['downloads'] }} views</span>
+                                            @else
+                                                <i class="fas fa-download me-1"></i>
+                                                <span>{{ $material['downloads'] }} unduhan</span>
+                                            @endif
+                                        </div>
+                                        <div class="stat-item">
+                                            <i class="fas fa-calendar me-1"></i>
+                                            <span>{{ $material['created_at']->diffForHumans() }}</span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="extracurricular-stats">
-                                    <div class="stat-item">
-                                        <i class="fas fa-users me-1"></i>
-                                        <span>45 anggota</span>
-                                    </div>
-                                    <div class="stat-item">
-                                        <i class="fas fa-clock me-1"></i>
-                                        <span>3 pending</span>
-                                    </div>
-                                </div>
-                                <div class="extracurricular-actions">
-                                    <button class="btn btn-sm btn-primary">
-                                        <i class="fas fa-cog me-1"></i>Kelola
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-secondary">
-                                        <i class="fas fa-eye me-1"></i>Lihat
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="extracurricular-item">
-                                <div class="extracurricular-header">
-                                    <div class="extracurricular-icon">
-                                        <i class="fas fa-music"></i>
-                                    </div>
-                                    <div class="extracurricular-info">
-                                        <div class="extracurricular-name">Paduan Suara</div>
-                                        <div class="extracurricular-desc">Kegiatan seni musik vokal dan koor</div>
-                                    </div>
-                                </div>
-                                <div class="extracurricular-stats">
-                                    <div class="stat-item">
-                                        <i class="fas fa-users me-1"></i>
-                                        <span>32 anggota</span>
-                                    </div>
-                                    <div class="stat-item">
-                                        <i class="fas fa-clock me-1"></i>
-                                        <span>2 pending</span>
+                                    <div class="extracurricular-actions">
+                                        <a href="{{ route('teacher.learning.materials.index') }}" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-edit me-1"></i>Edit
+                                        </a>
+                                        <a href="{{ route('teacher.learning.materials.index') }}" class="btn btn-sm btn-outline-secondary">
+                                            <i class="fas fa-eye me-1"></i>Lihat
+                                        </a>
                                     </div>
                                 </div>
-                                <div class="extracurricular-actions">
-                                    <button class="btn btn-sm btn-primary">
-                                        <i class="fas fa-cog me-1"></i>Kelola
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-secondary">
-                                        <i class="fas fa-eye me-1"></i>Lihat
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="extracurricular-item">
-                                <div class="extracurricular-header">
-                                    <div class="extracurricular-icon">
-                                        <i class="fas fa-robot"></i>
+                                @endforeach
+                            @else
+                                <div class="empty-state">
+                                    <div class="empty-icon">
+                                        <i class="fas fa-book-open"></i>
                                     </div>
-                                    <div class="extracurricular-info">
-                                        <div class="extracurricular-name">Robotika</div>
-                                        <div class="extracurricular-desc">Pembelajaran teknologi dan programming</div>
+                                    <div class="empty-title">Belum Ada Materi</div>
+                                    <div class="empty-text">Mulai membuat materi pembelajaran untuk siswa.</div>
+                                    <div class="mt-3">
+                                        <a href="{{ route('teacher.learning.materials.create') }}" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-plus me-1"></i>Buat Materi Pertama
+                                        </a>
                                     </div>
                                 </div>
-                                <div class="extracurricular-stats">
-                                    <div class="stat-item">
-                                        <i class="fas fa-users me-1"></i>
-                                        <span>28 anggota</span>
-                                    </div>
-                                    <div class="stat-item">
-                                        <i class="fas fa-clock me-1"></i>
-                                        <span>3 pending</span>
-                                    </div>
-                                </div>
-                                <div class="extracurricular-actions">
-                                    <button class="btn btn-sm btn-primary">
-                                        <i class="fas fa-cog me-1"></i>Kelola
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-secondary">
-                                        <i class="fas fa-eye me-1"></i>Lihat
-                                    </button>
-                                </div>
-                            </div>
+                            @endif
+                        </div>
+                        <div class="text-center" style="margin-top: 1rem;">
+                            <a href="{{ route('teacher.learning.materials.index') }}" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-eye me-1"></i>Lihat Semua Materi
+                            </a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Pending Registrations -->
+                <!-- Assignments to Grade -->
                 <div class="dashboard-card" data-aos="fade-right" data-aos-delay="400">
                     <div class="card-header">
                         <div class="header-content">
                             <h5 class="card-title">
-                                <i class="fas fa-user-clock me-2"></i>Pendaftaran Menunggu Persetujuan
+                                <i class="fas fa-clipboard-check me-2"></i>Tugas yang Perlu Dinilai
                             </h5>
-                            <span class="badge bg-warning">8</span>
+                            <span class="badge bg-warning">{{ $assignmentsToGrade ? $assignmentsToGrade->count() : 0 }}</span>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="registration-list">
-                            <div class="registration-item">
-                                <div class="registration-avatar">
-                                    <img src="https://ui-avatars.com/api/?name=Ahmad+Rizki&color=059669&background=D1FAE5" 
-                                         alt="Ahmad Rizki" 
-                                         class="avatar-img">
-                                </div>
-                                <div class="registration-info">
-                                    <div class="registration-name">Ahmad Rizki</div>
-                                    <div class="registration-email">ahmad.rizki@student.sch.id</div>
-                                    <div class="registration-extracurricular">
-                                        <i class="fas fa-tag me-1"></i>Basketball
+                            @if($assignmentsToGrade && $assignmentsToGrade->count() > 0)
+                                @foreach($assignmentsToGrade as $assignment)
+                                <div class="registration-item">
+                                    <div class="registration-avatar">
+                                        <div class="avatar-img d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, {{ $assignment['color'] }}, {{ $assignment['color'] }}dd); color: white; font-weight: bold;">
+                                            {{ $assignment['initials'] }}
+                                        </div>
+                                    </div>
+                                    <div class="registration-info">
+                                        <div class="registration-name">{{ $assignment['student_name'] }}</div>
+                                        <div class="registration-email">Tugas: {{ $assignment['assignment_title'] }}</div>
+                                        <div class="registration-extracurricular">
+                                            <i class="fas fa-clock me-1"></i>Dikumpulkan {{ $assignment['submitted_at']->diffForHumans() }}
+                                        </div>
+                                    </div>
+                                    <div class="registration-actions">
+                                        <a href="{{ route('teacher.assignments.show', $assignment['assignment_id']) }}" class="btn btn-sm btn-primary" title="Nilai">
+                                            <i class="fas fa-star"></i>
+                                        </a>
+                                        <a href="{{ route('teacher.assignments.show', $assignment['assignment_id']) }}" class="btn btn-sm btn-outline-secondary" title="Lihat">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
                                     </div>
                                 </div>
-                                <div class="registration-actions">
-                                    <button class="btn btn-sm btn-success" title="Setujui">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger" title="Tolak">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="registration-item">
-                                <div class="registration-avatar">
-                                    <img src="https://ui-avatars.com/api/?name=Siti+Nurhaliza&color=059669&background=D1FAE5" 
-                                         alt="Siti Nurhaliza" 
-                                         class="avatar-img">
-                                </div>
-                                <div class="registration-info">
-                                    <div class="registration-name">Siti Nurhaliza</div>
-                                    <div class="registration-email">siti.nurhaliza@student.sch.id</div>
-                                    <div class="registration-extracurricular">
-                                        <i class="fas fa-tag me-1"></i>Paduan Suara
+                                @endforeach
+                            @else
+                                <div class="empty-state">
+                                    <div class="empty-icon">
+                                        <i class="fas fa-clipboard-check"></i>
+                                    </div>
+                                    <div class="empty-title">Tidak Ada Tugas untuk Dinilai</div>
+                                    <div class="empty-text">Semua tugas sudah dinilai atau belum ada tugas yang dikumpulkan.</div>
+                                    <div class="mt-3">
+                                        <a href="{{ route('teacher.assignments.create') }}" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-plus me-1"></i>Buat Tugas Baru
+                                        </a>
                                     </div>
                                 </div>
-                                <div class="registration-actions">
-                                    <button class="btn btn-sm btn-success" title="Setujui">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger" title="Tolak">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="registration-item">
-                                <div class="registration-avatar">
-                                    <img src="https://ui-avatars.com/api/?name=Budi+Santoso&color=059669&background=D1FAE5" 
-                                         alt="Budi Santoso" 
-                                         class="avatar-img">
-                                </div>
-                                <div class="registration-info">
-                                    <div class="registration-name">Budi Santoso</div>
-                                    <div class="registration-email">budi.santoso@student.sch.id</div>
-                                    <div class="registration-extracurricular">
-                                        <i class="fas fa-tag me-1"></i>Robotika
-                                    </div>
-                                </div>
-                                <div class="registration-actions">
-                                    <button class="btn btn-sm btn-success" title="Setujui">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger" title="Tolak">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
+                            @endif
                         </div>
                         <div class="text-center" style="margin-top: 1rem;">
-                            <button class="btn btn-outline-primary btn-sm">
-                                <i class="fas fa-plus me-1"></i>Lihat 5 lainnya
-                            </button>
+                            <a href="{{ route('teacher.assignments.index') }}" class="btn btn-outline-primary btn-sm me-2">
+                                <i class="fas fa-eye me-1"></i>Lihat Semua Tugas
+                            </a>
+                            <a href="{{ route('teacher.grades.index') }}" class="btn btn-outline-success btn-sm">
+                                <i class="fas fa-chart-line me-1"></i>Rekap Nilai
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -1314,8 +1556,8 @@
                         </h5>
                     </div>
                     <div class="card-body">
-                        <div class="quick-actions-grid">
-                            <button class="quick-action-btn primary">
+                        <div class="quick-actions-grid" style="grid-template-columns: repeat(3, 1fr); gap: 0.75rem;">
+                            <a href="{{ route('teacher.posts.blog.create') }}" class="quick-action-btn primary">
                                 <div class="action-icon">
                                     <i class="fas fa-plus"></i>
                                 </div>
@@ -1323,37 +1565,154 @@
                                     <div class="action-title">Buat Post</div>
                                     <div class="action-subtitle">Berita & artikel</div>
                                 </div>
-                            </button>
+                            </a>
                             
-                            <button class="quick-action-btn success">
+                            <a href="{{ route('teacher.learning.materials.create') }}" class="quick-action-btn success">
                                 <div class="action-icon">
-                                    <i class="fas fa-calendar-plus"></i>
+                                    <i class="fas fa-book-plus"></i>
                                 </div>
                                 <div class="action-text">
-                                    <div class="action-title">Tambah Agenda</div>
-                                    <div class="action-subtitle">Jadwal kegiatan</div>
+                                    <div class="action-title">Buat Materi</div>
+                                    <div class="action-subtitle">Materi pembelajaran</div>
                                 </div>
-                            </button>
+                            </a>
                             
-                            <button class="quick-action-btn info">
+                            <a href="{{ route('teacher.assignments.create') }}" class="quick-action-btn info">
+                                <div class="action-icon">
+                                    <i class="fas fa-tasks"></i>
+                                </div>
+                                <div class="action-text">
+                                    <div class="action-title">Buat Tugas</div>
+                                    <div class="action-subtitle">Assignment baru</div>
+                                </div>
+                            </a>
+                            
+                            <a href="{{ route('teacher.students.index') }}" class="quick-action-btn warning">
                                 <div class="action-icon">
                                     <i class="fas fa-users"></i>
                                 </div>
                                 <div class="action-text">
-                                    <div class="action-title">Kelola Ekskul</div>
-                                    <div class="action-subtitle">Anggota & aktivitas</div>
+                                    <div class="action-title">Kelola Siswa</div>
+                                    <div class="action-subtitle">Data & informasi</div>
                                 </div>
-                            </button>
+                            </a>
                             
-                            <button class="quick-action-btn warning">
+                            <a href="{{ route('teacher.grades.index') }}" class="quick-action-btn primary">
                                 <div class="action-icon">
                                     <i class="fas fa-chart-bar"></i>
                                 </div>
                                 <div class="action-text">
-                                    <div class="action-title">Statistik</div>
+                                    <div class="action-title">Nilai Siswa</div>
                                     <div class="action-subtitle">Laporan & analisis</div>
                                 </div>
-                            </button>
+                            </a>
+                            
+                            <a href="{{ route('teacher.attendance.index') }}" class="quick-action-btn success">
+                                <div class="action-icon">
+                                    <i class="fas fa-user-check"></i>
+                                </div>
+                                <div class="action-text">
+                                    <div class="action-title">Absensi</div>
+                                    <div class="action-subtitle">Kehadiran siswa</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Menu Cards -->
+                <div class="dashboard-card" data-aos="fade-left" data-aos-delay="100">
+                    <div class="card-header">
+                        <h5 class="card-title">
+                            <i class="fas fa-th-large me-2"></i>Menu Utama
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-4">
+                            <!-- Learning Management -->
+                            <div class="col-6">
+                                <a href="{{ route('teacher.learning.materials.index') }}" class="main-menu-card text-decoration-none d-block h-100">
+                                    <div class="card-body text-center p-4">
+                                        <div class="main-menu-icon mx-auto" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">
+                                            <i class="fas fa-book-open"></i>
+                                        </div>
+                                        <h6 class="main-menu-title">Materi Pembelajaran</h6>
+                                        <div class="main-menu-subtitle">Kelola materi & bahan ajar untuk siswa</div>
+                                    </div>
+                                </a>
+                            </div>
+                            
+                            <!-- Assignments -->
+                            <div class="col-6">
+                                <a href="{{ route('teacher.assignments.index') }}" class="main-menu-card text-decoration-none d-block h-100">
+                                    <div class="card-body text-center p-4">
+                                        <div class="main-menu-icon mx-auto" style="background: linear-gradient(135deg, #059669, #047857);">
+                                            <i class="fas fa-tasks"></i>
+                                        </div>
+                                        <h6 class="main-menu-title">Tugas & Assignment</h6>
+                                        <div class="main-menu-subtitle">Buat & kelola tugas siswa</div>
+                                    </div>
+                                </a>
+                            </div>
+                            
+                            <!-- Quizzes -->
+                            <div class="col-6">
+                                <a href="{{ route('teacher.quizzes.index') }}" class="main-menu-card text-decoration-none d-block h-100">
+                                    <div class="card-body text-center p-4">
+                                        <div class="main-menu-icon mx-auto" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                                            <i class="fas fa-question-circle"></i>
+                                        </div>
+                                        <h6 class="main-menu-title">Kuis & Ujian</h6>
+                                        <div class="main-menu-subtitle">Buat kuis online interaktif</div>
+                                    </div>
+                                </a>
+                            </div>
+                            
+                            <!-- Daily Tests -->
+                            <div class="col-6">
+                                <a href="{{ route('teacher.daily-tests.index') }}" class="main-menu-card text-decoration-none d-block h-100">
+                                    <div class="card-body text-center p-4">
+                                        <div class="main-menu-icon mx-auto" style="background: linear-gradient(135deg, #06b6d4, #0891b2);">
+                                            <i class="fas fa-clipboard-check"></i>
+                                        </div>
+                                        <h6 class="main-menu-title">Ulangan Harian</h6>
+                                        <div class="main-menu-subtitle">Tes harian & evaluasi</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Posts & Content Management -->
+                        <div class="content-management-section mt-4">
+                            <div class="content-management-title">
+                                <i class="fas fa-edit"></i>
+                                <span>Konten & Publikasi</span>
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <a href="{{ route('teacher.posts.blog.index') }}" class="content-btn w-100">
+                                        <i class="fas fa-blog"></i>
+                                        <span>Blog Post</span>
+                                    </a>
+                                </div>
+                                <div class="col-6">
+                                    <a href="{{ route('teacher.posts.announcement') }}" class="content-btn w-100">
+                                        <i class="fas fa-bullhorn"></i>
+                                        <span>Pengumuman</span>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row g-3 mt-2">
+                                <div class="col-12">
+                                    <div class="content-btn w-100" style="opacity: 0.6; cursor: not-allowed; background: var(--bg-secondary);">
+                                        <i class="fas fa-calendar"></i>
+                                        <span>Agenda</span>
+                                        <small class="text-muted d-block mt-1" style="font-size: 0.65rem;">
+                                            <i class="fas fa-lock me-1"></i>Hanya Admin
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1363,72 +1722,56 @@
                     <div class="card-header">
                         <div class="header-content">
                             <h5 class="card-title">
-                                <i class="fas fa-calendar me-2"></i>Agenda Mendatang
+                                <i class="fas fa-calendar me-2"></i>Agenda Sekolah
                             </h5>
-                            <button class="btn btn-sm btn-outline-primary">
-                                <i class="fas fa-plus me-1"></i>Tambah
-                            </button>
+                            <span class="badge bg-info">
+                                <i class="fas fa-info-circle me-1"></i>Admin
+                            </span>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="agenda-timeline">
-                            <div class="agenda-item">
-                                <div class="agenda-date">
-                                    <div class="date-day">16</div>
-                                    <div class="date-month">Sep</div>
-                                </div>
-                                <div class="agenda-content">
-                                    <div class="agenda-title">Rapat Koordinasi Guru</div>
-                                    <div class="agenda-details">
-                                        <p class="agenda-time">
-                                            <i class="fas fa-clock me-1"></i>
-                                            09:00 - 11:00
-                                        </p>
-                                        <p class="agenda-location">
-                                            <i class="fas fa-map-marker-alt me-1"></i>
-                                            Ruang Guru
-                                        </p>
+                            @if($upcomingAgenda && $upcomingAgenda->count() > 0)
+                                @foreach($upcomingAgenda as $agenda)
+                                <div class="agenda-item">
+                                    <div class="agenda-date">
+                                        <div class="date-day">{{ $agenda->tanggal->format('d') }}</div>
+                                        <div class="date-month">{{ $agenda->tanggal->format('M') }}</div>
+                                    </div>
+                                    <div class="agenda-content">
+                                        <div class="agenda-title">{{ $agenda->judul }}</div>
+                                        <div class="agenda-details">
+                                            @if($agenda->waktu)
+                                            <p class="agenda-time">
+                                                <i class="fas fa-clock me-1"></i>
+                                                {{ $agenda->waktu }}
+                                            </p>
+                                            @endif
+                                            @if($agenda->lokasi)
+                                            <p class="agenda-location">
+                                                <i class="fas fa-map-marker-alt me-1"></i>
+                                                {{ $agenda->lokasi }}
+                                            </p>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="agenda-item">
-                                <div class="agenda-date">
-                                    <div class="date-day">18</div>
-                                    <div class="date-month">Sep</div>
-                                </div>
-                                <div class="agenda-content">
-                                    <div class="agenda-title">Ujian Tengah Semester</div>
-                                    <div class="agenda-details">
-                                        <p class="agenda-time">
-                                            <i class="fas fa-clock me-1"></i>
-                                            07:30 - 09:30
-                                        </p>
-                                        <p class="agenda-location">
-                                            <i class="fas fa-map-marker-alt me-1"></i>
-                                            Kelas X-1
-                                        </p>
+                                @endforeach
+                            @else
+                                <div class="empty-state">
+                                    <div class="empty-icon">
+                                        <i class="fas fa-calendar"></i>
+                                    </div>
+                                    <div class="empty-title">Tidak Ada Agenda</div>
+                                    <div class="empty-text">Belum ada agenda sekolah yang dijadwalkan oleh admin untuk periode mendatang.</div>
+                                    <div class="mt-3">
+                                        <small class="text-muted">
+                                            <i class="fas fa-info-circle me-1"></i>
+                                            Agenda sekolah hanya dapat dibuat oleh admin
+                                        </small>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="agenda-item">
-                                <div class="agenda-date">
-                                    <div class="date-day">22</div>
-                                    <div class="date-month">Sep</div>
-                                </div>
-                                <div class="agenda-content">
-                                    <div class="agenda-title">Workshop Digital</div>
-                                    <div class="agenda-details">
-                                        <p class="agenda-time">
-                                            <i class="fas fa-clock me-1"></i>
-                                            13:00 - 16:00
-                                        </p>
-                                        <p class="agenda-location">
-                                            <i class="fas fa-map-marker-alt me-1"></i>
-                                            Lab Komputer
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -1440,47 +1783,47 @@
                             <h5 class="card-title">
                                 <i class="fas fa-bullhorn me-2"></i>Pengumuman Terbaru
                             </h5>
-                            <button class="btn btn-sm btn-outline-primary">
+                            <a href="{{ route('teacher.posts.announcement') }}" class="btn btn-sm btn-outline-primary">
                                 <i class="fas fa-eye me-1"></i>Semua
-                            </button>
+                            </a>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="announcement-list">
-                            <div class="announcement-item">
-                                <div class="announcement-icon">
-                                    <i class="fas fa-bullhorn"></i>
-                                </div>
-                                <div class="announcement-content">
-                                    <div class="announcement-title">Libur Nasional Hari Kemerdekaan</div>
-                                    <div class="announcement-excerpt">
-                                        Sekolah diliburkan pada tanggal 17 Agustus dalam rangka memperingati Hari Kemerdekaan RI ke-78.
+                            @if($recentAnnouncements && $recentAnnouncements->count() > 0)
+                                @foreach($recentAnnouncements as $announcement)
+                                <div class="announcement-item">
+                                    <div class="announcement-icon">
+                                        <i class="fas fa-bullhorn"></i>
                                     </div>
-                                    <div class="announcement-meta">
-                                        <span class="announcement-date">
-                                            <i class="fas fa-clock me-1"></i>
-                                            2 hari yang lalu
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="announcement-item">
-                                <div class="announcement-icon">
-                                    <i class="fas fa-bullhorn"></i>
-                                </div>
-                                <div class="announcement-content">
-                                    <div class="announcement-title">Perubahan Jadwal Ujian</div>
-                                    <div class="announcement-excerpt">
-                                        Ujian Tengah Semester untuk kelas X dimajukan menjadi tanggal 25 Agustus 2023.
-                                    </div>
-                                    <div class="announcement-meta">
-                                        <span class="announcement-date">
-                                            <i class="fas fa-clock me-1"></i>
-                                            5 hari yang lalu
-                                        </span>
+                                    <div class="announcement-content">
+                                        <div class="announcement-title">{{ $announcement->title }}</div>
+                                        <div class="announcement-excerpt">
+                                            {{ Str::limit(strip_tags($announcement->content), 100) }}
+                                        </div>
+                                        <div class="announcement-meta">
+                                            <span class="announcement-date">
+                                                <i class="fas fa-clock me-1"></i>
+                                                {{ $announcement->created_at->diffForHumans() }}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                                @endforeach
+                            @else
+                                <div class="empty-state">
+                                    <div class="empty-icon">
+                                        <i class="fas fa-bullhorn"></i>
+                                    </div>
+                                    <div class="empty-title">Tidak Ada Pengumuman</div>
+                                    <div class="empty-text">Belum ada pengumuman terbaru yang dipublikasikan.</div>
+                                    <div class="mt-3">
+                                        <a href="{{ route('teacher.posts.announcement.create') }}" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-plus me-1"></i>Buat Pengumuman
+                                        </a>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -1498,6 +1841,47 @@
             offset: 50
         });
 
+        // Refresh activities function
+        function refreshActivities() {
+            const refreshBtn = document.querySelector('button[onclick="refreshActivities()"]');
+            const originalText = refreshBtn.innerHTML;
+            
+            // Show loading state
+            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Memuat...';
+            refreshBtn.disabled = true;
+            
+            // Simulate refresh (in real app, this would be an AJAX call)
+            setTimeout(() => {
+                // Restore button
+                refreshBtn.innerHTML = originalText;
+                refreshBtn.disabled = false;
+                
+                // Show success message
+                showToast('success', 'Aktivitas berhasil diperbarui!');
+            }, 1500);
+        }
+        
+        // Show toast notification
+        function showToast(type, message) {
+            const toast = document.createElement('div');
+            toast.className = `alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed`;
+            toast.style.cssText = 'top: 20px; right: 20px; z-index: 10000; min-width: 300px; animation: slideInRight 0.3s ease-out;';
+            toast.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+                    <span>${message}</span>
+                    <button type="button" class="btn-close ms-auto" onclick="this.parentElement.parentElement.remove()"></button>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.remove();
+                }
+            }, 5000);
+        }
+
         // Interactive functionality
         document.addEventListener('DOMContentLoaded', function() {
             // Quick action buttons
@@ -1510,35 +1894,30 @@
                 });
             });
 
-            // Registration action buttons
-            const registrationBtns = document.querySelectorAll('.registration-actions .btn');
-            registrationBtns.forEach(btn => {
+            // Assignment action buttons
+            const assignmentBtns = document.querySelectorAll('.registration-actions .btn');
+            assignmentBtns.forEach(btn => {
                 btn.addEventListener('click', function(e) {
-                    e.stopPropagation();
                     const action = this.getAttribute('title');
                     const name = this.closest('.registration-item').querySelector('.registration-name').textContent;
                     
-                    if (action === 'Setujui') {
-                        if (confirm(`Setujui pendaftaran ${name}?`)) {
-                            console.log('Approved:', name);
-                            // Add approval logic here
-                        }
-                    } else if (action === 'Tolak') {
-                        if (confirm(`Tolak pendaftaran ${name}?`)) {
-                            console.log('Rejected:', name);
-                            // Add rejection logic here
-                        }
+                    if (action === 'Nilai') {
+                        console.log('Grading assignment for:', name);
+                        // Add grading logic here
+                    } else if (action === 'Lihat') {
+                        console.log('Viewing assignment for:', name);
+                        // Add view logic here
                     }
                 });
             });
 
-            // Extracurricular management buttons
-            const extracurricularBtns = document.querySelectorAll('.extracurricular-actions .btn');
-            extracurricularBtns.forEach(btn => {
+            // Learning material management buttons
+            const materialBtns = document.querySelectorAll('.extracurricular-actions .btn');
+            materialBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
                     const action = this.textContent.trim();
                     const name = this.closest('.extracurricular-item').querySelector('.extracurricular-name').textContent;
-                    console.log('Extracurricular action:', action, 'for:', name);
+                    console.log('Material action:', action, 'for:', name);
                     // Add navigation logic here
                 });
             });

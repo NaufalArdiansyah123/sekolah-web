@@ -3,209 +3,310 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
-use App\Models\Attendance;
-use App\Models\AttendanceSession;
+use App\Models\AttendanceLog;
+use App\Models\QrAttendance;
+use App\Models\Student;
+use App\Services\QrCodeService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class AttendanceController extends Controller
 {
-    public function __construct()
+    protected $qrCodeService;
+
+    public function __construct(QrCodeService $qrCodeService)
     {
-        $this->middleware('auth');
-        $this->middleware('role:student');
+        $this->qrCodeService = $qrCodeService;
     }
 
     /**
-     * Display attendance dashboard
+     * Show attendance scanner page
      */
-    public function index(Request $request)
+    public function index()
     {
-        $studentId = Auth::id();
-        $currentMonth = $request->get('month', now()->format('Y-m'));
-        $monthStart = Carbon::parse($currentMonth . '-01')->startOfMonth();
-        $monthEnd = $monthStart->copy()->endOfMonth();
+        $student = auth()->user()->student ?? Student::where('user_id', auth()->id())->first();
+        
+        if (!$student) {
+            return redirect()->route('student.dashboard')
+                           ->with('error', 'Data siswa tidak ditemukan.');
+        }
 
-        // Get attendance records for current month
-        $attendances = Attendance::with(['session'])
-            ->where('student_id', $studentId)
-            ->whereBetween('date', [$monthStart, $monthEnd])
-            ->orderBy('date', 'desc')
-            ->get();
+        // Get today's attendance
+        $todayAttendance = $student->attendanceLogs()
+                                 ->whereDate('attendance_date', today())
+                                 ->first();
 
-        // Get statistics
-        $stats = [
-            'total_days' => $attendances->count(),
-            'present' => $attendances->where('status', 'present')->count(),
-            'absent' => $attendances->where('status', 'absent')->count(),
-            'late' => $attendances->where('status', 'late')->count(),
-            'sick' => $attendances->where('status', 'sick')->count(),
-            'permission' => $attendances->where('status', 'permission')->count(),
-        ];
+        // Get recent attendance (last 7 days)
+        $recentAttendance = $student->attendanceLogs()
+                                  ->where('attendance_date', '>=', now()->subDays(7))
+                                  ->orderBy('attendance_date', 'desc')
+                                  ->get();
 
-        $stats['attendance_rate'] = $stats['total_days'] > 0 
-            ? round(($stats['present'] + $stats['late']) / $stats['total_days'] * 100, 1) 
-            : 0;
+        // Get monthly statistics
+        $monthlyStats = $student->attendanceLogs()
+                              ->whereMonth('attendance_date', now()->month)
+                              ->whereYear('attendance_date', now()->year)
+                              ->selectRaw('status, count(*) as count')
+                              ->groupBy('status')
+                              ->pluck('count', 'status')
+                              ->toArray();
 
-        // Get active sessions (for check-in)
-        $activeSessions = AttendanceSession::where('status', 'active')
-            ->where('date', now()->toDateString())
-            ->where('start_time', '<=', now()->toTimeString())
-            ->where('end_time', '>=', now()->toTimeString())
-            ->get();
-
-        return view('student.attendance.index', [
-            'pageTitle' => 'Absensi',
-            'breadcrumb' => [
-                ['title' => 'Absensi']
-            ],
-            'attendances' => $attendances,
-            'stats' => $stats,
-            'activeSessions' => $activeSessions,
-            'currentMonth' => $currentMonth
-        ]);
+        // Return view with cache busting headers
+        return response()
+            ->view('student.attendance.index', compact(
+                'student', 
+                'todayAttendance', 
+                'recentAttendance', 
+                'monthlyStats'
+            ))
+            ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0');
     }
 
     /**
-     * Check in to attendance session
+     * Process QR code scan
      */
-    public function checkIn(Request $request, $sessionId)
+    public function scanQr(Request $request)
     {
-        $session = AttendanceSession::findOrFail($sessionId);
-        $studentId = Auth::id();
-
-        // Check if session is active
-        if ($session->status !== 'active') {
-            return redirect()->back()->with('error', 'Sesi absensi tidak aktif!');
-        }
-
-        // Check if today
-        if ($session->date !== now()->toDateString()) {
-            return redirect()->back()->with('error', 'Sesi absensi bukan untuk hari ini!');
-        }
-
-        // Check if already checked in
-        $existingAttendance = Attendance::where('session_id', $sessionId)
-            ->where('student_id', $studentId)
-            ->first();
-
-        if ($existingAttendance) {
-            return redirect()->back()->with('error', 'Anda sudah melakukan absensi untuk sesi ini!');
-        }
-
-        // Determine status based on time
-        $now = now();
-        $sessionStart = Carbon::parse($session->date . ' ' . $session->start_time);
-        $sessionEnd = Carbon::parse($session->date . ' ' . $session->end_time);
-        $lateThreshold = $sessionStart->copy()->addMinutes(15); // 15 minutes late threshold
-
-        $status = 'present';
-        if ($now->gt($lateThreshold)) {
-            $status = 'late';
-        }
-
-        // Create attendance record
-        Attendance::create([
-            'session_id' => $sessionId,
-            'student_id' => $studentId,
-            'date' => $session->date,
-            'status' => $status,
-            'check_in_time' => $now->toTimeString(),
-            'notes' => $request->notes
+        // Log untuk debugging
+        \Log::info('QR Scan Request:', [
+            'qr_code' => $request->qr_code,
+            'location' => $request->location,
+            'user_id' => auth()->id(),
+            'timestamp' => now()
         ]);
 
-        $message = $status === 'late' 
-            ? 'Absensi berhasil! Anda terlambat.' 
-            : 'Absensi berhasil!';
-
-        return redirect()->back()->with('success', $message);
-    }
-
-    /**
-     * Submit excuse/permission
-     */
-    public function submitExcuse(Request $request)
-    {
         $request->validate([
-            'date' => 'required|date',
-            'reason' => 'required|string|max:500',
-            'type' => 'required|in:sick,permission',
-            'attachment' => 'nullable|file|max:2048|mimes:pdf,jpg,jpeg,png'
+            'qr_code' => 'required|string',
+            'location' => 'nullable|string|max:255',
         ]);
 
-        $studentId = Auth::id();
-        $date = $request->date;
+        try {
+            // Validate QR code
+            $qrAttendance = $this->qrCodeService->validateQrCode($request->qr_code);
+            
+            \Log::info('QR Validation Result:', [
+                'qr_attendance_found' => $qrAttendance ? true : false,
+                'qr_attendance_id' => $qrAttendance ? $qrAttendance->id : null,
+                'student_id' => $qrAttendance ? $qrAttendance->student_id : null
+            ]);
+            
+            if (!$qrAttendance) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'QR Code tidak valid atau tidak ditemukan.',
+                    'debug' => [
+                        'qr_code' => $request->qr_code,
+                        'validation_result' => 'not_found'
+                    ]
+                ], 400);
+            }
 
-        // Check if already has attendance for this date
-        $existingAttendance = Attendance::where('student_id', $studentId)
-            ->where('date', $date)
-            ->first();
+            $student = $qrAttendance->student;
+            
+            if (!$student) {
+                \Log::error('Student not found for QR attendance', [
+                    'qr_attendance_id' => $qrAttendance->id,
+                    'student_id' => $qrAttendance->student_id
+                ]);
+                
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data siswa tidak ditemukan.',
+                ], 400);
+            }
+            
+            $scanTime = now();
+            $attendanceDate = $scanTime->toDateString();
 
-        if ($existingAttendance) {
-            return redirect()->back()->with('error', 'Anda sudah memiliki catatan absensi untuk tanggal ini!');
+            // Check if already scanned today
+            $existingAttendance = AttendanceLog::where('student_id', $student->id)
+                                             ->whereDate('attendance_date', $attendanceDate)
+                                             ->first();
+
+            \Log::info('Existing Attendance Check:', [
+                'student_id' => $student->id,
+                'attendance_date' => $attendanceDate,
+                'existing_found' => $existingAttendance ? true : false
+            ]);
+
+            if ($existingAttendance) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Anda sudah melakukan absensi hari ini pada ' . 
+                               $existingAttendance->scan_time->format('H:i:s'),
+                    'existing_attendance' => [
+                        'status' => $existingAttendance->status_text,
+                        'scan_time' => $existingAttendance->scan_time->format('H:i:s'),
+                        'badge_color' => $existingAttendance->status_badge,
+                    ]
+                ], 400);
+            }
+
+            // Determine status based on scan time
+            $status = AttendanceLog::determineStatus($scanTime);
+            
+            \Log::info('Attendance Status Determined:', [
+                'scan_time' => $scanTime,
+                'status' => $status
+            ]);
+
+            // Create attendance log
+            $attendanceLog = AttendanceLog::create([
+                'student_id' => $student->id,
+                'qr_code' => $request->qr_code,
+                'status' => $status,
+                'scan_time' => $scanTime,
+                'attendance_date' => $attendanceDate,
+                'location' => $request->location,
+            ]);
+            
+            \Log::info('Attendance Log Created:', [
+                'attendance_log_id' => $attendanceLog->id,
+                'student_id' => $student->id,
+                'status' => $status
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Absensi berhasil dicatat!',
+                'attendance' => [
+                    'student_name' => $student->name,
+                    'nis' => $student->nis,
+                    'class' => $student->class,
+                    'status' => $attendanceLog->status_text,
+                    'scan_time' => $attendanceLog->scan_time->format('H:i:s'),
+                    'attendance_date' => $attendanceLog->attendance_date->format('d/m/Y'),
+                    'badge_color' => $attendanceLog->status_badge,
+                ],
+                'debug' => [
+                    'attendance_log_id' => $attendanceLog->id,
+                    'raw_status' => $status,
+                    'scan_time_raw' => $scanTime->toISOString()
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('QR Scan Error:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'qr_code' => $request->qr_code
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+                'debug' => [
+                    'error_type' => get_class($e),
+                    'error_line' => $e->getLine(),
+                    'error_file' => $e->getFile()
+                ]
+            ], 500);
         }
-
-        $attendance = new Attendance();
-        $attendance->student_id = $studentId;
-        $attendance->date = $date;
-        $attendance->status = $request->type;
-        $attendance->notes = $request->reason;
-
-        // Handle file upload
-        if ($request->hasFile('attachment')) {
-            $file = $request->file('attachment');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('attendance/excuses', $filename, 'public');
-            $attendance->attachment = $path;
-        }
-
-        $attendance->save();
-
-        return redirect()->back()->with('success', 'Pengajuan izin berhasil dikirim!');
     }
 
     /**
-     * Show attendance history
+     * Get student's QR code for download
+     */
+    public function getMyQrCode()
+    {
+        $student = auth()->user()->student ?? Student::where('user_id', auth()->id())->first();
+        
+        if (!$student) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data siswa tidak ditemukan.',
+            ], 404);
+        }
+
+        $qrAttendance = $student->qrAttendance;
+        
+        if (!$qrAttendance) {
+            return response()->json([
+                'success' => false,
+                'message' => 'QR Code belum dibuat. Silakan hubungi admin.',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'qr_code' => $qrAttendance->qr_code,
+            'qr_image_url' => $qrAttendance->qr_image_url,
+            'student' => [
+                'name' => $student->name,
+                'nis' => $student->nis,
+                'class' => $student->class,
+            ]
+        ]);
+    }
+
+    /**
+     * Download student's QR code
+     */
+    public function downloadMyQrCode()
+    {
+        $student = auth()->user()->student ?? Student::where('user_id', auth()->id())->first();
+        
+        if (!$student) {
+            return redirect()->back()->with('error', 'Data siswa tidak ditemukan.');
+        }
+
+        $qrAttendance = $student->qrAttendance;
+        
+        if (!$qrAttendance || !$qrAttendance->qr_image_path) {
+            return redirect()->back()->with('error', 'QR Code belum dibuat. Silakan hubungi admin.');
+        }
+
+        $filePath = storage_path('app/public/' . $qrAttendance->qr_image_path);
+        
+        if (!file_exists($filePath)) {
+            return redirect()->back()->with('error', 'File QR Code tidak ditemukan.');
+        }
+
+        $fileName = 'QR_Absensi_' . $student->name . '_' . $student->nis . '.png';
+        
+        return response()->download($filePath, $fileName);
+    }
+
+    /**
+     * Get attendance history
      */
     public function history(Request $request)
     {
-        $studentId = Auth::id();
-        $year = $request->get('year', now()->year);
-
-        $attendances = Attendance::with(['session'])
-            ->where('student_id', $studentId)
-            ->whereYear('date', $year)
-            ->orderBy('date', 'desc')
-            ->paginate(20);
-
-        // Monthly statistics
-        $monthlyStats = [];
-        for ($month = 1; $month <= 12; $month++) {
-            $monthAttendances = Attendance::where('student_id', $studentId)
-                ->whereYear('date', $year)
-                ->whereMonth('date', $month)
-                ->get();
-
-            $monthlyStats[$month] = [
-                'total' => $monthAttendances->count(),
-                'present' => $monthAttendances->where('status', 'present')->count(),
-                'late' => $monthAttendances->where('status', 'late')->count(),
-                'absent' => $monthAttendances->where('status', 'absent')->count(),
-                'sick' => $monthAttendances->where('status', 'sick')->count(),
-                'permission' => $monthAttendances->where('status', 'permission')->count(),
-            ];
+        $student = auth()->user()->student ?? Student::where('user_id', auth()->id())->first();
+        
+        if (!$student) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data siswa tidak ditemukan.',
+            ], 404);
         }
 
-        return view('student.attendance.history', [
-            'pageTitle' => 'Riwayat Absensi',
-            'breadcrumb' => [
-                ['title' => 'Absensi', 'url' => route('student.attendance.index')],
-                ['title' => 'Riwayat']
-            ],
-            'attendances' => $attendances,
-            'monthlyStats' => $monthlyStats,
-            'currentYear' => $year
+        $month = $request->get('month', date('m'));
+        $year = $request->get('year', date('Y'));
+
+        $attendanceHistory = $student->attendanceLogs()
+                                   ->whereMonth('attendance_date', $month)
+                                   ->whereYear('attendance_date', $year)
+                                   ->orderBy('attendance_date', 'desc')
+                                   ->get()
+                                   ->map(function($log) {
+                                       return [
+                                           'date' => $log->attendance_date->format('d/m/Y'),
+                                           'day' => $log->attendance_date->format('l'),
+                                           'status' => $log->status_text,
+                                           'scan_time' => $log->scan_time->format('H:i:s'),
+                                           'badge_color' => $log->status_badge,
+                                           'location' => $log->location,
+                                       ];
+                                   });
+
+        return response()->json([
+            'success' => true,
+            'attendance_history' => $attendanceHistory,
+            'month' => $month,
+            'year' => $year,
         ]);
     }
 }

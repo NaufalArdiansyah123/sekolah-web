@@ -29,7 +29,7 @@ class GalleryController extends Controller
             abort(404, 'Album tidak ditemukan');
         }
 
-        return view('public.gallery.photos', compact('album'));
+        return view('public.gallery.index', compact('album'));
     }
 
     /**

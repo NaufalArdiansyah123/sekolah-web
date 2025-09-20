@@ -666,29 +666,49 @@
                  x-transition:enter="transition ease-out duration-200"
                  x-transition:enter-start="opacity-0 transform scale-95"
                  x-transition:enter-end="opacity-100 transform scale-100"
-                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave="transition ease-in duration-150" 
                  x-transition:leave-start="opacity-100 transform scale-100"
                  x-transition:leave-end="opacity-0 transform scale-95"
                  class="nav-dropdown-content">
                 <a href="{{ route('teacher.quizzes.index') }}" 
                    class="nav-dropdown-item {{ request()->routeIs('teacher.quizzes.*') ? 'active' : '' }}"
                    @click="sidebarOpen = false">
-                    🧪 Kuis & Ujian
+                    🧪 Kuis
                 </a>
-                <a href="{{ route('teacher.assessment.index') }}" 
-                   class="nav-dropdown-item {{ request()->routeIs('teacher.assessment.index') || request()->routeIs('teacher.assessment.show') || request()->routeIs('teacher.assessment.edit') || request()->routeIs('teacher.assessment.create') ? 'active' : '' }}"
+                <a href="{{ route('teacher.daily-tests.index') }}" 
+                   class="nav-dropdown-item {{ request()->routeIs('teacher.daily-tests.*') ? 'active' : '' }}"
                    @click="sidebarOpen = false">
-                    🎯 Assessment
+                    📝 Ulangan Harian
                 </a>
-                <a href="{{ route('teacher.assessment.grades') }}" 
-                   class="nav-dropdown-item {{ request()->routeIs('teacher.assessment.grades') ? 'active' : '' }}"
+            </div>
+            </div>
+
+            <!-- Grades & Reports -->
+            <div class="nav-dropdown" x-data="{ open: {{ request()->routeIs('teacher.grades.*') ? 'true' : 'false' }} }">
+                <button @click="open = !open" 
+                        class="nav-dropdown-btn flex items-center px-4 py-3 text-sm font-medium rounded-lg w-full {{ request()->routeIs('teacher.grades.*') ? 'active' : '' }}"
+                        :class="{ 'active': open }">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    <span>Nilai & Laporan</span>
+                    <svg class="dropdown-icon" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+                
+                <div x-show="open" 
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 transform scale-95"
+                 x-transition:enter-end="opacity-100 transform scale-100"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100 transform scale-100"
+                 x-transition:leave-end="opacity-0 transform scale-95"
+                 class="nav-dropdown-content">
+                <a href="{{ route('teacher.grades.index') }}" 
+                   class="nav-dropdown-item {{ request()->routeIs('teacher.grades.index') || request()->routeIs('teacher.grades.show') || request()->routeIs('teacher.grades.edit') || request()->routeIs('teacher.grades.create') ? 'active' : '' }}"
                    @click="sidebarOpen = false">
-                    📊 Nilai & Rapor
-                </a>
-                <a href="{{ route('teacher.assessment.reports') }}" 
-                   class="nav-dropdown-item {{ request()->routeIs('teacher.assessment.reports') ? 'active' : '' }}"
-                   @click="sidebarOpen = false">
-                    📈 Laporan & Analisis
+                    📊 Nilai
                 </a>
             </div>
             </div>

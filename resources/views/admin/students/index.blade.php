@@ -957,6 +957,18 @@
                 <div class="stat-label">Kelas 12</div>
             </div>
             <div class="stat-card">
+                <div class="stat-number">{{ $stats['tkj'] }}</div>
+                <div class="stat-label">TKJ</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ $stats['rpl'] }}</div>
+                <div class="stat-label">RPL</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ $stats['dkv'] }}</div>
+                <div class="stat-label">DKV</div>
+            </div>
+            <div class="stat-card">
                 <div class="stat-number">{{ $stats['active'] }}</div>
                 <div class="stat-label">Aktif</div>
             </div>
@@ -985,15 +997,43 @@
             <form method="GET" class="filters-form">
                 <div class="row g-3">
                     <div class="col-md-2 filter-group">
-                        <label class="filter-label" data-tooltip="Pilih kelas untuk memfilter siswa berdasarkan tingkat">
+                        <label class="filter-label" data-tooltip="Pilih tingkat kelas (10, 11, atau 12)">
                             <i class="fas fa-layer-group"></i>
-                            Filter Kelas
+                            Tingkat
                         </label>
-                        <select name="grade" class="form-select">
-                            <option value="">Semua Kelas</option>
+                        <select name="grade" class="form-select" id="gradeFilter">
+                            <option value="">Semua Tingkat</option>
                             <option value="10" {{ request('grade') == '10' ? 'selected' : '' }}>Kelas 10</option>
                             <option value="11" {{ request('grade') == '11' ? 'selected' : '' }}>Kelas 11</option>
                             <option value="12" {{ request('grade') == '12' ? 'selected' : '' }}>Kelas 12</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-2 filter-group">
+                        <label class="filter-label" data-tooltip="Pilih jurusan SMK">
+                            <i class="fas fa-graduation-cap"></i>
+                            Jurusan
+                        </label>
+                        <select name="major" class="form-select" id="majorFilter">
+                            <option value="">Semua Jurusan</option>
+                            <option value="TKJ" {{ request('major') == 'TKJ' ? 'selected' : '' }}>TKJ (Teknik Komputer Jaringan)</option>
+                            <option value="RPL" {{ request('major') == 'RPL' ? 'selected' : '' }}>RPL (Rekayasa Perangkat Lunak)</option>
+                            <option value="DKV" {{ request('major') == 'DKV' ? 'selected' : '' }}>DKV (Desain Komunikasi Visual)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-2 filter-group">
+                        <label class="filter-label" data-tooltip="Pilih kelas spesifik">
+                            <i class="fas fa-users"></i>
+                            Kelas Spesifik
+                        </label>
+                        <select name="class" class="form-select" id="classFilter">
+                            <option value="">Semua Kelas</option>
+                            @foreach($allClasses as $classOption)
+                                <option value="{{ $classOption }}" {{ request('class') == $classOption ? 'selected' : '' }}>
+                                    {{ $classOption }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
                     
@@ -1040,13 +1080,19 @@
                 </div>
                 
                 <!-- Filter Stats -->
-                @if(request()->hasAny(['grade', 'status', 'search']))
+                @if(request()->hasAny(['grade', 'major', 'class', 'status', 'search']))
                     <div class="filter-stats">
                         <i class="fas fa-info-circle"></i>
                         <span class="filter-stats-text">
                             Filter aktif: 
                             @if(request('grade'))
-                                <strong>Kelas {{ request('grade') }}</strong>
+                                <strong>Tingkat {{ request('grade') }}</strong>
+                            @endif
+                            @if(request('major'))
+                                <strong>Jurusan {{ request('major') }}</strong>
+                            @endif
+                            @if(request('class'))
+                                <strong>Kelas {{ request('class') }}</strong>
                             @endif
                             @if(request('status'))
                                 <strong>Status: {{ ucfirst(request('status')) }}</strong>
@@ -1091,8 +1137,17 @@
                 <div class="table-info">
                     <div>
                         <strong>{{ $students->total() }}</strong> siswa ditemukan
-                        @if(request()->hasAny(['grade', 'status', 'search']))
+                        @if(request()->hasAny(['grade', 'major', 'class', 'status', 'search']))
                             dari <strong>{{ $stats['total'] }}</strong> total siswa
+                        @endif
+                        @if(request('class'))
+                            <span class="text-muted">- Kelas {{ request('class') }}</span>
+                        @elseif(request('major') && request('grade'))
+                            <span class="text-muted">- {{ request('grade') }} {{ request('major') }}</span>
+                        @elseif(request('major'))
+                            <span class="text-muted">- Jurusan {{ request('major') }}</span>
+                        @elseif(request('grade'))
+                            <span class="text-muted">- Tingkat {{ request('grade') }}</span>
                         @endif
                     </div>
                     <div>
@@ -1131,6 +1186,7 @@
                             <th width="90">NIS</th>
                             <th width="90">NISN</th>
                             <th width="100">Kelas</th>
+                            <th width="80">Agama</th>
                             <th width="80">Status</th>
                             <th width="100">Telepon</th>
                             <th width="150">Tanggal Lahir</th>
@@ -1169,6 +1225,11 @@
                                 </td>
                                 <td>
                                     <span class="student-class">{{ $student->class }}</span>
+                                </td>
+                                <td>
+                                    <span class="text-muted" style="font-size: 0.75rem;">
+                                        {{ $student->religion ?? '-' }}
+                                    </span>
                                 </td>
                                 <td>
                                     <span class="status-badge status-{{ $student->status }}" 
@@ -1636,5 +1697,126 @@ rippleStyle.textContent = `
     }
 `;
 document.head.appendChild(rippleStyle);
+
+// Smart Class Filter System
+document.addEventListener('DOMContentLoaded', function() {
+    const gradeFilter = document.getElementById('gradeFilter');
+    const majorFilter = document.getElementById('majorFilter');
+    const classFilter = document.getElementById('classFilter');
+    
+    // Store all class options
+    const allClassOptions = Array.from(classFilter.options).slice(1); // Exclude "Semua Kelas"
+    
+    function updateClassFilter() {
+        const selectedGrade = gradeFilter.value;
+        const selectedMajor = majorFilter.value;
+        
+        // Clear current options except "Semua Kelas"
+        classFilter.innerHTML = '<option value="">Semua Kelas</option>';
+        
+        // Filter and add relevant options
+        allClassOptions.forEach(option => {
+            const className = option.value;
+            let shouldShow = true;
+            
+            // Filter by grade
+            if (selectedGrade && !className.startsWith(selectedGrade)) {
+                shouldShow = false;
+            }
+            
+            // Filter by major
+            if (selectedMajor && !className.includes(selectedMajor)) {
+                shouldShow = false;
+            }
+            
+            if (shouldShow) {
+                const newOption = document.createElement('option');
+                newOption.value = className;
+                newOption.textContent = className;
+                
+                // Maintain selection if it matches current request
+                if (className === '{{ request("class") }}') {
+                    newOption.selected = true;
+                }
+                
+                classFilter.appendChild(newOption);
+            }
+        });
+        
+        // If current selection is no longer valid, clear it
+        if (classFilter.value === '' && '{{ request("class") }}') {
+            const currentClass = '{{ request("class") }}';
+            const isStillValid = Array.from(classFilter.options).some(opt => opt.value === currentClass);
+            if (!isStillValid) {
+                // Clear the class filter if the current selection is no longer valid
+                const url = new URL(window.location);
+                url.searchParams.delete('class');
+                // Don't auto-redirect, just update the dropdown
+            }
+        }
+    }
+    
+    // Update class filter when grade or major changes
+    gradeFilter.addEventListener('change', updateClassFilter);
+    majorFilter.addEventListener('change', updateClassFilter);
+    
+    // Initialize on page load
+    updateClassFilter();
+    
+    // Add visual feedback for filter interactions
+    [gradeFilter, majorFilter, classFilter].forEach(filter => {
+        filter.addEventListener('change', function() {
+            this.style.borderColor = '#4f46e5';
+            this.style.boxShadow = '0 0 0 3px rgba(79, 70, 229, 0.1)';
+            
+            setTimeout(() => {
+                this.style.borderColor = '';
+                this.style.boxShadow = '';
+            }, 1000);
+        });
+    });
+    
+    // Auto-submit form when specific class is selected
+    classFilter.addEventListener('change', function() {
+        if (this.value) {
+            // Add a small delay for better UX
+            setTimeout(() => {
+                this.closest('form').submit();
+            }, 300);
+        }
+    });
+    
+    // Quick filter buttons
+    const quickFilters = {
+        'filter-10-tkj': { grade: '10', major: 'TKJ' },
+        'filter-10-rpl': { grade: '10', major: 'RPL' },
+        'filter-10-dkv': { grade: '10', major: 'DKV' },
+        'filter-11-tkj': { grade: '11', major: 'TKJ' },
+        'filter-11-rpl': { grade: '11', major: 'RPL' },
+        'filter-11-dkv': { grade: '11', major: 'DKV' },
+        'filter-12-tkj': { grade: '12', major: 'TKJ' },
+        'filter-12-rpl': { grade: '12', major: 'RPL' },
+        'filter-12-dkv': { grade: '12', major: 'DKV' }
+    };
+    
+    // Add quick filter functionality if buttons exist
+    Object.keys(quickFilters).forEach(id => {
+        const button = document.getElementById(id);
+        if (button) {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const filter = quickFilters[id];
+                gradeFilter.value = filter.grade;
+                majorFilter.value = filter.major;
+                updateClassFilter();
+                
+                // Submit form
+                setTimeout(() => {
+                    document.querySelector('.filters-form').submit();
+                }, 100);
+            });
+        }
+    });
+});
 </script>
 @endpush

@@ -1097,9 +1097,7 @@
                     </div>
                     <div class="card-body">
                         <div class="d-grid gap-3">
-                            <a href="<?php echo e(route('downloads.index')); ?>" class="btn btn-outline-secondary btn-enhanced">
-                                <i class="fas fa-download me-2"></i>Download
-                            </a>
+
 
                            <a href="<?php echo e(route('gallery.index')); ?>" class="btn btn-outline-secondary btn-enhanced">
                                 <i class="fas fa-images me-2"></i>Galeri

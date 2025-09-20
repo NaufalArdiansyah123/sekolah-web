@@ -157,7 +157,9 @@
 
             <!-- Form Actions -->
             <div class="form-actions">
-              
+                <a href="{{ route('admin.posts.blog') }}" class="btn btn-back">
+                    <i class="fas fa-arrow-left me-2"></i>Kembali
+                </a>
                 <div class="action-buttons">
                     <button type="submit" name="draft" value="1" class="btn btn-draft"><i class="fas fa-save me-2"></i>Simpan Draft</button>
                     <button type="submit" name="publish" value="1" class="btn btn-publish"><i class="fas fa-paper-plane me-2"></i>Publikasikan</button>
@@ -168,23 +170,7 @@
 </div>
 
 <style>
-    :root {
-        --primary: #4361ee;
-        --primary-dark: #3a56d4;
-        --secondary: #7209b7;
-        --success: #06d6a0;
-        --danger: #ef476f;
-        --warning: #ffd166;
-        --info: #118ab2;
-        --light: #f8f9fa;
-        --dark: #212529;
-        --gray: #6c757d;
-        --light-gray: #e9ecef;
-        --border-radius: 12px;
-        --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-        --transition: all 0.3s ease;
-    }
-
+    /* Dark Mode Compatible Styles */
     .btn {
         display: inline-flex;
         align-items: center;
@@ -192,7 +178,7 @@
         border-radius: 50px;
         font-weight: 600;
         text-decoration: none;
-        transition: var(--transition);
+        transition: all 0.3s ease;
         border: none;
         cursor: pointer;
         font-size: 1rem;
@@ -200,15 +186,17 @@
 
     /* Form Styles */
     .form-container {
-        background: white;
-        border-radius: var(--border-radius);
-        box-shadow: var(--shadow);
+        background: var(--bg-primary);
+        border-radius: 12px;
+        box-shadow: 0 10px 30px var(--shadow-color);
         overflow: hidden;
         margin-bottom: 30px;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
     }
 
     .form-header {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        background: linear-gradient(135deg, #4361ee 0%, #7209b7 100%);
         color: white;
         padding: 25px 30px;
         position: relative;
@@ -257,14 +245,18 @@
 
     .form-body {
         padding: 30px;
+        background: var(--bg-primary);
+        transition: all 0.3s ease;
     }
 
     .form-section {
         margin-bottom: 40px;
         padding: 25px;
-        background: #f8f9fa;
-        border-radius: var(--border-radius);
-        border-left: 4px solid var(--primary);
+        background: var(--bg-secondary);
+        border-radius: 12px;
+        border-left: 4px solid #4361ee;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
     }
 
     .section-header {
@@ -275,14 +267,16 @@
         font-size: 1.3rem;
         font-weight: 600;
         margin-bottom: 8px;
-        color: var(--dark);
+        color: var(--text-primary);
         display: flex;
         align-items: center;
         gap: 10px;
+        transition: color 0.3s ease;
     }
 
     .section-subtitle {
-        color: var(--gray);
+        color: var(--text-secondary);
+        transition: color 0.3s ease;
     }
 
     .form-group {
@@ -293,35 +287,43 @@
         display: block;
         font-weight: 600;
         margin-bottom: 10px;
-        color: var(--dark);
+        color: var(--text-primary);
         display: flex;
         align-items: center;
         gap: 8px;
+        transition: color 0.3s ease;
     }
 
     .required {
-        color: var(--danger);
+        color: #ef476f;
     }
 
     .form-control {
         width: 100%;
         padding: 14px 16px;
-        border: 2px solid var(--light-gray);
+        border: 2px solid var(--border-color);
         border-radius: 10px;
         font-size: 1rem;
-        transition: var(--transition);
+        transition: all 0.3s ease;
+        background: var(--bg-primary);
+        color: var(--text-primary);
     }
 
     .form-control:focus {
         outline: none;
-        border-color: var(--primary);
+        border-color: #4361ee;
         box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+    }
+
+    .form-control::placeholder {
+        color: var(--text-tertiary);
     }
 
     .form-help {
         font-size: 0.85rem;
-        color: var(--gray);
+        color: var(--text-secondary);
         margin-top: 8px;
+        transition: color 0.3s ease;
     }
 
     .form-row {
@@ -331,49 +333,52 @@
     }
 
     .editor-container {
-        border: 2px solid var(--light-gray);
+        border: 2px solid var(--border-color);
         border-radius: 10px;
         overflow: hidden;
-        transition: var(--transition);
+        transition: all 0.3s ease;
+        background: var(--bg-primary);
     }
 
     .editor-container:focus-within {
-        border-color: var(--primary);
+        border-color: #4361ee;
         box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
     }
 
     /* Upload Area */
     .upload-area {
-        border: 2px dashed var(--light-gray);
+        border: 2px dashed var(--border-color);
         border-radius: 10px;
         padding: 40px 20px;
         text-align: center;
-        background: #fafbfc;
-        transition: var(--transition);
+        background: var(--bg-secondary);
+        transition: all 0.3s ease;
         cursor: pointer;
         position: relative;
     }
 
     .upload-area:hover {
-        border-color: var(--primary);
-        background: #f0f4ff;
+        border-color: #4361ee;
+        background: var(--bg-tertiary);
     }
 
     .upload-icon {
         font-size: 3rem;
-        color: var(--primary);
+        color: #4361ee;
         margin-bottom: 15px;
     }
 
     .upload-title {
         font-weight: 600;
         margin-bottom: 5px;
-        color: var(--dark);
+        color: var(--text-primary);
+        transition: color 0.3s ease;
     }
 
     .upload-subtitle {
-        color: var(--gray);
+        color: var(--text-secondary);
         margin-bottom: 15px;
+        transition: color 0.3s ease;
     }
 
     .upload-input {
@@ -396,7 +401,7 @@
     .preview-image {
         width: 100%;
         border-radius: 10px;
-        box-shadow: var(--shadow);
+        box-shadow: 0 10px 30px var(--shadow-color);
     }
 
     .remove-image {
@@ -405,7 +410,7 @@
         right: 10px;
         width: 36px;
         height: 36px;
-        background: var(--danger);
+        background: #ef476f;
         color: white;
         border: none;
         border-radius: 50%;
@@ -413,7 +418,7 @@
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        transition: var(--transition);
+        transition: all 0.3s ease;
     }
 
     .remove-image:hover {
@@ -426,18 +431,20 @@
         justify-content: space-between;
         align-items: center;
         padding: 25px 30px;
-        background: #f8f9fa;
-        border-top: 1px solid var(--light-gray);
+        background: var(--bg-secondary);
+        border-top: 1px solid var(--border-color);
+        transition: all 0.3s ease;
     }
 
     .btn-back {
-        background: var(--gray);
+        background: var(--text-secondary);
         color: white;
     }
 
     .btn-back:hover {
-        background: #5a6268;
+        background: var(--text-primary);
         color: white;
+        text-decoration: none;
     }
 
     .action-buttons {
@@ -446,23 +453,42 @@
     }
 
     .btn-draft {
-        background: var(--dark);
+        background: #6c757d;
         color: white;
     }
 
     .btn-draft:hover {
-        background: #343a40;
+        background: #5a6268;
         color: white;
     }
 
     .btn-publish {
-        background: var(--success);
+        background: #06d6a0;
         color: white;
     }
 
     .btn-publish:hover {
         background: #05c28f;
         color: white;
+    }
+
+    .text-danger {
+        color: #ef476f;
+        font-size: 0.85rem;
+        margin-top: 5px;
+    }
+
+    /* Dark mode specific adjustments */
+    .dark .form-section {
+        background: var(--bg-tertiary);
+    }
+
+    .dark .upload-area {
+        background: var(--bg-primary);
+    }
+
+    .dark .upload-area:hover {
+        background: var(--bg-secondary);
     }
 
     /* Responsive Styles */
@@ -481,18 +507,20 @@
             width: 100%;
             justify-content: center;
         }
+
+        .form-body {
+            padding: 20px;
+        }
+
+        .form-section {
+            padding: 20px;
+        }
     }
 
     @media (max-width: 576px) {
         .form-row {
             grid-template-columns: 1fr;
         }
-    }
-
-    .text-danger {
-        color: var(--danger);
-        font-size: 0.85rem;
-        margin-top: 5px;
     }
 </style>
 
@@ -549,6 +577,12 @@
                 previewImage.src = '#';
             });
         }
+
+        // Listen for theme changes
+        window.addEventListener('theme-changed', function(e) {
+            // Update any theme-specific elements if needed
+            console.log('Theme changed to:', e.detail.darkMode ? 'dark' : 'light');
+        });
     });
 </script>
 @endsection

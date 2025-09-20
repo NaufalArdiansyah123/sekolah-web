@@ -74,13 +74,17 @@
                             <label for="class" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Kelas <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" 
-                                   name="class" 
-                                   id="class" 
-                                   value="{{ old('class') }}"
-                                   class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                                   placeholder="Contoh: X IPA 1"
-                                   required>
+                            <select name="class" 
+                                    id="class" 
+                                    class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                    required>
+                                <option value="">Pilih Kelas</option>
+                                @foreach(\App\Helpers\ClassHelper::getAllClasses() as $class)
+                                    <option value="{{ $class }}" {{ old('class') == $class ? 'selected' : '' }}>
+                                        {{ $class }} - {{ \App\Helpers\ClassHelper::parseClass($class)['major'] == 'TKJ' ? 'Teknik Komputer dan Jaringan' : (\App\Helpers\ClassHelper::parseClass($class)['major'] == 'RPL' ? 'Rekayasa Perangkat Lunak' : 'Desain Komunikasi Visual') }}
+                                    </option>
+                                @endforeach
+                            </select>
                             @error('class')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror

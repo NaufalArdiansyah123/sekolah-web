@@ -5,7 +5,10 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' || false }" :class="{ 'dark': darkMode }">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ $title ?? 'Admin' }} - {{ config('app.name') }}</title>
@@ -13,6 +16,11 @@
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+    <!-- Preload critical resources -->
+    <link rel="preconnect" href="https://code.jquery.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    
     <!-- jQuery (Required for Bootstrap and our modals) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     
@@ -28,8 +36,19 @@
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Mobile Fix CSS -->
+    <link rel="stylesheet" href="{{ asset('css/mobile-fix.css') }}">
+    
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    <!-- Mobile Debug Tool (only in development) -->
+    @if(app()->environment('local'))
+        <script src="{{ asset('js/mobile-debug.js') }}"></script>
+    @endif
     
     <!-- Enhanced Styles for Dark Mode & Mobile -->
     <style>
@@ -193,6 +212,60 @@
             .main-content {
                 margin-left: 0 !important;
             }
+            
+            /* Ensure all elements fit in viewport */
+            * {
+                max-width: 100% !important;
+            }
+            
+            /* Fix container overflow */
+            .container {
+                padding-left: 15px !important;
+                padding-right: 15px !important;
+                max-width: 100% !important;
+            }
+            
+            /* Improve touch targets */
+            .btn {
+                min-height: 44px !important;
+                min-width: 44px !important;
+                touch-action: manipulation !important;
+            }
+            
+            /* Fix form inputs */
+            .form-control,
+            .form-select {
+                font-size: 16px !important; /* Prevent zoom on iOS */
+            }
+            
+            /* Improve table responsiveness */
+            .table-responsive {
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+            }
+        }
+        
+        /* Fallback styles if Vite assets fail to load */
+        .fallback-mode {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+        }
+        
+        .fallback-mode .card {
+            background: white !important;
+            border: 1px solid #ddd !important;
+            border-radius: 8px !important;
+            padding: 15px !important;
+            margin-bottom: 15px !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        .fallback-mode .btn {
+            padding: 10px 15px !important;
+            background: #007bff !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 4px !important;
+            text-decoration: none !important;
         }
     </style>
     
@@ -366,6 +439,84 @@
             if (savedTheme === 'true' || (savedTheme === null && systemPrefersDark)) {
                 document.documentElement.classList.add('dark');
             }
+        })();
+        
+        // Mobile-specific fixes
+        (function() {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                document.body.classList.add('mobile-device');
+                
+                // Prevent zoom on form focus (iOS)
+                const viewport = document.querySelector('meta[name="viewport"]');
+                if (viewport) {
+                    viewport.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
+                }
+                
+                // Add mobile-specific styles
+                const mobileStyles = document.createElement('style');
+                mobileStyles.textContent = `
+                    @media (hover: none) {
+                        .card:hover,
+                        .btn:hover,
+                        .stat-card:hover {
+                            transform: none !important;
+                        }
+                    }
+                    
+                    .mobile-device .container {
+                        padding-left: 15px !important;
+                        padding-right: 15px !important;
+                    }
+                    
+                    .mobile-device .table-responsive {
+                        overflow-x: auto !important;
+                        -webkit-overflow-scrolling: touch !important;
+                    }
+                `;
+                document.head.appendChild(mobileStyles);
+            }
+            
+            // Fallback for failed asset loading
+            let assetsLoaded = false;
+            
+            // Check if assets loaded after 3 seconds
+            setTimeout(() => {
+                if (!assetsLoaded) {
+                    console.warn('Assets loading slowly, applying fallback styles');
+                    document.body.classList.add('fallback-mode');
+                    
+                    // Show user-friendly message
+                    const fallbackMessage = document.createElement('div');
+                    fallbackMessage.style.cssText = `
+                        position: fixed;
+                        top: 10px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        background: #ffc107;
+                        color: #212529;
+                        padding: 10px 20px;
+                        border-radius: 5px;
+                        z-index: 9999;
+                        font-size: 14px;
+                        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                    `;
+                    fallbackMessage.innerHTML = '⚠️ Loading in compatibility mode';
+                    document.body.appendChild(fallbackMessage);
+                    
+                    setTimeout(() => {
+                        if (document.body.contains(fallbackMessage)) {
+                            document.body.removeChild(fallbackMessage);
+                        }
+                    }, 5000);
+                }
+            }, 3000);
+            
+            // Mark assets as loaded when page loads
+            window.addEventListener('load', () => {
+                assetsLoaded = true;
+            });
         })();
     </script>
 </body>

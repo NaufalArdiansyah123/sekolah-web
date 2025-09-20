@@ -290,21 +290,7 @@ class VideoController extends Controller
         }
     }
 
-    /**
-     * Download video file
-     */
-    public function download(Video $video)
-    {
-        $video->incrementDownloads();
-        
-        $filePath = storage_path('app/public/videos/' . $video->filename);
-        
-        if (!file_exists($filePath)) {
-            abort(404, 'File tidak ditemukan');
-        }
 
-        return response()->download($filePath, $video->original_name);
-    }
 
     /**
      * Toggle featured status

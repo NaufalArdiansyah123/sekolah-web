@@ -6,7 +6,7 @@
     <div class="bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-600 dark:to-indigo-700 rounded-xl p-6 text-white shadow-lg">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold mb-2">Kelola Kuis & Ujian 📝</h1>
+                <h1 class="text-2xl font-bold mb-2">Kelola Kuis 📝</h1>
                 <p class="text-blue-100 dark:text-blue-200">Buat dan kelola kuis untuk siswa Anda</p>
             </div>
             <div class="hidden md:block">

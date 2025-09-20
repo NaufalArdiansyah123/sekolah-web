@@ -535,11 +535,85 @@
             min-width: auto;
         }
         
-        .floating-btn-text {
-            display: block;
-            font-size: 0.75rem;
-        }
+    .floating-btn-text {
+        display: block;
+        font-size: 0.75rem;
     }
+    
+    /* Validation Styles */
+    .input-wrapper {
+        position: relative;
+    }
+    
+    .validation-icon {
+        position: absolute;
+        right: 35px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        z-index: 5;
+    }
+    
+    .validation-message {
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    
+    .validation-message.success {
+        color: #166534;
+        background: #dcfce7;
+        border: 1px solid #bbf7d0;
+    }
+    
+    .validation-message.error {
+        color: #991b1b;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+    }
+    
+    .validation-message.loading {
+        color: #1d4ed8;
+        background: #dbeafe;
+        border: 1px solid #bfdbfe;
+    }
+    
+    .validation-icon.success {
+        color: #16a34a;
+    }
+    
+    .validation-icon.error {
+        color: #dc2626;
+    }
+    
+    .validation-icon.loading {
+        color: #2563eb;
+    }
+    
+    .form-control.is-valid {
+        border-color: #16a34a;
+        box-shadow: 0 0 0 0.2rem rgba(22, 163, 74, 0.25);
+    }
+    
+    .form-control.is-invalid {
+        border-color: #dc2626;
+        box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25);
+    }
+    
+    .spinner {
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+}</style>
 </style>
 @endpush
 
@@ -609,26 +683,51 @@
                                 <label for="nis" class="form-label">
                                     NIS <span class="required">*</span>
                                 </label>
-                                <input type="text" class="form-control @error('nis') is-invalid @enderror" 
-                                       id="nis" name="nis" value="{{ old('nis') }}" required>
+                                <div class="input-wrapper">
+                                    <input type="text" class="form-control @error('nis') is-invalid @enderror" 
+                                           id="nis" name="nis" value="{{ old('nis') }}" 
+                                           placeholder="Contoh: 2024100001" 
+                                           pattern="[0-9]+" 
+                                           minlength="6" 
+                                           maxlength="20" 
+                                           required>
+                                    <div class="validation-icon" id="nisValidationIcon" style="display: none;"></div>
+                                    <button type="button" class="btn btn-sm btn-outline-primary" 
+                                            id="generateNisBtn" 
+                                            style="position: absolute; right: 5px; top: 5px; z-index: 10; font-size: 0.7rem; padding: 0.25rem 0.5rem;"
+                                            title="Generate NIS otomatis">
+                                        <i class="fas fa-magic"></i>
+                                    </button>
+                                </div>
+                                <div id="nisValidationMessage" class="validation-message" style="display: none;"></div>
                                 @error('nis')
                                     <div class="invalid-feedback">
                                         <i class="fas fa-exclamation-circle"></i>{{ $message }}
                                     </div>
                                 @enderror
+                                <small class="form-text text-muted">Format: Tahun(4) + Kelas(2) + Urutan(3). Contoh: 2024100001</small>
                             </div>
                         </div>
                         
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="nisn" class="form-label">NISN</label>
-                                <input type="text" class="form-control @error('nisn') is-invalid @enderror" 
-                                       id="nisn" name="nisn" value="{{ old('nisn') }}">
+                                <div class="input-wrapper">
+                                    <input type="text" class="form-control @error('nisn') is-invalid @enderror" 
+                                           id="nisn" name="nisn" value="{{ old('nisn') }}" 
+                                           placeholder="10 digit angka" 
+                                           pattern="[0-9]{10}" 
+                                           minlength="10" 
+                                           maxlength="10">
+                                    <div class="validation-icon" id="nisnValidationIcon" style="display: none;"></div>
+                                </div>
+                                <div id="nisnValidationMessage" class="validation-message" style="display: none;"></div>
                                 @error('nisn')
                                     <div class="invalid-feedback">
                                         <i class="fas fa-exclamation-circle"></i>{{ $message }}
                                     </div>
                                 @enderror
+                                <small class="form-text text-muted">NISN harus 10 digit angka (opsional)</small>
                             </div>
                         </div>
                     </div>
@@ -672,8 +771,12 @@
                                     @foreach($classOptions as $grade => $classes)
                                         <optgroup label="Kelas {{ $grade }}">
                                             @foreach($classes as $class)
+                                                @php
+                                                    $parsed = \App\Helpers\ClassHelper::parseClass($class);
+                                                    $majorName = \App\Helpers\ClassHelper::getMajors()[$parsed['major']] ?? $parsed['major'];
+                                                @endphp
                                                 <option value="{{ $class }}" {{ old('class') == $class ? 'selected' : '' }}>
-                                                    {{ $class }}
+                                                    {{ $class }} - {{ $majorName }}
                                                 </option>
                                             @endforeach
                                         </optgroup>
@@ -719,7 +822,7 @@
                     </div>
                     
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label class="form-label">
                                     Jenis Kelamin <span class="required">*</span>
@@ -748,7 +851,26 @@
                             </div>
                         </div>
                         
-                        <div class="col-md-6">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="religion" class="form-label">
+                                    Agama <span class="required">*</span>
+                                </label>
+                                <select class="form-select @error('religion') is-invalid @enderror" id="religion" name="religion" required>
+                                    <option value="">Pilih Agama</option>
+                                    @foreach(config('school.student.religions', ['Islam' => 'Islam', 'Kristen' => 'Kristen', 'Katolik' => 'Katolik', 'Hindu' => 'Hindu', 'Buddha' => 'Buddha', 'Konghucu' => 'Konghucu']) as $value => $label)
+                                        <option value="{{ $value }}" {{ old('religion') == $value ? 'selected' : '' }}>{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                                @error('religion')
+                                    <div class="invalid-feedback">
+                                        <i class="fas fa-exclamation-circle"></i>{{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="status" class="form-label">
                                     Status <span class="required">*</span>
@@ -852,21 +974,45 @@
                     @enderror
                 </div>
 
-                <!-- User Account Section -->
+                <!-- QR Code & User Account Section -->
                 <div class="form-section">
                     <h3 class="section-title">
                         <div class="section-icon">
-                            <i class="fas fa-key"></i>
+                            <i class="fas fa-qrcode"></i>
                         </div>
-                        Akun Pengguna (Opsional)
+                        QR Code Absensi & Akun Pengguna (Opsional)
                     </h3>
                     
+                    <!-- QR Code Auto-Generate Option -->
+                    <div class="checkbox-wrapper mb-3">
+                        <div class="custom-checkbox">
+                            <input type="checkbox" id="auto_generate_qr" name="auto_generate_qr" value="1" checked>
+                            <div class="checkmark"></div>
+                        </div>
+                        <label for="auto_generate_qr" class="form-label mb-0">
+                            <i class="fas fa-qrcode text-primary me-2"></i>
+                            Otomatis buat QR Code absensi untuk siswa ini
+                        </label>
+                    </div>
+                    
+                    <div class="alert alert-info mb-3">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <small>
+                            <strong>QR Code Absensi:</strong> Jika dicentang, sistem akan otomatis membuat QR Code untuk absensi siswa. 
+                            QR Code dapat digunakan untuk scan absensi harian dan dapat di-download dari halaman manajemen QR.
+                        </small>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <!-- User Account Option -->
                     <div class="checkbox-wrapper">
                         <div class="custom-checkbox">
                             <input type="checkbox" id="create_user_account" name="create_user_account" value="1">
                             <div class="checkmark"></div>
                         </div>
                         <label for="create_user_account" class="form-label mb-0">
+                            <i class="fas fa-key text-warning me-2"></i>
                             Buat akun pengguna untuk siswa ini
                         </label>
                     </div>
@@ -1040,6 +1186,15 @@ document.getElementById('create_user_account').addEventListener('change', functi
         emailField.required = true;
         passwordField.required = true;
         passwordConfirmField.required = true;
+        
+        // Add visual indicator that email is required
+        const emailLabel = document.querySelector('label[for="email"]');
+        if (emailLabel && !emailLabel.querySelector('.required')) {
+            emailLabel.innerHTML += ' <span class="required">*</span>';
+        }
+        
+        // Show info message
+        showNotification('Email wajib diisi untuk membuat akun pengguna!', 'info');
     } else {
         userAccountFields.style.display = 'none';
         emailField.required = false;
@@ -1047,52 +1202,224 @@ document.getElementById('create_user_account').addEventListener('change', functi
         passwordConfirmField.required = false;
         passwordField.value = '';
         passwordConfirmField.value = '';
+        
+        // Remove required indicator from email
+        const emailLabel = document.querySelector('label[for="email"]');
+        const requiredSpan = emailLabel?.querySelector('.required');
+        if (requiredSpan) {
+            requiredSpan.remove();
+        }
     }
 });
+
+// NIS Validation
+let nisTimeout;
+const nisInput = document.getElementById('nis');
+const nisIcon = document.getElementById('nisValidationIcon');
+const nisMessage = document.getElementById('nisValidationMessage');
+
+nisInput.addEventListener('input', function() {
+    clearTimeout(nisTimeout);
+    const nis = this.value.trim();
+    
+    if (nis.length === 0) {
+        hideValidation('nis');
+        return;
+    }
+    
+    // Show loading state
+    showValidation('nis', 'loading', 'Memeriksa NIS...', '<i class="fas fa-spinner spinner"></i>');
+    
+    nisTimeout = setTimeout(() => {
+        validateNis(nis);
+    }, 500);
+});
+
+// NISN Validation
+let nisnTimeout;
+const nisnInput = document.getElementById('nisn');
+const nisnIcon = document.getElementById('nisnValidationIcon');
+const nisnMessage = document.getElementById('nisnValidationMessage');
+
+nisnInput.addEventListener('input', function() {
+    clearTimeout(nisnTimeout);
+    const nisn = this.value.trim();
+    
+    if (nisn.length === 0) {
+        hideValidation('nisn');
+        return;
+    }
+    
+    // Show loading state
+    showValidation('nisn', 'loading', 'Memeriksa NISN...', '<i class="fas fa-spinner spinner"></i>');
+    
+    nisnTimeout = setTimeout(() => {
+        validateNisn(nisn);
+    }, 500);
+});
+
+// Generate NIS button
+document.getElementById('generateNisBtn').addEventListener('click', function() {
+    const classSelect = document.getElementById('class');
+    const selectedClass = classSelect.value;
+    
+    if (!selectedClass) {
+        alert('Pilih kelas terlebih dahulu untuk generate NIS.');
+        classSelect.focus();
+        return;
+    }
+    
+    // Show loading
+    this.disabled = true;
+    this.innerHTML = '<i class="fas fa-spinner spinner"></i>';
+    
+    fetch(`{{ route('admin.students.generate-nis') }}?class=${selectedClass}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.suggested_nis) {
+                nisInput.value = data.suggested_nis;
+                validateNis(data.suggested_nis);
+                showNotification('success', 'NIS berhasil di-generate!', data.pattern);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('error', 'Gagal generate NIS', 'Silakan coba lagi.');
+        })
+        .finally(() => {
+            this.disabled = false;
+            this.innerHTML = '<i class="fas fa-magic"></i>';
+        });
+});
+
+function validateNis(nis) {
+    fetch(`{{ route('admin.students.check-nis') }}?nis=${nis}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.available) {
+                showValidation('nis', 'success', data.message, '<i class="fas fa-check-circle"></i>');
+                nisInput.classList.remove('is-invalid');
+                nisInput.classList.add('is-valid');
+            } else {
+                showValidation('nis', 'error', data.message, '<i class="fas fa-times-circle"></i>');
+                nisInput.classList.remove('is-valid');
+                nisInput.classList.add('is-invalid');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showValidation('nis', 'error', 'Gagal memeriksa NIS', '<i class="fas fa-exclamation-triangle"></i>');
+        });
+}
+
+function validateNisn(nisn) {
+    fetch(`{{ route('admin.students.check-nisn') }}?nisn=${nisn}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.available) {
+                showValidation('nisn', 'success', data.message, '<i class="fas fa-check-circle"></i>');
+                nisnInput.classList.remove('is-invalid');
+                nisnInput.classList.add('is-valid');
+            } else {
+                showValidation('nisn', 'error', data.message, '<i class="fas fa-times-circle"></i>');
+                nisnInput.classList.remove('is-valid');
+                nisnInput.classList.add('is-invalid');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showValidation('nisn', 'error', 'Gagal memeriksa NISN', '<i class="fas fa-exclamation-triangle"></i>');
+        });
+}
+
+function showValidation(field, type, message, icon) {
+    const iconElement = document.getElementById(field + 'ValidationIcon');
+    const messageElement = document.getElementById(field + 'ValidationMessage');
+    
+    iconElement.innerHTML = icon;
+    iconElement.className = `validation-icon ${type}`;
+    iconElement.style.display = 'block';
+    
+    messageElement.innerHTML = `${icon} ${message}`;
+    messageElement.className = `validation-message ${type}`;
+    messageElement.style.display = 'block';
+}
+
+function hideValidation(field) {
+    const iconElement = document.getElementById(field + 'ValidationIcon');
+    const messageElement = document.getElementById(field + 'ValidationMessage');
+    const inputElement = document.getElementById(field);
+    
+    iconElement.style.display = 'none';
+    messageElement.style.display = 'none';
+    inputElement.classList.remove('is-valid', 'is-invalid');
+}
 
 // Auto-generate NIS based on class and year
 document.getElementById('class').addEventListener('change', function() {
     const nisField = document.getElementById('nis');
     if (!nisField.value && this.value) {
-        const currentYear = new Date().getFullYear();
-        const grade = this.value.substring(0, 2);
-        const randomNum = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-        nisField.value = `${currentYear}${grade}${randomNum}`;
+        // Auto-generate when class is selected and NIS is empty
+        document.getElementById('generateNisBtn').click();
     }
 });
 
 // Form validation
 document.getElementById('studentForm').addEventListener('submit', function(e) {
     const createUserAccount = document.getElementById('create_user_account').checked;
-    const email = document.getElementById('email').value;
+    const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
     const passwordConfirm = document.getElementById('password_confirmation').value;
     
     if (createUserAccount) {
         if (!email) {
             e.preventDefault();
-            alert('Email harus diisi jika ingin membuat akun pengguna!');
+            showNotification('Email harus diisi jika ingin membuat akun pengguna!', 'error');
             document.getElementById('email').focus();
+            document.getElementById('email').classList.add('is-invalid');
+            return;
+        }
+        
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            e.preventDefault();
+            showNotification('Format email tidak valid!', 'error');
+            document.getElementById('email').focus();
+            document.getElementById('email').classList.add('is-invalid');
             return;
         }
         
         if (!password) {
             e.preventDefault();
-            alert('Password harus diisi jika ingin membuat akun pengguna!');
+            showNotification('Password harus diisi jika ingin membuat akun pengguna!', 'error');
             document.getElementById('password').focus();
+            document.getElementById('password').classList.add('is-invalid');
+            return;
+        }
+        
+        if (password.length < 8) {
+            e.preventDefault();
+            showNotification('Password minimal 8 karakter!', 'error');
+            document.getElementById('password').focus();
+            document.getElementById('password').classList.add('is-invalid');
             return;
         }
         
         if (password !== passwordConfirm) {
             e.preventDefault();
-            alert('Konfirmasi password tidak sesuai!');
+            showNotification('Konfirmasi password tidak sesuai!', 'error');
             document.getElementById('password_confirmation').focus();
+            document.getElementById('password_confirmation').classList.add('is-invalid');
             return;
         }
     }
     
     // Show loading overlay
     document.getElementById('loadingOverlay').style.display = 'flex';
+    
+    // Show success message
+    showNotification('Menyimpan data siswa...', 'info');
 });
 
 // Close form function
@@ -1174,28 +1501,35 @@ function resetForm() {
 // Show notification
 function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
-    notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
-    notification.style.cssText = 'top: 20px; right: 20px; z-index: 10000; min-width: 300px;';
+    const alertClass = type === 'error' ? 'danger' : type;
+    notification.className = `alert alert-${alertClass} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 10000; min-width: 300px; max-width: 400px;';
+    
+    const iconClass = type === 'success' ? 'check-circle' : 
+                     type === 'error' ? 'exclamation-triangle' : 
+                     type === 'warning' ? 'exclamation-circle' : 'info-circle';
+    
     notification.innerHTML = `
-        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'}"></i>
+        <i class="fas fa-${iconClass} me-2"></i>
         ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     `;
     
     document.body.appendChild(notification);
     
-    // Auto remove after 3 seconds
+    // Auto remove after 5 seconds for errors, 3 seconds for others
+    const timeout = type === 'error' ? 5000 : 3000;
     setTimeout(() => {
         if (notification.parentNode) {
             notification.remove();
         }
-    }, 3000);
+    }, timeout);
 }
 
 // Real-time validation
 document.querySelectorAll('input, select, textarea').forEach(field => {
     field.addEventListener('blur', function() {
-        if (this.hasAttribute('required') && !this.value) {
+        if (this.hasAttribute('required') && !this.value.trim()) {
             this.classList.add('is-invalid');
         } else {
             this.classList.remove('is-invalid');
@@ -1203,10 +1537,48 @@ document.querySelectorAll('input, select, textarea').forEach(field => {
     });
     
     field.addEventListener('input', function() {
-        if (this.classList.contains('is-invalid') && this.value) {
+        if (this.classList.contains('is-invalid') && this.value.trim()) {
             this.classList.remove('is-invalid');
         }
     });
+});
+
+// Password confirmation validation
+document.getElementById('password_confirmation').addEventListener('input', function() {
+    const password = document.getElementById('password').value;
+    const passwordConfirm = this.value;
+    
+    if (passwordConfirm && password !== passwordConfirm) {
+        this.classList.add('is-invalid');
+        showValidation('password_confirmation', 'error', 'Password tidak sesuai', '<i class="fas fa-times-circle"></i>');
+    } else if (passwordConfirm && password === passwordConfirm) {
+        this.classList.remove('is-invalid');
+        this.classList.add('is-valid');
+        hideValidation('password_confirmation');
+    } else {
+        this.classList.remove('is-invalid', 'is-valid');
+        hideValidation('password_confirmation');
+    }
+});
+
+// Password strength validation
+document.getElementById('password').addEventListener('input', function() {
+    const password = this.value;
+    const passwordConfirm = document.getElementById('password_confirmation').value;
+    
+    if (password.length > 0 && password.length < 8) {
+        this.classList.add('is-invalid');
+    } else if (password.length >= 8) {
+        this.classList.remove('is-invalid');
+        this.classList.add('is-valid');
+    } else {
+        this.classList.remove('is-invalid', 'is-valid');
+    }
+    
+    // Re-validate confirmation if it has value
+    if (passwordConfirm) {
+        document.getElementById('password_confirmation').dispatchEvent(new Event('input'));
+    }
 });
 
 // Keyboard shortcuts
