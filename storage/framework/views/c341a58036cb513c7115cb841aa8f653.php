@@ -650,7 +650,7 @@
         </div>
 
         <!-- Academic -->
-        <div class="nav-dropdown" x-data="{ open: <?php echo e(request()->routeIs('admin.extracurriculars.*', 'admin.achievements.*', 'admin.teachers.*', 'admin.students.*') ? 'true' : 'false'); ?> }">
+        <div class="nav-dropdown" x-data="{ open: <?php echo e(request()->routeIs('admin.extracurriculars.*', 'admin.achievements.*', 'admin.teachers.*', 'admin.students.*', 'admin.calendar.*') ? 'true' : 'false'); ?> }">
             <button @click="open = !open" 
                     class="nav-dropdown-btn group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg w-full"
                     :class="{ 'active': open }">
@@ -687,6 +687,11 @@
                    class="nav-dropdown-item <?php echo e(request()->routeIs('admin.students.*') ? 'active' : ''); ?>"
                    @click="sidebarOpen = false">
                     👨‍🎓 Siswa
+                </a>
+                <a href="<?php echo e(route('admin.calendar.index')); ?>" 
+                   class="nav-dropdown-item <?php echo e(request()->routeIs('admin.calendar.*') ? 'active' : ''); ?>"
+                   @click="sidebarOpen = false">
+                    📅 Kalender Akademik
                 </a>
             </div>
         </div>
@@ -780,7 +785,7 @@
                 <a href="<?php echo e(route('admin.student-registrations.index')); ?>" 
                    class="nav-dropdown-item <?php echo e(request()->routeIs('admin.student-registrations.*') ? 'active' : ''); ?>"
                    @click="sidebarOpen = false">
-                    📝 Pendaftaran Siswa
+                    📝 Pendaftaran Akun Siswa
                     <?php
                         $pendingCount = \App\Models\User::where('status', 'pending')->whereHas('roles', function($q) {
                             $q->where('name', 'student');

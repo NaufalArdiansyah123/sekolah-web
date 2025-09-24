@@ -14,6 +14,7 @@ class Assignment extends Model
         'title',
         'description',
         'subject',
+        'class',
         'teacher_id',
         'due_date',
         'max_score',

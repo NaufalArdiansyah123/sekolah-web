@@ -81,7 +81,6 @@ class DebugUserRoles extends Command
         $this->newLine();
         
         $this->info("Role Checks:");
-        $this->line("  hasRole('super_admin'): " . ($user->hasRole('super_admin') ? 'true' : 'false'));
         $this->line("  hasRole('admin'): " . ($user->hasRole('admin') ? 'true' : 'false'));
         $this->line("  hasRole('teacher'): " . ($user->hasRole('teacher') ? 'true' : 'false'));
         $this->line("  hasRole('student'): " . ($user->hasRole('student') ? 'true' : 'false'));

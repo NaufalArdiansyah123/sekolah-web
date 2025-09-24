@@ -1,62 +1,19 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <meta name="description" content="Website resmi sekolah">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Home - SMA Negeri 1</title>
-    
+    <title>SMK PGRI 2 PONOROGO</title>
+
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
-    <!-- Mobile Responsive Fix -->
-    <link rel="stylesheet" href="{{ asset('css/mobile-fix.css') }}">
-    
-    <!-- Inline JavaScript Fix - Must be first -->
-    <script>
-        // Global querySelector protection - runs immediately
-        (function() {
-            console.log('🔧 Inline querySelector protection loading...');
-            
-            // Store original functions
-            const originalQuerySelector = Document.prototype.querySelector;
-            const originalQuerySelectorAll = Document.prototype.querySelectorAll;
-            
-            // Override querySelector
-            Document.prototype.querySelector = function(selector) {
-                if (!selector || selector === '#' || selector === '' || selector.trim() === '') {
-                    console.warn('⚠️ Invalid selector blocked:', selector);
-                    return null;
-                }
-                try {
-                    return originalQuerySelector.call(this, selector);
-                } catch (error) {
-                    console.warn('⚠️ querySelector error blocked:', selector, error);
-                    return null;
-                }
-            };
-            
-            // Override querySelectorAll
-            Document.prototype.querySelectorAll = function(selector) {
-                if (!selector || selector === '#' || selector === '' || selector.trim() === '') {
-                    console.warn('⚠️ Invalid selector blocked:', selector);
-                    return [];
-                }
-                try {
-                    return originalQuerySelectorAll.call(this, selector);
-                } catch (error) {
-                    console.warn('⚠️ querySelectorAll error blocked:', selector, error);
-                    return [];
-                }
-            };
-            
-            console.log('✅ Inline querySelector protection active');
-        })();
-    </script>
-    
+
     <style>
         :root {
             --primary-color: #1a202c;
@@ -67,15 +24,17 @@
             --glass-bg: rgba(26, 32, 44, 0.95);
             --nav-height: 80px;
         }
-        
+
         /* Base Styles */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             font-size: 14px;
             line-height: 1.6;
             padding-top: var(--nav-height);
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
-        
+
         /* Enhanced Modern Navbar with Glassmorphism */
         .navbar {
             background: var(--glass-bg);
@@ -86,28 +45,33 @@
             padding: 0;
             height: var(--nav-height);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: fixed !important;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1050;
         }
-        
+
         /* Navbar scrolled state */
         .navbar.scrolled {
             background: rgba(26, 32, 44, 0.98);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             height: 70px;
         }
-        
+
         .navbar.scrolled .brand-icon img {
             height: 40px;
         }
-        
+
         .navbar.scrolled .brand-main {
             font-size: 1.1rem;
         }
-        
+
         .navbar .container-fluid {
             height: 100%;
             align-items: center;
         }
-        
+
         /* Enhanced Brand with Logo Animation */
         .navbar-brand {
             font-weight: 700;
@@ -119,7 +83,7 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             text-decoration: none;
         }
-        
+
         .navbar-brand .brand-icon {
             background: transparent;
             border-radius: 0;
@@ -131,45 +95,45 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         .navbar-brand .brand-icon img {
             height: 50px;
             width: auto;
             object-fit: contain;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
+
         .navbar-brand:hover .brand-icon {
             transform: scale(1.05);
             box-shadow: none;
         }
-        
+
         .navbar-brand:hover .brand-icon img {
             transform: scale(1.05);
         }
-        
+
         .navbar-brand .brand-text {
             display: flex;
             flex-direction: column;
             line-height: 1.2;
         }
-        
+
         .navbar-brand .brand-main {
             font-size: 1.2rem;
             font-weight: 700;
         }
-        
+
         .navbar-brand .brand-sub {
             font-size: 0.75rem;
             color: rgba(255, 255, 255, 0.7);
             font-weight: 400;
         }
-        
+
         /* Modern Navigation Links */
         .navbar-nav {
             gap: 0.5rem;
         }
-        
+
         .navbar-nav .nav-link {
             color: rgba(255, 255, 255, 0.9) !important;
             font-weight: 500;
@@ -182,7 +146,7 @@
             text-decoration: none;
             overflow: hidden;
         }
-        
+
         /* Hover effect dengan gradient background */
         .navbar-nav .nav-link::before {
             content: '';
@@ -196,30 +160,30 @@
             transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border-radius: 10px;
         }
-        
+
         .navbar-nav .nav-link:hover::before {
             opacity: 1;
         }
-        
+
         .navbar-nav .nav-link:hover {
             color: white !important;
             transform: translateY(-2px);
         }
-        
+
         /* Active state dengan glow effect */
         .navbar-nav .nav-link.active {
             background: linear-gradient(135deg, var(--secondary-color), #4299e1);
             color: white !important;
             box-shadow: 0 4px 15px rgba(49, 130, 206, 0.4);
         }
-        
+
         .navbar-nav .nav-link.active::before {
             opacity: 0;
         }
-        
-        /* Modern Dropdown Menu - FIXED FOR MOBILE */
+
+        /* ENHANCED Dropdown Menu - Perfect Functionality */
         .dropdown-menu {
-            background: rgba(255, 255, 255, 0.98);
+            background: rgba(255, 255, 255, 0.98) !important;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -228,38 +192,58 @@
             padding: 12px;
             margin-top: 8px;
             min-width: 220px;
-            z-index: 1050;
-            /* Remove problematic transforms for mobile */
-            transform: none;
+            z-index: 1060 !important;
+            /* Clean positioning */
+            transform: translateY(10px) !important;
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            /* Ensure clickable on mobile */
-            pointer-events: none;
+            position: absolute !important;
+            top: 100% !important;
+            left: 0 !important;
         }
-        
-        /* Desktop hover effect */
+
+        /* Enhanced hover for desktop */
         @media (min-width: 992px) {
-            .dropdown:hover .dropdown-menu {
-                opacity: 1;
-                visibility: visible;
-                pointer-events: auto;
-                transform: translateY(0) scale(1);
+            .navbar-nav .dropdown:hover .dropdown-menu {
+                display: block !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+                transform: translateY(0) !important;
             }
             
-            .dropdown-menu {
-                transform: translateY(-10px) scale(0.95);
+            .navbar-nav .dropdown .dropdown-menu {
+                display: block !important;
             }
         }
-        
-        /* Bootstrap show class - works on all devices */
+
+        /* Bootstrap show class for mobile/click */
         .dropdown-menu.show {
+            display: block !important;
             opacity: 1 !important;
             visibility: visible !important;
-            pointer-events: auto !important;
-            transform: translateY(0) scale(1) !important;
+            transform: translateY(0) !important;
+            z-index: 1060 !important;
+        }
+
+        /* Force dropdown visibility when show class is present */
+        .dropdown .dropdown-menu.show {
+            display: block !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            transform: translateY(0) !important;
+            position: absolute !important;
+            top: 100% !important;
+            left: 0 !important;
         }
         
+        /* Ensure dropdown is always visible when show class is present */
+        .dropdown-menu.show {
+            display: block !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+
         /* Dropdown Items dengan Modern Design */
         .dropdown-item {
             color: var(--primary-color);
@@ -272,30 +256,30 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .dropdown-item i {
             width: 20px;
             color: var(--secondary-color);
             transition: all 0.2s ease;
         }
-        
+
         .dropdown-item:hover {
             background: linear-gradient(135deg, rgba(49, 130, 206, 0.1), rgba(66, 153, 225, 0.05));
             color: var(--secondary-color);
             transform: translateX(4px);
         }
-        
+
         .dropdown-item:hover i {
             color: var(--secondary-color);
             transform: scale(1.1);
         }
-        
+
         .dropdown-divider {
             margin: 8px 0;
             border-color: rgba(0, 0, 0, 0.1);
         }
-        
-        /* Enhanced Mobile Toggler - FIXED */
+
+        /* Enhanced Mobile Toggler */
         .navbar-toggler {
             border: none;
             padding: 8px;
@@ -307,18 +291,38 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
         }
-        
+
         .navbar-toggler:focus {
             box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.3);
             outline: none;
         }
-        
+
         .navbar-toggler:hover {
             background: rgba(255, 255, 255, 0.2);
             transform: scale(1.05);
         }
         
+        /* Force collapsed state */
+        .navbar-toggler.collapsed {
+            border: none;
+        }
+        
+        .navbar-toggler.collapsed .navbar-toggler-icon {
+            background-color: white;
+        }
+        
+        .navbar-toggler.collapsed .navbar-toggler-icon::before {
+            transform: rotate(0deg);
+            top: -7px;
+        }
+        
+        .navbar-toggler.collapsed .navbar-toggler-icon::after {
+            transform: rotate(0deg);
+            top: 7px;
+        }
+
         /* Simple Hamburger Icon */
         .navbar-toggler-icon {
             background-image: none;
@@ -329,7 +333,7 @@
             display: block;
             transition: all 0.3s ease;
         }
-        
+
         .navbar-toggler-icon::before,
         .navbar-toggler-icon::after {
             content: '';
@@ -340,45 +344,45 @@
             left: 0;
             transition: all 0.3s ease;
         }
-        
+
         .navbar-toggler-icon::before {
             top: -7px;
         }
-        
+
         .navbar-toggler-icon::after {
             top: 7px;
         }
-        
-        /* Simple X animation */
+
+        /* X animation - Enhanced */
         .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
-            background-color: transparent;
+            background-color: transparent !important;
         }
-        
+
         .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::before {
-            transform: rotate(45deg);
-            top: 0;
+            transform: rotate(45deg) !important;
+            top: 0 !important;
         }
-        
+
         .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::after {
-            transform: rotate(-45deg);
-            top: 0;
+            transform: rotate(-45deg) !important;
+            top: 0 !important;
         }
         
-        /* Simple X icon toggle */
-        .navbar-toggler .fa-times {
-            display: none;
-            font-size: 1.1rem;
-            color: white;
+        /* Not collapsed state */
+        .navbar-toggler:not(.collapsed) .navbar-toggler-icon {
+            background-color: transparent !important;
         }
-        
-        .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
-            display: none;
+
+        .navbar-toggler:not(.collapsed) .navbar-toggler-icon::before {
+            transform: rotate(45deg) !important;
+            top: 0 !important;
         }
-        
-        .navbar-toggler[aria-expanded="true"] .fa-times {
-            display: inline-block;
+
+        .navbar-toggler:not(.collapsed) .navbar-toggler-icon::after {
+            transform: rotate(-45deg) !important;
+            top: 0 !important;
         }
-        
+
         /* User Dropdown Enhancement */
         .user-dropdown .dropdown-toggle {
             background: rgba(255, 255, 255, 0.1);
@@ -387,16 +391,16 @@
             padding: 8px 16px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
+
         .user-dropdown .dropdown-toggle:hover {
             background: rgba(255, 255, 255, 0.2);
             transform: translateY(-1px);
         }
-        
+
         .user-dropdown .dropdown-toggle::after {
             margin-left: 8px;
         }
-        
+
         /* Login Button Enhancement */
         .nav-item .login-btn {
             background: linear-gradient(135deg, var(--secondary-color), #4299e1);
@@ -407,12 +411,12 @@
             box-shadow: 0 4px 15px rgba(49, 130, 206, 0.3);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
+
         .nav-item .login-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 25px rgba(49, 130, 206, 0.4);
         }
-        
+
         /* Student Registration Button */
         .nav-item .register-btn {
             background: linear-gradient(135deg, #10b981, #34d399);
@@ -425,16 +429,22 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             text-decoration: none;
         }
-        
+
         .nav-item .register-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 25px rgba(16, 185, 129, 0.4);
             color: white !important;
             text-decoration: none;
         }
-        
-        /* Mobile Styles Enhancement - FIXED DROPDOWN */
+
+        /* ENHANCED Mobile Styles */
         @media (max-width: 991.98px) {
+            .navbar {
+                padding: 0.5rem 0;
+                height: auto;
+                min-height: 70px;
+            }
+
             .navbar-collapse {
                 background: rgba(26, 32, 44, 0.98);
                 backdrop-filter: blur(20px);
@@ -442,42 +452,75 @@
                 margin-top: 16px;
                 padding: 20px;
                 border: 1px solid rgba(255, 255, 255, 0.1);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+                max-height: 80vh;
+                overflow-y: auto;
             }
-            
+
             .navbar-nav {
-                gap: 8px;
+                gap: 4px;
             }
-            
+
             .navbar-nav .nav-link {
-                padding: 16px 20px !important;
+                padding: 14px 18px !important;
                 border-radius: 12px;
-                /* Ensure touch targets are large enough */
                 min-height: 48px;
                 display: flex;
                 align-items: center;
+                font-size: 0.95rem;
+                font-weight: 500;
+                transition: all 0.2s ease;
             }
-            
-            /* MOBILE DROPDOWN FIXES */
+
+            .navbar-nav .nav-link:hover {
+                background: rgba(255, 255, 255, 0.1);
+                transform: translateX(4px);
+            }
+
+            .navbar-nav .nav-link.active {
+                background: linear-gradient(135deg, var(--secondary-color), #4299e1);
+                color: white !important;
+            }
+
+            /* ENHANCED Mobile dropdown */
             .dropdown-menu {
                 background: rgba(255, 255, 255, 0.98) !important;
                 margin: 8px 0 !important;
                 position: static !important;
-                box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
                 transform: none !important;
                 opacity: 1 !important;
                 visibility: visible !important;
-                pointer-events: auto !important;
                 border-radius: 12px !important;
                 padding: 8px !important;
-                /* Ensure it's always visible when parent is clicked */
-                display: none;
+                display: none !important;
+                top: auto !important;
+                left: auto !important;
+                width: 100% !important;
+                border: 1px solid rgba(0, 0, 0, 0.1) !important;
+                max-height: 300px;
+                overflow-y: auto;
+                z-index: 1060 !important;
             }
-            
+
             .dropdown-menu.show {
                 display: block !important;
+                animation: slideDown 0.3s ease-out;
+                opacity: 1 !important;
+                visibility: visible !important;
             }
             
-            /* Make dropdown items more touch-friendly */
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
             .dropdown-item {
                 padding: 12px 16px !important;
                 min-height: 44px !important;
@@ -485,322 +528,343 @@
                 align-items: center !important;
                 border-radius: 8px !important;
                 margin-bottom: 2px !important;
+                font-size: 0.9rem;
+                transition: all 0.2s ease;
             }
-            
-            /* Ensure dropdown toggle is clickable */
-            .dropdown-toggle {
-                cursor: pointer !important;
-                -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+
+            .dropdown-item:hover {
+                background: rgba(49, 130, 206, 0.1) !important;
+                transform: translateX(4px);
             }
-            
+
+            .dropdown-item i {
+                width: 24px;
+                font-size: 0.9rem;
+            }
+
             .navbar-brand .brand-sub {
                 display: none;
             }
-            
+
             .navbar-brand .brand-icon img {
                 height: 40px;
             }
-            
+
             .navbar-brand .brand-main {
                 font-size: 1rem;
             }
-        }
-        
-        /* Tablet Styles */
-        @media (min-width: 768px) and (max-width: 991.98px) {
-            .navbar-brand {
-                font-size: 1.3rem;
+
+            /* Mobile user menu improvements */
+            .user-dropdown .dropdown-toggle {
+                background: rgba(255, 255, 255, 0.15);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 12px;
+                padding: 12px 16px;
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            /* Mobile action buttons */
+            .login-btn, .register-btn {
+                border-radius: 12px !important;
+                padding: 12px 20px !important;
+                margin: 4px 0 !important;
+                text-align: center;
+                justify-content: center;
+                min-height: 48px;
+                font-weight: 600;
+            }
+
+            .register-btn {
+                background: linear-gradient(135deg, #10b981, #34d399) !important;
+            }
+
+            .login-btn {
+                background: linear-gradient(135deg, var(--secondary-color), #4299e1) !important;
             }
         }
-        
-        /* Desktop Styles */
-        @media (min-width: 992px) {
-            .navbar-nav .nav-link {
-                margin: 0 4px;
-            }
-        }
-        
-        /* Search Bar (if needed) */
-        .navbar-search {
-            position: relative;
-            margin: 0 16px;
-        }
-        
-        .navbar-search input {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 25px;
-            padding: 8px 40px 8px 16px;
-            color: white;
-            width: 250px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .navbar-search input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
-        
-        .navbar-search input:focus {
-            outline: none;
-            background: rgba(255, 255, 255, 0.2);
-            border-color: var(--secondary-color);
-            width: 300px;
-        }
-        
-        .navbar-search .search-btn {
-            position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: rgba(255, 255, 255, 0.6);
-            padding: 4px;
-        }
-        
-        /* Animation for page load */
-        @keyframes slideDown {
-            from {
-                transform: translateY(-100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-        
-        .navbar {
-            animation: slideDown 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        /* Rest of existing styles... */
-        .hero-section {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
+
+        /* Content Styles for Demo */
+        .demo-content {
             padding: 40px 0;
-            min-height: 60vh;
-            display: flex;
-            align-items: center;
+            min-height: 80vh;
         }
-        
+
         .card {
             border: none;
             border-radius: 12px;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
             margin-bottom: 1rem;
         }
-        
+
         .card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
-        
+
         .footer {
             background-color: var(--primary-color);
             color: white;
             padding: 2rem 0 1rem 0;
             margin-top: 3rem;
         }
-        
+
         /* Mobile optimizations */
         @media (max-width: 767.98px) {
             body {
                 padding-top: 70px;
             }
-            
-            .hero-section {
-                padding: 30px 0;
-                text-align: center;
+
+            .navbar {
+                padding: 0.5rem 0;
             }
-            
-            .hero-section h1 {
-                font-size: 1.8rem !important;
-                margin-bottom: 1rem;
-            }
-            
-            /* Additional mobile fixes */
+
             .navbar-toggler {
                 width: 40px;
                 height: 40px;
+                padding: 6px;
             }
-            
+
             .navbar-toggler-icon {
-                width: 20px;
+                width: 18px;
             }
-            
+
             .navbar-toggler-icon::before,
             .navbar-toggler-icon::after {
-                width: 20px;
+                width: 18px;
             }
+
+            .navbar-brand .brand-icon img {
+                height: 35px;
+            }
+
+            .navbar-brand .brand-main {
+                font-size: 0.9rem;
+            }
+
+            .navbar-collapse {
+                padding: 16px;
+                margin-top: 12px;
+            }
+
+            .navbar-nav .nav-link {
+                padding: 12px 16px !important;
+                font-size: 0.9rem;
+            }
+
+            .dropdown-item {
+                padding: 10px 14px !important;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Extra small devices */
+        @media (max-width: 575.98px) {
+            .navbar-brand .brand-main {
+                font-size: 0.85rem;
+            }
+
+            .navbar-brand .brand-icon img {
+                height: 32px;
+            }
+
+            .navbar-collapse {
+                padding: 12px;
+            }
+
+            .navbar-nav .nav-link {
+                padding: 10px 14px !important;
+                font-size: 0.85rem;
+            }
+
+            .dropdown-item {
+                padding: 8px 12px !important;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Animation for page load */
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .navbar {
+            animation: slideDown 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
     </style>
 </head>
+
 <body>
     <!-- Enhanced Modern Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid px-4">
             <!-- Enhanced Brand -->
             <a class="navbar-brand" href="{{ route('home') }}">
                 <div class="brand-icon">
-                    <img src="{{ asset('images/logo-sterida.png') }}" alt="Logo SMK PGRI 2 PONOROGO">
+                    <img src="{{ asset('images/logo-sterida.png') }}" alt="Logo SMK PGRI 2 PONOROGO" onerror="this.style.display='none'">
                 </div>
                 <div class="brand-text">
                     <span class="brand-main">SMK PGRI 2 PONOROGO</span>
                     <span class="brand-sub d-none d-lg-block">Terbukti Lebih Maju</span>
                 </div>
             </a>
-            
+
             <!-- Mobile Toggle Button -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
-                <i class="fas fa-times"></i>
             </button>
-            
+
             <!-- Navigation Menu -->
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <!-- Home -->
                     <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('home') }}">
+                        <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">
                             <i class="fas fa-home me-2 d-lg-none"></i>Beranda
                         </a>
                     </li>
-                    
+
                     <!-- Profil Dropdown -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="aboutDropdown" role="button" 
-                           data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle {{ request()->routeIs('about.*') ? 'active' : '' }}" href="javascript:void(0)"
+                            id="aboutDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-info-circle me-2 d-lg-none"></i>Profil
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{{ route('about.profile') }}">
-                                <i class="fas fa-school me-3"></i>Profil Sekolah
-                            </a></li>
+                                    <i class="fas fa-school me-3"></i>Profil Sekolah
+                                </a></li>
                             <li><a class="dropdown-item" href="{{ route('about.vision') }}">
-                                <i class="fas fa-eye me-3"></i>Visi & Misi
-                            </a></li>
+                                    <i class="fas fa-eye me-3"></i>Visi & Misi
+                                </a></li>
                             <li><a class="dropdown-item" href="{{ route('about.sejarah') }}">
-                                <i class="fas fa-graduation-cap me-3"></i>Sejarah Sekolah
-                            </a></li>
+                                    <i class="fas fa-graduation-cap me-3"></i>Sejarah Sekolah
+                                </a></li>
                         </ul>
                     </li>
-                    
+
                     <!-- Akademik Dropdown -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="academicDropdown" role="button" 
-                           data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="academicDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-book me-2 d-lg-none"></i>Akademik
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{{ route('public.academic.programs') }}">
-                                <i class="fas fa-graduation-cap me-3"></i>Program Studi
-                            </a></li>
+                                    <i class="fas fa-graduation-cap me-3"></i>Program Studi
+                                </a></li>
                             <li><a class="dropdown-item" href="{{ route('academic.calendar') }}">
-                                <i class="fas fa-calendar-alt me-3"></i>Kalender Akademik
-                            </a></li>
-                            
+                                    <i class="fas fa-calendar-alt me-3"></i>Kalender Akademik
+                                </a></li>
+                            <li><a class="dropdown-item" href="{{ route('public.extracurriculars.index') }}">
+                                    <i class="fas fa-users me-3"></i>Ekstrakurikuler
+                                </a></li>
                         </ul>
                     </li>
-                    
+
                     <!-- Informasi Dropdown -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="infoDropdown" role="button" 
-                           data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle {{ request()->routeIs('news.*') || request()->routeIs('announcements.*') || request()->routeIs('agenda.*') ? 'active' : '' }}" href="javascript:void(0)" id="infoDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-newspaper me-2 d-lg-none"></i>Informasi
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{{ route('news.index') }}">
-                                <i class="fas fa-newspaper me-3"></i>Berita
-                            </a></li>
+                                    <i class="fas fa-newspaper me-3"></i>Berita
+                                </a></li>
                             <li><a class="dropdown-item" href="{{ route('announcements.index') }}">
-                                <i class="fas fa-bullhorn me-3"></i>Pengumuman
-                            </a></li>
+                                    <i class="fas fa-bullhorn me-3"></i>Pengumuman
+                                </a></li>
                             <li><a class="dropdown-item" href="{{ route('agenda.index') }}">
-                                <i class="fas fa-calendar-check me-3"></i>Agenda
-                            </a></li>
+                                    <i class="fas fa-calendar-check me-3"></i>Agenda
+                                </a></li>
                         </ul>
                     </li>
-                    
+
                     <!-- Media Dropdown -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="mediaDropdown" role="button" 
-                           data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle {{ request()->routeIs('gallery.*') || request()->routeIs('public.videos.*') ? 'active' : '' }}" href="javascript:void(0)" id="mediaDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-photo-video me-2 d-lg-none"></i>Media
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{{ route('gallery.index') }}">
-                                <i class="fas fa-images me-3"></i>Galeri Foto
-                            </a></li>
+                                    <i class="fas fa-images me-3"></i>Galeri Foto
+                                </a></li>
                             <li><a class="dropdown-item" href="{{ route('public.videos.index') }}">
-                                <i class="fas fa-video me-3"></i>Video Dokumentasi
-                            </a></li>
-                            <li><hr class="dropdown-divider"></li>
-
+                                    <i class="fas fa-video me-3"></i>Video Dokumentasi
+                                </a></li>
                         </ul>
                     </li>
-                    
+
                     <!-- Lainnya Dropdown -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="moreDropdown" role="button" 
-                           data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle {{ request()->routeIs('facilities.*') || request()->routeIs('achievements.*') || request()->routeIs('public.teachers.*') ? 'active' : '' }}" href="javascript:void(0)" id="moreDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-th me-2 d-lg-none"></i>Lainnya
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{{ route('facilities.index') }}">
-                                <i class="fas fa-building me-3"></i>Fasilitas
-                            </a></li>
+                                    <i class="fas fa-building me-3"></i>Fasilitas
+                                </a></li>
                             <li><a class="dropdown-item" href="{{ route('achievements.index') }}">
-                                <i class="fas fa-trophy me-3"></i>Prestasi
-                            </a></li>
-                            <li><a class="dropdown-item" href="{{ route('public.extracurriculars.index') }}">
-                                <i class="fas fa-users me-3"></i>Ekstrakurikuler
-                            </a></li>
+                                    <i class="fas fa-trophy me-3"></i>Prestasi
+                                </a></li>
                             <li><a class="dropdown-item" href="{{ route('public.teachers.index') }}">
-                                <i class="fas fa-chalkboard-teacher me-3"></i>Guru & Staff
-                            </a></li>
-                            <li><hr class="dropdown-divider"></li>
+                                    <i class="fas fa-chalkboard-teacher me-3"></i>Guru & Staff
+                                </a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
                             <li><a class="dropdown-item" href="{{ route('contact') }}">
-                                <i class="fas fa-envelope me-3"></i>Kontak
-                            </a></li>
+                                    <i class="fas fa-envelope me-3"></i>Kontak
+                                </a></li>
                         </ul>
                     </li>
-                    
+
                     <!-- Desktop only links -->
                     <li class="nav-item d-none d-xl-block">
-                        <a class="nav-link" href="{{ route('contact') }}">
+                        <a class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }}" href="{{ route('contact') }}">
                             <i class="fas fa-envelope me-2"></i>Kontak
                         </a>
                     </li>
                     <li class="nav-item d-none d-xl-block">
-                        <a class="nav-link" href="{{ route('news.index') }}">
+                        <a class="nav-link {{ request()->routeIs('news.*') ? 'active' : '' }}" href="{{ route('news.index') }}">
                             <i class="fas fa-newspaper me-2"></i>Berita
                         </a>
                     </li>
-                   
                 </ul>
-                
-                
+
                 <!-- User Menu -->
                 <ul class="navbar-nav ms-auto">
                     @auth
                         <li class="nav-item dropdown user-dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" 
-                               data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="userDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-user-circle me-2"></i>
                                 <span class="d-none d-md-inline">{{ auth()->user()->name }}</span>
                                 <span class="d-inline d-md-none">Profile</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li><a class="dropdown-item" href="{{ route('dashboard') }}">
-                                    <i class="fas fa-tachometer-alt me-3"></i>Dashboard
-                                </a></li>
+                                        <i class="fas fa-tachometer-alt me-3"></i>Dashboard
+                                    </a></li>
                                 <li><a class="dropdown-item" href="{{ route('profile.edit') }}">
-                                    <i class="fas fa-user-cog me-3"></i>Pengaturan
-                                </a></li>
-                                <li><hr class="dropdown-divider"></li>
+                                        <i class="fas fa-user-cog me-3"></i>Pengaturan
+                                    </a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
                                 <li>
                                     <form method="POST" action="{{ route('logout') }}" class="d-inline">
                                         @csrf
@@ -818,7 +882,7 @@
                                 <i class="fas fa-user-plus me-2"></i>Daftar Siswa
                             </a>
                         </li>
-                        
+
                         <!-- Login Button -->
                         <li class="nav-item">
                             <a class="nav-link login-btn" href="{{ route('login') }}">
@@ -827,12 +891,30 @@
                         </li>
                     @endauth
                 </ul>
+
+                
+
+                <!-- Alternative: Login/Register buttons -->
+                <!--
+                    <li class="nav-item me-2">
+                        <a class="nav-link register-btn" href="#register">
+                            <i class="fas fa-user-plus me-2"></i>Daftar Siswa
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link login-btn" href="#login">
+                            <i class="fas fa-sign-in-alt me-2"></i>Masuk
+                        </a>
+                    </li>
+                    -->
+
             </div>
         </div>
     </nav>
 
-            <!-- Main Content -->
-   <main>
+    <!-- Main Content -->
+    <main>
         @yield('content')
     </main>
 
@@ -842,7 +924,8 @@
             <div class="row">
                 <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
                     <h5><i class="fas fa-graduation-cap me-2"></i>SMK PGRI 2 PONOROGO</h5>
-                    <p class="mb-3">Excellence in Education - Membentuk generasi yang berkarakter dan berprestasi untuk masa depan Indonesia yang gemilang.</p>
+                    <p class="mb-3">Excellence in Education - Membentuk generasi yang berkarakter dan berprestasi untuk
+                        masa depan Indonesia yang gemilang.</p>
                     <div class="social-links">
                         <a href="#" class="text-white me-3" aria-label="Facebook">
                             <i class="fab fa-facebook fa-lg"></i>
@@ -861,32 +944,36 @@
                 <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
                     <h6 class="fw-bold mb-3">Quick Links</h6>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="{{ route('about.profile') }}" class="text-white-50 text-decoration-none">Profil Sekolah</a></li>
-                        <li class="mb-2"><a href="{{ route('facilities.index') }}" class="text-white-50 text-decoration-none">Fasilitas</a></li>
-                        <li class="mb-2"><a href="{{ route('achievements.index') }}" class="text-white-50 text-decoration-none">Prestasi</a></li>
-                        <li class="mb-2"><a href="{{ route('public.extracurriculars.index') }}" class="text-white-50 text-decoration-none">Ekstrakurikuler</a></li>
+                        <li class="mb-2"><a href="#profile" class="text-white-50 text-decoration-none">Profil
+                                Sekolah</a></li>
+                        <li class="mb-2"><a href="#facilities" class="text-white-50 text-decoration-none">Fasilitas</a>
+                        </li>
+                        <li class="mb-2"><a href="#achievements" class="text-white-50 text-decoration-none">Prestasi</a>
+                        </li>
+                        <li class="mb-2"><a href="#extra" class="text-white-50 text-decoration-none">Ekstrakurikuler</a>
+                        </li>
                     </ul>
                 </div>
                 <div class="col-lg-2 col-md-6 mb-4 mb-lg-0">
                     <h6 class="fw-bold mb-3">Akademik</h6>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="{{ route('public.academic.programs') }}" class="text-white-50 text-decoration-none">Program Studi</a></li>
-                        <li class="mb-2"><a href="{{ route('academic.calendar') }}" class="text-white-50 text-decoration-none">Kalender</a></li>
-
-                        <li class="mb-2"><a href="{{ route('gallery.index') }}" class="text-white-50 text-decoration-none">Galeri</a></li>
-                        <li class="mb-2"><a href="{{ route('public.videos.index') }}" class="text-white-50 text-decoration-none">Video</a></li>
-
+                        <li class="mb-2"><a href="#programs" class="text-white-50 text-decoration-none">Program
+                                Studi</a></li>
+                        <li class="mb-2"><a href="#calendar" class="text-white-50 text-decoration-none">Kalender</a>
+                        </li>
+                        <li class="mb-2"><a href="#gallery" class="text-white-50 text-decoration-none">Galeri</a></li>
+                        <li class="mb-2"><a href="#videos" class="text-white-50 text-decoration-none">Video</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <h6 class="fw-bold mb-3">Kontak Kami</h6>
                     <p class="mb-2">
                         <i class="fas fa-map-marker-alt me-2"></i>
-                        <small>Jl. Pendidikan No. 123<br>Semarang, Jawa Tengah 50123</small>
+                        <small>Jl. Pendidikan No. 123<br>Ponorogo, Jawa Timur 63411</small>
                     </p>
                     <p class="mb-2">
                         <i class="fas fa-phone me-2"></i>
-                        <small>(024) 123-4567</small>
+                        <small>(0352) 123-4567</small>
                     </p>
                     <p class="mb-0">
                         <i class="fas fa-envelope me-2"></i>
@@ -897,7 +984,7 @@
             <hr style="border-color: rgba(255,255,255,0.2); margin: 2rem 0 1rem 0;">
             <div class="row align-items-center">
                 <div class="col-md-6">
-                    <p class="mb-0">&copy; {{ date('Y') }} SMK PGRI 2 PONOROGO. All rights reserved.</p>
+                    <p class="mb-0">&copy; 2024 SMK PGRI 2 PONOROGO. All rights reserved.</p>
                 </div>
                 <div class="col-md-6 text-md-end">
                     <p class="mb-0">
@@ -909,341 +996,378 @@
     </footer>
 
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    
-    <!-- Simple Mobile Navbar Fix -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+
+    <!-- SAFE and WORKING Navbar Script -->
     <script>
-        // Simple mobile navbar fix - inline
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('📱 Simple mobile navbar fix loading...');
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('DOM loaded, initializing navbar...');
             
-            // Mobile dropdown fix
-            if (window.innerWidth < 992) {
-                const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+            try {
+                // Safe element selection with null checks
+                const navbar = document.querySelector('.navbar');
+                const navbarCollapse = document.querySelector('#navbarNav');
+                const navbarToggler = document.querySelector('.navbar-toggler');
                 
-                dropdownToggles.forEach(function(toggle) {
-                    toggle.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
+                console.log('Elements found:', {
+                    navbar: !!navbar,
+                    navbarCollapse: !!navbarCollapse,
+                    navbarToggler: !!navbarToggler
+                });
+                
+                if (!navbar || !navbarCollapse || !navbarToggler) {
+                    console.error('Required navbar elements not found!');
+                    return;
+                }
+                
+                let isDesktop = window.innerWidth >= 992;
+
+                // Navbar scroll effect
+                if (navbar) {
+                    window.addEventListener('scroll', function () {
+                        if (window.scrollY > 50) {
+                            navbar.classList.add('scrolled');
+                        } else {
+                            navbar.classList.remove('scrolled');
+                        }
+                    });
+                }
+
+                // Simple function to close all dropdowns
+                function closeAllDropdowns() {
+                    try {
+                        const openMenus = document.querySelectorAll('.dropdown-menu.show');
+                        const toggles = document.querySelectorAll('.dropdown-toggle');
                         
-                        const dropdown = this.closest('.dropdown');
-                        const menu = dropdown ? dropdown.querySelector('.dropdown-menu') : null;
+                        openMenus.forEach(menu => {
+                            menu.classList.remove('show');
+                        });
                         
-                        if (menu) {
-                            // Close other dropdowns
-                            document.querySelectorAll('.dropdown-menu.show').forEach(function(otherMenu) {
-                                if (otherMenu !== menu) {
-                                    otherMenu.classList.remove('show');
+                        toggles.forEach(toggle => {
+                            toggle.setAttribute('aria-expanded', 'false');
+                        });
+                    } catch (error) {
+                        console.warn('Error closing dropdowns:', error);
+                    }
+                }
+
+                // SAFE dropdown handling with enhanced error protection
+                function setupDropdowns() {
+                    try {
+                        const dropdowns = document.querySelectorAll('.dropdown');
+                        console.log('Setting up', dropdowns.length, 'dropdowns');
+
+                        dropdowns.forEach((dropdown, index) => {
+                            const toggle = dropdown.querySelector('.dropdown-toggle');
+                            const menu = dropdown.querySelector('.dropdown-menu');
+                            
+                            if (!toggle || !menu) {
+                                console.warn('Dropdown missing elements at index', index);
+                                return;
+                            }
+
+                            // Ensure Bootstrap data attributes are present
+                            toggle.setAttribute('data-bs-toggle', 'dropdown');
+                            toggle.setAttribute('aria-expanded', 'false');
+                            
+                            // Fix href if it's just '#'
+                            if (toggle.getAttribute('href') === '#') {
+                                toggle.setAttribute('href', 'javascript:void(0)');
+                            }
+
+                            // Enhanced click handler with better error handling
+                            toggle.addEventListener('click', function (e) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                
+                                console.log('Dropdown clicked:', this);
+                                
+                                try {
+                                    const isOpen = menu.classList.contains('show');
+                                    
+                                    // Close all dropdowns first
+                                    if (typeof closeAllDropdowns === 'function') {
+                                        closeAllDropdowns();
+                                    }
+                                    
+                                    // Toggle current dropdown
+                                    if (!isOpen) {
+                                        menu.classList.add('show');
+                                        toggle.setAttribute('aria-expanded', 'true');
+                                        console.log('Dropdown opened');
+                                    } else {
+                                        console.log('Dropdown was already open, now closed');
+                                    }
+                                } catch (error) {
+                                    console.error('Error in dropdown toggle:', error);
                                 }
                             });
-                            
-                            // Toggle current dropdown
-                            menu.classList.toggle('show');
-                            console.log('📱 Dropdown toggled');
-                        }
-                    });
-                });
-                
-                // Close dropdowns when clicking outside
-                document.addEventListener('click', function(e) {
-                    if (!e.target.closest('.dropdown')) {
-                        document.querySelectorAll('.dropdown-menu.show').forEach(function(menu) {
-                            menu.classList.remove('show');
-                        });
-                    }
-                });
-                
-                console.log('✅ Mobile dropdown fix applied');
-            }
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const navbar = document.querySelector('.navbar');
-            const navLinks = document.querySelectorAll('.nav-link');
-            
-            // Navbar scroll effect
-            window.addEventListener('scroll', function() {
-                if (window.scrollY > 50) {
-                    navbar.classList.add('scrolled');
-                } else {
-                    navbar.classList.remove('scrolled');
-                }
-            });
-            
-            // Enhanced dropdown handling for both desktop and mobile
-            const dropdowns = document.querySelectorAll('.dropdown');
-            dropdowns.forEach(dropdown => {
-                const toggle = dropdown.querySelector('.dropdown-toggle');
-                const menu = dropdown.querySelector('.dropdown-menu');
-                
-                if (window.innerWidth >= 992) {
-                    // Desktop hover behavior
-                    dropdown.addEventListener('mouseenter', function() {
-                        menu.classList.add('show');
-                    });
-                    
-                    dropdown.addEventListener('mouseleave', function() {
-                        menu.classList.remove('show');
-                    });
-                } else {
-                    // Mobile click behavior - ensure Bootstrap works
-                    toggle.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        
-                        // Close other dropdowns
-                        document.querySelectorAll('.dropdown-menu.show').forEach(otherMenu => {
-                            if (otherMenu !== menu) {
-                                otherMenu.classList.remove('show');
+
+                            // Desktop hover behavior
+                            if (isDesktop) {
+                                let hoverTimeout;
+                                
+                                dropdown.addEventListener('mouseenter', function () {
+                                    clearTimeout(hoverTimeout);
+                                    menu.classList.add('show');
+                                    toggle.setAttribute('aria-expanded', 'true');
+                                });
+
+                                dropdown.addEventListener('mouseleave', function () {
+                                    hoverTimeout = setTimeout(() => {
+                                        menu.classList.remove('show');
+                                        toggle.setAttribute('aria-expanded', 'false');
+                                    }, 200);
+                                });
                             }
-                        });
-                        
-                        // Toggle current dropdown
-                        menu.classList.toggle('show');
-                        
-                        // Update aria-expanded
-                        const isExpanded = menu.classList.contains('show');
-                        toggle.setAttribute('aria-expanded', isExpanded);
-                    });
-                }
-            });
-            
-            // Close dropdowns when clicking outside (mobile)
-            document.addEventListener('click', function(e) {
-                if (window.innerWidth < 992) {
-                    const isDropdownClick = e.target.closest('.dropdown');
-                    if (!isDropdownClick) {
-                        document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
-                            menu.classList.remove('show');
-                            const toggle = menu.parentElement.querySelector('.dropdown-toggle');
-                            if (toggle) {
-                                toggle.setAttribute('aria-expanded', 'false');
-                            }
-                        });
-                    }
-                }
-            });
-            
-            // Handle window resize
-            window.addEventListener('resize', function() {
-                // Reset dropdown states on resize
-                document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
-                    menu.classList.remove('show');
-                });
-            });
-            
-            // Active link highlighting
-            const currentPath = window.location.pathname;
-            navLinks.forEach(link => {
-                if (link.getAttribute('href') === currentPath) {
-                    link.classList.add('active');
-                }
-            });
-            
-            // Search functionality (if implemented)
-            const searchInput = document.querySelector('.navbar-search input');
-            if (searchInput) {
-                searchInput.addEventListener('focus', function() {
-                    this.parentElement.classList.add('focused');
-                });
-                
-                searchInput.addEventListener('blur', function() {
-                    this.parentElement.classList.remove('focused');
-                });
-                
-                // Search submit functionality
-                const searchBtn = document.querySelector('.search-btn');
-                if (searchBtn) {
-                    searchBtn.addEventListener('click', function() {
-                        const query = searchInput.value.trim();
-                        if (query) {
-                            // Implement search functionality here
-                            window.location.href = `/search?q=${encodeURIComponent(query)}`;
-                        }
-                    });
-                }
-                
-                searchInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        const query = this.value.trim();
-                        if (query) {
-                            window.location.href = `/search?q=${encodeURIComponent(query)}`;
-                        }
-                    }
-                });
-            }
-            
-            // Mobile menu improvements
-            const navbarToggler = document.querySelector('.navbar-toggler');
-            const navbarCollapse = document.querySelector('.navbar-collapse');
-            
-            // Simple navbar toggler - let Bootstrap handle the collapse
-            if (navbarToggler && navbarCollapse) {
-                // Listen for Bootstrap collapse events to update icon
-                navbarCollapse.addEventListener('shown.bs.collapse', function() {
-                    navbarToggler.setAttribute('aria-expanded', 'true');
-                });
-                
-                navbarCollapse.addEventListener('hidden.bs.collapse', function() {
-                    navbarToggler.setAttribute('aria-expanded', 'false');
-                });
-            }
-            
-            // Enhanced touch support for mobile dropdowns
-            if ('ontouchstart' in window) {
-                document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
-                    toggle.addEventListener('touchstart', function(e) {
-                        // Prevent double-tap zoom on iOS
-                        e.preventDefault();
-                        
-                        // Trigger click event
-                        setTimeout(() => {
-                            this.click();
-                        }, 0);
-                    }, { passive: false });
-                });
-                
-                // Improve touch responsiveness
-                document.querySelectorAll('.dropdown-item').forEach(item => {
-                    item.addEventListener('touchstart', function() {
-                        this.style.backgroundColor = 'rgba(49, 130, 206, 0.1)';
-                    });
-                    
-                    item.addEventListener('touchend', function() {
-                        setTimeout(() => {
-                            this.style.backgroundColor = '';
-                        }, 150);
-                    });
-                });
-            }
-            
-            // Close mobile menu when clicking on links
-            const mobileNavLinks = document.querySelectorAll('.navbar-nav .nav-link:not(.dropdown-toggle)');
-            mobileNavLinks.forEach(link => {
-                link.addEventListener('click', function() {
-                    if (window.innerWidth < 992) {
-                        navbarCollapse.classList.remove('show');
-                        navbarToggler.classList.add('collapsed');
-                        navbarToggler.setAttribute('aria-expanded', 'false');
-                    }
-                });
-            });
-            
-            // Safe smooth scroll for internal links
-            try {
-                const anchorLinks = document.querySelectorAll('a[href^="#"]');
-                console.log('🔗 Found', anchorLinks.length, 'anchor links');
-                
-                anchorLinks.forEach(function(anchor, index) {
-                    // Remove existing listeners by cloning
-                    const newAnchor = anchor.cloneNode(true);
-                    if (anchor.parentNode) {
-                        anchor.parentNode.replaceChild(newAnchor, anchor);
-                    }
-                    
-                    newAnchor.addEventListener('click', function(e) {
-                        const href = this.getAttribute('href');
-                        
-                        // Skip if href is just '#' or empty
-                        if (!href || href === '#' || href.length <= 1) {
-                            console.log('🔗 Skipping invalid anchor:', href);
-                            e.preventDefault();
-                            return false;
-                        }
-                        
-                        // Safe querySelector
-                        let target = null;
-                        try {
-                            target = document.querySelector(href);
-                        } catch (error) {
-                            console.warn('🔗 Invalid selector:', href, error);
-                            e.preventDefault();
-                            return false;
-                        }
-                        
-                        if (target) {
-                            e.preventDefault();
-                            target.scrollIntoView({
-                                behavior: 'smooth',
-                                block: 'start'
+
+                            // Prevent menu from closing when clicking inside
+                            menu.addEventListener('click', function(e) {
+                                e.stopPropagation();
                             });
-                            console.log('🔗 Smooth scroll to:', href);
-                        } else {
-                            console.log('🔗 Target not found:', href);
-                            e.preventDefault();
-                            return false;
+                        });
+                    } catch (error) {
+                        console.error('Error setting up dropdowns:', error);
+                    }
+                }
+
+                // Initialize dropdowns
+                setupDropdowns();
+                
+                // Verify dropdown setup
+                const dropdownCount = document.querySelectorAll('.dropdown').length;
+                const menuCount = document.querySelectorAll('.dropdown-menu').length;
+                
+                // Verify Bootstrap and ensure all attributes
+                setTimeout(() => {
+                    const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+                    
+                    dropdownToggles.forEach((toggle, index) => {
+                        const hasDataToggle = toggle.hasAttribute('data-bs-toggle');
+                        
+                        if (!hasDataToggle) {
+                            toggle.setAttribute('data-bs-toggle', 'dropdown');
+                        }
+                    });
+                    
+                    // Ensure mobile toggle has correct attributes
+                    if (navbarToggler) {
+                        navbarToggler.setAttribute('data-bs-toggle', 'collapse');
+                        navbarToggler.setAttribute('data-bs-target', '#navbarNav');
+                        navbarToggler.setAttribute('aria-controls', 'navbarNav');
+                        
+                        // Mobile toggle attributes verified
+                    }
+                    
+                    // All systems ready
+                }, 500);
+
+                // Close dropdowns when clicking outside
+                document.addEventListener('click', function (e) {
+                    if (!e.target.closest('.dropdown')) {
+                        closeAllDropdowns();
+                    }
+                });
+
+                // Close dropdown when clicking dropdown items
+                document.addEventListener('click', function(e) {
+                    const dropdownItem = e.target.closest('.dropdown-item');
+                    if (dropdownItem) {
+                        // Allow the link to work first, then close dropdown
+                        setTimeout(() => {
+                            closeAllDropdowns();
+                            
+                            // Close mobile menu if open
+                            if (!isDesktop && navbarCollapse && navbarCollapse.classList.contains('show')) {
+                                navbarCollapse.classList.remove('show');
+                                if (navbarToggler) {
+                                    navbarToggler.classList.add('collapsed');
+                                    navbarToggler.setAttribute('aria-expanded', 'false');
+                                }
+                            }
+                        }, 150);
+                    }
+                });
+
+                // Handle escape key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        closeAllDropdowns();
+                    }
+                });
+
+                // Close mobile menu when clicking regular nav links
+                const navLinks = document.querySelectorAll('.navbar-nav .nav-link:not(.dropdown-toggle)');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', function () {
+                        if (!isDesktop && navbarCollapse && navbarCollapse.classList.contains('show')) {
+                            setTimeout(() => {
+                                navbarCollapse.classList.remove('show');
+                                if (navbarToggler) {
+                                    navbarToggler.classList.add('collapsed');
+                                    navbarToggler.setAttribute('aria-expanded', 'false');
+                                }
+                            }, 100);
                         }
                     });
                 });
-                
-                console.log('✅ Anchor links fixed safely');
-            } catch (error) {
-                console.error('❌ Error fixing anchor links:', error);
-            }
-            
-            // Add loading states for navigation
-            navLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    if (this.href && !this.href.includes('#') && !this.classList.contains('dropdown-toggle')) {
-                        this.style.opacity = '0.6';
-                        this.style.pointerEvents = 'none';
+
+                // Handle window resize
+                let resizeTimeout;
+                window.addEventListener('resize', function () {
+                    clearTimeout(resizeTimeout);
+                    resizeTimeout = setTimeout(() => {
+                        const newIsDesktop = window.innerWidth >= 992;
                         
-                        // Reset after 3 seconds (fallback)
-                        setTimeout(() => {
-                            this.style.opacity = '';
-                            this.style.pointerEvents = '';
-                        }, 3000);
+                        if (newIsDesktop !== isDesktop) {
+                            isDesktop = newIsDesktop;
+                            closeAllDropdowns();
+                            
+                            // Close mobile menu when switching to desktop
+                            if (isDesktop && navbarCollapse && navbarCollapse.classList.contains('show')) {
+                                navbarCollapse.classList.remove('show');
+                                if (navbarToggler) {
+                                    navbarToggler.classList.add('collapsed');
+                                    navbarToggler.setAttribute('aria-expanded', 'false');
+                                }
+                            }
+                            
+                            // Re-setup dropdowns
+                            setupDropdowns();
+                        }
+                    }, 300);
+                });
+
+                // SIMPLE and SAFE mobile menu toggle
+                console.log('Setting up mobile toggle...');
+                
+                navbarToggler.addEventListener('click', function(e) {
+                    console.log('Mobile toggle clicked!');
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    try {
+                        // Close all dropdowns first
+                        if (typeof closeAllDropdowns === 'function') {
+                            closeAllDropdowns();
+                        }
+                        
+                        // Simple toggle logic
+                        const isOpen = navbarCollapse.classList.contains('show');
+                        console.log('Menu is currently:', isOpen ? 'open' : 'closed');
+                        
+                        if (isOpen) {
+                            // Close menu
+                            navbarCollapse.classList.remove('show');
+                            navbarToggler.classList.add('collapsed');
+                            navbarToggler.setAttribute('aria-expanded', 'false');
+                            console.log('Menu closed');
+                        } else {
+                            // Open menu
+                            navbarCollapse.classList.add('show');
+                            navbarToggler.classList.remove('collapsed');
+                            navbarToggler.setAttribute('aria-expanded', 'true');
+                            console.log('Menu opened');
+                        }
+                    } catch (error) {
+                        console.error('Error in mobile toggle:', error);
                     }
                 });
-            });
-            
-            // Keyboard navigation improvements
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    // Close all open dropdowns
-                    document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
-                        menu.classList.remove('show');
+
+                // Simple menu close on outside click
+                document.addEventListener('click', function(e) {
+                    if (!e.target.closest('.navbar')) {
+                        if (navbarCollapse.classList.contains('show')) {
+                            navbarCollapse.classList.remove('show');
+                            navbarToggler.classList.add('collapsed');
+                            navbarToggler.setAttribute('aria-expanded', 'false');
+                        }
+                    }
+                });
+
+                // Touch handling for mobile
+                if ('ontouchstart' in window) {
+                    document.addEventListener('touchstart', function(e) {
+                        if (!e.target.closest('.dropdown') && !e.target.closest('.navbar-toggler')) {
+                            closeAllDropdowns();
+                        }
                     });
-                    
-                    // Close mobile menu
-                    if (navbarCollapse.classList.contains('show')) {
-                        navbarCollapse.classList.remove('show');
-                        navbarToggler.classList.add('collapsed');
-                        navbarToggler.setAttribute('aria-expanded', 'false');
+                }
+
+                // Active link highlighting
+                function updateActiveLinks() {
+                    try {
+                        const currentPath = window.location.pathname;
+                        const navLinks = document.querySelectorAll('.nav-link');
+
+                        navLinks.forEach(link => {
+                            const href = link.getAttribute('href');
+                            if (href && (href === currentPath || (currentPath === '/' && href.includes('home')))) {
+                                link.classList.add('active');
+                            } else {
+                                link.classList.remove('active');
+                            }
+                        });
+                    } catch (error) {
+                        // Silently fail
                     }
                 }
-            });
-            
-            // Preload important pages for better performance
-            const importantLinks = [
-                '{{ route("home") }}',
-                '{{ route("about.profile") }}',
-                '{{ route("news.index") }}'
-            ];
-            
-            // Add preload links to head
-            importantLinks.forEach(href => {
-                const link = document.createElement('link');
-                link.rel = 'prefetch';
-                link.href = href;
-                document.head.appendChild(link);
-            });
-            
-            // Add visual feedback for user interactions
-            document.querySelectorAll('.nav-link, .dropdown-item').forEach(item => {
-                item.addEventListener('mouseenter', function() {
-                    this.style.transform = this.style.transform || '';
+
+                updateActiveLinks();
+
+                // Safe smooth scrolling for anchor links
+                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                    anchor.addEventListener('click', function (e) {
+                        const targetId = this.getAttribute('href');
+                        
+                        // Validate selector before using
+                        if (targetId && targetId !== '#' && targetId.length > 1) {
+                            try {
+                                // Additional validation for valid CSS selector
+                                if (targetId.match(/^#[a-zA-Z][a-zA-Z0-9_-]*$/)) {
+                                    const target = document.querySelector(targetId);
+                                    if (target) {
+                                        e.preventDefault();
+                                        target.scrollIntoView({
+                                            behavior: 'smooth',
+                                            block: 'start'
+                                        });
+                                        
+                                        // Close mobile menu
+                                        if (!isDesktop && navbarCollapse && navbarCollapse.classList.contains('show')) {
+                                            setTimeout(() => {
+                                                navbarCollapse.classList.remove('show');
+                                                if (navbarToggler) {
+                                                    navbarToggler.classList.add('collapsed');
+                                                    navbarToggler.setAttribute('aria-expanded', 'false');
+                                                }
+                                            }, 100);
+                                        }
+                                    }
+                                } else {
+                                    console.warn('Invalid selector:', targetId);
+                                }
+                            } catch (error) {
+                                console.warn('Error with selector:', targetId, error);
+                            }
+                        }
+                    });
                 });
-                
-                item.addEventListener('mouseleave', function() {
-                    // Reset transform if no other transforms are applied
-                    if (!this.classList.contains('active')) {
-                        this.style.transform = '';
-                    }
-                });
-            });
+
+                // Simple functionality test
+                // Simple test
+                setTimeout(() => {
+                    console.log('Navbar initialization complete');
+                    console.log('Mobile toggle ready for use');
+                }, 1000);
+
+            } catch (error) {
+                console.error('Navbar initialization error:', error);
+            }
         });
     </script>
 </body>
+
 </html>

@@ -1,215 +1,157 @@
 @extends('layouts.admin')
 
-@section('title', 'Detail Siswa')
+@section('title', 'Detail Siswa - ' . $student->name)
 
 @push('styles')
 <style>
-    /* Dark Mode Variables for Student Detail */
     :root {
-        /* Light Mode Colors */
-        --student-bg-gradient-light: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        --student-card-bg-light: rgba(255, 255, 255, 0.95);
-        --student-header-gradient-light: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-        --student-profile-bg-light: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-        --student-card-white-light: #ffffff;
-        --student-text-primary-light: #1f2937;
-        --student-text-secondary-light: #6b7280;
-        --student-text-muted-light: #9ca3af;
-        --student-border-light: #e5e7eb;
-        --student-shadow-light: rgba(0, 0, 0, 0.1);
-        --student-shadow-hover-light: rgba(0, 0, 0, 0.15);
-        
-        /* Dark Mode Colors */
-        --student-bg-gradient-dark: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        --student-card-bg-dark: rgba(30, 41, 59, 0.95);
-        --student-header-gradient-dark: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
-        --student-profile-bg-dark: linear-gradient(135deg, #374151 0%, #4b5563 100%);
-        --student-card-white-dark: #1f2937;
-        --student-text-primary-dark: #f8fafc;
-        --student-text-secondary-dark: #d1d5db;
-        --student-text-muted-dark: #9ca3af;
-        --student-border-dark: #374151;
-        --student-shadow-dark: rgba(0, 0, 0, 0.3);
-        --student-shadow-hover-dark: rgba(0, 0, 0, 0.4);
-        
-        /* Current Theme (Default: Light) */
-        --student-bg-gradient: var(--student-bg-gradient-light);
-        --student-card-bg: var(--student-card-bg-light);
-        --student-header-gradient: var(--student-header-gradient-light);
-        --student-profile-bg: var(--student-profile-bg-light);
-        --student-card-white: var(--student-card-white-light);
-        --student-text-primary: var(--student-text-primary-light);
-        --student-text-secondary: var(--student-text-secondary-light);
-        --student-text-muted: var(--student-text-muted-light);
-        --student-border: var(--student-border-light);
-        --student-shadow: var(--student-shadow-light);
-        --student-shadow-hover: var(--student-shadow-hover-light);
+        --primary-color: #6366f1;
+        --primary-dark: #4f46e5;
+        --secondary-color: #8b5cf6;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --info-color: #3b82f6;
+        --light-bg: #f8fafc;
+        --white: #ffffff;
+        --gray-50: #f9fafb;
+        --gray-100: #f3f4f6;
+        --gray-200: #e5e7eb;
+        --gray-300: #d1d5db;
+        --gray-400: #9ca3af;
+        --gray-500: #6b7280;
+        --gray-600: #4b5563;
+        --gray-700: #374151;
+        --gray-800: #1f2937;
+        --gray-900: #111827;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
     }
-    
-    /* Dark mode overrides */
-    .dark {
-        --student-bg-gradient: var(--student-bg-gradient-dark);
-        --student-card-bg: var(--student-card-bg-dark);
-        --student-header-gradient: var(--student-header-gradient-dark);
-        --student-profile-bg: var(--student-profile-bg-dark);
-        --student-card-white: var(--student-card-white-dark);
-        --student-text-primary: var(--student-text-primary-dark);
-        --student-text-secondary: var(--student-text-secondary-dark);
-        --student-text-muted: var(--student-text-muted-dark);
-        --student-border: var(--student-border-dark);
-        --student-shadow: var(--student-shadow-dark);
-        --student-shadow-hover: var(--student-shadow-hover-dark);
+
+    [data-bs-theme="dark"] {
+        --light-bg: #1f2937;
+        --white: #374151;
+        --gray-50: #374151;
+        --gray-100: #4b5563;
+        --gray-200: #6b7280;
+        --gray-300: #9ca3af;
+        --gray-400: #d1d5db;
+        --gray-500: #e5e7eb;
+        --gray-600: #f3f4f6;
+        --gray-700: #f9fafb;
+        --gray-800: #ffffff;
+        --gray-900: #ffffff;
     }
-    
-    .student-detail-container {
-        background: var(--student-bg-gradient);
+
+    .page-container {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
         min-height: 100vh;
         padding: 2rem 0;
-        transition: background 0.3s ease;
     }
-    
-    .detail-wrapper {
-        background: var(--student-card-bg);
-        backdrop-filter: blur(10px);
-        border-radius: 20px;
-        box-shadow: 0 20px 40px var(--student-shadow);
-        margin: 0 auto;
-        max-width: 1200px;
+
+    .detail-container {
+        background: var(--white);
+        border-radius: 24px;
+        box-shadow: var(--shadow-xl);
         overflow: hidden;
-        transition: all 0.3s ease;
+        margin: 0 auto;
+        max-width: 1400px;
     }
-    
+
     .detail-header {
-        background: var(--student-header-gradient);
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
         color: white;
         padding: 2rem;
         position: relative;
         overflow: hidden;
-        transition: background 0.3s ease;
     }
-    
+
     .detail-header::before {
         content: '';
         position: absolute;
-        top: 0;
-        right: 0;
+        top: -50%;
+        right: -50%;
         width: 200px;
         height: 200px;
         background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
         border-radius: 50%;
-        transform: translate(50%, -50%);
     }
-    
-    .detail-header h1 {
+
+    .detail-title {
         font-size: 2.5rem;
         font-weight: 800;
         margin-bottom: 0.5rem;
         position: relative;
         z-index: 2;
     }
-    
-    .detail-header p {
+
+    .detail-subtitle {
         font-size: 1.1rem;
         opacity: 0.9;
         margin-bottom: 0;
         position: relative;
         z-index: 2;
     }
-    
-    .action-buttons {
+
+    .header-actions {
         position: relative;
         z-index: 3;
+        margin-top: 1.5rem;
         display: flex;
         gap: 1rem;
-        margin-top: 1rem;
+        flex-wrap: wrap;
     }
-    
-    .btn-custom {
+
+    .btn-header {
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: white;
         padding: 0.75rem 1.5rem;
-        border-radius: 10px;
+        border-radius: 12px;
         font-weight: 600;
         text-decoration: none;
         transition: all 0.3s ease;
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        backdrop-filter: blur(10px);
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
     }
-    
-    .btn-back {
-        background: rgba(255, 255, 255, 0.2);
-        color: white;
-    }
-    
-    .btn-back:hover {
+
+    .btn-header:hover {
         background: rgba(255, 255, 255, 0.3);
-        color: white;
-        transform: translateY(-2px);
-    }
-    
-    .btn-edit {
-        background: rgba(255, 255, 255, 0.9);
-        color: #4f46e5;
-    }
-    
-    .btn-edit:hover {
-        background: white;
-        color: #4f46e5;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    }
-    
-    .btn-theme {
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        cursor: pointer;
-    }
-    
-    .btn-theme:hover {
-        background: rgba(255, 255, 255, 0.2);
-        color: white;
-        transform: translateY(-2px);
         border-color: rgba(255, 255, 255, 0.5);
+        color: white;
+        transform: translateY(-2px);
     }
-    
-    .detail-body {
-        padding: 0;
-    }
-    
+
     .profile-section {
-        background: var(--student-profile-bg);
+        background: var(--gray-50);
         padding: 2rem;
-        border-bottom: 1px solid var(--student-border);
-        transition: all 0.3s ease;
+        border-bottom: 1px solid var(--gray-200);
     }
-    
-    .profile-photo {
-        position: relative;
-        display: inline-block;
-    }
-    
+
     .student-photo {
         width: 200px;
         height: 200px;
         border-radius: 20px;
         object-fit: cover;
         border: 4px solid white;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow-lg);
         transition: all 0.3s ease;
     }
-    
+
     .student-photo:hover {
         transform: scale(1.05);
-        box-shadow: 0 20px 40px var(--student-shadow-hover);
+        box-shadow: var(--shadow-xl);
     }
-    
+
     .student-initials {
         width: 200px;
         height: 200px;
         border-radius: 20px;
-        background: var(--student-header-gradient);
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
         color: white;
         display: flex;
         align-items: center;
@@ -217,15 +159,15 @@
         font-size: 4rem;
         font-weight: 800;
         border: 4px solid white;
-        box-shadow: 0 15px 35px var(--student-shadow);
+        box-shadow: var(--shadow-lg);
         transition: all 0.3s ease;
     }
-    
+
     .student-initials:hover {
         transform: scale(1.05);
-        box-shadow: 0 20px 40px var(--student-shadow-hover);
+        box-shadow: var(--shadow-xl);
     }
-    
+
     .status-badge {
         position: absolute;
         top: -10px;
@@ -237,223 +179,434 @@
         text-transform: uppercase;
         letter-spacing: 0.5px;
         border: 3px solid white;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow);
     }
-    
+
     .status-active {
-        background: linear-gradient(135deg, #10b981, #059669);
+        background: linear-gradient(135deg, var(--success-color), #059669);
         color: white;
     }
-    
+
     .status-inactive {
-        background: linear-gradient(135deg, #f59e0b, #d97706);
+        background: linear-gradient(135deg, var(--warning-color), #d97706);
         color: white;
     }
-    
+
     .status-graduated {
-        background: linear-gradient(135deg, #6b7280, #4b5563);
+        background: linear-gradient(135deg, var(--gray-500), var(--gray-600));
         color: white;
     }
-    
+
     .student-name {
-        font-size: 2rem;
+        font-size: 2.5rem;
         font-weight: 800;
-        color: var(--student-text-primary);
+        color: var(--gray-800);
         margin-bottom: 0.5rem;
         margin-top: 1rem;
-        transition: color 0.3s ease;
     }
-    
+
     .student-class {
         display: inline-block;
-        background: var(--student-header-gradient);
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
         color: white;
         padding: 0.5rem 1.5rem;
         border-radius: 25px;
         font-size: 1rem;
         font-weight: 600;
         margin-bottom: 1rem;
-        transition: background 0.3s ease;
     }
-    
-    .info-sections {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+
+    .student-meta {
+        display: flex;
+        flex-wrap: wrap;
         gap: 2rem;
-        padding: 2rem;
+        margin-top: 1rem;
     }
-    
-    .info-card {
-        background: var(--student-card-white);
-        border-radius: 15px;
-        padding: 1.5rem;
-        box-shadow: 0 5px 15px var(--student-shadow);
-        border-left: 4px solid #4f46e5;
-        transition: all 0.3s ease;
-    }
-    
-    .info-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 25px var(--student-shadow-hover);
-    }
-    
-    .info-card-title {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: var(--student-text-primary);
-        margin-bottom: 1rem;
+
+    .meta-item {
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        transition: color 0.3s ease;
-    }
-    
-    .info-card-icon {
-        width: 32px;
-        height: 32px;
-        background: var(--student-header-gradient);
-        color: white;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.875rem;
-        transition: background 0.3s ease;
-    }
-    
-    .info-item {
-        display: flex;
-        align-items: center;
-        padding: 0.75rem 0;
-        border-bottom: 1px solid var(--student-border);
-        transition: all 0.2s ease;
-    }
-    
-    .info-item:last-child {
-        border-bottom: none;
-    }
-    
-    .info-item:hover {
-        background: var(--student-profile-bg);
-        margin: 0 -1rem;
-        padding-left: 1rem;
-        padding-right: 1rem;
-        border-radius: 8px;
-    }
-    
-    .info-label {
-        font-weight: 600;
-        color: var(--student-text-secondary);
-        min-width: 140px;
-        font-size: 0.875rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        transition: color 0.3s ease;
-    }
-    
-    .info-value {
-        color: var(--student-text-primary);
+        color: var(--gray-600);
         font-weight: 500;
-        flex: 1;
-        transition: color 0.3s ease;
     }
-    
-    .info-value.empty {
-        color: var(--student-text-muted);
-        font-style: italic;
+
+    .meta-icon {
+        color: var(--primary-color);
+        font-size: 1.1rem;
     }
-    
-    .contact-link {
-        color: #4f46e5;
-        text-decoration: none;
-        font-weight: 600;
-        transition: all 0.2s ease;
-    }
-    
-    .contact-link:hover {
-        color: #7c3aed;
-        text-decoration: underline;
-    }
-    
+
     .age-badge {
-        background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
-        color: #0369a1;
+        background: #eff6ff;
+        color: #1e40af;
         padding: 0.25rem 0.75rem;
         border-radius: 12px;
         font-size: 0.75rem;
         font-weight: 600;
         margin-left: 0.5rem;
     }
-    
-    .gender-icon {
-        margin-right: 0.5rem;
-        color: #4f46e5;
+
+    [data-bs-theme="dark"] .age-badge {
+        background: #1e3a8a;
+        color: #bfdbfe;
     }
-    
+
+    .content-section {
+        padding: 2rem;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .info-card {
+        background: var(--white);
+        border: 1px solid var(--gray-200);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+        border-left: 4px solid var(--primary-color);
+        transition: all 0.3s ease;
+    }
+
+    .info-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--gray-800);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .card-icon {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--gray-200);
+        transition: all 0.2s ease;
+    }
+
+    .info-item:last-child {
+        border-bottom: none;
+    }
+
+    .info-item:hover {
+        background: var(--gray-50);
+        margin: 0 -1rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        border-radius: 8px;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: var(--gray-600);
+        min-width: 140px;
+        font-size: 0.875rem;
+    }
+
+    .info-value {
+        color: var(--gray-800);
+        font-weight: 500;
+        flex: 1;
+    }
+
+    .info-value.empty {
+        color: var(--gray-400);
+        font-style: italic;
+    }
+
+    .contact-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+
+    .contact-link:hover {
+        color: var(--primary-dark);
+        text-decoration: underline;
+    }
+
+    .qr-section {
+        background: var(--white);
+        border: 2px solid var(--gray-200);
+        border-radius: 16px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .qr-section:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .qr-code-container {
+        background: white;
+        padding: 1rem;
+        border-radius: 12px;
+        display: inline-block;
+        box-shadow: var(--shadow);
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .qr-code-container:hover {
+        transform: scale(1.05);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .qr-code-image {
+        max-width: 200px;
+        height: auto;
+        border-radius: 8px;
+    }
+
+    .qr-actions {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+
+    .btn-qr {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-qr-download {
+        background: var(--success-color);
+        color: white;
+    }
+
+    .btn-qr-download:hover {
+        background: #059669;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .btn-qr-regenerate {
+        background: var(--warning-color);
+        color: white;
+    }
+
+    .btn-qr-regenerate:hover {
+        background: #d97706;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .btn-qr-manage {
+        background: var(--info-color);
+        color: white;
+    }
+
+    .btn-qr-manage:hover {
+        background: #2563eb;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .qr-info {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 1rem;
+        font-size: 0.875rem;
+        color: #1e40af;
+    }
+
+    [data-bs-theme="dark"] .qr-info {
+        background: #1e3a8a;
+        border-color: #3730a3;
+        color: #bfdbfe;
+    }
+
+    .no-qr-message {
+        background: #fef3c7;
+        border: 1px solid #fde68a;
+        border-radius: 8px;
+        padding: 1.5rem;
+        text-align: center;
+        color: #92400e;
+    }
+
+    [data-bs-theme="dark"] .no-qr-message {
+        background: #78350f;
+        border-color: #92400e;
+        color: #fde68a;
+    }
+
+    .btn-generate-qr {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-generate-qr:hover {
+        background: linear-gradient(135deg, var(--primary-dark), var(--secondary-color));
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .floating-actions {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        z-index: 1000;
+    }
+
+    .floating-btn {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        border: none;
+        color: white;
+        font-size: 1.25rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+    }
+
+    .floating-btn:hover {
+        transform: scale(1.1);
+        box-shadow: var(--shadow-xl);
+        color: white;
+    }
+
+    .floating-btn-primary {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    }
+
+    .floating-btn-success {
+        background: linear-gradient(135deg, var(--success-color), #059669);
+    }
+
+    .floating-btn-warning {
+        background: linear-gradient(135deg, var(--warning-color), #d97706);
+    }
+
     @media (max-width: 768px) {
-        .detail-wrapper {
-            margin: 0 1rem;
+        .page-container {
+            padding: 1rem;
         }
-        
+
         .detail-header {
             padding: 1.5rem;
             text-align: center;
         }
-        
-        .detail-header h1 {
+
+        .detail-title {
             font-size: 2rem;
         }
-        
-        .action-buttons {
+
+        .header-actions {
             justify-content: center;
-            flex-wrap: wrap;
         }
-        
+
         .profile-section {
             text-align: center;
         }
-        
+
         .student-photo,
         .student-initials {
             width: 150px;
             height: 150px;
         }
-        
+
         .student-initials {
             font-size: 3rem;
         }
-        
+
         .student-name {
-            font-size: 1.5rem;
+            font-size: 2rem;
         }
-        
-        .info-sections {
+
+        .info-grid {
             grid-template-columns: 1fr;
-            padding: 1rem;
         }
-        
+
         .info-item {
             flex-direction: column;
             align-items: flex-start;
             gap: 0.25rem;
         }
-        
+
         .info-label {
             min-width: auto;
         }
+
+        .qr-code-image {
+            max-width: 150px;
+        }
+
+        .floating-actions {
+            display: none;
+        }
     }
-    
-    /* Animation untuk loading */
-    .info-card {
+
+    .fade-in {
         opacity: 0;
         transform: translateY(20px);
         animation: fadeInUp 0.6s ease forwards;
     }
-    
-    .info-card:nth-child(1) { animation-delay: 0.1s; }
-    .info-card:nth-child(2) { animation-delay: 0.2s; }
-    .info-card:nth-child(3) { animation-delay: 0.3s; }
-    
+
+    .fade-in:nth-child(1) { animation-delay: 0.1s; }
+    .fade-in:nth-child(2) { animation-delay: 0.2s; }
+    .fade-in:nth-child(3) { animation-delay: 0.3s; }
+    .fade-in:nth-child(4) { animation-delay: 0.4s; }
+
     @keyframes fadeInUp {
         to {
             opacity: 1;
@@ -464,79 +617,87 @@
 @endpush
 
 @section('content')
-<div class="student-detail-container" x-data="studentDetail()">
-    <div class="detail-wrapper">
-        <!-- Header Section -->
+<div class="page-container">
+    <div class="detail-container">
+        <!-- Detail Header -->
         <div class="detail-header">
-            <h1><i class="fas fa-user-graduate me-3"></i>Detail Siswa</h1>
-            <p>Informasi lengkap data siswa</p>
-            
-            <div class="action-buttons">
-                <a href="{{ route('admin.students.index') }}" class="btn-custom btn-back">
-                    <i class="fas fa-arrow-left"></i> Kembali
-                </a>
-                <a href="{{ route('admin.students.edit', $student) }}" class="btn-custom btn-edit">
-                    <i class="fas fa-edit"></i> Edit Data
-                </a>
-                <button @click="$dispatch('toggle-dark-mode')" class="btn-custom btn-theme" title="Toggle Dark/Light Mode">
-                    <i class="fas" :class="darkMode ? 'fa-sun' : 'fa-moon'"></i>
-                    <span x-text="darkMode ? 'Light' : 'Dark'"></span>
-                </button>
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h1 class="detail-title">
+                        <i class="fas fa-user-graduate me-3"></i>Detail Siswa
+                    </h1>
+                    <p class="detail-subtitle">
+                        Informasi lengkap data siswa dan QR Code absensi
+                    </p>
+                </div>
+                <div class="header-actions">
+                    <a href="{{ route('admin.students.index') }}" class="btn-header">
+                        <i class="fas fa-arrow-left"></i> Kembali
+                    </a>
+                    <a href="{{ route('admin.students.edit', $student) }}" class="btn-header">
+                        <i class="fas fa-edit"></i> Edit Data
+                    </a>
+                </div>
             </div>
         </div>
 
-        <div class="detail-body">
-            <!-- Profile Section -->
-            <div class="profile-section">
-                <div class="row align-items-center">
-                    <div class="col-md-4 text-center">
-                        <div class="profile-photo">
-                            @if($student->photo)
-                                <img src="{{ $student->photo_url }}" alt="{{ $student->name }}" class="student-photo">
-                            @else
-                                <div class="student-initials">
-                                    {{ $student->initials }}
-                                </div>
-                            @endif
-                            
-                            <div class="status-badge status-{{ $student->status }}">
-                                {{ $student->status_label }}
+        <!-- Profile Section -->
+        <div class="profile-section">
+            <div class="row align-items-center">
+                <div class="col-md-4 text-center">
+                    <div class="position-relative d-inline-block">
+                        @if($student->photo)
+                            <img src="{{ $student->photo_url }}" alt="{{ $student->name }}" class="student-photo">
+                        @else
+                            <div class="student-initials">
+                                {{ $student->initials }}
                             </div>
+                        @endif
+                        
+                        <div class="status-badge status-{{ $student->status }}">
+                            {{ $student->status_label }}
                         </div>
                     </div>
+                </div>
+                
+                <div class="col-md-8">
+                    <h2 class="student-name">{{ $student->name }}</h2>
+                    <div class="student-class">
+                        <i class="fas fa-graduation-cap me-2"></i>{{ $student->class }}
+                    </div>
                     
-                    <div class="col-md-8">
-                        <h2 class="student-name">{{ $student->name }}</h2>
-                        <div class="student-class">
-                            <i class="fas fa-graduation-cap me-2"></i>{{ $student->class }}
+                    <div class="student-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-id-card meta-icon"></i>
+                            <strong>NIS:</strong> {{ $student->nis }}
                         </div>
-                        <div class="d-flex flex-wrap gap-3 mt-3">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-id-card text-primary me-2"></i>
-                                <strong>NIS:</strong> <span class="ms-1">{{ $student->nis }}</span>
+                        @if($student->nisn)
+                            <div class="meta-item">
+                                <i class="fas fa-id-badge meta-icon"></i>
+                                <strong>NISN:</strong> {{ $student->nisn }}
                             </div>
-                            @if($student->nisn)
-                                <div class="d-flex align-items-center">
-                                    <i class="fas fa-id-badge text-primary me-2"></i>
-                                    <strong>NISN:</strong> <span class="ms-1">{{ $student->nisn }}</span>
-                                </div>
-                            @endif
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-calendar text-primary me-2"></i>
-                                <strong>Umur:</strong> 
-                                <span class="age-badge">{{ $student->age ?? 'N/A' }} tahun</span>
-                            </div>
+                        @endif
+                        <div class="meta-item">
+                            <i class="fas fa-calendar meta-icon"></i>
+                            <strong>Umur:</strong> 
+                            <span class="age-badge">{{ $student->age ?? 'N/A' }} tahun</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-{{ $student->gender === 'male' ? 'mars' : 'venus' }} meta-icon"></i>
+                            {{ $student->gender === 'male' ? 'Laki-laki' : 'Perempuan' }}
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Information Sections -->
-            <div class="info-sections">
+        <!-- Content Section -->
+        <div class="content-section">
+            <div class="info-grid">
                 <!-- Personal Information -->
-                <div class="info-card">
-                    <h3 class="info-card-title">
-                        <div class="info-card-icon">
+                <div class="info-card fade-in">
+                    <h3 class="card-title">
+                        <div class="card-icon">
                             <i class="fas fa-user"></i>
                         </div>
                         Data Pribadi
@@ -563,7 +724,7 @@
                     <div class="info-item">
                         <div class="info-label">Jenis Kelamin</div>
                         <div class="info-value">
-                            <i class="fas fa-{{ $student->gender === 'male' ? 'mars' : 'venus' }} gender-icon"></i>
+                            <i class="fas fa-{{ $student->gender === 'male' ? 'mars' : 'venus' }} text-primary me-2"></i>
                             {{ $student->gender === 'male' ? 'Laki-laki' : 'Perempuan' }}
                         </div>
                     </div>
@@ -588,9 +749,9 @@
                 </div>
 
                 <!-- Contact Information -->
-                <div class="info-card">
-                    <h3 class="info-card-title">
-                        <div class="info-card-icon">
+                <div class="info-card fade-in">
+                    <h3 class="card-title">
+                        <div class="card-icon">
                             <i class="fas fa-phone"></i>
                         </div>
                         Kontak
@@ -642,9 +803,9 @@
                 </div>
 
                 <!-- Academic Information -->
-                <div class="info-card">
-                    <h3 class="info-card-title">
-                        <div class="info-card-icon">
+                <div class="info-card fade-in">
+                    <h3 class="card-title">
+                        <div class="card-icon">
                             <i class="fas fa-graduation-cap"></i>
                         </div>
                         Data Akademik
@@ -653,7 +814,7 @@
                     <div class="info-item">
                         <div class="info-label">NIS</div>
                         <div class="info-value">
-                            <code style="background: #f3f4f6; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">{{ $student->nis }}</code>
+                            <code style="background: var(--gray-100); padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600; color: var(--gray-800);">{{ $student->nis }}</code>
                         </div>
                     </div>
                     
@@ -661,7 +822,7 @@
                         <div class="info-item">
                             <div class="info-label">NISN</div>
                             <div class="info-value">
-                                <code style="background: #f3f4f6; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">{{ $student->nisn }}</code>
+                                <code style="background: var(--gray-100); padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600; color: var(--gray-800);">{{ $student->nisn }}</code>
                             </div>
                         </div>
                     @endif
@@ -700,6 +861,118 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- QR Code Section -->
+                <div class="info-card fade-in">
+                    <h3 class="card-title">
+                        <div class="card-icon">
+                            <i class="fas fa-qrcode"></i>
+                        </div>
+                        QR Code Absensi
+                    </h3>
+                    
+                    @if($student->qrAttendance)
+                        <div class="qr-section">
+                            <div class="qr-code-container">
+                                @if($student->qrAttendance->qr_image_path && file_exists(storage_path('app/public/' . $student->qrAttendance->qr_image_path)))
+                                    <img src="{{ asset('storage/' . $student->qrAttendance->qr_image_path) }}" 
+                                         alt="QR Code {{ $student->name }}" 
+                                         class="qr-code-image">
+                                @else
+                                    <div style="width: 200px; height: 200px; background: var(--gray-100); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--gray-500);">
+                                        <div class="text-center">
+                                            <i class="fas fa-qrcode fa-3x mb-2"></i>
+                                            <div>QR Code</div>
+                                            <div style="font-size: 0.75rem;">{{ $student->qrAttendance->qr_code }}</div>
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                            
+                            <div class="mb-3">
+                                <strong>Kode QR:</strong> 
+                                <code style="background: var(--gray-100); padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600; color: var(--gray-800);">
+                                    {{ $student->qrAttendance->qr_code }}
+                                </code>
+                            </div>
+                            
+                            <div class="qr-actions">
+                                @if($student->qrAttendance->qr_image_path && file_exists(storage_path('app/public/' . $student->qrAttendance->qr_image_path)))
+                                    <a href="{{ asset('storage/' . $student->qrAttendance->qr_image_path) }}" 
+                                       download="QR_{{ $student->name }}_{{ $student->nis }}.png" 
+                                       class="btn-qr btn-qr-download">
+                                        <i class="fas fa-download"></i> Download QR
+                                    </a>
+                                @endif
+                                
+                                <button type="button" class="btn-qr btn-qr-regenerate" onclick="regenerateQR({{ $student->id }})">
+                                    <i class="fas fa-sync-alt"></i> Regenerate
+                                </button>
+                                
+                                <a href="{{ route('admin.qr-attendance.index', ['search' => $student->nis]) }}" 
+                                   class="btn-qr btn-qr-manage" target="_blank">
+                                    <i class="fas fa-cog"></i> Kelola QR
+                                </a>
+                            </div>
+                            
+                            <div class="qr-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Informasi QR Code:</strong><br>
+                                QR Code ini digunakan untuk absensi siswa. Siswa dapat memindai QR Code ini untuk melakukan absensi harian.
+                                Dibuat pada: {{ $student->qrAttendance->created_at->format('d F Y H:i') }}
+                            </div>
+                        </div>
+                    @else
+                        <div class="no-qr-message">
+                            <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                            <h5>QR Code Belum Dibuat</h5>
+                            <p class="mb-3">Siswa ini belum memiliki QR Code untuk absensi. Buat QR Code sekarang untuk memungkinkan siswa melakukan absensi.</p>
+                            
+                            <button type="button" class="btn-generate-qr" onclick="generateQR({{ $student->id }})">
+                                <i class="fas fa-qrcode"></i> Buat QR Code
+                            </button>
+                            
+                            <div class="mt-3">
+                                <small class="text-muted">
+                                    Atau buat QR Code melalui halaman 
+                                    <a href="{{ route('admin.qr-attendance.index') }}" target="_blank" class="contact-link">
+                                        Manajemen QR Attendance
+                                    </a>
+                                </small>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Floating Action Buttons -->
+<div class="floating-actions">
+    <a href="{{ route('admin.students.edit', $student) }}" class="floating-btn floating-btn-primary" title="Edit Data Siswa">
+        <i class="fas fa-edit"></i>
+    </a>
+    @if($student->qrAttendance)
+        <button type="button" onclick="regenerateQR({{ $student->id }})" class="floating-btn floating-btn-warning" title="Regenerate QR Code">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+    @else
+        <button type="button" onclick="generateQR({{ $student->id }})" class="floating-btn floating-btn-success" title="Generate QR Code">
+            <i class="fas fa-qrcode"></i>
+        </button>
+    @endif
+</div>
+
+<!-- Loading Modal -->
+<div class="modal fade" id="loadingModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center py-4">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <div id="loadingText">Memproses QR Code...</div>
             </div>
         </div>
     </div>
@@ -708,59 +981,112 @@
 
 @push('scripts')
 <script>
-    // Listen for dark mode toggle
-    document.addEventListener('alpine:init', () => {
-        Alpine.data('studentDetail', () => ({
-            darkMode: localStorage.getItem('darkMode') === 'true' || false,
-            
-            init() {
-                // Listen for theme toggle from header button
-                this.$watch('darkMode', (value) => {
-                    localStorage.setItem('darkMode', value);
-                    this.applyTheme();
-                });
-                
-                // Listen for global theme changes
-                window.addEventListener('theme-changed', (e) => {
-                    this.darkMode = e.detail.darkMode;
-                });
-                
-                // Listen for toggle dark mode dispatch
-                this.$el.addEventListener('toggle-dark-mode', () => {
-                    this.toggleDarkMode();
-                });
-                
-                this.applyTheme();
-            },
-            
-            toggleDarkMode() {
-                this.darkMode = !this.darkMode;
-                
-                // Dispatch to parent admin app
-                window.dispatchEvent(new CustomEvent('theme-changed', { 
-                    detail: { darkMode: this.darkMode } 
-                }));
-            },
-            
-            applyTheme() {
-                if (this.darkMode) {
-                    document.documentElement.classList.add('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                }
-            }
-        }));
-    });
-    
-    // Smooth scroll to top when page loads
-    document.addEventListener('DOMContentLoaded', function() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+function generateQR(studentId) {
+    if (confirm('Apakah Anda yakin ingin membuat QR Code untuk siswa ini?')) {
+        showLoading('Membuat QR Code...');
         
-        // Add loading animation to cards
-        const cards = document.querySelectorAll('.info-card');
-        cards.forEach((card, index) => {
-            card.style.animationDelay = `${index * 0.1}s`;
+        fetch(`/admin/qr-attendance/generate/${studentId}`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            hideLoading();
+            
+            if (data.success) {
+                showNotification('QR Code berhasil dibuat!', 'success');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            } else {
+                showNotification(data.message || 'Gagal membuat QR Code', 'error');
+            }
+        })
+        .catch(error => {
+            hideLoading();
+            console.error('Error:', error);
+            showNotification('Terjadi kesalahan saat membuat QR Code', 'error');
         });
-    });
+    }
+}
+
+function regenerateQR(studentId) {
+    if (confirm('Apakah Anda yakin ingin membuat ulang QR Code? QR Code lama akan diganti dengan yang baru.')) {
+        showLoading('Membuat ulang QR Code...');
+        
+        fetch(`/admin/qr-attendance/regenerate/${studentId}`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            hideLoading();
+            
+            if (data.success) {
+                showNotification('QR Code berhasil dibuat ulang!', 'success');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            } else {
+                showNotification(data.message || 'Gagal membuat ulang QR Code', 'error');
+            }
+        })
+        .catch(error => {
+            hideLoading();
+            console.error('Error:', error);
+            showNotification('Terjadi kesalahan saat membuat ulang QR Code', 'error');
+        });
+    }
+}
+
+function showLoading(text = 'Memproses...') {
+    document.getElementById('loadingText').textContent = text;
+    const modal = new bootstrap.Modal(document.getElementById('loadingModal'));
+    modal.show();
+}
+
+function hideLoading() {
+    const modal = bootstrap.Modal.getInstance(document.getElementById('loadingModal'));
+    if (modal) {
+        modal.hide();
+    }
+}
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    const alertClass = type === 'error' ? 'danger' : type;
+    notification.className = `alert alert-${alertClass} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 10000; min-width: 300px; max-width: 400px;';
+    
+    const iconClass = type === 'success' ? 'check-circle' : 
+                     type === 'error' ? 'exclamation-triangle' : 
+                     type === 'warning' ? 'exclamation-circle' : 'info-circle';
+    
+    notification.innerHTML = `
+        <i class="fas fa-${iconClass} me-2"></i>
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    const timeout = type === 'error' ? 5000 : 3000;
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, timeout);
+}
+
+// Smooth scroll to top when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
 </script>
 @endpush

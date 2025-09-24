@@ -81,43 +81,25 @@
                         </div>
                     </div>
 
-                    <!-- Options Section -->
-                    <div class="row mb-4">
-                        <div class="col-md-6 mb-3">
-                            <div class="card border-0 h-100" style="background: linear-gradient(135deg, #e3f2fd, #bbdefb); border-radius: 15px;">
+                    <!-- Contact Section -->
+                    <div class="row justify-content-center mb-4">
+                        <div class="col-md-8">
+                            <div class="card border-0" style="background: linear-gradient(135deg, #f3e5f5, #e1bee7); border-radius: 15px;">
                                 <div class="card-body p-4 text-center">
                                     <div class="mb-3">
-                                        <i class="fas fa-redo-alt text-primary" style="font-size: 2rem;"></i>
+                                        <i class="fas fa-headset text-purple" style="font-size: 2.5rem; color: #7b1fa2;"></i>
                                     </div>
-                                    <h6 class="fw-bold mb-2" style="color: #1976d2;">Ajukan Banding</h6>
-                                    <p class="text-muted mb-3" style="font-size: 0.9rem;">
-                                        Jika Anda merasa ada kesalahan atau ingin memberikan informasi tambahan
+                                    <h5 class="fw-bold mb-2" style="color: #7b1fa2;">Butuh Bantuan?</h5>
+                                    <p class="text-muted mb-3">
+                                        Jika Anda memiliki pertanyaan atau memerlukan klarifikasi lebih lanjut mengenai penolakan akun ini, 
+                                        silakan hubungi tim support kami.
                                     </p>
-                                    <a href="<?php echo e(route('auth.rejection.appeal', ['user' => $user->id])); ?>" 
-                                       class="btn btn-primary btn-sm px-4" 
-                                       style="border-radius: 25px;">
-                                        <i class="fas fa-paper-plane me-1"></i>
-                                        Ajukan Banding
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <div class="card border-0 h-100" style="background: linear-gradient(135deg, #f3e5f5, #e1bee7); border-radius: 15px;">
-                                <div class="card-body p-4 text-center">
-                                    <div class="mb-3">
-                                        <i class="fas fa-phone text-purple" style="font-size: 2rem; color: #7b1fa2;"></i>
-                                    </div>
-                                    <h6 class="fw-bold mb-2" style="color: #7b1fa2;">Hubungi Kami</h6>
-                                    <p class="text-muted mb-3" style="font-size: 0.9rem;">
-                                        Butuh penjelasan lebih lanjut? Tim kami siap membantu Anda
-                                    </p>
-                                    <button class="btn btn-sm px-4" 
+                                    <button class="btn btn-lg px-4" 
                                             style="background: #7b1fa2; color: white; border-radius: 25px; border: none;"
                                             data-bs-toggle="modal" 
                                             data-bs-target="#contactModal">
-                                        <i class="fas fa-envelope me-1"></i>
-                                        Kirim Pesan
+                                        <i class="fas fa-envelope me-2"></i>
+                                        Hubungi Support
                                     </button>
                                 </div>
                             </div>
@@ -128,47 +110,47 @@
                     <div class="card border-0 mb-4" style="background: linear-gradient(135deg, #fff3e0, #ffe0b2); border-radius: 15px;">
                         <div class="card-body p-4">
                             <h5 class="fw-bold mb-3" style="color: #f57c00;">
-                                <i class="fas fa-lightbulb text-warning me-2"></i>
+                                <i class="fas fa-info-circle text-warning me-2"></i>
                                 Informasi Penting
                             </h5>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="d-flex align-items-start mb-3">
                                         <div class="flex-shrink-0">
-                                            <i class="fas fa-clock text-warning me-3" style="margin-top: 2px;"></i>
+                                            <i class="fas fa-user-plus text-warning me-3" style="margin-top: 2px;"></i>
                                         </div>
                                         <div>
-                                            <strong>Periode Banding</strong><br>
-                                            <small class="text-muted">Anda dapat mengajukan banding dalam 30 hari setelah penolakan</small>
+                                            <strong>Pendaftaran Ulang</strong><br>
+                                            <small class="text-muted">Anda dapat mendaftar ulang dengan data yang telah diperbaiki</small>
                                         </div>
                                     </div>
                                     <div class="d-flex align-items-start mb-3">
                                         <div class="flex-shrink-0">
-                                            <i class="fas fa-file-alt text-warning me-3" style="margin-top: 2px;"></i>
+                                            <i class="fas fa-shield-check text-warning me-3" style="margin-top: 2px;"></i>
                                         </div>
                                         <div>
-                                            <strong>Dokumen Tambahan</strong><br>
-                                            <small class="text-muted">Siapkan dokumen pendukung untuk memperkuat banding Anda</small>
+                                            <strong>Verifikasi Data</strong><br>
+                                            <small class="text-muted">Pastikan semua data yang dimasukkan valid dan sesuai</small>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="d-flex align-items-start mb-3">
                                         <div class="flex-shrink-0">
-                                            <i class="fas fa-calendar-check text-warning me-3" style="margin-top: 2px;"></i>
+                                            <i class="fas fa-headset text-warning me-3" style="margin-top: 2px;"></i>
                                         </div>
                                         <div>
-                                            <strong>Waktu Proses</strong><br>
-                                            <small class="text-muted">Banding akan diproses dalam 3-5 hari kerja</small>
+                                            <strong>Bantuan Support</strong><br>
+                                            <small class="text-muted">Tim support siap membantu jika ada pertanyaan</small>
                                         </div>
                                     </div>
                                     <div class="d-flex align-items-start">
                                         <div class="flex-shrink-0">
-                                            <i class="fas fa-envelope text-warning me-3" style="margin-top: 2px;"></i>
+                                            <i class="fas fa-clock text-warning me-3" style="margin-top: 2px;"></i>
                                         </div>
                                         <div>
-                                            <strong>Notifikasi</strong><br>
-                                            <small class="text-muted">Hasil akan dikirim melalui email yang terdaftar</small>
+                                            <strong>Waktu Respon</strong><br>
+                                            <small class="text-muted">Support akan merespon dalam 1x24 jam</small>
                                         </div>
                                     </div>
                                 </div>
@@ -192,7 +174,7 @@
                     <div class="mt-4 pt-3 text-center" style="border-top: 1px solid #dee2e6;">
                         <small class="text-muted">
                             <i class="fas fa-shield-alt me-1"></i>
-                            Keputusan ini dibuat berdasarkan evaluasi menyeluruh terhadap dokumen dan persyaratan yang telah ditetapkan.
+                            Keputusan ini dibuat berdasarkan evaluasi data dan persyaratan sistem yang telah ditetapkan.
                         </small>
                     </div>
                 </div>
@@ -227,7 +209,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="subject" class="form-label">Subjek</label>
-                        <input type="text" class="form-control" id="subject" name="subject" placeholder="Pertanyaan tentang penolakan pendaftaran" required>
+                        <input type="text" class="form-control" id="subject" name="subject" placeholder="Pertanyaan tentang penolakan akun" required>
                     </div>
                     <div class="mb-3">
                         <label for="message" class="form-label">Pesan</label>

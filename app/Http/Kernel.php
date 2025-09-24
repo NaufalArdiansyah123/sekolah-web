@@ -37,6 +37,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\CheckUserStatus::class, // Add user status check to web middleware
+            \App\Http\Middleware\CheckMaintenanceMode::class, // Add maintenance mode check
         ],
 
         'api' => [
@@ -68,5 +69,6 @@ class Kernel extends HttpKernel
         'check.upload.size' => \App\Http\Middleware\CheckFileUploadSize::class,
         'role' => \App\Http\Middleware\CheckRole::class,
         'check.user.status' => \App\Http\Middleware\CheckUserStatus::class,
+        'maintenance' => \App\Http\Middleware\CheckMaintenanceMode::class,
     ];
 }

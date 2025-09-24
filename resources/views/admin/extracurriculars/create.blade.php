@@ -666,8 +666,8 @@
                                 name="status" 
                                 required>
                             <option value="">Pilih Status</option>
-                            <option value="aktif" {{ old('status') == 'aktif' ? 'selected' : '' }}>Aktif</option>
-                            <option value="tidak_aktif" {{ old('status') == 'tidak_aktif' ? 'selected' : '' }}>Tidak Aktif</option>
+                            <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Aktif</option>
+                            <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
                         </select>
                         @error('status')
                             <div class="invalid-feedback">{{ $message }}</div>

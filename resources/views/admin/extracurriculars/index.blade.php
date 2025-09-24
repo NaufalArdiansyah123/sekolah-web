@@ -1127,7 +1127,7 @@
                                     </td>
                                     <td>{{ $extracurricular->coach }}</td>
                                     <td>
-                                        <span class="badge badge-{{ $extracurricular->status == 'aktif' ? 'active' : 'inactive' }}">
+                                        <span class="badge badge-{{ $extracurricular->status == 'active' ? 'active' : 'inactive' }}>
                                             {{ ucfirst($extracurricular->status) }}
                                         </span>
                                     </td>

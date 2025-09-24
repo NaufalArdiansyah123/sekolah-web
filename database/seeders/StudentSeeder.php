@@ -89,26 +89,51 @@ class StudentSeeder extends Seeder
         $createdStudents = 0;
         $createdUsers = 0;
         
+        // Check if students already exist
+        $existingStudentsCount = Student::count();
+        if ($existingStudentsCount > 0) {
+            $this->command->info("⚠️  Students already exist ({$existingStudentsCount} records). Skipping StudentSeeder.");
+            $this->command->info("✅ StudentSeeder completed (skipped - data exists)!");
+            return;
+        }
+        
         DB::beginTransaction();
         
         try {
             foreach ($studentsData as $index => $studentData) {
-                // Generate NIS berdasarkan kelas dan urutan
+                // Generate unique NIS berdasarkan kelas dan urutan
                 $classInfo = ClassHelper::parseClass($studentData['class']);
                 $grade = $classInfo['grade'];
                 $sequenceNumber = str_pad($index + 1, 3, '0', STR_PAD_LEFT);
                 $nis = $currentYear . str_pad($grade, 2, '0', STR_PAD_LEFT) . $sequenceNumber;
                 
-                // Generate NISN (10 digit random)
-                $nisn = '00' . rand(10000000, 99999999);
+                // Check if NIS already exists, if so, generate new one
+                $attempts = 0;
+                while (Student::where('nis', $nis)->exists() && $attempts < 100) {
+                    $sequenceNumber = str_pad(($index + 1) + $attempts + 1000, 3, '0', STR_PAD_LEFT);
+                    $nis = $currentYear . str_pad($grade, 2, '0', STR_PAD_LEFT) . $sequenceNumber;
+                    $attempts++;
+                }
+                
+                // Generate unique NISN (10 digit)
+                do {
+                    $nisn = '00' . rand(10000000, 99999999);
+                } while (Student::where('nisn', $nisn)->exists());
                 
                 // Generate birth date (15-18 tahun yang lalu)
                 $birthYear = $currentYear - (15 + ($grade - 10)); // Kelas 10 = 15 tahun, 11 = 16 tahun, 12 = 17 tahun
                 $birthDate = Carbon::create($birthYear, rand(1, 12), rand(1, 28));
                 
-                // Generate email
+                // Generate unique email
                 $emailName = strtolower(str_replace(' ', '.', $studentData['name']));
                 $email = $emailName . '@student.smk.sch.id';
+                
+                // Check if email already exists, if so, add number
+                $emailAttempts = 1;
+                while (Student::where('email', $email)->exists() || User::where('email', $email)->exists()) {
+                    $email = $emailName . $emailAttempts . '@student.smk.sch.id';
+                    $emailAttempts++;
+                }
                 
                 // Generate phone
                 $phone = '08' . rand(1000000000, 9999999999);

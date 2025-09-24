@@ -38,12 +38,10 @@ class AuthenticatedSessionController extends Controller
             'user_id' => $user->id,
             'roles' => $user->roles->pluck('name')->toArray(),
             'roles_count' => $user->roles->count(),
-            'has_super_admin' => $user->hasRole('super_admin'),
             'has_admin' => $user->hasRole('admin'),
             'has_teacher' => $user->hasRole('teacher'),
             'has_student' => $user->hasRole('student'),
             'all_role_checks' => [
-                'super_admin' => $user->hasRole('super_admin'),
                 'admin' => $user->hasRole('admin'),
                 'teacher' => $user->hasRole('teacher'),
                 'student' => $user->hasRole('student')
@@ -51,10 +49,7 @@ class AuthenticatedSessionController extends Controller
         ]);
         
         // Check roles in priority order
-        if ($user->hasRole('super_admin')) {
-            Log::info('Login: Redirecting to admin dashboard (super_admin)');
-            return redirect()->route('admin.dashboard');
-        } elseif ($user->hasRole('admin')) {
+        if ($user->hasRole('admin')) {
             Log::info('Login: Redirecting to admin dashboard (admin)');
             return redirect()->route('admin.dashboard');
         } elseif ($user->hasRole('teacher')) {

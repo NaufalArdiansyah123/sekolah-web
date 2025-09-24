@@ -8,14 +8,17 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('extracurriculars', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->text('description')->nullable();
-            $table->string('teacher_in_charge')->nullable();
-            $table->enum('status', ['active', 'inactive'])->default('active');
-            $table->timestamps();
-        });
+        // Only create the table if it doesn't exist to avoid conflicts
+        if (!Schema::hasTable('extracurriculars')) {
+            Schema::create('extracurriculars', function (Blueprint $table) {
+                $table->id();
+                $table->string('name');
+                $table->text('description')->nullable();
+                $table->string('teacher_in_charge')->nullable();
+                $table->enum('status', ['active', 'inactive'])->default('active');
+                $table->timestamps();
+            });
+        }
     }
 
     public function down()

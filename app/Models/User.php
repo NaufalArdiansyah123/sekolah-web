@@ -74,6 +74,14 @@ class User extends Authenticatable
         return $this->hasMany(Student::class);
     }
 
+    /**
+     * Get the student record for this user (for student role)
+     */
+    public function student()
+    {
+        return $this->hasOne(Student::class);
+    }
+
     public function teachers()
     {
         return $this->hasMany(Teacher::class);

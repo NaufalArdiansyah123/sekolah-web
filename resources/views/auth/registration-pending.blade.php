@@ -17,7 +17,7 @@
                     <!-- Title -->
                     <h2 class="fw-bold mb-3" style="color: #1a202c;">
                         <i class="fas fa-check-circle text-success me-2"></i>
-                        Pendaftaran Berhasil!
+                        Pendaftaran Akun Berhasil!
                     </h2>
 
                     <!-- Success Message -->
@@ -33,7 +33,7 @@
                         <div class="card-body p-4">
                             <h5 class="fw-bold mb-3" style="color: #495057;">
                                 <i class="fas fa-hourglass-half text-warning me-2"></i>
-                                Status Pendaftaran
+                                Status Pendaftaran Akun
                             </h5>
                             <p class="mb-3" style="color: #6c757d; line-height: 1.6;">
                                 Akun Anda telah berhasil didaftarkan dan sedang menunggu konfirmasi dari administrator sekolah. 
@@ -44,21 +44,21 @@
                                 <div class="col-md-4 mb-3">
                                     <div class="p-3" style="background: rgba(16, 185, 129, 0.1); border-radius: 10px;">
                                         <i class="fas fa-user-plus text-success mb-2" style="font-size: 1.5rem;"></i>
-                                        <h6 class="fw-bold mb-1">Pendaftaran</h6>
+                                        <h6 class="fw-bold mb-1">Pendaftaran Akun</h6>
                                         <small class="text-success">✓ Selesai</small>
                                     </div>
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <div class="p-3" style="background: rgba(255, 193, 7, 0.1); border-radius: 10px;">
                                         <i class="fas fa-search text-warning mb-2" style="font-size: 1.5rem;"></i>
-                                        <h6 class="fw-bold mb-1">Verifikasi</h6>
+                                        <h6 class="fw-bold mb-1">Verifikasi Akun</h6>
                                         <small class="text-warning">⏳ Dalam Proses</small>
                                     </div>
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <div class="p-3" style="background: rgba(108, 117, 125, 0.1); border-radius: 10px;">
                                         <i class="fas fa-key text-muted mb-2" style="font-size: 1.5rem;"></i>
-                                        <h6 class="fw-bold mb-1">Aktivasi</h6>
+                                        <h6 class="fw-bold mb-1">Aktivasi Akun</h6>
                                         <small class="text-muted">⏸️ Menunggu</small>
                                     </div>
                                 </div>

@@ -44,19 +44,11 @@ class RolePermissionSeeder extends Seeder
             ]);
         }
 
-        // --- Roles ---
+        // --- Simple 3 Roles System ---
 
-        // Super Admin
-        $superAdmin = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
-        $superAdmin->givePermissionTo(Permission::all());
-
-        // Admin
+        // Admin (Full Access)
         $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
-        $admin->givePermissionTo([
-            'posts.create', 'posts.read', 'posts.update', 'posts.delete',
-            'users.create', 'users.read', 'users.update',
-            'academic.manage', 'system.settings'
-        ]);
+        $admin->givePermissionTo(Permission::all());
 
         // Teacher
         $teacher = Role::firstOrCreate(['name' => 'teacher', 'guard_name' => 'web']);
@@ -72,12 +64,6 @@ class RolePermissionSeeder extends Seeder
             'posts.read', 'assignments.submit', 'exams.take', 'materials.access'
         ]);
 
-        // Parent
-        $parent = Role::firstOrCreate(['name' => 'parent', 'guard_name' => 'web']);
-        $parent->givePermissionTo([
-            'posts.read', 'academic.view'
-        ]);
-
         // --- Create default super admin user ---
         $user = User::firstOrCreate(
             ['email' => 'admin@sekolah.com'],
@@ -88,6 +74,6 @@ class RolePermissionSeeder extends Seeder
             ]
         );
 
-        $user->assignRole('super_admin');
+        $user->assignRole('admin');
     }
 }

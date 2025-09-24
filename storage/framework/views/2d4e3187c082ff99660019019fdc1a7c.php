@@ -1,3 +1,5 @@
+
+
 <?php $__env->startSection('title', 'QR Scanner Absensi'); ?>
 
 <?php $__env->startPush('meta'); ?>
@@ -32,6 +34,36 @@
                class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-all duration-200 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                 <i class="fas fa-history mr-2"></i>Riwayat Absensi
             </a>
+        </div>
+    </div>
+
+    <!-- Security Warning Banner -->
+    <div class="bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-2xl shadow-xl p-6 mb-8">
+        <div class="flex items-start">
+            <div class="flex-shrink-0">
+                <i class="fas fa-shield-alt text-3xl mr-4"></i>
+            </div>
+            <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">🔒 Keamanan Absensi</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <h4 class="font-semibold mb-2">⚠️ PENTING:</h4>
+                        <ul class="space-y-1">
+                            <li>• Gunakan HANYA QR Code Anda sendiri</li>
+                            <li>• Jangan scan QR Code milik siswa lain</li>
+                            <li>• Setiap siswa memiliki QR Code unik</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-2">📱 Cara Mendapatkan QR Code:</h4>
+                        <ul class="space-y-1">
+                            <li>• Klik tombol "QR Code Saya" di atas</li>
+                            <li>• Download dan simpan QR Code Anda</li>
+                            <li>• Hubungi admin jika belum memiliki QR Code</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -144,18 +176,37 @@
                             </div>
 
                             <!-- Instructions -->
-                            <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-6">
-                                <div class="flex items-start">
-                                    <i class="fas fa-lightbulb text-amber-600 dark:text-amber-400 text-xl mr-3 mt-1"></i>
-                                    <div class="text-left">
-                                        <h4 class="font-semibold text-amber-900 dark:text-amber-100 mb-2">Petunjuk Penggunaan:</h4>
-                                        <ul class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
-                                            <li>• Klik "Mulai Scanner" untuk mengaktifkan kamera</li>
-                                            <li>• Arahkan kamera ke QR Code absensi</li>
-                                            <li>• Pastikan QR Code terlihat jelas dalam frame</li>
-                                            <li>• Scanner akan otomatis membaca QR Code</li>
-                                            <li>• Gunakan "Input Manual" jika kamera bermasalah</li>
-                                        </ul>
+                            <div class="space-y-4">
+                                <!-- Security Warning -->
+                                <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6">
+                                    <div class="flex items-start">
+                                        <i class="fas fa-exclamation-triangle text-red-600 dark:text-red-400 text-xl mr-3 mt-1"></i>
+                                        <div class="text-left">
+                                            <h4 class="font-semibold text-red-900 dark:text-red-100 mb-2">⚠️ PERINGATAN KEAMANAN:</h4>
+                                            <ul class="text-sm text-red-800 dark:text-red-200 space-y-1">
+                                                <li>• <strong>HANYA scan QR Code milik Anda sendiri</strong></li>
+                                                <li>• Menggunakan QR Code orang lain adalah pelanggaran</li>
+                                                <li>• Sistem akan mendeteksi dan mencatat pelanggaran</li>
+                                                <li>• Dapatkan QR Code Anda melalui tombol "QR Code Saya"</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Usage Instructions -->
+                                <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-6">
+                                    <div class="flex items-start">
+                                        <i class="fas fa-lightbulb text-amber-600 dark:text-amber-400 text-xl mr-3 mt-1"></i>
+                                        <div class="text-left">
+                                            <h4 class="font-semibold text-amber-900 dark:text-amber-100 mb-2">Petunjuk Penggunaan:</h4>
+                                            <ul class="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+                                                <li>• Klik "Mulai Scanner" untuk mengaktifkan kamera</li>
+                                                <li>• Arahkan kamera ke QR Code absensi <strong>milik Anda</strong></li>
+                                                <li>• Pastikan QR Code terlihat jelas dalam frame</li>
+                                                <li>• Scanner akan otomatis membaca QR Code</li>
+                                                <li>• Gunakan "Input Manual" jika kamera bermasalah</li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -731,13 +782,138 @@ function processAttendance(qrCode) {
                 location.reload();
             });
         } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Absensi Gagal',
-                text: data.message,
-                confirmButtonText: 'OK',
-                confirmButtonColor: '#ef4444'
-            });
+            // Check if this is a wrong QR owner warning
+            if (data.error_type === 'wrong_qr_owner_warning') {
+                // Show warning instead of error for QR code violations
+                Swal.fire({
+                    icon: 'warning',
+                    title: '⚠️ PERINGATAN KEAMANAN',
+                    html: `
+                        <div class="text-left">
+                            <div class="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
+                                <h4 class="text-orange-800 font-bold mb-2">🚨 QR Code Salah Terdeteksi!</h4>
+                                <p class="text-orange-700 text-sm mb-3">${data.detailed_message}</p>
+                                <div class="bg-red-100 border border-red-300 rounded p-2 mb-2">
+                                    <p class="text-red-800 text-xs font-semibold">ID Pelanggaran: ${data.warning_data.violation_id}</p>
+                                    <p class="text-red-800 text-xs">Waktu: ${data.warning_data.violation_time}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                                <h5 class="text-yellow-800 font-semibold mb-2">📋 Detail QR Code:</h5>
+                                <div class="text-sm text-yellow-700">
+                                    <p><strong>QR Code milik:</strong> ${data.warning_data.qr_owner.name}</p>
+                                    <p><strong>NIS:</strong> ${data.warning_data.qr_owner.nis}</p>
+                                    <p><strong>Kelas:</strong> ${data.warning_data.qr_owner.class}</p>
+                                    <hr class="my-2 border-yellow-300">
+                                    <p><strong>Anda adalah:</strong> ${data.warning_data.current_user.name}</p>
+                                    <p><strong>NIS Anda:</strong> ${data.warning_data.current_user.nis}</p>
+                                    <p><strong>Kelas Anda:</strong> ${data.warning_data.current_user.class}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                                <h5 class="text-blue-800 font-semibold mb-2">💡 Cara yang Benar:</h5>
+                                <ul class="text-sm text-blue-700 space-y-1">
+                                    ${data.instructions.map(instruction => `<li>• ${instruction}</li>`).join('')}
+                                </ul>
+                            </div>
+                            
+                            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                                <h5 class="text-red-800 font-semibold mb-2">🔍 Pemberitahuan Admin:</h5>
+                                <p class="text-sm text-red-700">${data.admin_notice}</p>
+                            </div>
+                        </div>
+                    `,
+                    confirmButtonText: 'Saya Mengerti',
+                    confirmButtonColor: '#f59e0b',
+                    width: '600px',
+                    customClass: {
+                        popup: 'text-left'
+                    },
+                    footer: '<div class="text-xs text-gray-500">⚠️ Pelanggaran ini telah dicatat dalam sistem untuk ditindaklanjuti admin</div>'
+                }).then(() => {
+                    // Show "QR Code Saya" button prominently
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Dapatkan QR Code Anda',
+                        text: 'Klik tombol "QR Code Saya" di bagian atas untuk mendapatkan QR Code absensi Anda sendiri.',
+                        confirmButtonText: 'Buka QR Code Saya',
+                        confirmButtonColor: '#3b82f6',
+                        showCancelButton: true,
+                        cancelButtonText: 'Nanti Saja'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            showMyQrCode();
+                        }
+                    });
+                });
+            } else if (data.error_type === 'wrong_qr_owner') {
+                // Show detailed warning for wrong QR code owner
+                Swal.fire({
+                    icon: 'warning',
+                    title: '⚠️ PERINGATAN KEAMANAN: QR Code Salah!',
+                    html: `
+                        <div class="text-left">
+                            <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                                <h4 class="text-red-800 font-bold mb-2">🚫 QR Code ini bukan milik Anda!</h4>
+                                <p class="text-red-700 text-sm mb-3">${data.detailed_message}</p>
+                            </div>
+                            
+                            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                                <h5 class="text-yellow-800 font-semibold mb-2">📋 Detail QR Code:</h5>
+                                <div class="text-sm text-yellow-700">
+                                    <p><strong>QR Code milik:</strong> ${data.warning_data.qr_owner.name}</p>
+                                    <p><strong>NIS:</strong> ${data.warning_data.qr_owner.nis}</p>
+                                    <p><strong>Kelas:</strong> ${data.warning_data.qr_owner.class}</p>
+                                    <hr class="my-2 border-yellow-300">
+                                    <p><strong>Anda adalah:</strong> ${data.warning_data.current_user.name}</p>
+                                    <p><strong>NIS Anda:</strong> ${data.warning_data.current_user.nis}</p>
+                                    <p><strong>Kelas Anda:</strong> ${data.warning_data.current_user.class}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                <h5 class="text-blue-800 font-semibold mb-2">💡 Cara yang Benar:</h5>
+                                <ul class="text-sm text-blue-700 space-y-1">
+                                    ${data.instructions.map(instruction => `<li>• ${instruction}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    `,
+                    confirmButtonText: 'Saya Mengerti',
+                    confirmButtonColor: '#f59e0b',
+                    width: '600px',
+                    customClass: {
+                        popup: 'text-left'
+                    },
+                    footer: '<div class="text-xs text-gray-500">⚠️ Menggunakan QR Code orang lain dapat melanggar aturan sekolah</div>'
+                }).then(() => {
+                    // Show "QR Code Saya" button prominently
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Dapatkan QR Code Anda',
+                        text: 'Klik tombol "QR Code Saya" di bagian atas untuk mendapatkan QR Code absensi Anda sendiri.',
+                        confirmButtonText: 'Buka QR Code Saya',
+                        confirmButtonColor: '#3b82f6',
+                        showCancelButton: true,
+                        cancelButtonText: 'Nanti Saja'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            showMyQrCode();
+                        }
+                    });
+                });
+            } else {
+                // Show regular error message
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Absensi Gagal',
+                    text: data.message,
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#ef4444'
+                });
+            }
         }
     })
     .catch(error => {
@@ -792,11 +968,26 @@ function showMyQrCode() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                document.getElementById('myQrCodeContent').innerHTML = `
+        document.getElementById('myQrCodeContent').innerHTML = `
                     <div class="text-center">
                         <img src="${data.qr_image_url}" alt="My QR Code" class="max-w-xs mx-auto mb-4 rounded-lg shadow-lg">
                         <h4 class="text-xl font-bold text-gray-900 dark:text-white mb-2">${data.student.name}</h4>
                         <p class="text-gray-600 dark:text-gray-400 mb-4">NIS: ${data.student.nis} | Kelas: ${data.student.class}</p>
+                        
+                        <!-- QR Code Text Display -->
+                        <div class="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4 mb-4">
+                            <h5 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                <i class="fas fa-code mr-1"></i>Kode QR:
+                            </h5>
+                            <div class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded p-3">
+                                <code class="text-xs text-gray-800 dark:text-gray-200 break-all font-mono">${data.qr_code}</code>
+                            </div>
+                            <button onclick="copyQrCode('${data.qr_code}')" 
+                                    class="mt-2 text-xs bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded transition-colors">
+                                <i class="fas fa-copy mr-1"></i>Salin Kode
+                            </button>
+                        </div>
+                        
                         <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
                             <p class="text-sm text-blue-700 dark:text-blue-300">
                                 <i class="fas fa-info-circle mr-1"></i>
@@ -830,6 +1021,79 @@ function showMyQrCode() {
 function closeModal(modalId) {
     document.getElementById(modalId).classList.add('hidden');
     document.getElementById(modalId).classList.remove('flex');
+}
+
+// Copy QR Code to clipboard
+function copyQrCode(qrCode) {
+    if (navigator.clipboard && window.isSecureContext) {
+        // Use modern clipboard API
+        navigator.clipboard.writeText(qrCode).then(() => {
+            // Show success message
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: 'Kode QR berhasil disalin ke clipboard',
+                timer: 2000,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end'
+            });
+        }).catch(err => {
+            console.error('Failed to copy QR code:', err);
+            fallbackCopyQrCode(qrCode);
+        });
+    } else {
+        // Fallback for older browsers
+        fallbackCopyQrCode(qrCode);
+    }
+}
+
+// Fallback copy method for older browsers
+function fallbackCopyQrCode(qrCode) {
+    try {
+        // Create temporary textarea
+        const textArea = document.createElement('textarea');
+        textArea.value = qrCode;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        
+        // Try to copy
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
+        
+        if (successful) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: 'Kode QR berhasil disalin ke clipboard',
+                timer: 2000,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end'
+            });
+        } else {
+            throw new Error('Copy command failed');
+        }
+    } catch (err) {
+        console.error('Fallback copy failed:', err);
+        // Show manual copy dialog
+        Swal.fire({
+            icon: 'info',
+            title: 'Salin Manual',
+            html: `
+                <p class="mb-3">Silakan salin kode QR berikut secara manual:</p>
+                <div class="bg-gray-100 border rounded p-3 text-left">
+                    <code class="text-sm break-all">${qrCode}</code>
+                </div>
+            `,
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#3b82f6'
+        });
+    }
 }
 
 // Manual input toggle

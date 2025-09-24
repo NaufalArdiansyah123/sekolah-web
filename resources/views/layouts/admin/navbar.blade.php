@@ -46,7 +46,7 @@
                               class="notification-count-badge absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold notification-badge"></span>
                     </button>
                     
-                    <!-- Enhanced Notifications dropdown -->
+                    <!-- Fixed Notifications dropdown -->
                     <div x-show="notificationOpen" 
                          @click.away="notificationOpen = false" 
                          x-transition:enter="transition ease-out duration-200" 
@@ -55,8 +55,8 @@
                          x-transition:leave="transition ease-in duration-150" 
                          x-transition:leave-start="transform opacity-100 scale-100 translate-y-0" 
                          x-transition:leave-end="transform opacity-0 scale-95 translate-y-1" 
-                         class="absolute right-0 mt-3 w-96 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden"
-                         style="display: none;">
+                         class="notification-dropdown absolute right-0 mt-3 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden"
+                         style="display: none; width: 400px; min-width: 380px; max-width: 450px;">
                         
                         <!-- Enhanced Header -->
                         <div class="px-4 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 border-b border-gray-200 dark:border-gray-600">
@@ -88,9 +88,9 @@
                         </div>
                         
                         <!-- Enhanced Notifications List -->
-                        <div class="max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent" id="notifications-list">
-                            <div class="notifications-loading">
-                                <div class="loading-spinner"></div>
+                        <div class="notification-list-container" style="max-height: 320px; overflow-y: auto;" id="notifications-list">
+                            <div class="notifications-loading flex flex-col items-center justify-center p-6 text-gray-500">
+                                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mb-2"></div>
                                 <span class="text-sm">Memuat notifikasi...</span>
                             </div>
                         </div>
@@ -159,22 +159,153 @@
     </div>
 </header>
 
+<style>
+/* Fixed Notification Dropdown Styles */
+.notification-dropdown {
+    /* Force specific width and prevent shrinking */
+    width: 400px !important;
+    min-width: 380px !important;
+    max-width: 450px !important;
+    position: absolute !important;
+    right: 0 !important;
+    z-index: 9999 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .notification-dropdown {
+        width: 350px !important;
+        min-width: 320px !important;
+        max-width: 380px !important;
+        right: -50px !important;
+    }
+}
+
+@media (max-width: 380px) {
+    .notification-dropdown {
+        width: 300px !important;
+        min-width: 280px !important;
+        max-width: 320px !important;
+        right: -80px !important;
+    }
+}
+
+/* Ensure dropdown content doesn't shrink */
+.notification-list-container {
+    width: 100% !important;
+    min-height: 200px !important;
+    max-height: 320px !important;
+    overflow-y: auto !important;
+}
+
+/* Loading spinner styles */
+.notifications-loading {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 2rem !important;
+    color: #6b7280 !important;
+    width: 100% !important;
+    min-height: 150px !important;
+}
+
+/* Scrollbar styling */
+.notification-list-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.notification-list-container::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+.notification-list-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+.notification-list-container::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Dark mode scrollbar */
+.dark .notification-list-container::-webkit-scrollbar-track {
+    background: #374151;
+}
+
+.dark .notification-list-container::-webkit-scrollbar-thumb {
+    background: #6b7280;
+}
+
+.dark .notification-list-container::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
+
+/* Ensure proper positioning */
+.notification-dropdown {
+    transform-origin: top right;
+}
+
+/* Mobile viewport fix */
+@media (max-width: 768px) {
+    .notification-dropdown {
+        position: fixed !important;
+        right: 10px !important;
+        left: 10px !important;
+        width: auto !important;
+        min-width: auto !important;
+        max-width: none !important;
+    }
+}
+</style>
+
 <script>
-// Notification functions
+// Enhanced Notification functions
 function loadNotifications() {
+    const notificationsList = document.getElementById('notifications-list');
+    if (!notificationsList) return;
+    
+    // Show loading state
+    notificationsList.innerHTML = `
+        <div class="flex flex-col items-center justify-center p-6 text-gray-500">
+            <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mb-2"></div>
+            <span class="text-sm">Memuat notifikasi...</span>
+        </div>
+    `;
+    
     fetch('/admin/notifications/recent')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
-            document.getElementById('notifications-list').innerHTML = data.html;
+            if (data.success) {
+                notificationsList.innerHTML = data.html;
+                // Update unread count if provided
+                if (typeof data.unread_count !== 'undefined') {
+                    updateUnreadCountDisplay(data.unread_count);
+                }
+            } else {
+                throw new Error(data.error || 'Unknown error');
+            }
         })
         .catch(error => {
             console.error('Error loading notifications:', error);
-            document.getElementById('notifications-list').innerHTML = 
-                '<div class="p-4 text-center text-red-500">Gagal memuat notifikasi</div>';
+            notificationsList.innerHTML = `
+                <div class="p-4 text-center text-red-500">
+                    <i class="fas fa-exclamation-triangle mb-2 text-2xl"></i>
+                    <div class="text-sm">Gagal memuat notifikasi</div>
+                    <button onclick="loadNotifications()" class="mt-2 text-xs text-blue-500 hover:text-blue-700">Coba lagi</button>
+                </div>
+            `;
         });
 }
 
 function markAllAsRead() {
+    if (!confirm('Tandai semua notifikasi sebagai dibaca?')) return;
+    
     fetch('/admin/notifications/mark-all-read', {
         method: 'POST',
         headers: {
@@ -182,19 +313,28 @@ function markAllAsRead() {
             'Content-Type': 'application/json'
         }
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
-            // Update unread count
-            const countElement = document.querySelector('[x-data] span[x-text]');
-            if (countElement) {
-                countElement.style.display = 'none';
-            }
+            // Update unread count to 0
+            updateUnreadCountDisplay(0);
             // Reload notifications
             loadNotifications();
+            // Show success message
+            showToast('success', 'Berhasil', 'Semua notifikasi ditandai sebagai dibaca');
+        } else {
+            throw new Error(data.error || 'Unknown error');
         }
     })
-    .catch(error => console.error('Error marking notifications as read:', error));
+    .catch(error => {
+        console.error('Error marking notifications as read:', error);
+        showToast('error', 'Error', 'Gagal menandai notifikasi sebagai dibaca');
+    });
 }
 
 function markNotificationAsRead(notificationId) {
@@ -223,19 +363,46 @@ function markNotificationAsRead(notificationId) {
 
 function updateUnreadCount() {
     fetch('/admin/notifications/unread-count')
-        .then(response => response.json())
-        .then(data => {
-            const countElement = document.querySelector('[x-data] span[x-text]');
-            if (countElement) {
-                if (data.count > 0) {
-                    countElement.textContent = data.count > 99 ? '99+' : data.count;
-                    countElement.style.display = 'flex';
-                } else {
-                    countElement.style.display = 'none';
-                }
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
+            return response.json();
         })
-        .catch(error => console.error('Error updating unread count:', error));
+        .then(data => {
+            updateUnreadCountDisplay(data.count);
+        })
+        .catch(error => {
+            console.error('Error updating unread count:', error);
+        });
+}
+
+function updateUnreadCountDisplay(count) {
+    const countElements = document.querySelectorAll('.notification-count-badge');
+    countElements.forEach(element => {
+        if (count > 0) {
+            element.textContent = count > 99 ? '99+' : count;
+            element.style.display = 'flex';
+        } else {
+            element.style.display = 'none';
+        }
+    });
+    
+    // Update Alpine.js data if available
+    const notificationComponent = document.querySelector('[x-data*="unreadCount"]');
+    if (notificationComponent && notificationComponent._x_dataStack) {
+        notificationComponent._x_dataStack[0].unreadCount = count;
+    }
+}
+
+// Toast notification function
+function showToast(type, title, message) {
+    if (typeof window.showToast === 'function') {
+        window.showToast(type, title, message);
+    } else {
+        // Fallback to alert if toast function not available
+        alert(`${title}: ${message}`);
+    }
 }
 
 // Auto-refresh notifications every 30 seconds

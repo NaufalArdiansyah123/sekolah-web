@@ -21,7 +21,8 @@ class Announcement extends Model
         'status',
         'views',
         'tanggal_publikasi',
-        'gambar'
+        'gambar',
+        'slug'
     ];
 
     protected $casts = [
@@ -66,5 +67,42 @@ class Announcement extends Model
     public function incrementViews()
     {
         $this->increment('views');
+    }
+
+    // Generate slug otomatis
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($announcement) {
+            if (empty($announcement->slug)) {
+                $announcement->slug = static::generateUniqueSlug($announcement->judul);
+            }
+        });
+
+        static::updating(function ($announcement) {
+            if ($announcement->isDirty('judul') && empty($announcement->slug)) {
+                $announcement->slug = static::generateUniqueSlug($announcement->judul);
+            }
+        });
+    }
+
+    public static function generateUniqueSlug($title)
+    {
+        $slug = \Str::slug($title);
+        $originalSlug = $slug;
+        $counter = 1;
+
+        while (static::where('slug', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $counter;
+            $counter++;
+        }
+
+        return $slug;
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
     }
 }

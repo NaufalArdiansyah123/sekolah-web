@@ -175,7 +175,7 @@ class UserController extends Controller
         }
 
         // Prevent deleting super admin if current user is not super admin
-        if ($user->hasRole('super_admin') && !auth()->user()->hasRole('super_admin')) {
+        if ($user->hasRole('admin') && !auth()->user()->hasRole('admin')) {
             return redirect()->route('admin.users.index')
                 ->with('error', 'Anda tidak memiliki izin untuk menghapus Super Administrator!');
         }

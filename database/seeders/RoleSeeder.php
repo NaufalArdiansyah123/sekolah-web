@@ -16,13 +16,13 @@ class RoleSeeder extends Seeder
     {
         Log::info('Starting RoleSeeder...');
         
-        // Original roles from the existing system + new superadministrator
+        // Simple 3 roles system
         $roles = [
             [
                 'name' => 'admin',
                 'guard_name' => 'web',
                 'display_name' => 'Administrator',
-                'description' => 'Administrator dengan akses ke fitur manajemen sekolah',
+                'description' => 'Administrator dengan akses penuh ke semua fitur sistem',
             ],
             [
                 'name' => 'teacher',
@@ -35,12 +35,6 @@ class RoleSeeder extends Seeder
                 'guard_name' => 'web',
                 'display_name' => 'Student',
                 'description' => 'Siswa dengan akses ke fitur pembelajaran dan absensi',
-            ],
-            [
-                'name' => 'superadministrator',
-                'guard_name' => 'web',
-                'display_name' => 'Super Administrator',
-                'description' => 'Super Administrator dengan akses penuh ke semua fitur sistem',
             ],
         ];
         
@@ -65,11 +59,10 @@ class RoleSeeder extends Seeder
             }
             
             $this->command->info("🎭 RoleSeeder completed successfully!");
-            $this->command->info("📋 Available roles:");
-            $this->command->info("   1. admin (Administrator) - Original");
-            $this->command->info("   2. teacher (Teacher) - Original");
-            $this->command->info("   3. student (Student) - Original");
-            $this->command->info("   4. superadministrator (Super Administrator) - New");
+            $this->command->info("📋 Available roles (Simple 3 roles system):");
+            $this->command->info("   1. admin (Administrator) - Full system access");
+            $this->command->info("   2. teacher (Teacher) - Teaching and assessment");
+            $this->command->info("   3. student (Student) - Learning and attendance");
             
             Log::info("RoleSeeder completed successfully");
             

@@ -696,7 +696,7 @@
                             </div>
                             <div class="info-label">Status</div>
                             <div class="info-value">
-                                <span class="status-badge {{ $extracurricular->status == 'aktif' ? 'active' : 'inactive' }}">
+                                <span class="status-badge {{ $extracurricular->status == 'active' ? 'active' : 'inactive' }}>
                                     <span class="status-indicator"></span>
                                     {{ ucfirst($extracurricular->status) }}
                                 </span>

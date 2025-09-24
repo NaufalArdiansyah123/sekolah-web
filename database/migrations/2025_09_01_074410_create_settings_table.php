@@ -9,14 +9,17 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('settings', function (Blueprint $table) {
-            $table->id();
-            $table->string('key')->unique();
-            $table->text('value')->nullable();
-            $table->string('type')->default('string');
-            $table->string('group')->default('general');
-            $table->timestamps();
-        });
+        // Only create the table if it doesn't exist to avoid conflicts
+        if (!Schema::hasTable('settings')) {
+            Schema::create('settings', function (Blueprint $table) {
+                $table->id();
+                $table->string('key')->unique();
+                $table->text('value')->nullable();
+                $table->string('type')->default('string');
+                $table->string('group')->default('general');
+                $table->timestamps();
+            });
+        }
     }
 
     public function down()

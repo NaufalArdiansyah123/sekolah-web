@@ -26,7 +26,7 @@ class ViewServiceProvider extends ServiceProvider
         View::composer(['layouts.admin*', 'admin.*'], function ($view) {
             try {
                 // Check if user is authenticated and has admin role
-                if (auth()->check() && auth()->user()->hasAnyRole(['admin', 'super_admin', 'superadministrator'])) {
+                if (auth()->check() && auth()->user()->hasRole('admin')) {
                     // Check if notification system is available
                     if (class_exists('App\Models\AdminNotification') && Schema::hasTable('admin_notifications')) {
                         $unreadCount = NotificationService::getUnreadCount();

@@ -11,18 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('agendas', function (Blueprint $table) {
-            $table->id();
-            $table->string('judul');
-            $table->text('deskripsi')->nullable();
-            $table->date('tanggal');
-            $table->time('waktu')->nullable();
-            $table->string('kategori')->nullable();
-            $table->enum('prioritas', ['low', 'medium', 'high'])->default('medium');
-            $table->string('lokasi')->nullable();
-            $table->string('penanggung_jawab')->nullable();
-            $table->timestamps();
-        });
+        // Only create the table if it doesn't exist to avoid conflicts
+        if (!Schema::hasTable('agendas')) {
+            Schema::create('agendas', function (Blueprint $table) {
+                $table->id();
+                $table->string('judul');
+                $table->text('deskripsi')->nullable();
+                $table->date('tanggal');
+                $table->time('waktu')->nullable();
+                $table->string('kategori')->nullable();
+                $table->enum('prioritas', ['low', 'medium', 'high'])->default('medium');
+                $table->string('lokasi')->nullable();
+                $table->string('penanggung_jawab')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

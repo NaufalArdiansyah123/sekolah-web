@@ -692,7 +692,7 @@ class DashboardController extends Controller
             return Agenda::where('tanggal', '>=', now())
                     ->whereHas('user', function($query) {
                         $query->whereHas('roles', function($roleQuery) {
-                            $roleQuery->whereIn('name', ['admin', 'super_admin', 'superadministrator']);
+                            $roleQuery->where('name', 'admin');
                         });
                     })
                     ->orderBy('tanggal')

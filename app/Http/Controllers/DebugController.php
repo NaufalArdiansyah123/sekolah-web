@@ -72,7 +72,6 @@ class DebugController extends Controller
             'user_name' => $user->name,
             'user_email' => $user->email,
             'roles' => $user->roles->pluck('name')->toArray(),
-            'has_super_admin' => $user->hasRole('super_admin'),
             'has_admin' => $user->hasRole('admin'),
             'has_teacher' => $user->hasRole('teacher'),
             'has_student' => $user->hasRole('student'),
@@ -91,7 +90,7 @@ class DebugController extends Controller
         
         $redirectTo = null;
         
-        if ($user->hasRole('super_admin') || $user->hasRole('admin')) {
+        if ($user->hasRole('admin')) {
             $redirectTo = 'admin.dashboard';
         } elseif ($user->hasRole('teacher')) {
             $redirectTo = 'teacher.dashboard';
@@ -108,7 +107,7 @@ class DebugController extends Controller
             'admin_route_exists' => \Route::has('admin.dashboard'),
             'teacher_route_exists' => \Route::has('teacher.dashboard'),
             'student_route_exists' => \Route::has('student.dashboard'),
-            'can_access_admin' => $user->hasRole(['super_admin', 'admin']),
+            'can_access_admin' => $user->hasRole('admin'),
             'can_access_teacher' => $user->hasRole('teacher')
         ]);
     }
@@ -174,7 +173,6 @@ class DebugController extends Controller
                     'name' => $user->name,
                     'email' => $user->email,
                     'roles' => $user->roles->pluck('name')->toArray(),
-                    'has_super_admin' => $user->hasRole('super_admin'),
                     'has_admin' => $user->hasRole('admin'),
                     'has_teacher' => $user->hasRole('teacher'),
                     'has_student' => $user->hasRole('student'),

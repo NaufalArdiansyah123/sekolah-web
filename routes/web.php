@@ -26,6 +26,7 @@ use App\Http\Controllers\Admin\{
     RoleController,
     SettingController,
     SlideshowController,
+    CalendarController,
 };
 
 // Import Student Controllers
@@ -70,6 +71,11 @@ Route::get('/blog', [PublicBlogController::class, 'index'])->name('public.blog.i
 Route::get('/contact', [PublicController::class, 'contact'])->name('contact');
 Route::post('/contact', [PublicController::class, 'submitContact'])->name('contact.submit');
 
+// Downloads Routes
+Route::get('/downloads', [PublicController::class, 'downloads'])->name('downloads.index');
+Route::get('/downloads/{id}', [PublicController::class, 'downloadDetail'])->name('downloads.show');
+Route::get('/downloads/{id}/download', [PublicController::class, 'downloadFile'])->name('downloads.download');
+
 // Legacy Gallery Routes (redirect to new gallery system)
 Route::get('/gallery/photos', [PublicController::class, 'galleryPhotos'])->name('gallery.photos');
 Route::get('/gallery/videos', [PublicController::class, 'galleryVideos'])->name('gallery.videos');
@@ -89,8 +95,6 @@ Route::prefix('extracurriculars')->name('public.extracurriculars.')->group(funct
     Route::post('/{extracurricular}/register', [App\Http\Controllers\Public\ExtracurricularController::class, 'storeRegistration'])->name('store-registration');
 });
 
-
-
 /*
 |--------------------------------------------------------------------------
 | Authentication Routes
@@ -99,7 +103,7 @@ Route::prefix('extracurriculars')->name('public.extracurriculars.')->group(funct
 
 require __DIR__.'/auth.php';
 
-// Student Registration Routes
+// Student Account Registration Routes
 Route::get('/student/register', [App\Http\Controllers\Auth\StudentRegisterController::class, 'showRegistrationForm'])->name('student.register.form');
 Route::post('/student/register', [App\Http\Controllers\Auth\StudentRegisterController::class, 'register'])->name('student.register');
 Route::get('/student/registration/pending', [App\Http\Controllers\Auth\StudentRegisterController::class, 'showPendingPage'])->name('student.registration.pending');
@@ -107,7 +111,7 @@ Route::get('/student/check-nis', [App\Http\Controllers\Auth\StudentRegisterContr
 Route::get('/student/check-email', [App\Http\Controllers\Auth\StudentRegisterController::class, 'checkEmail'])->name('student.check-email');
 Route::get('/student/check-data', [App\Http\Controllers\Auth\StudentRegisterController::class, 'checkStudentData'])->name('student.check-data');
 
-// Student Registration Rejection Routes
+// Student Account Registration Rejection Routes
 Route::get('/auth/rejection', [App\Http\Controllers\Auth\RejectionController::class, 'show'])->name('auth.rejection.show');
 Route::post('/auth/rejection/contact', [App\Http\Controllers\Auth\RejectionController::class, 'contact'])->name('auth.rejection.contact');
 
@@ -129,15 +133,13 @@ Route::middleware('auth')->group(function () {
         // Log untuk debugging
         \Illuminate\Support\Facades\Log::info('Dashboard redirect for user: ' . $user->email, [
             'roles' => $user->roles->pluck('name')->toArray(),
-            'has_superadministrator' => $user->hasRole('superadministrator'),
-            'has_super_admin' => $user->hasRole('super_admin'),
             'has_admin' => $user->hasRole('admin'),
             'has_teacher' => $user->hasRole('teacher'),
             'has_student' => $user->hasRole('student')
         ]);
         
-        // Prioritas: superadministrator > super_admin > admin > teacher > student
-        if ($user->hasRole('superadministrator') || $user->hasRole('super_admin') || $user->hasRole('admin')) {
+        // Prioritas: admin > teacher > student
+        if ($user->hasRole('admin')) {
             \Illuminate\Support\Facades\Log::info('Redirecting to admin dashboard');
             return redirect()->route('admin.dashboard');
         } elseif ($user->hasRole('teacher')) {
@@ -162,7 +164,7 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role:superadministrator,super_admin,admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     
     // Dashboard
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
@@ -267,41 +269,81 @@ Route::middleware(['auth', 'role:superadministrator,super_admin,admin'])->prefix
     Route::resource('roles', RoleController::class);
     Route::post('roles/bulk-action', [RoleController::class, 'bulkAction'])->name('roles.bulk-action');
     
+    // Downloads Management Routes
+    Route::resource('downloads', App\Http\Controllers\Admin\DownloadController::class);
+    Route::post('downloads/bulk-action', [App\Http\Controllers\Admin\DownloadController::class, 'bulkAction'])->name('downloads.bulk-action');
+    Route::post('downloads/{download}/toggle-featured', [App\Http\Controllers\Admin\DownloadController::class, 'toggleFeatured'])->name('downloads.toggle-featured');
+    
     // Settings Routes
-    Route::get('/settings', [SettingController::class, 'index'])->name('settings');
-    Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
-    Route::post('/settings/reset', [SettingController::class, 'reset'])->name('settings.reset');
-    Route::post('/settings/clear-cache', [SettingController::class, 'clearCache'])->name('settings.clear-cache');
-    Route::post('/settings/optimize', [SettingController::class, 'optimize'])->name('settings.optimize');
-    Route::post('/settings/create-backup', [SettingController::class, 'createBackup'])->name('settings.create-backup');
-    Route::post('/settings/optimize-database', [SettingController::class, 'optimizeDatabase'])->name('settings.optimize-database');
-    Route::post('/settings/clear-logs', [SettingController::class, 'clearLogs'])->name('settings.clear-logs');
-    Route::get('/settings/system-health', [SettingController::class, 'systemHealth'])->name('settings.system-health');
-    Route::post('/settings/test-email', [SettingController::class, 'testEmail'])->name('settings.test-email');
-    Route::get('/settings/list-backups', [SettingController::class, 'listBackups'])->name('settings.list-backups');
-    Route::get('/settings/download-backup', [SettingController::class, 'downloadBackup'])->name('settings.download-backup');
-    Route::delete('/settings/delete-backup', [SettingController::class, 'deleteBackup'])->name('settings.delete-backup');
-    Route::get('/settings/system-monitoring', [SettingController::class, 'systemMonitoring'])->name('settings.system-monitoring');
+    // Settings
+    Route::get('/settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings');
+    Route::put('/settings', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
+    Route::post('/settings/reset', [App\Http\Controllers\Admin\SettingController::class, 'reset'])->name('settings.reset');
+    Route::post('/settings/clear-cache', [App\Http\Controllers\Admin\SettingController::class, 'clearCache'])->name('settings.clear-cache');
+    Route::post('/settings/optimize', [App\Http\Controllers\Admin\SettingController::class, 'optimize'])->name('settings.optimize');
+    Route::post('/settings/create-backup', [App\Http\Controllers\Admin\SettingController::class, 'createBackup'])->name('settings.create-backup');
+    Route::post('/settings/test-email', [App\Http\Controllers\Admin\SettingController::class, 'testEmail'])->name('settings.test-email');
+    Route::get('/settings/system-health', [App\Http\Controllers\Admin\SettingController::class, 'systemHealth'])->name('settings.system-health');
+    Route::get('/settings/list-backups', [App\Http\Controllers\Admin\SettingController::class, 'listBackups'])->name('settings.list-backups');
+    Route::get('/settings/download-backup', [App\Http\Controllers\Admin\SettingController::class, 'downloadBackup'])->name('settings.download-backup');
+    Route::delete('/settings/delete-backup', [App\Http\Controllers\Admin\SettingController::class, 'deleteBackup'])->name('settings.delete-backup');
+
+    Route::post('/settings/optimize-database', [App\Http\Controllers\Admin\SettingController::class, 'optimizeDatabase'])->name('settings.optimize-database');
+    Route::post('/settings/clear-logs', [App\Http\Controllers\Admin\SettingController::class, 'clearLogs'])->name('settings.clear-logs');
+    Route::get('/settings/system-monitoring', [App\Http\Controllers\Admin\SettingController::class, 'systemMonitoring'])->name('settings.system-monitoring');
     
     // Notifications Routes
     Route::prefix('notifications')->name('notifications.')->group(function () {
         Route::get('/', [App\Http\Controllers\Admin\NotificationController::class, 'index'])->name('index');
         Route::get('/recent', [App\Http\Controllers\Admin\NotificationController::class, 'recent'])->name('recent');
         Route::get('/unread-count', [App\Http\Controllers\Admin\NotificationController::class, 'unreadCount'])->name('unread-count');
-        Route::post('/{notification}/read', [App\Http\Controllers\Admin\NotificationController::class, 'markAsRead'])->name('mark-as-read');
+        Route::post('/{id}/read', [App\Http\Controllers\Admin\NotificationController::class, 'markAsRead'])->name('mark-as-read');
         Route::post('/mark-all-read', [App\Http\Controllers\Admin\NotificationController::class, 'markAllAsRead'])->name('mark-all-read');
-        Route::delete('/{notification}', [App\Http\Controllers\Admin\NotificationController::class, 'destroy'])->name('destroy');
+        Route::delete('/{id}', [App\Http\Controllers\Admin\NotificationController::class, 'destroy'])->name('destroy');
         Route::post('/clear-old', [App\Http\Controllers\Admin\NotificationController::class, 'clearOld'])->name('clear-old');
     });
     
-    // Student Registration Management Routes
+    // Student Account Registration Management Routes
     Route::prefix('student-registrations')->name('student-registrations.')->group(function () {
         Route::get('/', [App\Http\Controllers\Admin\StudentRegistrationController::class, 'index'])->name('index');
         Route::get('/{id}', [App\Http\Controllers\Admin\StudentRegistrationController::class, 'show'])->name('show');
         Route::post('/{id}/approve', [App\Http\Controllers\Admin\StudentRegistrationController::class, 'approve'])->name('approve');
         Route::post('/{id}/reject', [App\Http\Controllers\Admin\StudentRegistrationController::class, 'reject'])->name('reject');
         Route::post('/bulk-action', [App\Http\Controllers\Admin\StudentRegistrationController::class, 'bulkAction'])->name('bulk-action');
+        Route::post('/bulk-reject', [App\Http\Controllers\Admin\StudentRegistrationController::class, 'bulkReject'])->name('bulk-reject');
         Route::get('/export/data', [App\Http\Controllers\Admin\StudentRegistrationController::class, 'export'])->name('export');
+    });
+    
+    // Security Violations Management Routes
+    Route::prefix('security-violations')->name('security-violations.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\SecurityViolationController::class, 'index'])->name('index');
+        Route::get('/{id}', [App\Http\Controllers\Admin\SecurityViolationController::class, 'show'])->name('show');
+        Route::post('/{id}/review', [App\Http\Controllers\Admin\SecurityViolationController::class, 'review'])->name('review');
+        Route::post('/{id}/resolve', [App\Http\Controllers\Admin\SecurityViolationController::class, 'resolve'])->name('resolve');
+        Route::post('/bulk-action', [App\Http\Controllers\Admin\SecurityViolationController::class, 'bulkAction'])->name('bulk-action');
+        Route::get('/export', [App\Http\Controllers\Admin\SecurityViolationController::class, 'export'])->name('export');
+        Route::get('/statistics', [App\Http\Controllers\Admin\SecurityViolationController::class, 'statistics'])->name('statistics');
+    });
+    
+    // Calendar Academic Routes
+    Route::prefix('calendar')->name('calendar.')->group(function () {
+        Route::get('/', [CalendarController::class, 'index'])->name('index');
+        Route::get('/events', [CalendarController::class, 'getEvents'])->name('events');
+        Route::post('/events', [CalendarController::class, 'storeEvent'])->name('events.store');
+        Route::get('/events/{id}', [CalendarController::class, 'getEvent'])->name('events.show');
+        Route::put('/events/{id}', [CalendarController::class, 'updateEvent'])->name('events.update');
+        Route::delete('/events/{id}', [CalendarController::class, 'deleteEvent'])->name('events.delete');
+        Route::post('/sync-agenda', [CalendarController::class, 'syncFromAgenda'])->name('sync-agenda');
+    });
+    
+    // Agenda Management Routes (for legacy agenda table)
+    Route::prefix('agenda')->name('agenda.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\AgendaController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\Admin\AgendaController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\Admin\AgendaController::class, 'store'])->name('store');
+        Route::put('/{id}', [App\Http\Controllers\Admin\AgendaController::class, 'update'])->name('update');
+        Route::delete('/{id}', [App\Http\Controllers\Admin\AgendaController::class, 'destroy'])->name('destroy');
+        Route::post('/sync-all', [App\Http\Controllers\Admin\AgendaController::class, 'syncAllToCalendar'])->name('sync-all');
     });
 });
 
@@ -394,8 +436,6 @@ Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')
         });
     });
 
-
-
     // Teacher Student Management Routes
     Route::prefix('students')->name('students.')->group(function () {
         Route::get('/', [App\Http\Controllers\Teacher\StudentController::class, 'index'])->name('index');
@@ -464,6 +504,13 @@ Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')
         Route::get('/report', [App\Http\Controllers\Teacher\GradeController::class, 'report'])->name('report');
         Route::get('/recap', [App\Http\Controllers\Teacher\GradeController::class, 'recap'])->name('recap');
     });
+
+    // Teacher Assessment Management Routes
+    Route::prefix('assessment')->name('assessment.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Teacher\AssessmentController::class, 'index'])->name('index');
+        Route::get('/grades', [App\Http\Controllers\Teacher\AssessmentController::class, 'grades'])->name('grades');
+        Route::get('/reports', [App\Http\Controllers\Teacher\AssessmentController::class, 'reports'])->name('reports');
+    });
 });
 
 /*
@@ -518,7 +565,6 @@ Route::group([
     
     // Student Attendance Routes
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
-    Route::get('/attendance/history', [AttendanceController::class, 'history'])->name('attendance.history');
     Route::post('/attendance/sessions/{sessionId}/check-in', [AttendanceController::class, 'checkIn'])->name('attendance.check-in');
     Route::post('/attendance/excuse', [AttendanceController::class, 'submitExcuse'])->name('attendance.excuse');
     
@@ -532,6 +578,7 @@ Route::group([
     Route::prefix('attendance')->name('attendance.')->group(function () {
         Route::get('/qr-scanner', [App\Http\Controllers\Student\AttendanceController::class, 'index'])->name('qr-scanner');
         Route::post('/scan', [App\Http\Controllers\Student\AttendanceController::class, 'scanQr'])->name('scan');
+        Route::post('/process-qr-file', [App\Http\Controllers\Student\AttendanceController::class, 'processQrFile'])->name('process-qr-file');
         Route::get('/my-qr', [App\Http\Controllers\Student\AttendanceController::class, 'getMyQrCode'])->name('my-qr');
         Route::get('/download-qr', [App\Http\Controllers\Student\AttendanceController::class, 'downloadMyQrCode'])->name('download-qr');
         Route::get('/history', [App\Http\Controllers\Student\AttendanceHistoryController::class, 'index'])->name('history');
@@ -550,7 +597,7 @@ Route::group([
 */
 
 // Admin Announcement Routes (Protected by role middleware)
-Route::middleware(['auth', 'role:superadministrator,super_admin,admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('announcements', AnnouncementController::class);
     Route::post('announcements/{id}/toggle-status', [AnnouncementController::class, 'toggleStatus'])
          ->name('announcements.toggle-status');
@@ -567,7 +614,7 @@ Route::middleware(['auth', 'role:superadministrator,super_admin,admin'])->prefix
 */
 
     // Admin Gallery Routes (Protected by role middleware)
-Route::middleware(['auth', 'role:superadministrator,super_admin,admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::prefix('gallery')->name('gallery.')->group(function () {
         Route::get('/', [App\Http\Controllers\Admin\GalleryController::class, 'index'])->name('index');
         Route::get('/upload', [App\Http\Controllers\Admin\GalleryController::class, 'upload'])->name('upload');

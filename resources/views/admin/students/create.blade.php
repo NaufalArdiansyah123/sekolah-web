@@ -4,221 +4,299 @@
 
 @push('styles')
 <style>
-    .create-container {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    :root {
+        --primary-color: #6366f1;
+        --primary-dark: #4f46e5;
+        --secondary-color: #8b5cf6;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --info-color: #3b82f6;
+        --light-bg: #f8fafc;
+        --white: #ffffff;
+        --gray-50: #f9fafb;
+        --gray-100: #f3f4f6;
+        --gray-200: #e5e7eb;
+        --gray-300: #d1d5db;
+        --gray-400: #9ca3af;
+        --gray-500: #6b7280;
+        --gray-600: #4b5563;
+        --gray-700: #374151;
+        --gray-800: #1f2937;
+        --gray-900: #111827;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    }
+
+    [data-bs-theme="dark"] {
+        --light-bg: #1f2937;
+        --white: #374151;
+        --gray-50: #374151;
+        --gray-100: #4b5563;
+        --gray-200: #6b7280;
+        --gray-300: #9ca3af;
+        --gray-400: #d1d5db;
+        --gray-500: #e5e7eb;
+        --gray-600: #f3f4f6;
+        --gray-700: #f9fafb;
+        --gray-800: #ffffff;
+        --gray-900: #ffffff;
+    }
+
+    .page-container {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
         min-height: 100vh;
         padding: 2rem 0;
     }
-    
-    .form-wrapper {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 20px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        margin: 0 auto;
-        max-width: 1000px;
+
+    .form-container {
+        background: var(--white);
+        border-radius: 24px;
+        box-shadow: var(--shadow-xl);
         overflow: hidden;
+        margin: 0 auto;
+        max-width: 1200px;
     }
-    
+
     .form-header {
-        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
         color: white;
         padding: 2rem;
-        text-align: center;
         position: relative;
         overflow: hidden;
     }
-    
+
     .form-header::before {
         content: '';
         position: absolute;
-        top: 0;
-        right: 0;
+        top: -50%;
+        right: -50%;
         width: 200px;
         height: 200px;
         background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
         border-radius: 50%;
-        transform: translate(50%, -50%);
     }
-    
-    .form-header h1 {
+
+    .form-title {
         font-size: 2.5rem;
         font-weight: 800;
         margin-bottom: 0.5rem;
         position: relative;
         z-index: 2;
     }
-    
-    .form-header p {
+
+    .form-subtitle {
         font-size: 1.1rem;
         opacity: 0.9;
         margin-bottom: 0;
         position: relative;
         z-index: 2;
     }
-    
-    .btn-close-custom {
+
+    .header-actions {
+        position: relative;
+        z-index: 3;
+        margin-top: 1.5rem;
+        display: flex;
+        gap: 1rem;
+    }
+
+    .btn-header {
         background: rgba(255, 255, 255, 0.2);
         border: 2px solid rgba(255, 255, 255, 0.3);
         color: white;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
         transition: all 0.3s ease;
-        position: relative;
-        z-index: 3;
-    }
-    
-    .btn-close-custom:hover {
-        background: rgba(255, 255, 255, 0.3);
-        border-color: rgba(255, 255, 255, 0.5);
-        transform: scale(1.1);
-        color: white;
-    }
-    
-    .btn-close-custom:active {
-        transform: scale(0.95);
-    }
-    
-    .form-body {
-        padding: 2rem;
-    }
-    
-    .form-section {
-        background: white;
-        border-radius: 15px;
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-        border-left: 4px solid #4f46e5;
-    }
-    
-    .section-title {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: #1f2937;
-        margin-bottom: 1rem;
-        display: flex;
+        display: inline-flex;
         align-items: center;
         gap: 0.5rem;
     }
-    
-    .section-icon {
-        width: 32px;
-        height: 32px;
-        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+
+    .btn-header:hover {
+        background: rgba(255, 255, 255, 0.3);
+        border-color: rgba(255, 255, 255, 0.5);
         color: white;
-        border-radius: 8px;
+        transform: translateY(-2px);
+    }
+
+    .form-body {
+        padding: 2rem;
+    }
+
+    .form-section {
+        background: var(--white);
+        border: 1px solid var(--gray-200);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow);
+        border-left: 4px solid var(--primary-color);
+        transition: all 0.3s ease;
+    }
+
+    .form-section:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--gray-800);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .section-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.875rem;
+        font-size: 1rem;
     }
-    
+
     .form-group {
         margin-bottom: 1.5rem;
     }
-    
+
     .form-label {
         font-weight: 600;
-        color: #374151;
+        color: var(--gray-700);
         margin-bottom: 0.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
+        display: block;
+        font-size: 0.875rem;
     }
-    
+
     .required {
-        color: #ef4444;
+        color: var(--danger-color);
+        margin-left: 0.25rem;
     }
-    
+
     .form-control, .form-select {
-        border: 2px solid #e5e7eb;
-        border-radius: 10px;
+        border: 2px solid var(--gray-200);
+        border-radius: 12px;
         padding: 0.75rem 1rem;
         font-size: 0.875rem;
         transition: all 0.3s ease;
-        background: #f9fafb;
+        background: var(--white);
+        color: var(--gray-800);
+        width: 100%;
     }
-    
+
     .form-control:focus, .form-select:focus {
-        border-color: #4f46e5;
-        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-        background: white;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        outline: none;
     }
-    
+
     .form-control.is-invalid, .form-select.is-invalid {
-        border-color: #ef4444;
+        border-color: var(--danger-color);
         background: #fef2f2;
     }
-    
+
+    .form-control.is-valid, .form-select.is-valid {
+        border-color: var(--success-color);
+        background: #f0fdf4;
+    }
+
+    [data-bs-theme="dark"] .form-control.is-invalid,
+    [data-bs-theme="dark"] .form-select.is-invalid {
+        background: #7f1d1d;
+        color: #fecaca;
+    }
+
+    [data-bs-theme="dark"] .form-control.is-valid,
+    [data-bs-theme="dark"] .form-select.is-valid {
+        background: #14532d;
+        color: #bbf7d0;
+    }
+
     .invalid-feedback {
-        color: #ef4444;
+        color: var(--danger-color);
         font-size: 0.75rem;
         margin-top: 0.25rem;
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
+        font-weight: 500;
     }
-    
+
+    .form-text {
+        color: var(--gray-500);
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+    }
+
     .photo-upload-area {
-        border: 2px dashed #d1d5db;
-        border-radius: 15px;
+        border: 2px dashed var(--gray-300);
+        border-radius: 16px;
         padding: 2rem;
         text-align: center;
         transition: all 0.3s ease;
-        background: #f9fafb;
+        background: var(--gray-50);
         cursor: pointer;
+        color: var(--gray-600);
     }
-    
+
     .photo-upload-area:hover {
-        border-color: #4f46e5;
+        border-color: var(--primary-color);
         background: #f0f9ff;
+        color: var(--primary-color);
     }
-    
+
     .photo-upload-area.dragover {
-        border-color: #4f46e5;
+        border-color: var(--primary-color);
         background: #eff6ff;
         transform: scale(1.02);
     }
-    
+
     .photo-preview {
         max-width: 200px;
         max-height: 200px;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border-radius: 16px;
+        box-shadow: var(--shadow-lg);
         margin: 1rem auto;
     }
-    
+
     .user-account-card {
-        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-        border: 2px solid #0ea5e9;
-        border-radius: 15px;
+        background: #eff6ff;
+        border: 2px solid #bfdbfe;
+        border-radius: 16px;
         padding: 1.5rem;
         margin-top: 1rem;
     }
-    
+
+    [data-bs-theme="dark"] .user-account-card {
+        background: #1e3a8a;
+        border-color: #3730a3;
+    }
+
     .checkbox-wrapper {
         display: flex;
         align-items: center;
         gap: 0.75rem;
         margin-bottom: 1rem;
     }
-    
+
     .custom-checkbox {
         width: 20px;
         height: 20px;
-        border: 2px solid #4f46e5;
+        border: 2px solid var(--primary-color);
         border-radius: 4px;
         position: relative;
         cursor: pointer;
         transition: all 0.3s ease;
     }
-    
+
     .custom-checkbox input {
         opacity: 0;
         position: absolute;
@@ -226,12 +304,12 @@
         height: 100%;
         cursor: pointer;
     }
-    
+
     .custom-checkbox input:checked + .checkmark {
-        background: #4f46e5;
-        border-color: #4f46e5;
+        background: var(--primary-color);
+        border-color: var(--primary-color);
     }
-    
+
     .custom-checkbox input:checked + .checkmark::after {
         content: '✓';
         color: white;
@@ -241,149 +319,66 @@
         left: 50%;
         transform: translate(-50%, -50%);
     }
-    
+
     .form-actions {
-        background: #f9fafb;
-        padding: 1.5rem 2rem;
-        border-top: 1px solid #e5e7eb;
+        background: var(--gray-50);
+        padding: 2rem;
+        border-top: 1px solid var(--gray-200);
         display: flex;
         justify-content: space-between;
         align-items: center;
         gap: 1rem;
     }
-    
-    .btn-custom {
+
+    .btn-form {
         padding: 0.75rem 2rem;
-        border-radius: 10px;
+        border-radius: 12px;
         font-weight: 600;
-        text-decoration: none;
-        transition: all 0.3s ease;
         border: none;
-        cursor: pointer;
+        transition: all 0.3s ease;
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
+        text-decoration: none;
+        cursor: pointer;
     }
-    
-    .btn-primary-custom {
-        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+
+    .btn-primary-form {
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
         color: white;
-        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        box-shadow: var(--shadow);
     }
-    
-    .btn-primary-custom:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
-        color: white;
-    }
-    
-    .btn-secondary-custom {
-        background: #6b7280;
-        color: white;
-    }
-    
-    .btn-secondary-custom:hover {
-        background: #4b5563;
+
+    .btn-primary-form:hover {
+        background: linear-gradient(135deg, var(--primary-dark), var(--secondary-color));
         color: white;
         transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
     }
-    
-    .btn-outline-custom {
+
+    .btn-secondary-form {
+        background: var(--gray-100);
+        color: var(--gray-700);
+        border: 2px solid var(--gray-200);
+    }
+
+    .btn-secondary-form:hover {
+        background: var(--gray-200);
+        color: var(--gray-800);
+        transform: translateY(-2px);
+    }
+
+    .btn-outline-form {
         background: transparent;
-        border: 2px solid #6b7280;
-        color: #6b7280;
+        border: 2px solid var(--gray-300);
+        color: var(--gray-600);
     }
-    
-    .btn-outline-custom:hover {
-        background: #6b7280;
-        color: white;
+
+    .btn-outline-form:hover {
+        background: var(--gray-100);
+        color: var(--gray-700);
     }
-    
-    .btn-close-left {
-        background: linear-gradient(135deg, #ef4444, #dc2626);
-        color: white;
-        border: 2px solid #ef4444;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .btn-close-left::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(255, 255, 255, 0.1);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-    
-    .btn-close-left:hover {
-        background: linear-gradient(135deg, #dc2626, #b91c1c);
-        border-color: #dc2626;
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
-    }
-    
-    .btn-close-left:hover::before {
-        opacity: 1;
-    }
-    
-    .btn-close-left:active {
-        transform: translateY(0);
-    }
-    
-    .alert-custom {
-        border-radius: 10px;
-        padding: 1rem 1.5rem;
-        margin-bottom: 1.5rem;
-        border: none;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-    
-    .alert-danger-custom {
-        background: #fef2f2;
-        color: #991b1b;
-        border-left: 4px solid #ef4444;
-    }
-    
-    .alert-success-custom {
-        background: #f0fdf4;
-        color: #166534;
-        border-left: 4px solid #22c55e;
-    }
-    
-    .loading-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-    }
-    
-    .loading-spinner {
-        width: 50px;
-        height: 50px;
-        border: 4px solid #f3f4f6;
-        border-top: 4px solid #4f46e5;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-    }
-    
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    
+
     .floating-actions {
         position: fixed;
         bottom: 2rem;
@@ -393,247 +388,219 @@
         gap: 1rem;
         z-index: 1000;
     }
-    
-    .floating-actions-mobile {
-        position: fixed;
-        bottom: 1rem;
-        left: 1rem;
-        right: 1rem;
-        display: none;
-        flex-direction: row;
-        gap: 0.5rem;
-        z-index: 1000;
-        justify-content: space-between;
-    }
-    
+
     .floating-btn {
-        min-width: 64px;
-        height: 64px;
-        border-radius: 16px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
         border: none;
         color: white;
         font-size: 1.25rem;
         cursor: pointer;
         transition: all 0.3s ease;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        box-shadow: var(--shadow-lg);
         display: flex;
         align-items: center;
         justify-content: center;
         text-decoration: none;
-        position: relative;
-        overflow: hidden;
-        padding: 0 1rem;
-        gap: 0.5rem;
-        font-weight: 600;
-        white-space: nowrap;
     }
-    
-    .floating-btn-icon {
-        font-size: 1.5rem;
-        flex-shrink: 0;
-    }
-    
-    .floating-btn-text {
-        font-size: 0.875rem;
-        display: none;
-    }
-    
-    .floating-btn::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(255, 255, 255, 0.1);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-    
+
     .floating-btn:hover {
-        transform: translateY(-3px) scale(1.05);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        transform: scale(1.1);
+        box-shadow: var(--shadow-xl);
         color: white;
-        min-width: 140px;
     }
-    
-    .floating-btn:hover .floating-btn-text {
-        display: block;
-    }
-    
-    .floating-btn:hover::before {
-        opacity: 1;
-    }
-    
-    .floating-btn:active {
-        transform: translateY(-1px) scale(1.02);
-    }
-    
+
     .floating-btn-primary {
-        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     }
-    
-    .floating-btn-secondary {
-        background: linear-gradient(135deg, #6b7280, #4b5563);
-    }
-    
+
     .floating-btn-success {
-        background: linear-gradient(135deg, #10b981, #059669);
+        background: linear-gradient(135deg, var(--success-color), #059669);
     }
-    
+
+    .floating-btn-secondary {
+        background: linear-gradient(135deg, var(--gray-500), var(--gray-600));
+    }
+
     .floating-btn-danger {
-        background: linear-gradient(135deg, #ef4444, #dc2626);
+        background: linear-gradient(135deg, var(--danger-color), #dc2626);
     }
-    
-    @media (max-width: 768px) {
-        .form-wrapper {
-            margin: 0 1rem;
-        }
-        
-        .form-body {
-            padding: 1rem;
-        }
-        
-        .form-actions {
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .btn-custom {
-            width: 100%;
-            justify-content: center;
-        }
-        
-        .form-header {
-            text-align: left;
-        }
-        
-        .form-header h1 {
-            font-size: 2rem;
-        }
-        
-        .floating-actions {
-            display: none;
-        }
-        
-        .floating-actions-mobile {
-            display: flex;
-        }
-        
-        .floating-btn {
-            flex: 1;
-            min-width: auto;
-            height: 48px;
-            font-size: 1rem;
-        }
-        
-        .floating-btn-icon {
-            font-size: 1.25rem;
-        }
-        
-        .floating-btn:hover {
-            min-width: auto;
-        }
-        
-    .floating-btn-text {
-        display: block;
-        font-size: 0.75rem;
+
+    .alert-custom {
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 2rem;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        box-shadow: var(--shadow);
     }
-    
-    /* Validation Styles */
-    .input-wrapper {
+
+    .alert-danger-custom {
+        background: #fef2f2;
+        color: #991b1b;
+        border-left: 4px solid var(--danger-color);
+    }
+
+    .alert-success-custom {
+        background: #f0fdf4;
+        color: #166534;
+        border-left: 4px solid var(--success-color);
+    }
+
+    .alert-info-custom {
+        background: #eff6ff;
+        color: #1e40af;
+        border-left: 4px solid var(--info-color);
+    }
+
+    [data-bs-theme="dark"] .alert-danger-custom {
+        background: #7f1d1d;
+        color: #fecaca;
+    }
+
+    [data-bs-theme="dark"] .alert-success-custom {
+        background: #14532d;
+        color: #bbf7d0;
+    }
+
+    [data-bs-theme="dark"] .alert-info-custom {
+        background: #1e3a8a;
+        color: #bfdbfe;
+    }
+
+    .validation-wrapper {
         position: relative;
     }
-    
+
     .validation-icon {
         position: absolute;
-        right: 35px;
+        right: 12px;
         top: 50%;
         transform: translateY(-50%);
         width: 20px;
         height: 20px;
         z-index: 5;
     }
-    
+
     .validation-message {
         font-size: 0.75rem;
         margin-top: 0.25rem;
         padding: 0.25rem 0.5rem;
-        border-radius: 4px;
+        border-radius: 6px;
         display: flex;
         align-items: center;
         gap: 0.25rem;
     }
-    
+
     .validation-message.success {
         color: #166534;
         background: #dcfce7;
         border: 1px solid #bbf7d0;
     }
-    
+
     .validation-message.error {
         color: #991b1b;
         background: #fef2f2;
         border: 1px solid #fecaca;
     }
-    
+
     .validation-message.loading {
         color: #1d4ed8;
         background: #dbeafe;
         border: 1px solid #bfdbfe;
     }
-    
-    .validation-icon.success {
-        color: #16a34a;
+
+    @media (max-width: 768px) {
+        .page-container {
+            padding: 1rem;
+        }
+
+        .form-header {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .form-title {
+            font-size: 2rem;
+        }
+
+        .header-actions {
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .form-body {
+            padding: 1rem;
+        }
+
+        .form-section {
+            padding: 1.5rem;
+        }
+
+        .form-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .floating-actions {
+            display: none;
+        }
     }
-    
-    .validation-icon.error {
-        color: #dc2626;
+
+    .fade-in {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.6s ease forwards;
     }
-    
-    .validation-icon.loading {
-        color: #2563eb;
+
+    .fade-in:nth-child(1) { animation-delay: 0.1s; }
+    .fade-in:nth-child(2) { animation-delay: 0.2s; }
+    .fade-in:nth-child(3) { animation-delay: 0.3s; }
+    .fade-in:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
-    
-    .form-control.is-valid {
-        border-color: #16a34a;
-        box-shadow: 0 0 0 0.2rem rgba(22, 163, 74, 0.25);
-    }
-    
-    .form-control.is-invalid {
-        border-color: #dc2626;
-        box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25);
-    }
-    
+
     .spinner {
         animation: spin 1s linear infinite;
     }
-    
+
     @keyframes spin {
         from { transform: rotate(0deg); }
         to { transform: rotate(360deg); }
     }
-}</style>
 </style>
 @endpush
 
 @section('content')
-<div class="create-container">
-    <div class="form-wrapper">
+<div class="page-container">
+    <div class="form-container">
         <!-- Form Header -->
         <div class="form-header">
             <div class="d-flex justify-content-between align-items-start">
                 <div>
-                    <h1><i class="fas fa-user-plus me-3"></i>Tambah Siswa Baru</h1>
-                    <p>Lengkapi formulir di bawah untuk menambahkan data siswa baru</p>
+                    <h1 class="form-title">
+                        <i class="fas fa-user-plus me-3"></i>Tambah Siswa Baru
+                    </h1>
+                    <p class="form-subtitle">
+                        Lengkapi formulir di bawah untuk menambahkan data siswa baru
+                    </p>
                 </div>
-                <button type="button" class="btn-close-custom" onclick="closeForm()" title="Tutup Form">
-                    <i class="fas fa-times"></i>
-                </button>
+                <div class="header-actions">
+                    <a href="{{ route('admin.students.index') }}" class="btn-header">
+                        <i class="fas fa-arrow-left"></i> Kembali
+                    </a>
+                </div>
             </div>
         </div>
 
-        <!-- Form Body -->
         <div class="form-body">
             <!-- Error Messages -->
             @if ($errors->any())
@@ -654,7 +621,7 @@
                 @csrf
                 
                 <!-- Personal Information Section -->
-                <div class="form-section">
+                <div class="form-section fade-in">
                     <h3 class="section-title">
                         <div class="section-icon">
                             <i class="fas fa-user"></i>
@@ -671,9 +638,7 @@
                                 <input type="text" class="form-control @error('name') is-invalid @enderror" 
                                        id="name" name="name" value="{{ old('name') }}" required>
                                 @error('name')
-                                    <div class="invalid-feedback">
-                                        <i class="fas fa-exclamation-circle"></i>{{ $message }}
-                                    </div>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -683,7 +648,7 @@
                                 <label for="nis" class="form-label">
                                     NIS <span class="required">*</span>
                                 </label>
-                                <div class="input-wrapper">
+                                <div class="validation-wrapper">
                                     <input type="text" class="form-control @error('nis') is-invalid @enderror" 
                                            id="nis" name="nis" value="{{ old('nis') }}" 
                                            placeholder="Contoh: 2024100001" 
@@ -701,18 +666,16 @@
                                 </div>
                                 <div id="nisValidationMessage" class="validation-message" style="display: none;"></div>
                                 @error('nis')
-                                    <div class="invalid-feedback">
-                                        <i class="fas fa-exclamation-circle"></i>{{ $message }}
-                                    </div>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                                <small class="form-text text-muted">Format: Tahun(4) + Kelas(2) + Urutan(3). Contoh: 2024100001</small>
+                                <small class="form-text">Format: Tahun(4) + Kelas(2) + Urutan(3). Contoh: 2024100001</small>
                             </div>
                         </div>
                         
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="nisn" class="form-label">NISN</label>
-                                <div class="input-wrapper">
+                                <div class="validation-wrapper">
                                     <input type="text" class="form-control @error('nisn') is-invalid @enderror" 
                                            id="nisn" name="nisn" value="{{ old('nisn') }}" 
                                            placeholder="10 digit angka" 
@@ -723,11 +686,9 @@
                                 </div>
                                 <div id="nisnValidationMessage" class="validation-message" style="display: none;"></div>
                                 @error('nisn')
-                                    <div class="invalid-feedback">
-                                        <i class="fas fa-exclamation-circle"></i>{{ $message }}
-                                    </div>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                                <small class="form-text text-muted">NISN harus 10 digit angka (opsional)</small>
+                                <small class="form-text">NISN harus 10 digit angka (opsional)</small>
                             </div>
                         </div>
                     </div>
@@ -739,9 +700,7 @@
                                 <input type="email" class="form-control @error('email') is-invalid @enderror" 
                                        id="email" name="email" value="{{ old('email') }}">
                                 @error('email')
-                                    <div class="invalid-feedback">
-                                        <i class="fas fa-exclamation-circle"></i>{{ $message }}
-                                    </div>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -752,9 +711,7 @@
                                 <input type="text" class="form-control @error('phone') is-invalid @enderror" 
                                        id="phone" name="phone" value="{{ old('phone') }}">
                                 @error('phone')
-                                    <div class="invalid-feedback">
-                                        <i class="fas fa-exclamation-circle"></i>{{ $message }}
-                                    </div>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -783,9 +740,7 @@
                                     @endforeach
                                 </select>
                                 @error('class')
-                                    <div class="invalid-feedback">
-                                        <i class="fas fa-exclamation-circle"></i>{{ $message }}
-                                    </div>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -798,9 +753,7 @@
                                 <input type="date" class="form-control @error('birth_date') is-invalid @enderror" 
                                        id="birth_date" name="birth_date" value="{{ old('birth_date') }}" required>
                                 @error('birth_date')
-                                    <div class="invalid-feedback">
-                                        <i class="fas fa-exclamation-circle"></i>{{ $message }}
-                                    </div>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -813,9 +766,7 @@
                                 <input type="text" class="form-control @error('birth_place') is-invalid @enderror" 
                                        id="birth_place" name="birth_place" value="{{ old('birth_place') }}" required>
                                 @error('birth_place')
-                                    <div class="invalid-feedback">
-                                        <i class="fas fa-exclamation-circle"></i>{{ $message }}
-                                    </div>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -844,9 +795,7 @@
                                     </div>
                                 </div>
                                 @error('gender')
-                                    <div class="invalid-feedback d-block">
-                                        <i class="fas fa-exclamation-circle"></i>{{ $message }}
-                                    </div>
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -863,9 +812,7 @@
                                     @endforeach
                                 </select>
                                 @error('religion')
-                                    <div class="invalid-feedback">
-                                        <i class="fas fa-exclamation-circle"></i>{{ $message }}
-                                    </div>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -882,9 +829,7 @@
                                     <option value="graduated" {{ old('status') == 'graduated' ? 'selected' : '' }}>Lulus</option>
                                 </select>
                                 @error('status')
-                                    <div class="invalid-feedback">
-                                        <i class="fas fa-exclamation-circle"></i>{{ $message }}
-                                    </div>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -896,15 +841,13 @@
                                   id="address" name="address" rows="3" 
                                   placeholder="Masukkan alamat lengkap...">{{ old('address') }}</textarea>
                         @error('address')
-                            <div class="invalid-feedback">
-                                <i class="fas fa-exclamation-circle"></i>{{ $message }}
-                            </div>
+                            <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                 </div>
 
                 <!-- Parent Information Section -->
-                <div class="form-section">
+                <div class="form-section fade-in">
                     <h3 class="section-title">
                         <div class="section-icon">
                             <i class="fas fa-users"></i>
@@ -921,9 +864,7 @@
                                 <input type="text" class="form-control @error('parent_name') is-invalid @enderror" 
                                        id="parent_name" name="parent_name" value="{{ old('parent_name') }}" required>
                                 @error('parent_name')
-                                    <div class="invalid-feedback">
-                                        <i class="fas fa-exclamation-circle"></i>{{ $message }}
-                                    </div>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -934,9 +875,7 @@
                                 <input type="text" class="form-control @error('parent_phone') is-invalid @enderror" 
                                        id="parent_phone" name="parent_phone" value="{{ old('parent_phone') }}">
                                 @error('parent_phone')
-                                    <div class="invalid-feedback">
-                                        <i class="fas fa-exclamation-circle"></i>{{ $message }}
-                                    </div>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -944,7 +883,7 @@
                 </div>
 
                 <!-- Photo Upload Section -->
-                <div class="form-section">
+                <div class="form-section fade-in">
                     <h3 class="section-title">
                         <div class="section-icon">
                             <i class="fas fa-camera"></i>
@@ -953,9 +892,9 @@
                     </h3>
                     
                     <div class="photo-upload-area" onclick="document.getElementById('photo').click()">
-                        <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                        <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
                         <h5>Klik untuk upload foto atau drag & drop</h5>
-                        <p class="text-muted">Format: JPG, PNG, GIF. Maksimal 2MB</p>
+                        <p>Format: JPG, PNG, GIF. Maksimal 2MB</p>
                         <input type="file" class="d-none @error('photo') is-invalid @enderror" 
                                id="photo" name="photo" accept="image/*">
                     </div>
@@ -968,14 +907,12 @@
                     </div>
                     
                     @error('photo')
-                        <div class="invalid-feedback d-block">
-                            <i class="fas fa-exclamation-circle"></i>{{ $message }}
-                        </div>
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <!-- QR Code & User Account Section -->
-                <div class="form-section">
+                <div class="form-section fade-in">
                     <h3 class="section-title">
                         <div class="section-icon">
                             <i class="fas fa-qrcode"></i>
@@ -995,8 +932,8 @@
                         </label>
                     </div>
                     
-                    <div class="alert alert-info mb-3">
-                        <i class="fas fa-info-circle me-2"></i>
+                    <div class="alert-custom alert-info-custom mb-3">
+                        <i class="fas fa-info-circle"></i>
                         <small>
                             <strong>QR Code Absensi:</strong> Jika dicentang, sistem akan otomatis membuat QR Code untuk absensi siswa. 
                             QR Code dapat digunakan untuk scan absensi harian dan dapat di-download dari halaman manajemen QR.
@@ -1027,11 +964,9 @@
                                         </label>
                                         <input type="password" class="form-control @error('password') is-invalid @enderror" 
                                                id="password" name="password" minlength="8">
-                                        <small class="text-muted">Minimal 8 karakter</small>
+                                        <small class="form-text">Minimal 8 karakter</small>
                                         @error('password')
-                                            <div class="invalid-feedback">
-                                                <i class="fas fa-exclamation-circle"></i>{{ $message }}
-                                            </div>
+                                            <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -1047,8 +982,8 @@
                                 </div>
                             </div>
                             
-                            <div class="alert alert-info">
-                                <i class="fas fa-info-circle me-2"></i>
+                            <div class="alert-custom alert-info-custom">
+                                <i class="fas fa-info-circle"></i>
                                 <small>
                                     Jika akun pengguna dibuat, siswa dapat login menggunakan email dan password yang diberikan.
                                     Email harus diisi jika ingin membuat akun pengguna.
@@ -1063,68 +998,31 @@
         <!-- Form Actions -->
         <div class="form-actions">
             <div class="d-flex gap-2">
-                <a href="{{ route('admin.students.index') }}" class="btn-custom btn-outline-custom" title="Kembali ke Daftar Siswa">
+                <a href="{{ route('admin.students.index') }}" class="btn-form btn-outline-form">
                     <i class="fas fa-arrow-left"></i>Kembali
                 </a>
-                <button type="button" class="btn-custom btn-close-left" onclick="closeForm()" title="❌ Tutup Form (Esc)">
-                    <i class="fas fa-times-circle"></i>Tutup
+                <button type="button" class="btn-form btn-secondary-form" onclick="resetForm()">
+                    <i class="fas fa-undo"></i>Reset
                 </button>
             </div>
             
-            <div class="d-flex gap-2">
-                <button type="button" class="btn-custom btn-secondary-custom" onclick="resetForm()" title="Reset Form">
-                    <i class="fas fa-undo"></i>Reset
-                </button>
-                <button type="submit" form="studentForm" class="btn-custom btn-primary-custom" title="Simpan Data Siswa">
-                    <i class="fas fa-save"></i>Simpan Data Siswa
-                </button>
-            </div>
+            <button type="submit" form="studentForm" class="btn-form btn-primary-form">
+                <i class="fas fa-save"></i>Simpan Data Siswa
+            </button>
         </div>
     </div>
 </div>
 
-<!-- Loading Overlay -->
-<div class="loading-overlay" id="loadingOverlay">
-    <div class="loading-spinner"></div>
-</div>
-
-<!-- Floating Action Buttons - Desktop -->
+<!-- Floating Action Buttons -->
 <div class="floating-actions">
-    <button type="submit" form="studentForm" class="floating-btn floating-btn-success" title="💾 Simpan Data Siswa (Ctrl+S)">
-        <i class="fas fa-save floating-btn-icon"></i>
-        <span class="floating-btn-text">Simpan</span>
+    <button type="submit" form="studentForm" class="floating-btn floating-btn-success" title="Simpan Data Siswa">
+        <i class="fas fa-save"></i>
     </button>
-    <a href="{{ route('admin.students.index') }}" class="floating-btn floating-btn-primary" title="📋 Kembali ke Daftar Siswa">
-        <i class="fas fa-list floating-btn-icon"></i>
-        <span class="floating-btn-text">Daftar</span>
+    <a href="{{ route('admin.students.index') }}" class="floating-btn floating-btn-primary" title="Kembali ke Daftar">
+        <i class="fas fa-list"></i>
     </a>
-    <button type="button" onclick="resetForm()" class="floating-btn floating-btn-secondary" title="🔄 Reset Form (Ctrl+R)">
-        <i class="fas fa-undo floating-btn-icon"></i>
-        <span class="floating-btn-text">Reset</span>
-    </button>
-    <button type="button" onclick="closeForm()" class="floating-btn floating-btn-danger" title="❌ Tutup Form (Esc)">
-        <i class="fas fa-times floating-btn-icon"></i>
-        <span class="floating-btn-text">Tutup</span>
-    </button>
-</div>
-
-<!-- Floating Action Buttons - Mobile -->
-<div class="floating-actions-mobile">
-    <button type="button" onclick="closeForm()" class="floating-btn floating-btn-danger" title="Tutup Form">
-        <i class="fas fa-times floating-btn-icon"></i>
-        <span class="floating-btn-text">Tutup</span>
-    </button>
     <button type="button" onclick="resetForm()" class="floating-btn floating-btn-secondary" title="Reset Form">
-        <i class="fas fa-undo floating-btn-icon"></i>
-        <span class="floating-btn-text">Reset</span>
-    </button>
-    <a href="{{ route('admin.students.index') }}" class="floating-btn floating-btn-primary" title="Daftar Siswa">
-        <i class="fas fa-list floating-btn-icon"></i>
-        <span class="floating-btn-text">Daftar</span>
-    </a>
-    <button type="submit" form="studentForm" class="floating-btn floating-btn-success" title="Simpan Data">
-        <i class="fas fa-save floating-btn-icon"></i>
-        <span class="floating-btn-text">Simpan</span>
+        <i class="fas fa-undo"></i>
     </button>
 </div>
 @endsection
@@ -1193,7 +1091,6 @@ document.getElementById('create_user_account').addEventListener('change', functi
             emailLabel.innerHTML += ' <span class="required">*</span>';
         }
         
-        // Show info message
         showNotification('Email wajib diisi untuk membuat akun pengguna!', 'info');
     } else {
         userAccountFields.style.display = 'none';
@@ -1227,7 +1124,6 @@ nisInput.addEventListener('input', function() {
         return;
     }
     
-    // Show loading state
     showValidation('nis', 'loading', 'Memeriksa NIS...', '<i class="fas fa-spinner spinner"></i>');
     
     nisTimeout = setTimeout(() => {
@@ -1250,7 +1146,6 @@ nisnInput.addEventListener('input', function() {
         return;
     }
     
-    // Show loading state
     showValidation('nisn', 'loading', 'Memeriksa NISN...', '<i class="fas fa-spinner spinner"></i>');
     
     nisnTimeout = setTimeout(() => {
@@ -1269,7 +1164,6 @@ document.getElementById('generateNisBtn').addEventListener('click', function() {
         return;
     }
     
-    // Show loading
     this.disabled = true;
     this.innerHTML = '<i class="fas fa-spinner spinner"></i>';
     
@@ -1279,12 +1173,12 @@ document.getElementById('generateNisBtn').addEventListener('click', function() {
             if (data.suggested_nis) {
                 nisInput.value = data.suggested_nis;
                 validateNis(data.suggested_nis);
-                showNotification('success', 'NIS berhasil di-generate!', data.pattern);
+                showNotification('NIS berhasil di-generate!', 'success');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            showNotification('error', 'Gagal generate NIS', 'Silakan coba lagi.');
+            showNotification('Gagal generate NIS', 'error');
         })
         .finally(() => {
             this.disabled = false;
@@ -1355,15 +1249,6 @@ function hideValidation(field) {
     inputElement.classList.remove('is-valid', 'is-invalid');
 }
 
-// Auto-generate NIS based on class and year
-document.getElementById('class').addEventListener('change', function() {
-    const nisField = document.getElementById('nis');
-    if (!nisField.value && this.value) {
-        // Auto-generate when class is selected and NIS is empty
-        document.getElementById('generateNisBtn').click();
-    }
-});
-
 // Form validation
 document.getElementById('studentForm').addEventListener('submit', function(e) {
     const createUserAccount = document.getElementById('create_user_account').checked;
@@ -1380,7 +1265,6 @@ document.getElementById('studentForm').addEventListener('submit', function(e) {
             return;
         }
         
-        // Validate email format
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             e.preventDefault();
@@ -1415,75 +1299,8 @@ document.getElementById('studentForm').addEventListener('submit', function(e) {
         }
     }
     
-    // Show loading overlay
-    document.getElementById('loadingOverlay').style.display = 'flex';
-    
-    // Show success message
     showNotification('Menyimpan data siswa...', 'info');
 });
-
-// Close form function
-function closeForm() {
-    const form = document.getElementById('studentForm');
-    const hasData = checkFormHasData();
-    
-    // Add visual feedback
-    const closeButtons = document.querySelectorAll('[onclick="closeForm()"]');
-    closeButtons.forEach(btn => {
-        btn.style.transform = 'scale(0.95)';
-        setTimeout(() => {
-            btn.style.transform = '';
-        }, 150);
-    });
-    
-    if (hasData) {
-        // Custom confirmation dialog with better styling
-        const confirmClose = confirm(
-            '⚠️ PERINGATAN!\n\n' +
-            'Anda memiliki data yang belum disimpan.\n' +
-            'Semua data yang telah diisi akan hilang.\n\n' +
-            'Apakah Anda yakin ingin menutup form?'
-        );
-        
-        if (confirmClose) {
-            // Show closing animation
-            showNotification('Menutup form...', 'info');
-            
-            // Clear auto-saved data
-            clearAutoSavedData();
-            
-            // Redirect with slight delay for better UX
-            setTimeout(() => {
-                window.location.href = '{{ route('admin.students.index') }}';
-            }, 500);
-        } else {
-            showNotification('Form tetap terbuka', 'info');
-        }
-    } else {
-        // No data, close immediately
-        showNotification('Menutup form...', 'success');
-        clearAutoSavedData();
-        
-        setTimeout(() => {
-            window.location.href = '{{ route('admin.students.index') }}';
-        }, 300);
-    }
-}
-
-// Check if form has data
-function checkFormHasData() {
-    const form = document.getElementById('studentForm');
-    const inputs = form.querySelectorAll('input, select, textarea');
-    
-    for (let input of inputs) {
-        if (input.type === 'checkbox' || input.type === 'radio') {
-            if (input.checked) return true;
-        } else if (input.value.trim() !== '') {
-            return true;
-        }
-    }
-    return false;
-}
 
 // Reset form
 function resetForm() {
@@ -1493,7 +1310,6 @@ function resetForm() {
         document.getElementById('userAccountFields').style.display = 'none';
         document.getElementById('create_user_account').checked = false;
         
-        // Show success message
         showNotification('Form berhasil direset!', 'success');
     }
 }
@@ -1517,7 +1333,6 @@ function showNotification(message, type = 'info') {
     
     document.body.appendChild(notification);
     
-    // Auto remove after 5 seconds for errors, 3 seconds for others
     const timeout = type === 'error' ? 5000 : 3000;
     setTimeout(() => {
         if (notification.parentNode) {
@@ -1526,23 +1341,6 @@ function showNotification(message, type = 'info') {
     }, timeout);
 }
 
-// Real-time validation
-document.querySelectorAll('input, select, textarea').forEach(field => {
-    field.addEventListener('blur', function() {
-        if (this.hasAttribute('required') && !this.value.trim()) {
-            this.classList.add('is-invalid');
-        } else {
-            this.classList.remove('is-invalid');
-        }
-    });
-    
-    field.addEventListener('input', function() {
-        if (this.classList.contains('is-invalid') && this.value.trim()) {
-            this.classList.remove('is-invalid');
-        }
-    });
-});
-
 // Password confirmation validation
 document.getElementById('password_confirmation').addEventListener('input', function() {
     const password = document.getElementById('password').value;
@@ -1550,14 +1348,11 @@ document.getElementById('password_confirmation').addEventListener('input', funct
     
     if (passwordConfirm && password !== passwordConfirm) {
         this.classList.add('is-invalid');
-        showValidation('password_confirmation', 'error', 'Password tidak sesuai', '<i class="fas fa-times-circle"></i>');
     } else if (passwordConfirm && password === passwordConfirm) {
         this.classList.remove('is-invalid');
         this.classList.add('is-valid');
-        hideValidation('password_confirmation');
     } else {
         this.classList.remove('is-invalid', 'is-valid');
-        hideValidation('password_confirmation');
     }
 });
 
@@ -1575,185 +1370,34 @@ document.getElementById('password').addEventListener('input', function() {
         this.classList.remove('is-invalid', 'is-valid');
     }
     
-    // Re-validate confirmation if it has value
     if (passwordConfirm) {
         document.getElementById('password_confirmation').dispatchEvent(new Event('input'));
     }
 });
 
-// Keyboard shortcuts
-document.addEventListener('keydown', function(e) {
-    // Ctrl + S to save
-    if (e.ctrlKey && e.key === 's') {
-        e.preventDefault();
-        document.getElementById('studentForm').dispatchEvent(new Event('submit'));
-        return;
-    }
-    
-    // Escape to close
-    if (e.key === 'Escape') {
-        e.preventDefault();
-        closeForm();
-        return;
-    }
-    
-    // Ctrl + R to reset
-    if (e.ctrlKey && e.key === 'r') {
-        e.preventDefault();
-        resetForm();
-        return;
+// Auto-generate NIS based on class
+document.getElementById('class').addEventListener('change', function() {
+    const nisField = document.getElementById('nis');
+    if (!nisField.value && this.value) {
+        document.getElementById('generateNisBtn').click();
     }
 });
 
-// Prevent accidental page leave
-window.addEventListener('beforeunload', function(e) {
-    if (checkFormHasData()) {
-        e.preventDefault();
-        e.returnValue = 'Anda memiliki data yang belum disimpan. Yakin ingin meninggalkan halaman?';
-        return e.returnValue;
-    }
-});
-
-// Auto-save to localStorage (optional)
-function autoSaveForm() {
-    const formData = new FormData(document.getElementById('studentForm'));
-    const data = {};
-    
-    for (let [key, value] of formData.entries()) {
-        data[key] = value;
-    }
-    
-    localStorage.setItem('studentFormDraft', JSON.stringify(data));
-}
-
-// Load auto-saved data
-function loadAutoSavedData() {
-    const savedData = localStorage.getItem('studentFormDraft');
-    if (savedData) {
-        const data = JSON.parse(savedData);
-        
-        if (Object.keys(data).length > 0) {
-            if (confirm('Ditemukan data form yang tersimpan sebelumnya. Apakah Anda ingin memulihkannya?')) {
-                for (let [key, value] of Object.entries(data)) {
-                    const field = document.querySelector(`[name="${key}"]`);
-                    if (field) {
-                        if (field.type === 'checkbox' || field.type === 'radio') {
-                            field.checked = value === 'on' || value === field.value;
-                        } else {
-                            field.value = value;
-                        }
-                    }
-                }
-                showNotification('Data form berhasil dipulihkan!', 'success');
-            }
+// Real-time validation
+document.querySelectorAll('input, select, textarea').forEach(field => {
+    field.addEventListener('blur', function() {
+        if (this.hasAttribute('required') && !this.value.trim()) {
+            this.classList.add('is-invalid');
+        } else {
+            this.classList.remove('is-invalid');
         }
-    }
-}
-
-// Clear auto-saved data when form is submitted successfully
-function clearAutoSavedData() {
-    localStorage.removeItem('studentFormDraft');
-}
-
-// Initialize close button functionality
-function initializeCloseButtons() {
-    // Add click handlers to all close buttons
-    const closeButtons = document.querySelectorAll('[onclick="closeForm()"]');
-    closeButtons.forEach(button => {
-        // Add visual feedback on click
-        button.addEventListener('click', function(e) {
-            // Add ripple effect
-            const ripple = document.createElement('span');
-            ripple.style.cssText = `
-                position: absolute;
-                border-radius: 50%;
-                background: rgba(255, 255, 255, 0.6);
-                transform: scale(0);
-                animation: ripple 0.6s linear;
-                pointer-events: none;
-            `;
-            
-            const rect = this.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height);
-            ripple.style.width = ripple.style.height = size + 'px';
-            ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
-            ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
-            
-            this.appendChild(ripple);
-            
-            setTimeout(() => {
-                ripple.remove();
-            }, 600);
-        });
-        
-        // Add hover effect
-        button.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-2px) scale(1.02)';
-        });
-        
-        button.addEventListener('mouseleave', function() {
-            this.style.transform = '';
-        });
-    });
-}
-
-// Add ripple animation CSS
-const rippleStyle = document.createElement('style');
-rippleStyle.textContent = `
-    @keyframes ripple {
-        to {
-            transform: scale(4);
-            opacity: 0;
-        }
-    }
-`;
-document.head.appendChild(rippleStyle);
-
-// Smooth animations on load
-document.addEventListener('DOMContentLoaded', function() {
-    const sections = document.querySelectorAll('.form-section');
-    
-    sections.forEach((section, index) => {
-        section.style.opacity = '0';
-        section.style.transform = 'translateY(20px)';
-        section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        
-        setTimeout(() => {
-            section.style.opacity = '1';
-            section.style.transform = 'translateY(0)';
-        }, index * 100);
     });
     
-    // Initialize close buttons
-    initializeCloseButtons();
-    
-    // Load auto-saved data
-    loadAutoSavedData();
-    
-    // Auto-save every 30 seconds
-    setInterval(autoSaveForm, 30000);
-    
-    // Show keyboard shortcuts info with close button highlight
-    showNotification('Tips: Gunakan Ctrl+S untuk simpan, Esc untuk tutup, Ctrl+R untuk reset. Tombol merah untuk tutup form!', 'info');
-    
-    // Highlight close buttons briefly
-    setTimeout(() => {
-        const closeButtons = document.querySelectorAll('[onclick="closeForm()"]');
-        closeButtons.forEach(btn => {
-            btn.style.animation = 'pulse 1s ease-in-out 2';
-        });
-    }, 2000);
+    field.addEventListener('input', function() {
+        if (this.classList.contains('is-invalid') && this.value.trim()) {
+            this.classList.remove('is-invalid');
+        }
+    });
 });
-
-// Add pulse animation
-const pulseStyle = document.createElement('style');
-pulseStyle.textContent = `
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(1); }
-    }
-`;
-document.head.appendChild(pulseStyle);
 </script>
 @endpush

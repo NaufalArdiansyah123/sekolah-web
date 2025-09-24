@@ -1,18 +1,25 @@
 <?php
-// resources/views/layouts/teacher/sidebar.blade.php - Teacher Limited Access Sidebar
+// resources/views/layouts/teacher/sidebar.blade.php - Enhanced Teacher Sidebar for Mobile
 ?>
+
 <style>
-    /* Enhanced Sidebar Styles (Same as Admin but with Teacher Green Theme) */
+    /* Enhanced Sidebar Styles for Mobile Compatibility */
     .sidebar-nav {
-        background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-        border-right: 1px solid var(--border-color);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+        border-right: 1px solid #e5e7eb;
+        transition: all 0.3s ease;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         position: relative;
         overflow: hidden;
+        width: 16rem;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
     }
     
     .dark .sidebar-nav {
+        background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
+        border-right-color: #374151;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
     
@@ -40,20 +47,25 @@
     .sidebar-content {
         position: relative;
         z-index: 2;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
     }
     
     /* Enhanced Logo Section */
     .sidebar-logo {
         background: rgba(255, 255, 255, 0.9);
         backdrop-filter: blur(10px);
-        border-bottom: 1px solid var(--border-color);
-        color: var(--text-primary);
+        border-bottom: 1px solid #e5e7eb;
+        color: #111827;
         padding: 1.5rem 1rem;
         transition: all 0.3s ease;
     }
     
     .dark .sidebar-logo {
         background: rgba(0, 0, 0, 0.2);
+        border-bottom-color: #374151;
+        color: #ffffff;
     }
     
     .logo-container {
@@ -62,7 +74,7 @@
         padding: 0.75rem;
         border-radius: 16px;
         background: rgba(255, 255, 255, 0.1);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.3s ease;
         border: 1px solid rgba(255, 255, 255, 0.2);
         position: relative;
         overflow: hidden;
@@ -111,18 +123,29 @@
     .logo-text {
         font-weight: 700;
         font-size: 1.2rem;
-        background: linear-gradient(135deg, var(--text-primary), var(--accent-color));
+        background: linear-gradient(135deg, #111827, #059669);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
         letter-spacing: 0.5px;
     }
     
+    .dark .logo-text {
+        background: linear-gradient(135deg, #ffffff, #10b981);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
     .logo-subtitle {
         font-size: 0.75rem;
-        color: var(--text-secondary);
+        color: #6b7280;
         font-weight: 500;
         margin-top: 2px;
+    }
+    
+    .dark .logo-subtitle {
+        color: #9ca3af;
     }
     
     /* Enhanced Navigation Items */
@@ -130,7 +153,12 @@
         padding: 1.5rem 1rem;
         overflow-y: auto;
         scrollbar-width: thin;
-        scrollbar-color: var(--border-color) transparent;
+        scrollbar-color: #e5e7eb transparent;
+        flex: 1;
+    }
+    
+    .dark .nav-section {
+        scrollbar-color: #374151 transparent;
     }
     
     .nav-section::-webkit-scrollbar {
@@ -142,18 +170,29 @@
     }
     
     .nav-section::-webkit-scrollbar-thumb {
-        background: var(--border-color);
+        background: #e5e7eb;
         border-radius: 3px;
     }
     
+    .dark .nav-section::-webkit-scrollbar-thumb {
+        background: #374151;
+    }
+    
     .sidebar-nav-item {
-        color: var(--text-secondary);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        color: #6b7280;
+        transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
         margin-bottom: 0.5rem;
         border-radius: 12px;
         font-weight: 500;
+        display: block;
+        padding: 0.75rem 1rem;
+        text-decoration: none;
+    }
+    
+    .dark .sidebar-nav-item {
+        color: #9ca3af;
     }
     
     .sidebar-nav-item::before {
@@ -172,11 +211,15 @@
     }
     
     .sidebar-nav-item:hover {
-        color: var(--text-primary);
+        color: #111827;
         background: linear-gradient(135deg, rgba(5, 150, 105, 0.1), rgba(16, 185, 129, 0.05));
         transform: translateX(5px);
         text-decoration: none;
         box-shadow: 0 4px 12px rgba(5, 150, 105, 0.1);
+    }
+    
+    .dark .sidebar-nav-item:hover {
+        color: #ffffff;
     }
     
     .sidebar-nav-item.active {
@@ -197,11 +240,16 @@
         margin-right: 12px;
         transition: all 0.3s ease;
         flex-shrink: 0;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
     }
     
     .sidebar-nav-item:hover .nav-icon {
         transform: scale(1.1);
-        color: var(--accent-color);
+        color: #059669;
     }
     
     /* Enhanced Dropdown Styles */
@@ -210,8 +258,8 @@
     }
     
     .nav-dropdown-btn {
-        color: var(--text-secondary);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        color: #6b7280;
+        transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
         border-radius: 12px;
@@ -221,6 +269,13 @@
         border: none;
         cursor: pointer;
         text-align: left;
+        padding: 0.75rem 1rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .dark .nav-dropdown-btn {
+        color: #9ca3af;
     }
     
     .nav-dropdown-btn::before {
@@ -239,17 +294,25 @@
     }
     
     .nav-dropdown-btn:hover {
-        color: var(--text-primary);
+        color: #111827;
         background: linear-gradient(135deg, rgba(5, 150, 105, 0.1), rgba(16, 185, 129, 0.05));
         transform: translateX(5px);
         box-shadow: 0 4px 12px rgba(5, 150, 105, 0.1);
     }
     
+    .dark .nav-dropdown-btn:hover {
+        color: #ffffff;
+    }
+    
     .nav-dropdown-btn.active {
-        color: var(--text-primary);
+        color: #111827;
         background: linear-gradient(135deg, rgba(5, 150, 105, 0.15), rgba(16, 185, 129, 0.1));
         font-weight: 600;
         box-shadow: 0 4px 15px rgba(5, 150, 105, 0.2);
+    }
+    
+    .dark .nav-dropdown-btn.active {
+        color: #ffffff;
     }
     
     .dropdown-icon {
@@ -258,6 +321,11 @@
         transition: transform 0.3s ease;
         margin-left: auto;
         flex-shrink: 0;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
     }
     
     .nav-dropdown-btn.active .dropdown-icon {
@@ -274,6 +342,11 @@
         border-left: 2px solid rgba(5, 150, 105, 0.2);
         padding-left: 1rem;
         position: relative;
+        display: none;
+    }
+    
+    .nav-dropdown-content.show {
+        display: block;
     }
     
     .nav-dropdown-content::before {
@@ -293,7 +366,7 @@
     }
     
     .nav-dropdown-item {
-        color: var(--text-secondary);
+        color: #6b7280;
         transition: all 0.3s ease;
         border-radius: 8px;
         font-size: 0.875rem;
@@ -305,11 +378,19 @@
         text-decoration: none;
     }
     
+    .dark .nav-dropdown-item {
+        color: #9ca3af;
+    }
+    
     .nav-dropdown-item:hover {
-        color: var(--text-primary);
+        color: #111827;
         background: rgba(5, 150, 105, 0.1);
         transform: translateX(5px);
         text-decoration: none;
+    }
+    
+    .dark .nav-dropdown-item:hover {
+        color: #ffffff;
     }
     
     .nav-dropdown-item.active {
@@ -323,9 +404,13 @@
     /* Section Dividers */
     .nav-section-divider {
         height: 1px;
-        background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+        background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
         margin: 1.5rem 0;
         position: relative;
+    }
+    
+    .dark .nav-section-divider {
+        background: linear-gradient(90deg, transparent, #374151, transparent);
     }
     
     .nav-section-divider::after {
@@ -336,13 +421,13 @@
         transform: translate(-50%, -50%);
         width: 6px;
         height: 6px;
-        background: var(--accent-color);
+        background: #059669;
         border-radius: 50%;
         opacity: 0.6;
     }
     
     .nav-section-title {
-        color: var(--text-secondary);
+        color: #6b7280;
         font-size: 0.7rem;
         font-weight: 700;
         text-transform: uppercase;
@@ -354,11 +439,15 @@
         align-items: center;
     }
     
+    .dark .nav-section-title {
+        color: #9ca3af;
+    }
+    
     .nav-section-title::before {
         content: '';
         width: 4px;
         height: 4px;
-        background: var(--accent-color);
+        background: #059669;
         border-radius: 50%;
         margin-right: 8px;
     }
@@ -366,7 +455,7 @@
     /* Enhanced User Section */
     .user-section {
         padding: 1rem;
-        border-top: 1px solid var(--border-color);
+        border-top: 1px solid #e5e7eb;
         background: rgba(255, 255, 255, 0.8);
         backdrop-filter: blur(10px);
         transition: all 0.3s ease;
@@ -374,6 +463,7 @@
     
     .dark .user-section {
         background: rgba(0, 0, 0, 0.2);
+        border-top-color: #374151;
     }
     
     .user-card {
@@ -382,7 +472,7 @@
         padding: 1rem;
         border-radius: 16px;
         background: rgba(255, 255, 255, 0.1);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.3s ease;
         border: 1px solid rgba(255, 255, 255, 0.2);
         cursor: pointer;
         position: relative;
@@ -431,7 +521,7 @@
     }
     
     .user-name {
-        color: var(--text-primary);
+        color: #111827;
         font-weight: 600;
         font-size: 0.875rem;
         margin-bottom: 2px;
@@ -440,12 +530,20 @@
         text-overflow: ellipsis;
     }
     
+    .dark .user-name {
+        color: #ffffff;
+    }
+    
     .user-role {
-        color: var(--text-secondary);
+        color: #6b7280;
         font-size: 0.75rem;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+    
+    .dark .user-role {
+        color: #9ca3af;
     }
     
     .user-status {
@@ -472,15 +570,20 @@
         height: 40px;
         border-radius: 10px;
         background: rgba(255, 255, 255, 0.1);
-        border: 1px solid var(--border-color);
-        display: none; /* Hidden by default */
+        border: 1px solid #e5e7eb;
+        display: none;
         align-items: center;
         justify-content: center;
         cursor: pointer;
         transition: all 0.3s ease;
-        color: var(--text-secondary);
+        color: #6b7280;
         z-index: 10;
         backdrop-filter: blur(10px);
+    }
+    
+    .dark .mobile-close-btn {
+        border-color: #374151;
+        color: #9ca3af;
     }
     
     .mobile-close-btn:hover {
@@ -497,8 +600,8 @@
             top: 0;
             left: 0;
             bottom: 0;
-            width: 16rem; /* w-64 = 256px = 16rem */
-            z-index: 10; /* Lower z-index so content can be above */
+            width: 16rem;
+            z-index: 10;
         }
     }
     
@@ -514,7 +617,7 @@
         }
         
         .sidebar-logo {
-            padding-right: 4rem; /* Space for close button */
+            padding-right: 4rem;
         }
         
         .nav-section {
@@ -522,22 +625,13 @@
         }
         
         .mobile-close-btn {
-            display: flex; /* Show only on mobile */
+            display: flex;
         }
     }
 </style>
 
 <!-- Enhanced Teacher Sidebar -->
-<div class="sidebar-nav w-64 flex-shrink-0 md:flex md:flex-col sidebar-content"
-     :class="{ 'hidden': !sidebarOpen }"
-     x-show="sidebarOpen || window.innerWidth >= 768"
-     x-transition:enter="transition ease-out duration-300"
-     x-transition:enter-start="transform -translate-x-full"
-     x-transition:enter-end="transform translate-x-0"
-     x-transition:leave="transition ease-in duration-300"
-     x-transition:leave-start="transform translate-x-0"
-     x-transition:leave-end="transform -translate-x-full">
-    
+<div class="sidebar-nav sidebar-content hidden" id="teacher-sidebar">
     <!-- Enhanced Logo Section -->
     <div class="sidebar-logo">
         <div class="logo-container">
@@ -553,7 +647,7 @@
         </div>
         
         <!-- Mobile Close Button -->
-        <button @click="sidebarOpen = false" class="mobile-close-btn md:hidden">
+        <button onclick="toggleSidebar()" class="mobile-close-btn">
             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -561,11 +655,11 @@
     </div>
 
     <!-- Enhanced Navigation -->
-    <div class="nav-section flex-1">
+    <div class="nav-section">
         <!-- Dashboard -->
         <a href="{{ route('teacher.dashboard') }}" 
-           class="sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('teacher.dashboard') ? 'active' : '' }}"
-           @click="sidebarOpen = false">
+           class="sidebar-nav-item {{ request()->routeIs('teacher.dashboard') ? 'active' : '' }}"
+           onclick="closeMobileSidebar()">
             <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
             </svg>
@@ -578,140 +672,99 @@
             <span>Content Management</span>
         </div>
 
-            <!-- Posts & Content -->
-            <div class="nav-dropdown" x-data="{ open: {{ request()->routeIs('teacher.posts.*') ? 'true' : 'false' }} }">
-                <button @click="open = !open" 
-                        class="nav-dropdown-btn flex items-center px-4 py-3 text-sm font-medium rounded-lg w-full {{ request()->routeIs('teacher.posts.*') ? 'active' : '' }}"
-                        :class="{ 'active': open }">
-                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
-                    </svg>
-                    <span>Posts & Content</span>
-                    <svg class="dropdown-icon" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                </button>
-                
-                <div x-show="open" 
-                 x-transition:enter="transition ease-out duration-200"
-                 x-transition:enter-start="opacity-0 transform scale-95"
-                 x-transition:enter-end="opacity-100 transform scale-100"
-                 x-transition:leave="transition ease-in duration-150"
-                 x-transition:leave-start="opacity-100 transform scale-100"
-                 x-transition:leave-end="opacity-0 transform scale-95"
-                 class="nav-dropdown-content">
+        <!-- Posts & Content -->
+        <div class="nav-dropdown">
+            <button onclick="toggleDropdown('posts')" 
+                    class="nav-dropdown-btn {{ request()->routeIs('teacher.posts.*') ? 'active' : '' }}"
+                    id="posts-btn">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                </svg>
+                <span>Posts & Content</span>
+                <svg class="dropdown-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+            
+            <div id="posts-content" class="nav-dropdown-content {{ request()->routeIs('teacher.posts.*') ? 'show' : '' }}">
                 <a href="{{ route('teacher.posts.announcement') }}" 
                    class="nav-dropdown-item {{ request()->routeIs('teacher.posts.announcement*') ? 'active' : '' }}"
-                   @click="sidebarOpen = false">
+                   onclick="closeMobileSidebar()">
                     📢 Pengumuman
                 </a>
                 <a href="{{ route('teacher.posts.blog.index') }}" 
                    class="nav-dropdown-item {{ request()->routeIs('teacher.posts.blog*') ? 'active' : '' }}"
-                   @click="sidebarOpen = false">
+                   onclick="closeMobileSidebar()">
                     📰 Berita & Blog
                 </a>
             </div>
-            </div>
+        </div>
 
-            <!-- Learning Management -->
-            <div class="nav-dropdown" x-data="{ open: {{ request()->routeIs('teacher.learning.*') ? 'true' : 'false' }} }">
-                <button @click="open = !open" 
-                        class="nav-dropdown-btn flex items-center px-4 py-3 text-sm font-medium rounded-lg w-full {{ request()->routeIs('teacher.learning.*') ? 'active' : '' }}"
-                        :class="{ 'active': open }">
-                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                    </svg>
-                    <span>Learning Management</span>
-                    <svg class="dropdown-icon" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                </button>
-                
-                <div x-show="open" 
-                 x-transition:enter="transition ease-out duration-200"
-                 x-transition:enter-start="opacity-0 transform scale-95"
-                 x-transition:enter-end="opacity-100 transform scale-100"
-                 x-transition:leave="transition ease-in duration-150"
-                 x-transition:leave-start="opacity-100 transform scale-100"
-                 x-transition:leave-end="opacity-0 transform scale-95"
-                 class="nav-dropdown-content">
+        <!-- Learning Management -->
+        <div class="nav-dropdown">
+            <button onclick="toggleDropdown('learning')" 
+                    class="nav-dropdown-btn {{ request()->routeIs('teacher.learning.*') ? 'active' : '' }}"
+                    id="learning-btn">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                </svg>
+                <span>Learning Management</span>
+                <svg class="dropdown-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+            
+            <div id="learning-content" class="nav-dropdown-content {{ request()->routeIs('teacher.learning.*') ? 'show' : '' }}">
                 <a href="{{ route('teacher.learning.materials.index') }}" 
                    class="nav-dropdown-item {{ request()->routeIs('teacher.learning.materials*') ? 'active' : '' }}"
-                   @click="sidebarOpen = false">
+                   onclick="closeMobileSidebar()">
                     📚 Materi Pembelajaran
                 </a>
                 <a href="{{ route('teacher.learning.assignments.index') }}" 
                    class="nav-dropdown-item {{ request()->routeIs('teacher.learning.assignments*') ? 'active' : '' }}"
-                   @click="sidebarOpen = false">
+                   onclick="closeMobileSidebar()">
                     📝 Tugas & Latihan
                 </a>
             </div>
-            </div>
+        </div>
 
-            <!-- Assessment & Grading -->
-            <div class="nav-dropdown" x-data="{ open: {{ request()->routeIs('teacher.assessment.*') ? 'true' : 'false' }} }">
-                <button @click="open = !open" 
-                        class="nav-dropdown-btn flex items-center px-4 py-3 text-sm font-medium rounded-lg w-full {{ request()->routeIs('teacher.assessment.*') ? 'active' : '' }}"
-                        :class="{ 'active': open }">
-                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
-                    </svg>
-                    <span>Assessment & Grading</span>
-                    <svg class="dropdown-icon" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                </button>
-                
-                <div x-show="open" 
-                 x-transition:enter="transition ease-out duration-200"
-                 x-transition:enter-start="opacity-0 transform scale-95"
-                 x-transition:enter-end="opacity-100 transform scale-100"
-                 x-transition:leave="transition ease-in duration-150" 
-                 x-transition:leave-start="opacity-100 transform scale-100"
-                 x-transition:leave-end="opacity-0 transform scale-95"
-                 class="nav-dropdown-content">
+        <!-- Assessment & Grading -->
+        <div class="nav-dropdown">
+            <button onclick="toggleDropdown('assessment')" 
+                    class="nav-dropdown-btn {{ request()->routeIs('teacher.assessment.*') ? 'active' : '' }}"
+                    id="assessment-btn">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                </svg>
+                <span>Assessment & Grading</span>
+                <svg class="dropdown-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+            
+            <div id="assessment-content" class="nav-dropdown-content {{ request()->routeIs('teacher.assessment.*') ? 'show' : '' }}">
                 <a href="{{ route('teacher.quizzes.index') }}" 
                    class="nav-dropdown-item {{ request()->routeIs('teacher.quizzes.*') ? 'active' : '' }}"
-                   @click="sidebarOpen = false">
-                    🧪 Kuis
+                   onclick="closeMobileSidebar()">
+                    🧪 Kuis & Ujian
                 </a>
-                <a href="{{ route('teacher.daily-tests.index') }}" 
-                   class="nav-dropdown-item {{ request()->routeIs('teacher.daily-tests.*') ? 'active' : '' }}"
-                   @click="sidebarOpen = false">
-                    📝 Ulangan Harian
+                <a href="{{ route('teacher.assessment.index') }}" 
+                   class="nav-dropdown-item {{ request()->routeIs('teacher.assessment.index') || request()->routeIs('teacher.assessment.show') || request()->routeIs('teacher.assessment.edit') || request()->routeIs('teacher.assessment.create') ? 'active' : '' }}"
+                   onclick="closeMobileSidebar()">
+                    🎯 Assessment
                 </a>
-            </div>
-            </div>
-
-            <!-- Grades & Reports -->
-            <div class="nav-dropdown" x-data="{ open: {{ request()->routeIs('teacher.grades.*') ? 'true' : 'false' }} }">
-                <button @click="open = !open" 
-                        class="nav-dropdown-btn flex items-center px-4 py-3 text-sm font-medium rounded-lg w-full {{ request()->routeIs('teacher.grades.*') ? 'active' : '' }}"
-                        :class="{ 'active': open }">
-                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                    </svg>
-                    <span>Nilai & Laporan</span>
-                    <svg class="dropdown-icon" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                </button>
-                
-                <div x-show="open" 
-                 x-transition:enter="transition ease-out duration-200"
-                 x-transition:enter-start="opacity-0 transform scale-95"
-                 x-transition:enter-end="opacity-100 transform scale-100"
-                 x-transition:leave="transition ease-in duration-150"
-                 x-transition:leave-start="opacity-100 transform scale-100"
-                 x-transition:leave-end="opacity-0 transform scale-95"
-                 class="nav-dropdown-content">
-                <a href="{{ route('teacher.grades.index') }}" 
-                   class="nav-dropdown-item {{ request()->routeIs('teacher.grades.index') || request()->routeIs('teacher.grades.show') || request()->routeIs('teacher.grades.edit') || request()->routeIs('teacher.grades.create') ? 'active' : '' }}"
-                   @click="sidebarOpen = false">
-                    📊 Nilai
+                <a href="{{ route('teacher.assessment.grades') }}" 
+                   class="nav-dropdown-item {{ request()->routeIs('teacher.assessment.grades') ? 'active' : '' }}"
+                   onclick="closeMobileSidebar()">
+                    📊 Nilai & Rapor
+                </a>
+                <a href="{{ route('teacher.assessment.reports') }}" 
+                   class="nav-dropdown-item {{ request()->routeIs('teacher.assessment.reports') ? 'active' : '' }}"
+                   onclick="closeMobileSidebar()">
+                    📈 Laporan & Analisis
                 </a>
             </div>
-            </div>
+        </div>
 
         <!-- Section Divider -->
         <div class="nav-section-divider"></div>
@@ -719,12 +772,10 @@
             <span>Academic Management</span>
         </div>
 
-       
-
         <!-- Students (View Only) -->
         <a href="{{ route('teacher.students.index') }}" 
-           class="sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('teacher.students.*') ? 'active' : '' }}"
-           @click="sidebarOpen = false">
+           class="sidebar-nav-item {{ request()->routeIs('teacher.students.*') ? 'active' : '' }}"
+           onclick="closeMobileSidebar()">
             <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
             </svg>
@@ -737,12 +788,12 @@
             <span>Presensi</span>
         </div>
 
-        <!-- Learning Materials -->
+        <!-- Attendance -->
         <a href="{{ route('teacher.attendance.index') }}" 
-           class="sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('teacher.materials.*') ? 'active' : '' }}"
-           @click="sidebarOpen = false">
+           class="sidebar-nav-item {{ request()->routeIs('teacher.attendance.*') ? 'active' : '' }}"
+           onclick="closeMobileSidebar()">
             <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
             </svg>
             <span>Absen Siswa</span>
         </a>
@@ -762,3 +813,58 @@
         </div>
     </div>
 </div>
+
+<!-- Enhanced JavaScript for Mobile Compatibility -->
+<script>
+    // Dropdown management
+    function toggleDropdown(dropdownName) {
+        const content = document.getElementById(dropdownName + '-content');
+        const btn = document.getElementById(dropdownName + '-btn');
+        
+        if (content.classList.contains('show')) {
+            content.classList.remove('show');
+            btn.classList.remove('active');
+        } else {
+            // Close all other dropdowns
+            document.querySelectorAll('.nav-dropdown-content').forEach(el => {
+                el.classList.remove('show');
+            });
+            document.querySelectorAll('.nav-dropdown-btn').forEach(el => {
+                if (!el.classList.contains('active') || el.id !== dropdownName + '-btn') {
+                    el.classList.remove('active');
+                }
+            });
+            
+            // Open current dropdown
+            content.classList.add('show');
+            btn.classList.add('active');
+        }
+    }
+    
+    // Close mobile sidebar
+    function closeMobileSidebar() {
+        if (window.innerWidth < 768) {
+            const sidebar = document.getElementById('teacher-sidebar');
+            sidebar.style.display = 'none';
+            sidebar.classList.add('hidden');
+            window.sidebarOpen = false;
+        }
+    }
+    
+    // Initialize dropdowns based on current route
+    document.addEventListener('DOMContentLoaded', function() {
+        // Auto-open dropdowns if current route matches
+        const activeDropdowns = document.querySelectorAll('.nav-dropdown-btn.active');
+        activeDropdowns.forEach(btn => {
+            const dropdownName = btn.id.replace('-btn', '');
+            const content = document.getElementById(dropdownName + '-content');
+            if (content) {
+                content.classList.add('show');
+            }
+        });
+    });
+    
+    // Make functions globally available
+    window.toggleDropdown = toggleDropdown;
+    window.closeMobileSidebar = closeMobileSidebar;
+</script>

@@ -387,6 +387,26 @@
         position: relative;
     }
     
+    /* Mobile Debug Indicator */
+    .mobile-debug {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        background: rgba(0,0,0,0.8);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 12px;
+        z-index: 9999;
+        display: none;
+    }
+    
+    @media (max-width: 768px) {
+        .mobile-debug {
+            display: block;
+        }
+    }
+    
     .stats-card {
         background: white;
         border-radius: 15px;
@@ -636,6 +656,10 @@
         transform: scale(1.2) rotate(10deg);
         background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(252, 211, 77, 0.1));
         color: var(--gold-color);
+    }
+    
+    .text-purple {
+        color: #8b5cf6 !important;
     }
     
     .feature-card h5 {
@@ -962,63 +986,63 @@
                     <p>Informasi terkini seputar kegiatan dan prestasi sekolah</p>
                 </div>
 
-                <!-- News Card 1 -->
-                <div class="news-card">
-                    <div class="row g-0">
-                        <div class="col-md-4">
-                            <div class="news-image">
-                                <i class="fas fa-graduation-cap"></i>
+                @if($latestNews->count() > 0)
+                    @foreach($latestNews as $news)
+                        <div class="news-card">
+                            <div class="row g-0">
+                                <div class="col-md-4">
+                                    @if($news->featured_image)
+                                        <div class="news-image" style="background-image: url('{{ asset('storage/' . $news->featured_image) }}'); background-size: cover; background-position: center;">
+                                        </div>
+                                    @else
+                                        <div class="news-image">
+                                            <i class="fas fa-newspaper"></i>
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="card-body p-4">
+                                        <h5 class="card-title fw-bold">
+                                            <a href="{{ route('news.detail', $news->slug) }}" class="text-decoration-none text-dark">
+                                                {{ Str::limit($news->title, 60) }}
+                                            </a>
+                                        </h5>
+                                        <p class="card-text">{{ Str::limit(strip_tags($news->content), 120) }}</p>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar me-1"></i>{{ $news->created_at->diffForHumans() }}
+                                                @if($news->author)
+                                                    <i class="fas fa-user ms-2 me-1"></i>{{ $news->author }}
+                                                @endif
+                                            </small>
+                                        </p>
+                                        <a href="{{ route('news.detail', $news->slug) }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-arrow-right me-1"></i>Baca Selengkapnya
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-8">
-                            <div class="card-body p-4">
-                                <h5 class="card-title fw-bold">Penerimaan Siswa Baru Tahun Ajaran 2024/2025</h5>
-                                <p class="card-text">Pendaftaran siswa baru telah dibuka dengan sistem online yang lebih mudah dan terintegrasi untuk kemudahan calon siswa dan orang tua.</p>
-                                <p class="card-text"><small class="text-muted">2 hari yang lalu</small></p>
-                            </div>
+                    @endforeach
+                @else
+                    <!-- No News Available -->
+                    <div class="text-center py-5">
+                        <div class="mb-4">
+                            <i class="fas fa-newspaper fa-4x text-muted"></i>
                         </div>
+                        <h5 class="text-muted mb-3">Belum Ada Berita Terbaru</h5>
+                        <p class="text-muted mb-4">Saat ini belum ada berita terbaru yang dipublikasikan. Silakan kembali lagi nanti untuk mendapatkan informasi terkini seputar kegiatan sekolah.</p>
+                        <a href="{{ route('news.index') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-newspaper me-2"></i>Lihat Arsip Berita
+                        </a>
                     </div>
-                </div>
+                @endif
 
-                <!-- News Card 2 -->
-                <div class="news-card">
-                    <div class="row g-0">
-                        <div class="col-md-4">
-                            <div class="news-image bg-success">
-                                <i class="fas fa-trophy"></i>
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <div class="card-body p-4">
-                                <h5 class="card-title fw-bold">Juara Umum Olimpiade Sains Tingkat Kabupaten</h5>
-                                <p class="card-text">Tim olimpiade SMA Negeri 1 Balong berhasil meraih juara umum dalam kompetisi olimpiade sains tingkat kabupaten dengan berbagai medali emas.</p>
-                                <p class="card-text"><small class="text-muted">5 hari yang lalu</small></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- News Card 3 -->
-                <div class="news-card">
-                    <div class="row g-0">
-                        <div class="col-md-4">
-                            <div class="news-image bg-info">
-                                <i class="fas fa-laptop"></i>
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <div class="card-body p-4">
-                                <h5 class="card-title fw-bold">Launching Platform E-Learning Terbaru</h5>
-                                <p class="card-text">Peluncuran platform pembelajaran digital terbaru dengan fitur-fitur canggih untuk mendukung proses pembelajaran yang lebih efektif.</p>
-                                <p class="card-text"><small class="text-muted">1 minggu yang lalu</small></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <a href="{{ route('news.index') }}" class="btn btn-primary-enhanced btn-enhanced mt-3">
-                    <i class="fas fa-arrow-right me-2"></i>Lihat Semua Berita
-                </a>
+                @if($latestNews->count() > 0)
+                    <a href="{{ route('news.index') }}" class="btn btn-primary-enhanced btn-enhanced mt-3">
+                        <i class="fas fa-arrow-right me-2"></i>Lihat Semua Berita
+                    </a>
+                @endif
             </div>
 
             <!-- Sidebar -->
@@ -1028,21 +1052,43 @@
                         <h5 class="mb-0"><i class="fas fa-bullhorn me-2"></i>Pengumuman Penting</h5>
                     </div>
                     <div class="card-body">
-                        <div class="announcement-item mb-3 pb-3 border-bottom">
-                            <h6 class="fw-bold text-primary">Ujian Tengah Semester</h6>
-                            <p class="mb-1 small">Pelaksanaan UTS untuk semua kelas akan dimulai pada minggu depan sesuai jadwal yang telah ditentukan.</p>
-                            <small class="text-muted">15 Desember 2024</small>
-                        </div>
-                        <div class="announcement-item mb-3 pb-3 border-bottom">
-                            <h6 class="fw-bold text-success">Ekstrakurikuler Semester Baru</h6>
-                            <p class="mb-1 small">Pendaftaran kegiatan ekstrakurikuler untuk semester genap telah dibuka. Daftar segera!</p>
-                            <small class="text-muted">20 Desember 2024</small>
-                        </div>
-                        <div class="announcement-item">
-                            <h6 class="fw-bold" style="color: var(--gold-color);">Libur Semester</h6>
-                            <p class="mb-1 small">Libur semester genap akan dimulai tanggal 25 Desember 2024 hingga 8 Januari 2025.</p>
-                            <small class="text-muted">25 Desember 2024</small>
-                        </div>
+                        @if($latestAnnouncements->count() > 0)
+                            @foreach($latestAnnouncements as $index => $announcement)
+                                <div class="announcement-item {{ $index < $latestAnnouncements->count() - 1 ? 'mb-3 pb-3 border-bottom' : '' }}">
+                                    <h6 class="fw-bold text-primary">
+                                        <a href="{{ route('announcements.show', $announcement->slug ?? $announcement->id) }}" class="text-decoration-none">
+                                            {{ Str::limit($announcement->judul, 40) }}
+                                        </a>
+                                    </h6>
+                                    <p class="mb-1 small">{{ Str::limit(strip_tags($announcement->isi), 80) }}</p>
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>{{ $announcement->created_at->format('d M Y') }}
+                                        @if($announcement->prioritas === 'tinggi')
+                                            <span class="badge bg-danger ms-2">Penting</span>
+                                        @endif
+                                    </small>
+                                </div>
+                            @endforeach
+                        @else
+                            <!-- No Announcements Available -->
+                            <div class="text-center py-4">
+                                <div class="mb-3">
+                                    <i class="fas fa-bullhorn fa-3x text-muted"></i>
+                                </div>
+                                <h6 class="text-muted mb-2">Belum Ada Pengumuman Terbaru</h6>
+                                <p class="text-muted small mb-0">Saat ini belum ada pengumuman penting yang dipublikasikan. Silakan kembali lagi nanti untuk mendapatkan informasi terkini.</p>
+                            </div>
+                        @endif
+                        
+                        @if($latestAnnouncements->count() > 0)
+                            <a href="{{ route('announcements.index') }}" class="btn btn-outline-warning btn-enhanced mt-3 w-100">
+                                <i class="fas fa-bullhorn me-2"></i>Lihat Semua Pengumuman
+                            </a>
+                        @else
+                            <a href="{{ route('announcements.index') }}" class="btn btn-outline-secondary btn-enhanced mt-3 w-100">
+                                <i class="fas fa-bullhorn me-2"></i>Lihat Arsip Pengumuman
+                            </a>
+                        @endif
                     </div>
                 </div>
                 
@@ -1096,7 +1142,9 @@
                     </div>
                     <div class="card-body">
                         <div class="d-grid gap-3">
-
+                            <a href="{{ route('downloads.index') }}" class="btn btn-outline-secondary btn-enhanced">
+                                <i class="fas fa-download me-2"></i>Download
+                            </a>
 
                            <a href="{{ route('gallery.index') }}" class="btn btn-outline-secondary btn-enhanced">
                                 <i class="fas fa-images me-2"></i>Galeri
@@ -1122,50 +1170,71 @@
 <section class="features-section">
     <div class="container">
         <div class="section-title">
-            <h2>Program Unggulan</h2>
-            <p>Inovasi dan teknologi untuk mendukung pendidikan berkualitas di era digital</p>
+            <h2>Fitur Website Sekolah</h2>
+            <p>Berbagai fitur canggih yang telah tersedia di website sekolah untuk mendukung aktivitas akademik dan administrasi</p>
         </div>
         <div class="row">
             <div class="col-md-4 mb-4">
                 <div class="feature-card fade-in-up">
-                    <i class="fas fa-laptop-code fa-3x text-primary"></i>
-                    <h5>Learning Management System</h5>
-                    <p>Platform pembelajaran digital yang terintegrasi dengan sistem manajemen sekolah untuk mendukung proses belajar mengajar yang efektif.</p>
+                    <i class="fas fa-tachometer-alt fa-3x text-primary"></i>
+                    <h5>Dashboard Multi-Role</h5>
+                    <p>Dashboard khusus untuk Admin, Guru, dan Siswa dengan fitur yang disesuaikan dengan kebutuhan masing-masing role pengguna.</p>
                 </div>
             </div>
             <div class="col-md-4 mb-4">
                 <div class="feature-card fade-in-up">
                     <i class="fas fa-qrcode fa-3x text-success"></i>
-                    <h5>Absensi QR Code</h5>
-                    <p>Sistem absensi modern menggunakan teknologi QR Code untuk memudahkan pencatatan kehadiran siswa dan guru secara real-time.</p>
+                    <h5>Sistem Absensi QR Code</h5>
+                    <p>Absensi digital menggunakan QR Code dengan sistem keamanan berlapis dan monitoring pelanggaran secara real-time.</p>
                 </div>
             </div>
             <div class="col-md-4 mb-4">
                 <div class="feature-card fade-in-up">
-                    <i class="fas fa-chart-line fa-3x" style="color: var(--gold-color);"></i>
-                    <h5>Analitik Akademik</h5>
-                    <p>Dashboard analitik komprehensif untuk memantau perkembangan akademik siswa dengan visualisasi data yang mudah dipahami.</p>
+                    <i class="fas fa-users-cog fa-3x" style="color: var(--gold-color);"></i>
+                    <h5>Manajemen User & Role</h5>
+                    <p>Sistem manajemen pengguna dengan 3 role (Admin, Teacher, Student) dan kontrol akses yang komprehensif.</p>
                 </div>
             </div>
             <div class="col-md-4 mb-4">
                 <div class="feature-card fade-in-up">
-                    <i class="fas fa-users fa-3x text-warning"></i>
-                    <h5>Portal Orang Tua</h5>
-                    <p>Platform komunikasi antara sekolah dan orang tua untuk memantau perkembangan anak dan kegiatan sekolah secara langsung.</p>
+                    <i class="fas fa-graduation-cap fa-3x text-warning"></i>
+                    <h5>Manajemen Siswa</h5>
+                    <p>Sistem pendaftaran siswa online, validasi data, dan manajemen profil siswa dengan fitur export/import data.</p>
                 </div>
             </div>
             <div class="col-md-4 mb-4">
                 <div class="feature-card fade-in-up">
-                    <i class="fas fa-book-open fa-3x text-info"></i>
-                    <h5>Perpustakaan Digital</h5>
-                    <p>Koleksi buku digital dan jurnal online yang dapat diakses siswa dan guru kapan saja untuk mendukung proses pembelajaran.</p>
+                    <i class="fas fa-newspaper fa-3x text-info"></i>
+                    <h5>Portal Berita & Pengumuman</h5>
+                    <p>Sistem publikasi berita sekolah dan pengumuman penting dengan kategori dan sistem pencarian yang mudah.</p>
                 </div>
             </div>
             <div class="col-md-4 mb-4">
                 <div class="feature-card fade-in-up">
-                    <i class="fas fa-mobile-alt fa-3x text-danger"></i>
-                    <h5>Aplikasi Mobile Sekolah</h5>
-                    <p>Aplikasi mobile terintegrasi untuk memudahkan akses informasi sekolah, jadwal pelajaran, dan komunikasi antar civitas akademika.</p>
+                    <i class="fas fa-images fa-3x text-danger"></i>
+                    <h5>Galeri & Media</h5>
+                    <p>Galeri foto dan video kegiatan sekolah dengan sistem upload yang mudah dan tampilan yang menarik.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-card fade-in-up">
+                    <i class="fas fa-calendar-alt fa-3x text-purple"></i>
+                    <h5>Agenda & Kalender</h5>
+                    <p>Sistem manajemen agenda kegiatan sekolah dengan kalender interaktif dan notifikasi otomatis.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-card fade-in-up">
+                    <i class="fas fa-download fa-3x text-secondary"></i>
+                    <h5>Pusat Download</h5>
+                    <p>Repository file dan dokumen sekolah yang dapat diakses dengan mudah oleh siswa, guru, dan orang tua.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-card fade-in-up">
+                    <i class="fas fa-shield-alt fa-3x text-dark"></i>
+                    <h5>Sistem Keamanan</h5>
+                    <p>Monitoring keamanan dengan tracking pelanggaran QR Code dan sistem peringatan untuk menjaga integritas data.</p>
                 </div>
             </div>
         </div>
@@ -1173,8 +1242,16 @@
 </section>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const totalSlides = {{ $slideshows->count() }};
+// Namespace isolation to prevent conflicts
+(function() {
+    'use strict';
+    
+    // Wait for both DOM and navbar to be ready
+    function initHomePage() {
+        console.log('Home page initialization started');
+        
+        try {
+            const totalSlides = {{ $slideshows->count() }};
     
     // Enhanced Slideshow functionality - only initialize if there are multiple slides
     if (totalSlides > 1) {
@@ -1305,49 +1382,201 @@ document.addEventListener('DOMContentLoaded', function() {
         initEnhancedSlideshow();
     }
 
-    // Counter Animation Function
+    // Enhanced Mobile Detection
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+    const isTouch = 'ontouchstart' in window;
+    
+    console.log('Device detection:', { isMobile, isTouch, width: window.innerWidth });
+    
+    // Enhanced Counter Animation Function
     function animateCounter(element, target, duration = 2500) {
+        // Prevent multiple animations on same element
+        if (element.dataset.animated === 'true') {
+            console.log('Counter already animated:', element);
+            return;
+        }
+        
+        element.dataset.animated = 'true';
         const start = 0;
         const increment = target / (duration / 16);
         let current = start;
         
         element.classList.add('counting');
+        console.log('Starting counter animation:', { element, target, duration });
         
         const timer = setInterval(() => {
             current += increment;
             if (current >= target) {
                 current = target;
                 clearInterval(timer);
+                console.log('Counter animation completed:', target);
             }
             const displayValue = Math.floor(current).toLocaleString();
             element.textContent = displayValue;
         }, 16);
     }
     
-    // Intersection Observer for stats counter animation
-    const statsObserverOptions = {
-        threshold: 0.5,
+    // Enhanced Stats Animation with Multiple Triggers
+    function triggerStatsAnimation() {
+        try {
+            console.log('Triggering stats animation...');
+            const statsNumbers = document.querySelectorAll('.stats-number');
+            
+            if (statsNumbers.length === 0) {
+                console.warn('No stats numbers found!');
+                return;
+            }
+            
+            statsNumbers.forEach((numberElement, index) => {
+                const target = parseInt(numberElement.dataset.target);
+                if (target && !numberElement.dataset.animated) {
+                    setTimeout(() => {
+                        animateCounter(numberElement, target, 2500);
+                    }, index * 200); // Reduced delay for mobile
+                }
+            });
+        } catch (error) {
+            console.error('Error in triggerStatsAnimation:', error);
+        }
+    }
+    
+    // Mobile-Optimized Intersection Observer
+    const statsObserverOptions = isMobile ? {
+        threshold: 0.1, // Much lower threshold for mobile
+        rootMargin: '0px 0px -50px 0px' // Less strict margin for mobile
+    } : {
+        threshold: 0.3, // Reduced from 0.5 for better desktop experience
         rootMargin: '0px 0px -100px 0px'
     };
     
+    console.log('Observer options:', statsObserverOptions);
+    
     const statsObserver = new IntersectionObserver(function(entries) {
+        console.log('Intersection observer triggered:', entries.length, 'entries');
         entries.forEach(entry => {
+            console.log('Entry intersecting:', entry.isIntersecting, 'ratio:', entry.intersectionRatio);
             if (entry.isIntersecting) {
-                const statsNumbers = entry.target.querySelectorAll('.stats-number');
-                statsNumbers.forEach((numberElement, index) => {
-                    const target = parseInt(numberElement.dataset.target);
-                    setTimeout(() => {
-                        animateCounter(numberElement, target, 2500);
-                    }, index * 300);
-                });
+                console.log('Stats section is visible, triggering animation');
+                triggerStatsAnimation();
                 statsObserver.unobserve(entry.target);
             }
         });
     }, statsObserverOptions);
     
-    const statsSection = document.querySelector('.stats-section');
-    if (statsSection) {
-        statsObserver.observe(statsSection);
+    // Initialize Stats Animation with Multiple Methods
+    function initStatsAnimation() {
+        try {
+            const statsSection = document.querySelector('.stats-section');
+            
+            if (!statsSection) {
+                console.warn('Stats section not found!');
+                return;
+            }
+            
+            console.log('Initializing stats animation for:', isMobile ? 'mobile' : 'desktop');
+            
+            // Method 1: Intersection Observer (Primary)
+            if (typeof IntersectionObserver !== 'undefined') {
+                statsObserver.observe(statsSection);
+            } else {
+                console.warn('IntersectionObserver not supported, using fallback');
+                triggerStatsAnimation();
+            }
+            
+            // Method 2: Scroll-based fallback for mobile
+            if (isMobile) {
+                let scrollTriggered = false;
+                
+                function checkScrollPosition() {
+                    try {
+                        if (scrollTriggered) return;
+                        
+                        const rect = statsSection.getBoundingClientRect();
+                        const windowHeight = window.innerHeight;
+                        const isVisible = rect.top < windowHeight * 0.8 && rect.bottom > 0;
+                        
+                        console.log('Scroll check:', { 
+                            rectTop: rect.top, 
+                            windowHeight, 
+                            threshold: windowHeight * 0.8,
+                            isVisible 
+                        });
+                        
+                        if (isVisible) {
+                            console.log('Stats visible via scroll detection');
+                            scrollTriggered = true;
+                            triggerStatsAnimation();
+                            window.removeEventListener('scroll', checkScrollPosition);
+                        }
+                    } catch (error) {
+                        console.error('Error in scroll check:', error);
+                    }
+                }
+                
+                window.addEventListener('scroll', checkScrollPosition);
+                
+                // Check immediately in case already in view
+                setTimeout(checkScrollPosition, 100);
+            }
+            
+            // Method 3: Manual trigger after delay (Ultimate fallback)
+            setTimeout(() => {
+                try {
+                    const statsNumbers = document.querySelectorAll('.stats-number');
+                    const hasAnimated = Array.from(statsNumbers).some(el => el.dataset.animated === 'true');
+                    
+                    if (!hasAnimated) {
+                        console.log('No animation detected after 3s, triggering manually');
+                        triggerStatsAnimation();
+                    }
+                } catch (error) {
+                    console.error('Error in manual trigger:', error);
+                }
+            }, 3000);
+            
+            // Method 4: Touch/Click trigger for mobile debugging
+            if (isMobile) {
+                statsSection.addEventListener('touchstart', function() {
+                    console.log('Stats section touched, triggering animation');
+                    triggerStatsAnimation();
+                }, { once: true });
+            }
+        } catch (error) {
+            console.error('Error initializing stats animation:', error);
+        }
+    }
+    
+    // Initialize stats animation
+    initStatsAnimation();
+    
+    // Add mobile debug indicator with error handling
+    if (isMobile) {
+        try {
+            const debugDiv = document.createElement('div');
+            debugDiv.className = 'mobile-debug';
+            debugDiv.innerHTML = 'Mobile Mode: Stats Ready';
+            document.body.appendChild(debugDiv);
+            
+            // Update debug info when animation triggers
+            const originalTrigger = triggerStatsAnimation;
+            triggerStatsAnimation = function() {
+                try {
+                    debugDiv.innerHTML = 'Mobile Mode: Animating!';
+                    debugDiv.style.background = 'rgba(0,128,0,0.8)';
+                    originalTrigger();
+                    
+                    setTimeout(() => {
+                        debugDiv.innerHTML = 'Mobile Mode: Complete!';
+                    }, 3000);
+                } catch (error) {
+                    console.error('Error in mobile debug trigger:', error);
+                    debugDiv.innerHTML = 'Mobile Mode: Error!';
+                    debugDiv.style.background = 'rgba(255,0,0,0.8)';
+                }
+            };
+        } catch (error) {
+            console.error('Error setting up mobile debug:', error);
+        }
     }
     
     // Intersection Observer for fade-in animations
@@ -1401,18 +1630,33 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Enhanced hover effects for stats cards
-    const statsCards = document.querySelectorAll('.stats-card');
-    statsCards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-15px) scale(1.02)';
-            this.style.zIndex = '10';
+    // Enhanced hover effects for stats cards (Desktop only)
+    if (!isMobile) {
+        const statsCards = document.querySelectorAll('.stats-card');
+        statsCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-15px) scale(1.02)';
+                this.style.zIndex = '10';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+                this.style.zIndex = '1';
+            });
         });
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0) scale(1)';
-            this.style.zIndex = '1';
+    }
+    
+    // Mobile-specific stats card interactions
+    if (isMobile) {
+        const statsCards = document.querySelectorAll('.stats-card');
+        statsCards.forEach(card => {
+            card.addEventListener('touchstart', function() {
+                this.style.transform = 'translateY(-5px) scale(1.01)';
+                setTimeout(() => {
+                    this.style.transform = 'translateY(0) scale(1)';
+                }, 200);
+            });
         });
-    });
+    }
     
     // Parallax effect for decorative elements
     window.addEventListener('scroll', function() {
@@ -1453,17 +1697,34 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Add lazy loading for better performance
-    const lazyImages = document.querySelectorAll('.news-image, .slide');
-    const imageObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('loaded');
-                imageObserver.unobserve(entry.target);
-            }
+    try {
+        const lazyImages = document.querySelectorAll('.news-image, .slide');
+        const imageObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('loaded');
+                    imageObserver.unobserve(entry.target);
+                }
+            });
         });
-    });
 
-    lazyImages.forEach(img => imageObserver.observe(img));
-});
+        lazyImages.forEach(img => imageObserver.observe(img));
+    } catch (error) {
+        console.error('Error setting up lazy loading:', error);
+    }
+    
+        } catch (error) {
+            console.error('Error in home page initialization:', error);
+        }
+    }
+    
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initHomePage);
+    } else {
+        // DOM already loaded
+        setTimeout(initHomePage, 100);
+    }
+})();
 </script>
 @endsection

@@ -78,24 +78,54 @@ class NotificationController extends Controller
      */
     public function recent()
     {
-        $notifications = NotificationService::getRecentNotifications(10);
-        $unreadCount = NotificationService::getUnreadCount();
+        try {
+            $notifications = NotificationService::getRecentNotifications(10);
+            $unreadCount = NotificationService::getUnreadCount();
 
-        return response()->json([
-            'notifications' => $notifications,
-            'unread_count' => $unreadCount,
-            'html' => view('admin.partials.notifications', compact('notifications'))->render()
-        ]);
+            return response()->json([
+                'success' => true,
+                'notifications' => $notifications,
+                'unread_count' => $unreadCount,
+                'html' => view('admin.partials.notifications-fixed', compact('notifications'))->render()
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error loading recent notifications', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'error' => 'Gagal memuat notifikasi',
+                'html' => '<div class="p-4 text-center text-red-500"><i class="fas fa-exclamation-triangle mb-2"></i><br>Gagal memuat notifikasi</div>'
+            ]);
+        }
     }
 
     /**
      * Mark notification as read
      */
-    public function markAsRead(AdminNotification $notification)
+    public function markAsRead($id)
     {
-        $notification->markAsRead();
+        try {
+            $notification = AdminNotification::findOrFail($id);
+            $notification->markAsRead();
 
-        return response()->json(['success' => true]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Notifikasi berhasil ditandai sebagai dibaca'
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error marking notification as read', [
+                'notification_id' => $id,
+                'error' => $e->getMessage()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'error' => 'Gagal menandai notifikasi sebagai dibaca'
+            ], 500);
+        }
     }
 
     /**
@@ -121,11 +151,27 @@ class NotificationController extends Controller
     /**
      * Delete notification
      */
-    public function destroy(AdminNotification $notification)
+    public function destroy($id)
     {
-        $notification->delete();
+        try {
+            $notification = AdminNotification::findOrFail($id);
+            $notification->delete();
 
-        return response()->json(['success' => true]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Notifikasi berhasil dihapus'
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error deleting notification', [
+                'notification_id' => $id,
+                'error' => $e->getMessage()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'error' => 'Gagal menghapus notifikasi'
+            ], 500);
+        }
     }
 
     /**

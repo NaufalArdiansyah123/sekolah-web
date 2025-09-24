@@ -1022,10 +1022,10 @@
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
                 </svg>
-                Pendaftaran Siswa
+                Pendaftaran Akun Siswa
             </h1>
             <p class="page-subtitle">
-                Kelola dan konfirmasi pendaftaran siswa baru - <?php echo e($stats['total'] ?? 0); ?> total, <?php echo e($stats['pending'] ?? 0); ?> menunggu konfirmasi
+                Kelola dan konfirmasi pendaftaran Akun siswa - <?php echo e($stats['total'] ?? 0); ?> total, <?php echo e($stats['pending'] ?? 0); ?> menunggu konfirmasi
             </p>
             <div class="header-actions">
                 <a href="<?php echo e(route('admin.student-registrations.export', request()->query())); ?>" class="btn-header">
@@ -1034,11 +1034,17 @@
                     </svg>
                     Export Data
                 </a>
-                <button class="btn-header" onclick="bulkApprove()">
+                <button class="btn-header" onclick="bulkApprove()" id="bulkApproveBtn" style="display: none;">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
-                    Setujui Terpilih
+                    Setujui Terpilih (<span id="selectedCount">0</span>)
+                </button>
+                <button class="btn-header" onclick="bulkReject()" id="bulkRejectBtn" style="display: none; background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.3); color: #dc2626;">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                    Tolak Terpilih (<span id="selectedCountReject">0</span>)
                 </button>
             </div>
         </div>
@@ -1177,7 +1183,8 @@
                         <?php $__currentLoopData = $registrations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $registration): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <tr>
                                 <td>
-                                    <input type="checkbox" class="registration-checkbox" value="<?php echo e($registration->id); ?>">
+                                    <input type="checkbox" class="registration-checkbox" value="<?php echo e($registration->id); ?>" 
+                                           <?php echo e($registration->status !== 'pending' ? 'disabled' : ''); ?>>
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center">
@@ -1323,7 +1330,7 @@
                     </svg>
                 </div>
                 <div class="rejection-title-section">
-                    <h5 class="modal-title rejection-title">Tolak Pendaftaran Siswa</h5>
+                    <h5 class="modal-title rejection-title">Tolak Pendaftaran Akun Siswa</h5>
                     <p class="rejection-subtitle">Berikan alasan yang jelas untuk penolakan ini</p>
                 </div>
                 <button type="button" class="btn-close-custom" data-bs-dismiss="modal">
@@ -1413,11 +1420,112 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Detail Pendaftaran Siswa</h5>
+                <h5 class="modal-title">Detail Pendaftaran Akun Siswa</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body" id="detailContent">
                 <!-- Content will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bulk Rejection Modal -->
+<div class="modal fade" id="bulkRejectionModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rejection-modal">
+            <div class="modal-header rejection-header">
+                <div class="rejection-icon">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                    </svg>
+                </div>
+                <div class="rejection-title-section">
+                    <h5 class="modal-title rejection-title">Tolak Pendaftaran Akun Massal</h5>
+                    <p class="rejection-subtitle">Berikan alasan yang jelas untuk penolakan ini</p>
+                </div>
+                <button type="button" class="btn-close-custom" data-bs-dismiss="modal">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body rejection-body">
+                <form id="bulkRejectionForm">
+                    <div class="alert alert-warning" style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); color: #d97706; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+                        <div class="d-flex align-items-center">
+                            <svg class="w-5 h-5 me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                            </svg>
+                            <strong>Peringatan:</strong> Anda akan menolak <span id="bulkRejectCount">0</span> pendaftaran sekaligus.
+                        </div>
+                    </div>
+                    
+                    <div class="rejection-form-group">
+                        <label for="bulkRejectionReason" class="rejection-label">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h14a2 2 0 002-2V7a2 2 0 00-2-2h-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            Alasan Penolakan
+                        </label>
+                        <textarea class="form-control rejection-textarea" 
+                                  id="bulkRejectionReason" 
+                                  name="rejection_reason" 
+                                  rows="5" 
+                                  required 
+                                  placeholder="Jelaskan alasan penolakan untuk semua pendaftaran yang dipilih...">
+                        </textarea>
+                        <div class="rejection-help-text">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Alasan ini akan dikirim ke email semua siswa yang ditolak
+                        </div>
+                    </div>
+                    
+                    <div class="rejection-templates">
+                        <label class="rejection-label">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                            </svg>
+                            Template Alasan (Opsional)
+                        </label>
+                        <div class="template-buttons">
+                            <button type="button" class="template-btn" onclick="useBulkTemplate('data')">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                Data Tidak Valid
+                            </button>
+                            <button type="button" class="template-btn" onclick="useBulkTemplate('verifikasi')">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                </svg>
+                                Gagal Verifikasi
+                            </button>
+                            <button type="button" class="template-btn" onclick="useBulkTemplate('sistem')">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                                </svg>
+                                Masalah Sistem
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer rejection-footer">
+                <button type="button" class="btn-cancel" data-bs-dismiss="modal">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                    Batal
+                </button>
+                <button type="button" class="btn-reject-confirm" onclick="submitBulkRejection()">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                    </svg>
+                    Tolak Semua Pendaftaran
+                </button>
             </div>
         </div>
     </div>
@@ -1434,6 +1542,8 @@ function toggleSelectAll() {
     checkboxes.forEach(checkbox => {
         checkbox.checked = selectAll.checked;
     });
+    
+    updateBulkActionButtons();
 }
 
 // Get selected registration IDs
@@ -1441,6 +1551,50 @@ function getSelectedIds() {
     const checkboxes = document.querySelectorAll('.registration-checkbox:checked');
     return Array.from(checkboxes).map(cb => cb.value);
 }
+
+// Get selected pending registration IDs
+function getSelectedPendingIds() {
+    const checkboxes = document.querySelectorAll('.registration-checkbox:checked');
+    const selectedIds = [];
+    
+    checkboxes.forEach(checkbox => {
+        const row = checkbox.closest('tr');
+        const statusBadge = row.querySelector('.status-badge');
+        if (statusBadge && statusBadge.classList.contains('pending')) {
+            selectedIds.push(checkbox.value);
+        }
+    });
+    
+    return selectedIds;
+}
+
+// Update bulk action buttons visibility
+function updateBulkActionButtons() {
+    const selectedIds = getSelectedIds();
+    const selectedPendingIds = getSelectedPendingIds();
+    const bulkApproveBtn = document.getElementById('bulkApproveBtn');
+    const bulkRejectBtn = document.getElementById('bulkRejectBtn');
+    const selectedCount = document.getElementById('selectedCount');
+    const selectedCountReject = document.getElementById('selectedCountReject');
+    
+    if (selectedPendingIds.length > 0) {
+        bulkApproveBtn.style.display = 'inline-flex';
+        bulkRejectBtn.style.display = 'inline-flex';
+        selectedCount.textContent = selectedPendingIds.length;
+        selectedCountReject.textContent = selectedPendingIds.length;
+    } else {
+        bulkApproveBtn.style.display = 'none';
+        bulkRejectBtn.style.display = 'none';
+    }
+}
+
+// Add event listeners to checkboxes
+document.addEventListener('DOMContentLoaded', function() {
+    const checkboxes = document.querySelectorAll('.registration-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateBulkActionButtons);
+    });
+});
 
 // View registration detail
 function viewRegistration(id) {
@@ -1489,8 +1643,14 @@ function rejectRegistration(id) {
     
     // Find the student data from the table
     const row = document.querySelector(`input[value="${id}"]`).closest('tr');
-    const studentName = row.querySelector('.user-avatar').nextElementSibling.querySelector('div').textContent;
-    const studentEmail = row.querySelector('.user-avatar').nextElementSibling.querySelector('div:nth-child(2)').textContent;
+    const studentNameDiv = row.querySelector('.user-avatar').nextElementSibling.querySelector('div');
+    const studentName = studentNameDiv ? studentNameDiv.textContent.trim() : 'Unknown Student';
+    
+    // Try to find email from the contact column
+    const contactColumn = row.children[2]; // Contact column is the 3rd column (index 2)
+    const emailDiv = contactColumn ? contactColumn.querySelector('div') : null;
+    const studentEmail = emailDiv ? emailDiv.textContent.trim() : 'No email';
+    
     const studentAvatar = row.querySelector('.user-avatar').src;
     
     // Populate student info in modal
@@ -1510,27 +1670,44 @@ function rejectRegistration(id) {
 
 // Bulk approve
 function bulkApprove() {
-    const selectedIds = getSelectedIds();
+    const selectedIds = getSelectedPendingIds();
     
     if (selectedIds.length === 0) {
-        alert('Pilih minimal satu pendaftaran untuk disetujui');
+        showToast('warning', 'Pilih minimal satu pendaftaran dengan status pending untuk disetujui');
         return;
     }
     
     if (!confirm(`Apakah Anda yakin ingin menyetujui ${selectedIds.length} pendaftaran yang dipilih?`)) return;
     
+    // Show loading state
+    const bulkApproveBtn = document.getElementById('bulkApproveBtn');
+    const originalText = bulkApproveBtn.innerHTML;
+    bulkApproveBtn.innerHTML = `
+        <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        </svg>
+        Memproses...
+    `;
+    bulkApproveBtn.disabled = true;
+    
     fetch('/admin/student-registrations/bulk-action', {
         method: 'POST',
         headers: {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
         },
         body: JSON.stringify({
             action: 'approve',
             ids: selectedIds
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             showToast('success', data.message);
@@ -1541,19 +1718,52 @@ function bulkApprove() {
     })
     .catch(error => {
         console.error('Error:', error);
-        showToast('error', 'Terjadi kesalahan saat memproses permintaan');
+        showToast('error', 'Terjadi kesalahan saat memproses permintaan: ' + error.message);
+    })
+    .finally(() => {
+        // Restore button state
+        bulkApproveBtn.innerHTML = originalText;
+        bulkApproveBtn.disabled = false;
     });
+}
+
+// Bulk reject
+function bulkReject() {
+    const selectedIds = getSelectedPendingIds();
+    
+    if (selectedIds.length === 0) {
+        showToast('warning', 'Pilih minimal satu pendaftaran dengan status pending untuk ditolak');
+        return;
+    }
+    
+    // Update count in modal
+    document.getElementById('bulkRejectCount').textContent = selectedIds.length;
+    document.getElementById('bulkRejectionReason').value = '';
+    
+    // Show modal
+    new bootstrap.Modal(document.getElementById('bulkRejectionModal')).show();
 }
 
 // Show toast notification
 function showToast(type, message) {
     const toast = document.createElement('div');
-    toast.className = `alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed`;
+    let alertClass = 'alert-danger';
+    let iconPath = 'M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z';
+    
+    if (type === 'success') {
+        alertClass = 'alert-success';
+        iconPath = 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z';
+    } else if (type === 'warning') {
+        alertClass = 'alert-warning';
+        iconPath = 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z';
+    }
+    
+    toast.className = `alert ${alertClass} position-fixed`;
     toast.style.cssText = 'top: 20px; right: 20px; z-index: 10000; min-width: 300px; animation: slideInRight 0.3s ease-out;';
     toast.innerHTML = `
         <div class="d-flex align-items-center">
             <svg class="w-4 h-4 me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${type === 'success' ? 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' : 'M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'}"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${iconPath}"/>
             </svg>
             <span>${message}</span>
             <button type="button" class="btn-close ms-auto" onclick="this.parentElement.parentElement.remove()"></button>
@@ -1566,6 +1776,93 @@ function showToast(type, message) {
             toast.remove();
         }
     }, 5000);
+}
+
+// Submit bulk rejection
+function submitBulkRejection() {
+    const reason = document.getElementById('bulkRejectionReason').value.trim();
+    const selectedIds = getSelectedPendingIds();
+    
+    if (!reason) {
+        // Show error animation
+        const textarea = document.getElementById('bulkRejectionReason');
+        textarea.style.borderColor = '#ef4444';
+        textarea.style.animation = 'shake 0.5s ease-in-out';
+        
+        setTimeout(() => {
+            textarea.style.animation = '';
+        }, 500);
+        
+        showToast('error', 'Alasan penolakan harus diisi');
+        return;
+    }
+    
+    if (reason.length < 10) {
+        showToast('error', 'Alasan penolakan terlalu singkat. Minimal 10 karakter.');
+        return;
+    }
+    
+    if (selectedIds.length === 0) {
+        showToast('error', 'Tidak ada pendaftaran yang dapat ditolak.');
+        return;
+    }
+    
+    // Show loading state
+    const submitBtn = document.querySelector('#bulkRejectionModal .btn-reject-confirm');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = `
+        <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        </svg>
+        Memproses...
+    `;
+    submitBtn.disabled = true;
+    
+    fetch('/admin/student-registrations/bulk-reject', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            ids: selectedIds,
+            rejection_reason: reason
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            showToast('success', data.message);
+            bootstrap.Modal.getInstance(document.getElementById('bulkRejectionModal')).hide();
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            showToast('error', data.message || 'Terjadi kesalahan saat menolak pendaftaran');
+        }
+    })
+    .catch(error => {
+        console.error('Fetch error:', error);
+        
+        if (error.message.includes('422')) {
+            showToast('error', 'Data yang dikirim tidak valid. Pastikan alasan penolakan sudah diisi dengan benar.');
+        } else if (error.message.includes('419')) {
+            showToast('error', 'Sesi telah berakhir. Silakan refresh halaman dan coba lagi.');
+        } else if (error.message.includes('500')) {
+            showToast('error', 'Terjadi kesalahan server. Silakan coba lagi atau hubungi administrator.');
+        } else {
+            showToast('error', 'Terjadi kesalahan saat memproses permintaan: ' + error.message);
+        }
+    })
+    .finally(() => {
+        // Restore button state
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    });
 }
 
 // Template functions for rejection reasons
@@ -1582,6 +1879,33 @@ function useTemplate(type) {
             break;
         case 'sistem':
             template = 'Mohon maaf, terjadi masalah teknis dalam pemrosesan akun Anda:\n\n• Sistem mengalami gangguan saat memproses data\n• Terdapat duplikasi data dalam sistem\n• Error validasi otomatis\n\nSilakan coba mendaftar ulang atau hubungi administrator sistem untuk bantuan lebih lanjut.';
+            break;
+    }
+    
+    textarea.value = template;
+    textarea.focus();
+    
+    // Add animation effect
+    textarea.style.transform = 'scale(1.02)';
+    setTimeout(() => {
+        textarea.style.transform = 'scale(1)';
+    }, 200);
+}
+
+// Template functions for bulk rejection reasons
+function useBulkTemplate(type) {
+    const textarea = document.getElementById('bulkRejectionReason');
+    let template = '';
+    
+    switch(type) {
+        case 'data':
+            template = 'Mohon maaf, pendaftaran Anda tidak dapat diaktifkan karena terdapat masalah pada data yang dimasukkan:\n\n• Data pribadi tidak valid atau tidak sesuai\n• Email yang digunakan sudah terdaftar di sistem\n• NIS/NISN tidak ditemukan dalam database siswa\n• Informasi yang diberikan tidak lengkap\n\nSilakan periksa kembali data Anda dan daftar ulang dengan informasi yang benar.';
+            break;
+        case 'verifikasi':
+            template = 'Mohon maaf, pendaftaran Anda tidak dapat diverifikasi karena:\n\n• Data yang dimasukkan tidak dapat diverifikasi dengan database sekolah\n• Informasi kontak tidak dapat dikonfirmasi\n• Terdapat ketidaksesuaian data dengan catatan sekolah\n\nSilakan hubungi bagian administrasi sekolah untuk verifikasi data Anda.';
+            break;
+        case 'sistem':
+            template = 'Mohon maaf, terjadi masalah teknis dalam pemrosesan pendaftaran Anda:\n\n• Sistem mengalami gangguan saat memproses data\n• Terdapat duplikasi data dalam sistem\n• Error validasi otomatis\n\nSilakan coba mendaftar ulang atau hubungi administrator sistem untuk bantuan lebih lanjut.';
             break;
     }
     
@@ -1702,6 +2026,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }, index * 100);
     });
     
+    // Add event listeners to checkboxes
+    const checkboxes = document.querySelectorAll('.registration-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateBulkActionButtons);
+    });
+    
     // Add shake animation for validation
     const style = document.createElement('style');
     style.textContent = `
@@ -1718,6 +2048,17 @@ document.addEventListener('DOMContentLoaded', function() {
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
     `;
     document.head.appendChild(style);

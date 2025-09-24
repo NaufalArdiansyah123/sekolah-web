@@ -14,6 +14,7 @@ class Quiz extends Model
         'title',
         'description',
         'subject',
+        'class',
         'teacher_id',
         'start_time',
         'end_time',

@@ -8,68 +8,168 @@ use Carbon\Carbon;
 
 class AnnouncementSeeder extends Seeder
 {
-    public function run()
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
     {
         $announcements = [
             [
-                'judul' => 'Pengumuman Jadwal Ujian Tengah Semester Ganjil 2024/2025',
-                'isi' => 'Kepada seluruh siswa SMA Negeri 1 Balong, dengan ini diinformasikan bahwa Ujian Tengah Semester (UTS) Ganjil tahun pelajaran 2024/2025 akan dilaksanakan pada tanggal 1-8 November 2024. Siswa diharapkan mempersiapkan diri dengan baik dan mengikuti seluruh rangkaian ujian sesuai jadwal yang telah ditentukan. Untuk informasi lebih detail mengenai jadwal ujian per mata pelajaran, silakan lihat pengumuman yang telah ditempel di papan pengumuman sekolah atau website resmi sekolah.',
+                'judul' => 'Ujian Tengah Semester Genap 2024/2025',
+                'isi' => '<p>Pelaksanaan Ujian Tengah Semester (UTS) untuk semester genap tahun ajaran 2024/2025 akan dimulai pada minggu depan sesuai dengan jadwal yang telah ditentukan.</p>
+
+<h3>Jadwal UTS:</h3>
+<ul>
+<li>Senin, 27 Januari 2025: Matematika dan Bahasa Indonesia</li>
+<li>Selasa, 28 Januari 2025: Bahasa Inggris dan IPA</li>
+<li>Rabu, 29 Januari 2025: IPS dan Seni Budaya</li>
+<li>Kamis, 30 Januari 2025: Pendidikan Agama dan PKn</li>
+<li>Jumat, 31 Januari 2025: Penjaskes dan Prakarya</li>
+</ul>
+
+<h3>Ketentuan Ujian:</h3>
+<ul>
+<li>Siswa wajib hadir 15 menit sebelum ujian dimulai</li>
+<li>Membawa alat tulis lengkap dan kartu peserta ujian</li>
+<li>Tidak diperbolehkan membawa HP atau alat komunikasi lainnya</li>
+<li>Berpakaian seragam sekolah lengkap dan rapi</li>
+</ul>
+
+<p>Bagi siswa yang berhalangan hadir karena sakit harus menyertakan surat keterangan dokter untuk dapat mengikuti ujian susulan.</p>',
                 'kategori' => 'akademik',
                 'prioritas' => 'tinggi',
                 'penulis' => 'Wakil Kepala Sekolah Bidang Kurikulum',
                 'status' => 'published',
-                'views' => 125,
-                'tanggal_publikasi' => Carbon::now()->subDays(2),
-                'created_at' => Carbon::now()->subDays(2),
+                'views' => 245,
+                'tanggal_publikasi' => Carbon::now()->subDays(3),
             ],
             [
-                'judul' => 'Peringatan Hari Sumpah Pemuda ke-96',
-                'isi' => 'Dalam rangka memperingati Hari Sumpah Pemuda ke-96, SMA Negeri 1 Balong akan mengadakan serangkaian kegiatan mulai tanggal 25-28 Oktober 2024. Kegiatan meliputi upacara bendera, lomba kreativitas siswa, dan pertunjukan seni budaya. Seluruh siswa wajib mengikuti kegiatan ini sebagai bentuk penghargaan terhadap jasa para pemuda Indonesia. Panitia pelaksana telah menyiapkan berbagai lomba menarik seperti lomba pidato, lomba poster, dan pertunjukan tari tradisional.',
+                'judul' => 'Pendaftaran Ekstrakurikuler Semester Genap',
+                'isi' => '<p>Pendaftaran kegiatan ekstrakurikuler untuk semester genap tahun ajaran 2024/2025 telah dibuka. Semua siswa diharapkan untuk mendaftar minimal satu kegiatan ekstrakurikuler.</p>
+
+<h3>Ekstrakurikuler yang Tersedia:</h3>
+<ul>
+<li>Pramuka (wajib untuk kelas X)</li>
+<li>PMR (Palang Merah Remaja)</li>
+<li>Basket dan Futsal</li>
+<li>Badminton dan Voli</li>
+<li>Seni Tari dan Musik</li>
+<li>Teater dan Sastra</li>
+<li>Robotika dan Coding</li>
+<li>Jurnalistik dan Fotografi</li>
+<li>English Club</li>
+<li>Pecinta Alam</li>
+</ul>
+
+<h3>Cara Pendaftaran:</h3>
+<p>Pendaftaran dapat dilakukan secara online melalui website sekolah atau datang langsung ke ruang OSIS. Pendaftaran dibuka hingga tanggal 31 Januari 2025.</p>
+
+<p>Kegiatan ekstrakurikuler akan dimulai pada minggu pertama Februari 2025. Jadwal lengkap akan diumumkan setelah pendaftaran ditutup.</p>',
                 'kategori' => 'kegiatan',
                 'prioritas' => 'sedang',
-                'penulis' => 'Wakil Kepala Sekolah Bidang Kesiswaan',
+                'penulis' => 'Pembina OSIS',
                 'status' => 'published',
-                'views' => 89,
-                'tanggal_publikasi' => Carbon::now()->subDays(3),
-                'created_at' => Carbon::now()->subDays(3),
+                'views' => 189,
+                'tanggal_publikasi' => Carbon::now()->subDays(5),
             ],
             [
-                'judul' => 'Pembayaran SPP Bulan November 2024',
-                'isi' => 'Kepada orang tua/wali siswa, pembayaran SPP bulan November 2024 dapat dilakukan mulai tanggal 1 November 2024 melalui bank yang telah ditunjuk atau sistem pembayaran online. Batas akhir pembayaran adalah tanggal 15 November 2024. Bank yang bekerjasama dengan sekolah antara lain BRI, BNI, dan Mandiri. Untuk pembayaran online dapat melalui aplikasi mobile banking atau internet banking. Terima kasih atas perhatian dan kerjasamanya.',
-                'kategori' => 'administrasi',
-                'prioritas' => 'sedang',
-                'penulis' => 'Bagian Tata Usaha',
-                'status' => 'published',
-                'views' => 76,
-                'tanggal_publikasi' => Carbon::now()->subDays(4),
-                'created_at' => Carbon::now()->subDays(4),
-            ],
-            [
-                'judul' => 'Workshop Teknologi Pendidikan untuk Guru',
-                'isi' => 'Akan dilaksanakan workshop teknologi pendidikan untuk seluruh guru SMA Negeri 1 Balong pada tanggal 31 Oktober 2024 pukul 08.00-15.00 WIB di Aula sekolah. Workshop ini bertujuan untuk meningkatkan kemampuan guru dalam menggunakan teknologi untuk mendukung proses pembelajaran. Materi yang akan dibahas meliputi penggunaan platform e-learning, aplikasi pembelajaran interaktif, dan teknik multimedia dalam pembelajaran. Narasumber dari Universitas Pendidikan Indonesia.',
-                'kategori' => 'akademik',
-                'prioritas' => 'sedang',
+                'judul' => 'Libur Semester dan Tahun Baru 2025',
+                'isi' => '<p>Dalam rangka menyambut tahun baru 2025 dan memberikan waktu istirahat kepada siswa setelah menyelesaikan ujian semester, sekolah akan mengadakan libur semester.</p>
+
+<h3>Jadwal Libur:</h3>
+<ul>
+<li>Libur Tahun Baru: 1 Januari 2025</li>
+<li>Libur Semester: 25 Desember 2024 - 8 Januari 2025</li>
+<li>Masuk sekolah kembali: 9 Januari 2025</li>
+</ul>
+
+<h3>Kegiatan Selama Libur:</h3>
+<p>Meskipun libur, beberapa kegiatan tetap berjalan:</p>
+<ul>
+<li>Bimbingan belajar untuk kelas XII (opsional)</li>
+<li>Pelatihan olimpiade sains</li>
+<li>Kegiatan ekstrakurikuler tertentu</li>
+</ul>
+
+<h3>Tugas Liburan:</h3>
+<p>Guru mata pelajaran akan memberikan tugas liburan yang harus dikumpulkan pada hari pertama masuk sekolah. Siswa diharapkan menggunakan waktu libur dengan baik untuk belajar dan beristirahat.</p>
+
+<p>Selamat berlibur dan selamat tahun baru 2025!</p>',
+                'kategori' => 'umum',
+                'prioritas' => 'tinggi',
                 'penulis' => 'Kepala Sekolah',
                 'status' => 'published',
-                'views' => 43,
-                'tanggal_publikasi' => Carbon::now()->subDays(5),
-                'created_at' => Carbon::now()->subDays(5),
+                'views' => 567,
+                'tanggal_publikasi' => Carbon::now()->subWeek(),
             ],
             [
-                'judul' => 'Penerimaan Siswa Baru Tahun Ajaran 2025/2026',
-                'isi' => 'Informasi penerimaan siswa baru untuk tahun ajaran 2025/2026 akan segera diumumkan. Pendaftaran dibuka mulai bulan Januari 2025. Persyaratan dan prosedur pendaftaran dapat dilihat di website resmi sekolah.',
+                'judul' => 'Pembayaran SPP Semester Genap 2025',
+                'isi' => '<p>Pemberitahuan kepada seluruh orang tua/wali siswa mengenai pembayaran SPP (Sumbangan Pembinaan Pendidikan) untuk semester genap tahun ajaran 2024/2025.</p>
+
+<h3>Rincian Pembayaran:</h3>
+<ul>
+<li>SPP Bulanan: Rp 150.000 per bulan</li>
+<li>Biaya Kegiatan: Rp 50.000 per semester</li>
+<li>Biaya Praktikum: Rp 75.000 per semester</li>
+<li>Total per bulan: Rp 175.000</li>
+</ul>
+
+<h3>Cara Pembayaran:</h3>
+<ul>
+<li>Transfer ke rekening sekolah: BNI 1234567890</li>
+<li>Pembayaran langsung di kantor tata usaha</li>
+<li>Melalui aplikasi mobile banking dengan kode sekolah</li>
+</ul>
+
+<h3>Batas Waktu:</h3>
+<p>Pembayaran SPP paling lambat tanggal 10 setiap bulannya. Keterlambatan pembayaran akan dikenakan denda sebesar Rp 10.000 per hari.</p>
+
+<p>Bagi keluarga yang mengalami kesulitan ekonomi, dapat mengajukan keringanan biaya dengan melampirkan surat keterangan tidak mampu dari kelurahan.</p>',
                 'kategori' => 'administrasi',
                 'prioritas' => 'tinggi',
-                'penulis' => 'Panitia PSB',
+                'penulis' => 'Kepala Tata Usaha',
                 'status' => 'published',
-                'views' => 234,
-                'tanggal_publikasi' => Carbon::now()->subDays(10),
-                'created_at' => Carbon::now()->subDays(10),
-            ]
+                'views' => 423,
+                'tanggal_publikasi' => Carbon::now()->subDays(8),
+            ],
+            [
+                'judul' => 'Sosialisasi Protokol Kesehatan di Sekolah',
+                'isi' => '<p>Dalam upaya menjaga kesehatan dan keselamatan seluruh warga sekolah, kami mengingatkan kembali protokol kesehatan yang harus dipatuhi oleh semua pihak.</p>
+
+<h3>Protokol Kesehatan:</h3>
+<ul>
+<li>Wajib menggunakan masker selama berada di lingkungan sekolah</li>
+<li>Mencuci tangan dengan sabun atau menggunakan hand sanitizer</li>
+<li>Menjaga jarak minimal 1 meter dengan orang lain</li>
+<li>Tidak berkerumun di area sekolah</li>
+<li>Mengukur suhu tubuh sebelum memasuki sekolah</li>
+</ul>
+
+<h3>Fasilitas yang Disediakan:</h3>
+<ul>
+<li>Tempat cuci tangan di setiap sudut sekolah</li>
+<li>Hand sanitizer di setiap kelas dan ruangan</li>
+<li>Thermal gun untuk mengukur suhu</li>
+<li>Masker cadangan untuk yang lupa membawa</li>
+</ul>
+
+<h3>Sanksi:</h3>
+<p>Siswa yang melanggar protokol kesehatan akan diberikan teguran dan pembinaan. Pelanggaran berulang dapat dikenakan sanksi sesuai dengan tata tertib sekolah.</p>
+
+<p>Mari bersama-sama menjaga kesehatan dan menciptakan lingkungan sekolah yang aman dan nyaman untuk belajar.</p>',
+                'kategori' => 'umum',
+                'prioritas' => 'sedang',
+                'penulis' => 'Tim Satgas COVID-19 Sekolah',
+                'status' => 'published',
+                'views' => 156,
+                'tanggal_publikasi' => Carbon::now()->subDays(12),
+            ],
         ];
 
         foreach ($announcements as $announcement) {
             Announcement::create($announcement);
         }
+
+        $this->command->info('Announcements seeded successfully!');
     }
 }

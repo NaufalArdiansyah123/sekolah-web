@@ -75,7 +75,7 @@ class CheckAdminAccounts extends Command
                 }
                 
                 // Check if there's at least one admin
-                $adminUsers = User::role(['Super Admin', 'Admin', 'super_admin', 'admin'])->get();
+                $adminUsers = User::role('admin')->get();
                 if ($adminUsers->isEmpty()) {
                     $this->newLine();
                     $this->error('❌ No admin users found. Creating admin account...');
@@ -95,7 +95,7 @@ class CheckAdminAccounts extends Command
             $this->line('You can login with any of these accounts:');
             $this->newLine();
             
-            $adminUsers = User::role(['Super Admin', 'Admin', 'super_admin', 'admin'])->get();
+            $adminUsers = User::role('admin')->get();
             foreach ($adminUsers as $admin) {
                 $roleName = $admin->roles->first()->name ?? 'No Role';
                 $this->line("Email: {$admin->email}");
@@ -137,16 +137,8 @@ class CheckAdminAccounts extends Command
         $this->info('✓ Created permissions');
         
         // Create roles
-        $superAdmin = Role::create(['name' => 'super_admin', 'guard_name' => 'web']);
-        $superAdmin->givePermissionTo(Permission::all());
-        
         $admin = Role::create(['name' => 'admin', 'guard_name' => 'web']);
-        $admin->givePermissionTo([
-            'posts.read', 'posts.create', 'posts.update',
-            'academic.manage', 'students.manage', 'teachers.manage',
-            'achievements.manage', 'extracurriculars.manage',
-            'media.manage', 'downloads.manage', 'gallery.manage'
-        ]);
+        $admin->givePermissionTo(Permission::all());
         
         $teacher = Role::create(['name' => 'teacher', 'guard_name' => 'web']);
         $teacher->givePermissionTo(['posts.read', 'students.manage', 'achievements.manage']);
@@ -157,11 +149,8 @@ class CheckAdminAccounts extends Command
     private function createAdminAccounts()
     {
         // Ensure roles exist - use existing role names
-        $superAdminRole = Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'web']);
-        $adminRole = Role::firstOrCreate(['name' => 'Admin', 'guard_name' => 'web']);
-        
-        // Create Super Admin
-        $superAdmin = User::create([
+        // Create Admin user
+        $adminUser = User::create([
             'name' => 'Super Administrator',
             'email' => 'admin@admin.com',
             'password' => Hash::make('password'),
@@ -169,8 +158,8 @@ class CheckAdminAccounts extends Command
             'status' => 'active',
             'email_verified_at' => now(),
         ]);
-        $superAdmin->assignRole('Super Admin');
-        $this->info('✓ Created Super Admin: admin@admin.com');
+        $adminUser->assignRole('admin');
+        $this->info('✓ Created Admin: admin@admin.com');
         
         // Create Regular Admin
         $admin = User::create([
@@ -181,7 +170,7 @@ class CheckAdminAccounts extends Command
             'status' => 'active',
             'email_verified_at' => now(),
         ]);
-        $admin->assignRole('Admin');
+        $admin->assignRole('admin');
         $this->info('✓ Created Admin: admin2@admin.com');
         
         // Create another admin with simple credentials
@@ -193,7 +182,7 @@ class CheckAdminAccounts extends Command
             'status' => 'active',
             'email_verified_at' => now(),
         ]);
-        $simpleAdmin->assignRole('Admin');
+        $simpleAdmin->assignRole('admin');
         $this->info('✓ Created Simple Admin: admin@sekolah.com (password: admin123)');
     }
 }

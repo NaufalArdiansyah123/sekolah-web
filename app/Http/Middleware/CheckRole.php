@@ -26,9 +26,9 @@ class CheckRole
             'user_roles' => $user->roles->pluck('name')->toArray()
         ]);
         
-        // Jika user memiliki role superadministrator, izinkan akses ke semua
-        if ($user->hasRole('superadministrator') || $user->hasRole('super_admin')) {
-            Log::info('Access granted: User has superadministrator role');
+        // Jika user memiliki role admin, izinkan akses ke semua
+        if ($user->hasRole('admin')) {
+            Log::info('Access granted: User has admin role');
             return $next($request);
         }
         
