@@ -1,7 +1,9 @@
 @php
-    use App\Http\Controllers\Admin\BroadcastController;
-    $broadcastController = new BroadcastController();
-    $announcements = $broadcastController->getPublicBroadcasts(5);
+    use App\Models\Announcement;
+    $announcements = Announcement::published()
+                                ->latest('created_at')
+                                ->take(5)
+                                ->get();
 @endphp
 
 @if($announcements->count() > 0)
@@ -22,33 +24,33 @@
             <div class="announcement-card">
                 <div class="announcement-header">
                     <div class="announcement-meta">
-                        <div class="extracurricular-badge">
+                        <div class="category-badge">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
                             </svg>
-                            {{ $announcement->extracurricular->name }}
+                            {{ ucfirst($announcement->kategori) }}
                         </div>
                         <div class="announcement-date">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
-                            {{ $announcement->sent_at->format('M d, Y') }}
+                            {{ $announcement->tanggal_publikasi ? $announcement->tanggal_publikasi->format('M d, Y') : $announcement->created_at->format('M d, Y') }}
                         </div>
                     </div>
                     <div class="announcement-status">
-                        <span class="status-badge">
+                        <span class="status-badge priority-{{ $announcement->prioritas }}">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
                             </svg>
-                            Announcement
+                            {{ ucfirst($announcement->prioritas) }}
                         </span>
                     </div>
                 </div>
 
                 <div class="announcement-content">
-                    <h3 class="announcement-title">{{ $announcement->subject }}</h3>
+                    <h3 class="announcement-title">{{ $announcement->judul }}</h3>
                     <div class="announcement-text">
-                        {!! $announcement->formatted_content !!}
+                        {!! Str::limit(strip_tags($announcement->isi), 150) !!}
                     </div>
                 </div>
 
@@ -57,10 +59,14 @@
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                         </svg>
-                        By {{ $announcement->user->name }}
+                        By {{ $announcement->penulis }}
                     </div>
-                    <div class="announcement-delivery">
-                        {{ $announcement->delivery_summary }}
+                    <div class="announcement-views">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                        {{ $announcement->views }} views
                     </div>
                 </div>
             </div>
@@ -166,7 +172,7 @@
     gap: 0.5rem;
 }
 
-.extracurricular-badge {
+.category-badge {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -243,10 +249,32 @@
     font-weight: 500;
 }
 
-.announcement-delivery {
+.announcement-views {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     color: #6b7280;
-    font-size: 0.8rem;
-    font-style: italic;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Priority Badge Styles */
+.status-badge.priority-tinggi {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.status-badge.priority-sedang {
+    background: rgba(245, 158, 11, 0.1);
+    color: #d97706;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.status-badge.priority-rendah {
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 .btn-outline-primary {
@@ -299,7 +327,7 @@
     
     .announcement-date,
     .announcement-author,
-    .announcement-delivery {
+    .announcement-views {
         color: #9ca3af;
     }
     

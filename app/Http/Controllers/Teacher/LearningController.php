@@ -30,9 +30,7 @@ class LearningController extends Controller
             $query->bySubject($request->get('subject'));
         }
 
-        if ($request->filled('class')) {
-            $query->byClass($request->get('class'));
-        }
+
 
         if ($request->filled('type')) {
             $query->byType($request->get('type'));
@@ -49,7 +47,15 @@ class LearningController extends Controller
 
     public function createMaterial()
     {
-        return view('teacher.learning.materials.create');
+        // Get active classes for selection
+        $activeClasses = \App\Models\Classes::where('is_active', true)
+            ->orderBy('level')
+            ->orderBy('program')
+            ->orderBy('name')
+            ->get()
+            ->groupBy('level');
+        
+        return view('teacher.learning.materials.create', compact('activeClasses'));
     }
 
     public function storeMaterial(Request $request)
@@ -57,10 +63,10 @@ class LearningController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'subject' => 'required|string',
-            'class' => 'required|string',
             'type' => 'required|in:document,video,presentation,exercise,audio',
             'description' => 'nullable|string',
             'file' => 'required|file|max:102400', // 100MB max
+            'class_id' => 'nullable|exists:classes,id',
             'status' => 'required|in:draft,published'
         ]);
 
@@ -84,7 +90,6 @@ class LearningController extends Controller
         LearningMaterial::create([
             'title' => $request->title,
             'subject' => $request->subject,
-            'class' => $request->class,
             'type' => $request->type,
             'description' => $request->description,
             'file_name' => $fileName,
@@ -92,6 +97,7 @@ class LearningController extends Controller
             'original_name' => $originalName,
             'mime_type' => $mimeType,
             'file_size' => $fileSize,
+            'class_id' => $request->class_id,
             'status' => $request->status,
             'teacher_id' => Auth::id(),
             'created_by' => Auth::id(),
@@ -105,8 +111,16 @@ class LearningController extends Controller
     {
         $material = LearningMaterial::where('teacher_id', Auth::id())
                                    ->findOrFail($id);
+        
+        // Get active classes for selection
+        $activeClasses = \App\Models\Classes::where('is_active', true)
+            ->orderBy('level')
+            ->orderBy('program')
+            ->orderBy('name')
+            ->get()
+            ->groupBy('level');
 
-        return view('teacher.learning.materials.edit', compact('material'));
+        return view('teacher.learning.materials.edit', compact('material', 'activeClasses'));
     }
 
     public function updateMaterial(Request $request, $id)
@@ -117,19 +131,19 @@ class LearningController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'subject' => 'required|string',
-            'class' => 'required|string',
             'type' => 'required|in:document,video,presentation,exercise,audio',
             'description' => 'nullable|string',
             'file' => 'nullable|file|max:102400',
+            'class_id' => 'nullable|exists:classes,id',
             'status' => 'required|in:draft,published'
         ]);
 
         $updateData = [
             'title' => $request->title,
             'subject' => $request->subject,
-            'class' => $request->class,
             'type' => $request->type,
             'description' => $request->description,
+            'class_id' => $request->class_id,
             'status' => $request->status,
             'updated_by' => Auth::id(),
         ];
@@ -192,9 +206,7 @@ class LearningController extends Controller
             $query->bySubject($request->get('subject'));
         }
 
-        if ($request->filled('class')) {
-            $query->byClass($request->get('class'));
-        }
+
 
         if ($request->filled('status')) {
             $query->byStatus($request->get('status'));
@@ -252,7 +264,6 @@ class LearningController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'subject' => 'required|string',
-            'class' => 'required|string',
             'type' => 'required|in:homework,project,essay,quiz,presentation',
             'description' => 'required|string',
             'due_date' => 'required|date|after:today',
@@ -267,7 +278,6 @@ class LearningController extends Controller
         $assignment = Assignment::create([
             'title' => $request->title,
             'subject' => $request->subject,
-            'class' => $request->class,
             'type' => $request->type,
             'description' => $request->description,
             'instructions' => $request->instructions,
@@ -374,7 +384,6 @@ class LearningController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'subject' => 'required|string',
-            'class' => 'required|string',
             'type' => 'required|in:homework,project,essay,quiz,presentation',
             'description' => 'required|string',
             'due_date' => 'required|date',
@@ -386,7 +395,6 @@ class LearningController extends Controller
         $assignment->update([
             'title' => $request->title,
             'subject' => $request->subject,
-            'class' => $request->class,
             'type' => $request->type,
             'description' => $request->description,
             'instructions' => $request->instructions,

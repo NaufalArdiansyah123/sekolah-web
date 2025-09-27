@@ -22,7 +22,7 @@
             </a>
             <button type="button" onclick="exportLogs()" 
                     class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition-all duration-200 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                <i class="fas fa-download mr-2"></i>Export Excel
+                <i class="fas fa-download mr-2"></i>Export CSV
             </button>
         </div>
     </div>
@@ -82,8 +82,8 @@
                         <select name="class" id="class" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white">
                             <option value="">Semua Kelas</option>
                             @foreach($classes as $class)
-                                <option value="{{ $class }}" {{ request('class') == $class ? 'selected' : '' }}>
-                                    {{ $class }}
+                                <option value="{{ $class->id }}" {{ request('class') == $class->id ? 'selected' : '' }}>
+                                    {{ $class->name }}
                                 </option>
                             @endforeach
                         </select>
@@ -239,7 +239,11 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                                        {{ $log->student->class }}
+                                        @if($log->student->class_id && $log->student->class)
+                                            {{ $log->student->class->name }}
+                                        @else
+                                            Kelas Belum Ditentukan
+                                        @endif
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
@@ -298,41 +302,68 @@
 @push('scripts')
 <script>
 function exportLogs() {
+    // Get current filters from URL
     const params = new URLSearchParams(window.location.search);
-    params.set('export', 'excel');
+    // Remove export parameter since we're using dedicated route
+    params.delete('export');
     
-    // Show loading
-    Swal.fire({
-        title: 'Exporting...',
-        text: 'Sedang menyiapkan file Excel',
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
-    });
+    // Show loading notification
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            title: 'Exporting...',
+            text: 'Sedang menyiapkan file CSV',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+    }
     
     // Create download link
-    const downloadUrl = '{{ route("admin.qr-attendance.logs") }}?' + params.toString();
+    const downloadUrl = '{{ route("admin.qr-attendance.logs.export") }}?' + params.toString();
     
     // Create temporary link and trigger download
     const link = document.createElement('a');
     link.href = downloadUrl;
-    link.download = 'log-absensi-' + new Date().toISOString().split('T')[0] + '.xlsx';
+    
+    // Generate filename based on current filters
+    let filename = 'log-absensi-qr';
+    const date = params.get('date') || new Date().toISOString().split('T')[0];
+    filename += '-' + date;
+    
+    const classFilter = params.get('class');
+    if (classFilter) {
+        filename += '-kelas-' + classFilter.toLowerCase().replace(/\s+/g, '-');
+    }
+    
+    const statusFilter = params.get('status');
+    if (statusFilter) {
+        filename += '-' + statusFilter;
+    }
+    
+    filename += '.csv';
+    link.download = filename;
+    
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     
-    // Close loading after a short delay
+    // Close loading and show success message
     setTimeout(() => {
-        Swal.close();
-        Swal.fire({
-            icon: 'success',
-            title: 'Export Berhasil!',
-            text: 'File Excel telah didownload',
-            timer: 2000,
-            showConfirmButton: false
-        });
-    }, 1500);
+        if (typeof Swal !== 'undefined') {
+            Swal.close();
+            Swal.fire({
+                icon: 'success',
+                title: 'Export Berhasil!',
+                text: 'File CSV log absensi QR telah didownload',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        } else {
+            // Fallback for when SweetAlert is not available
+            alert('File CSV log absensi QR berhasil didownload!');
+        }
+    }, 1000);
 }
 
 // Auto refresh every 30 seconds if viewing today's logs

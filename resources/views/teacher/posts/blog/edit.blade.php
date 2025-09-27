@@ -268,11 +268,18 @@
 
 /* Modern Breadcrumb */
 .modern-breadcrumb {
-    background: white;
+    background: var(--bg-primary, white);
     padding: 1rem 1.5rem;
     border-radius: var(--border-radius);
     box-shadow: var(--card-shadow);
     margin-bottom: 2rem;
+    transition: all 0.3s ease;
+}
+
+/* Dark mode breadcrumb */
+.dark .modern-breadcrumb {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
 }
 
 .modern-breadcrumb .breadcrumb-item a {
@@ -282,16 +289,29 @@
 }
 
 .modern-breadcrumb .breadcrumb-item.active {
-    color: #6c757d;
+    color: var(--text-secondary, #6c757d);
     font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+/* Dark mode breadcrumb text */
+.dark .modern-breadcrumb .breadcrumb-item.active {
+    color: var(--text-secondary);
 }
 
 /* Create Form Container */
 .create-form-container {
-    background: white;
+    background: var(--bg-primary, white);
     border-radius: var(--border-radius);
     box-shadow: var(--card-shadow);
     overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+/* Dark mode form container */
+.dark .create-form-container {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
 }
 
 /* Form Header */
@@ -339,9 +359,16 @@
 .form-section {
     margin-bottom: 3rem;
     padding: 2rem;
-    background: #f8f9fa;
+    background: var(--bg-secondary, #f8f9fa);
     border-radius: var(--border-radius);
     border-left: 4px solid #059669;
+    transition: all 0.3s ease;
+}
+
+/* Dark mode form section */
+.dark .form-section {
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
 }
 
 .section-header {
@@ -349,15 +376,26 @@
 }
 
 .section-title {
-    color: #2d3748;
+    color: var(--text-primary, #2d3748);
     font-weight: 600;
     margin-bottom: 0.5rem;
     font-size: 1.2rem;
+    transition: all 0.3s ease;
 }
 
 .section-subtitle {
-    color: #6c757d;
+    color: var(--text-secondary, #6c757d);
     margin: 0;
+    transition: all 0.3s ease;
+}
+
+/* Dark mode section text */
+.dark .section-title {
+    color: var(--text-primary);
+}
+
+.dark .section-subtitle {
+    color: var(--text-secondary);
 }
 
 /* Modern Form Elements */
@@ -368,9 +406,15 @@
 .form-label-modern {
     display: block;
     font-weight: 600;
-    color: #2d3748;
+    color: var(--text-primary, #2d3748);
     margin-bottom: 0.8rem;
     font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+/* Dark mode form label */
+.dark .form-label-modern {
+    color: var(--text-primary);
 }
 
 .required {
@@ -380,11 +424,12 @@
 .form-input-modern, .form-select-modern, .form-textarea-modern {
     width: 100%;
     padding: 1rem 1.2rem;
-    border: 2px solid #e2e8f0;
+    border: 2px solid var(--border-color, #e2e8f0);
     border-radius: 12px;
     font-size: 1rem;
     transition: all 0.3s ease;
-    background: white;
+    background: var(--bg-primary, white);
+    color: var(--text-primary, #2d3748);
 }
 
 .form-input-modern:focus, .form-select-modern:focus, .form-textarea-modern:focus {
@@ -394,6 +439,18 @@
     transform: translateY(-2px);
 }
 
+/* Dark mode form inputs */
+.dark .form-input-modern, .dark .form-select-modern, .dark .form-textarea-modern {
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.dark .form-input-modern:focus, .dark .form-select-modern:focus, .dark .form-textarea-modern:focus {
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
 .form-textarea-modern {
     resize: vertical;
     min-height: 120px;
@@ -401,16 +458,23 @@
 
 .input-helper {
     font-size: 0.875rem;
-    color: #6c757d;
+    color: var(--text-secondary, #6c757d);
     margin-top: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+/* Dark mode input helper */
+.dark .input-helper {
+    color: var(--text-secondary);
 }
 
 /* Editor Container */
 .editor-container {
     border-radius: 12px;
     overflow: hidden;
-    border: 2px solid #e2e8f0;
+    border: 2px solid var(--border-color, #e2e8f0);
     transition: all 0.3s ease;
+    background: var(--bg-primary, white);
 }
 
 .editor-container:focus-within {
@@ -418,13 +482,24 @@
     box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
 }
 
+/* Dark mode editor container */
+.dark .editor-container {
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+}
+
+.dark .editor-container:focus-within {
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
 /* Upload Area */
 .upload-area {
-    border: 2px dashed #cbd5e0;
+    border: 2px dashed var(--border-color, #cbd5e0);
     border-radius: 12px;
     padding: 3rem 2rem;
     text-align: center;
-    background: #f7fafc;
+    background: var(--bg-secondary, #f7fafc);
     transition: all 0.3s ease;
     cursor: pointer;
     position: relative;
@@ -432,13 +507,29 @@
 
 .upload-area:hover {
     border-color: #059669;
-    background: #f0fdf4;
+    background: var(--bg-tertiary, #f0fdf4);
 }
 
 .upload-area.dragover {
     border-color: #059669;
-    background: #e6fffa;
+    background: var(--bg-tertiary, #e6fffa);
     transform: scale(1.02);
+}
+
+/* Dark mode upload area */
+.dark .upload-area {
+    background: var(--bg-tertiary);
+    border-color: var(--border-color);
+}
+
+.dark .upload-area:hover {
+    border-color: #10b981;
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.dark .upload-area.dragover {
+    border-color: #10b981;
+    background: rgba(16, 185, 129, 0.15);
 }
 
 .upload-input {
@@ -458,14 +549,25 @@
 }
 
 .upload-title {
-    color: #2d3748;
+    color: var(--text-primary, #2d3748);
     font-weight: 600;
     margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
 }
 
 .upload-subtitle {
-    color: #6c757d;
+    color: var(--text-secondary, #6c757d);
     margin: 0;
+    transition: all 0.3s ease;
+}
+
+/* Dark mode upload text */
+.dark .upload-title {
+    color: var(--text-primary);
+}
+
+.dark .upload-subtitle {
+    color: var(--text-secondary);
 }
 
 /* Image Preview */
@@ -509,8 +611,15 @@
 .form-actions {
     margin-top: 3rem;
     padding: 2rem;
-    background: #f8f9fa;
+    background: var(--bg-secondary, #f8f9fa);
     border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+}
+
+/* Dark mode form actions */
+.dark .form-actions {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
 }
 
 .actions-container {

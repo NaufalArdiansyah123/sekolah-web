@@ -16,13 +16,31 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 2rem;
-        background: var(--bg-primary);
+        background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
         backdrop-filter: blur(15px);
-        padding: 1.5rem 2rem;
-        border-radius: 16px;
+        padding: 2rem;
+        border-radius: 20px;
         border: 1px solid var(--border-color);
-        box-shadow: 0 4px 20px var(--shadow-color);
+        box-shadow: 0 8px 32px var(--shadow-color);
         transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, transparent 30%, rgba(59, 130, 246, 0.05) 50%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .page-header > * {
+        position: relative;
+        z-index: 2;
     }
 
     .page-title {
@@ -298,80 +316,99 @@
         transition: all 0.3s ease;
     }
 
-    .action-dropdown {
-        position: relative;
-    }
-
-    .dropdown-toggle {
-        background: var(--bg-secondary);
-        color: var(--text-primary);
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        padding: 0.5rem 1rem;
-        font-size: 0.8rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .dropdown-toggle:hover {
-        background: var(--bg-tertiary);
-        transform: translateY(-1px);
-    }
-
-    .dropdown-menu {
-        background: var(--bg-primary);
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        box-shadow: 0 8px 25px var(--shadow-color);
-        overflow: hidden;
-        position: absolute;
-        right: 0;
-        top: 100%;
-        min-width: 150px;
-        z-index: 10;
-        display: none;
-    }
-
-    .dropdown-menu.show {
-        display: block;
-    }
-
-    .dropdown-item {
-        padding: 0.75rem 1rem;
-        color: var(--text-primary);
-        text-decoration: none;
+    /* Action Buttons */
+    .action-buttons {
         display: flex;
-        align-items: center;
         gap: 0.5rem;
-        font-size: 0.875rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-action {
+        padding: 0.5rem 0.75rem;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
         transition: all 0.3s ease;
         border: none;
-        background: none;
-        width: 100%;
-        text-align: left;
         cursor: pointer;
+        min-width: auto;
     }
 
-    .dropdown-item:hover {
-        background: var(--bg-secondary);
-        color: var(--text-primary);
+    .btn-action:hover {
+        transform: translateY(-1px);
+        text-decoration: none;
     }
 
-    .dropdown-item.text-danger {
-        color: #dc2626;
+    .btn-view {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: white;
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
     }
 
-    .dropdown-item.text-danger:hover {
-        background: rgba(239, 68, 68, 0.05);
-        color: #dc2626;
+    .btn-view:hover {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: white;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
     }
 
-    .dropdown-divider {
-        height: 1px;
-        background: var(--border-color);
-        margin: 0;
-        border: none;
+    .btn-edit {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+    }
+
+    .btn-edit:hover {
+        background: linear-gradient(135deg, #059669, #047857);
+        color: white;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-delete {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
+    }
+
+    .btn-delete:hover {
+        background: linear-gradient(135deg, #dc2626, #b91c1c);
+        color: white;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+
+    /* Dark mode button adjustments */
+    .dark .btn-view {
+        background: linear-gradient(135deg, #1e40af, #1d4ed8);
+        box-shadow: 0 2px 8px rgba(30, 64, 175, 0.3);
+    }
+
+    .dark .btn-view:hover {
+        background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
+        box-shadow: 0 4px 12px rgba(30, 64, 175, 0.4);
+    }
+
+    .dark .btn-edit {
+        background: linear-gradient(135deg, #047857, #065f46);
+        box-shadow: 0 2px 8px rgba(4, 120, 87, 0.3);
+    }
+
+    .dark .btn-edit:hover {
+        background: linear-gradient(135deg, #065f46, #064e3b);
+        box-shadow: 0 4px 12px rgba(4, 120, 87, 0.4);
+    }
+
+    .dark .btn-delete {
+        background: linear-gradient(135deg, #b91c1c, #991b1b);
+        box-shadow: 0 2px 8px rgba(185, 28, 28, 0.3);
+    }
+
+    .dark .btn-delete:hover {
+        background: linear-gradient(135deg, #991b1b, #7f1d1d);
+        box-shadow: 0 4px 12px rgba(185, 28, 28, 0.4);
     }
 
     /* Image preview */
@@ -503,6 +540,28 @@
         transition: all 0.3s ease;
     }
 
+    /* Enhanced hover effects */
+    .table tbody tr:hover .btn-action {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .slideshow-image {
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .slideshow-image:hover {
+        transform: scale(1.1);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        border-radius: 12px;
+    }
+
+    /* Loading states */
+    .btn-action:active {
+        transform: translateY(0) scale(0.95);
+    }
+
     /* Responsive Design */
     @media (max-width: 768px) {
         .slideshow-container {
@@ -531,6 +590,35 @@
         .table {
             min-width: 800px;
         }
+
+        .action-buttons {
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .btn-action {
+            width: 100%;
+            justify-content: center;
+            padding: 0.5rem;
+        }
+
+        .btn-action span {
+            display: inline !important;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .stats-container {
+            grid-template-columns: 1fr;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+        }
     }
 
     /* Animation */
@@ -554,14 +642,21 @@
     <!-- Page Header -->
     <div class="page-header">
         <div>
-            <h1 class="page-title">Slideshow Management</h1>
-            <p class="page-subtitle">Manage homepage slideshow content</p>
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
+                <div style="background: linear-gradient(135deg, #3b82f6, #8b5cf6); padding: 0.75rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);">
+                    <svg class="w-6 h-6" style="color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                <h1 class="page-title">Slideshow Management</h1>
+            </div>
+            <p class="page-subtitle">✨ Manage and organize your homepage slideshow content with ease</p>
         </div>
         <a href="{{ route('admin.posts.slideshow.create') }}" class="btn-primary">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
             </svg>
-            Add Slideshow
+            Add New Slideshow
         </a>
     </div>
 
@@ -728,41 +823,32 @@
                             </div>
                         </td>
                         <td>
-                            <div class="action-dropdown">
-                                <button type="button" class="dropdown-toggle" onclick="toggleDropdown({{ $slideshow->id }})">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
-                                    </svg>
-                                </button>
-                                <div class="dropdown-menu" id="dropdown-{{ $slideshow->id }}">
-                                    @if($slideshow->image)
-                                        <button class="dropdown-item" onclick="showImageModal('{{ asset('storage/' . $slideshow->image) }}', '{{ $slideshow->title }}')">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                            </svg>
-                                            Preview
-                                        </button>
-                                    @endif
-                                    <a class="dropdown-item" href="{{ route('admin.posts.slideshow.edit', $slideshow->id) }}">
+                            <div class="action-buttons">
+                                @if($slideshow->image)
+                                    <button type="button" class="btn-action btn-view" onclick="showImageModal('{{ asset('storage/' . $slideshow->image) }}', '{{ $slideshow->title }}')" title="Preview Image">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                         </svg>
-                                        Edit
-                                    </a>
-                                    <hr class="dropdown-divider">
-                                    <form action="{{ route('admin.posts.slideshow.destroy', $slideshow->id) }}" 
-                                          method="POST" class="delete-form">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="dropdown-item text-danger">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H8a1 1 0 00-1 1v3M4 7h16"/>
-                                            </svg>
-                                            Delete
-                                        </button>
-                                    </form>
-                                </div>
+                                        <span class="hidden sm:inline">View</span>
+                                    </button>
+                                @endif
+                                <a href="{{ route('admin.posts.slideshow.edit', $slideshow->id) }}" class="btn-action btn-edit" title="Edit Slideshow">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                    </svg>
+                                    <span class="hidden sm:inline">Edit</span>
+                                </a>
+                                <form action="{{ route('admin.posts.slideshow.destroy', $slideshow->id) }}" method="POST" class="delete-form" style="display: inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn-action btn-delete" title="Delete Slideshow">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H8a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                        <span class="hidden sm:inline">Delete</span>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>
@@ -849,30 +935,25 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 5000);
     });
 
-    // Close dropdowns when clicking outside
-    document.addEventListener('click', function(event) {
-        if (!event.target.closest('.action-dropdown')) {
-            document.querySelectorAll('.dropdown-menu').forEach(function(menu) {
-                menu.classList.remove('show');
-            });
-        }
+    // Add smooth hover effects to action buttons
+    document.querySelectorAll('.btn-action').forEach(function(btn) {
+        btn.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px) scale(1.05)';
+        });
+        
+        btn.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
     });
 });
 
-// Dropdown functions
-function toggleDropdown(id) {
-    const dropdown = document.getElementById('dropdown-' + id);
-    const isShown = dropdown.classList.contains('show');
-    
-    // Close all dropdowns
-    document.querySelectorAll('.dropdown-menu').forEach(function(menu) {
-        menu.classList.remove('show');
-    });
-    
-    // Toggle current dropdown
-    if (!isShown) {
-        dropdown.classList.add('show');
+// Enhanced button interactions
+function confirmDelete(event) {
+    if (!confirm('Are you sure you want to delete this slideshow? This action cannot be undone.')) {
+        event.preventDefault();
+        return false;
     }
+    return true;
 }
 
 // Image Modal Functions

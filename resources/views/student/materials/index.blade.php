@@ -5,6 +5,7 @@
 
 @section('content')
 <div class="space-y-6">
+    
     <!-- Header Section -->
     <div class="bg-gradient-to-r from-emerald-500 to-teal-600 dark:from-emerald-600 dark:to-teal-700 rounded-xl p-6 text-white shadow-lg">
         <div class="flex items-center justify-between">
@@ -86,7 +87,7 @@
     <!-- Search and Filter Section -->
     <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
         <form method="GET" action="{{ route('student.materials.index') }}" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <!-- Search -->
                 <div class="lg:col-span-2">
                     <label for="search" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cari Materi</label>
@@ -113,19 +114,6 @@
                         @foreach($subjects as $subject)
                             <option value="{{ $subject }}" {{ $currentFilters['subject'] == $subject ? 'selected' : '' }}>
                                 {{ $subject }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Class Filter -->
-                <div>
-                    <label for="class" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Kelas</label>
-                    <select id="class" name="class" class="w-full py-2 px-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white">
-                        <option value="">Semua Kelas</option>
-                        @foreach($classes as $class)
-                            <option value="{{ $class }}" {{ $currentFilters['class'] == $class ? 'selected' : '' }}>
-                                {{ $class }}
                             </option>
                         @endforeach
                     </select>
@@ -174,8 +162,6 @@
         </form>
     </div>
 
-
-
     <!-- Materials Grid -->
     @if($materials->count() > 0)
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -204,13 +190,10 @@
                             {{ $material->description }}
                         </p>
 
-                        <!-- Subject and Class -->
+                        <!-- Subject -->
                         <div class="flex items-center space-x-2 mb-3">
                             <span class="px-2 py-1 text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 rounded-full">
                                 {{ $material->subject }}
-                            </span>
-                            <span class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 rounded-full">
-                                {{ $material->class }}
                             </span>
                         </div>
 
@@ -269,7 +252,7 @@
             </svg>
             <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">Tidak ada materi ditemukan</h3>
             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                @if(request()->hasAny(['search', 'subject', 'class', 'type']))
+                @if(request()->hasAny(['search', 'subject', 'type']))
                     Coba ubah filter pencarian atau 
                     <a href="{{ route('student.materials.index') }}" class="text-emerald-600 hover:text-emerald-500">reset filter</a>
                 @else

@@ -101,6 +101,29 @@
         text-decoration: none;
     }
 
+    /* Dark mode button adjustments */
+    .dark .btn-primary {
+        background: rgba(255, 255, 255, 0.9);
+        color: #059669;
+    }
+
+    .dark .btn-primary:hover {
+        background: white;
+        color: #059669;
+        box-shadow: 0 6px 20px rgba(255, 255, 255, 0.1);
+    }
+
+    .dark .btn-secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .dark .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+    }
+
     .announcement-card {
         background: var(--bg-primary);
         backdrop-filter: blur(10px);
@@ -201,6 +224,21 @@
     .badge-published { background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.2); }
     .badge-draft { background: rgba(107, 114, 128, 0.1); color: #374151; border: 1px solid rgba(107, 114, 128, 0.2); }
     .badge-archived { background: rgba(75, 85, 99, 0.1); color: #1f2937; border: 1px solid rgba(75, 85, 99, 0.2); }
+
+    /* Dark mode badge adjustments */
+    .dark .badge-akademik { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .dark .badge-kegiatan { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .dark .badge-administrasi { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .dark .badge-umum { background: rgba(107, 114, 128, 0.2); color: #9ca3af; border: 1px solid rgba(107, 114, 128, 0.3); }
+
+    .dark .badge-low { background: rgba(107, 114, 128, 0.2); color: #9ca3af; border: 1px solid rgba(107, 114, 128, 0.3); }
+    .dark .badge-normal { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .dark .badge-high { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .dark .badge-urgent { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+    .dark .badge-published { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .dark .badge-draft { background: rgba(107, 114, 128, 0.2); color: #9ca3af; border: 1px solid rgba(107, 114, 128, 0.3); }
+    .dark .badge-archived { background: rgba(75, 85, 99, 0.2); color: #9ca3af; border: 1px solid rgba(75, 85, 99, 0.3); }
 
     .stats-grid {
         display: grid;

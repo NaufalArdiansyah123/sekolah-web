@@ -417,7 +417,7 @@
             box-shadow: 0 6px 25px rgba(49, 130, 206, 0.4);
         }
 
-        /* Student Registration Button */
+        /* Student Account Registration Button */
         .nav-item .register-btn {
             background: linear-gradient(135deg, #10b981, #34d399);
             border: none;
@@ -876,12 +876,17 @@
                             </ul>
                         </li>
                     @else
-                        <!-- Student Registration Button -->
+                        <!-- Student Account Registration Button -->
+                        @php
+                            $allowRegistration = \App\Models\Setting::get('allow_registration', '1');
+                        @endphp
+                        @if($allowRegistration === '1')
                         <li class="nav-item me-2">
                             <a class="nav-link register-btn" href="{{ route('student.register.form') }}">
-                                <i class="fas fa-user-plus me-2"></i>Daftar Siswa
+                                <i class="fas fa-user-plus me-2"></i>Daftar Akun
                             </a>
                         </li>
+                        @endif
 
                         <!-- Login Button -->
                         <li class="nav-item">

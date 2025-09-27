@@ -133,8 +133,8 @@
                         <select name="class" id="class" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
                             <option value="">Semua Kelas</option>
                             @foreach($classes as $class)
-                                <option value="{{ $class }}" {{ request('class') == $class ? 'selected' : '' }}>
-                                    {{ $class }}
+                                <option value="{{ $class->id }}" {{ request('class') == $class->id ? 'selected' : '' }}>
+                                    {{ $class->name }}
                                 </option>
                             @endforeach
                         </select>
@@ -215,7 +215,11 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{{ $student->nis }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                                        {{ $student->class }}
+                                        @if($student->class_id && $student->class)
+                                            {{ $student->class->name }}
+                                        @else
+                                            Kelas Belum Ditentukan
+                                        @endif
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
@@ -819,7 +823,7 @@ function closeModal(modalId) {
     document.getElementById(modalId).classList.remove('flex');
 }
 
-// Debug function to test SweetAlert
+
 function testSweetAlert() {
     if (typeof Swal !== 'undefined') {
         Swal.fire({

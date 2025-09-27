@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Carbon\Carbon;
+use App\Models\Setting;
 
 class AttendanceLog extends Model
 {
@@ -61,19 +62,118 @@ class AttendanceLog extends Model
     }
 
     /**
+     * Get attendance settings with caching
+     */
+    public static function getAttendanceSettings(): array
+    {
+        static $settings = null;
+        
+        if ($settings === null) {
+            $settings = [
+                'start_time' => Setting::get('attendance_start_time', '07:00'),
+                'end_time' => Setting::get('attendance_end_time', '07:30'),
+                'late_tolerance' => (int) Setting::get('late_tolerance_minutes', 15),
+                'absent_threshold' => (int) Setting::get('absent_threshold_minutes', 30),
+            ];
+        }
+        
+        return $settings;
+    }
+    
+    /**
+     * Clear static settings cache
+     */
+    public static function clearSettingsCache(): void
+    {
+        // Reset static variable to force reload from database
+        $reflection = new \ReflectionClass(static::class);
+        $property = $reflection->getProperty('settings');
+        $property->setAccessible(true);
+        $property->setValue(null, null);
+        
+        \Log::info('AttendanceLog settings cache cleared');
+    }
+    
+    /**
      * Determine status berdasarkan waktu scan
      */
     public static function determineStatus($scanTime): string
     {
+        try {
+            $scanTime = Carbon::parse($scanTime);
+            $scanHour = $scanTime->format('H:i');
+            
+            // Get attendance settings
+            $settings = self::getAttendanceSettings();
+            
+            // Validate settings
+            if (!$settings['start_time'] || !$settings['end_time']) {
+                \Log::warning('Attendance settings not configured, using defaults');
+                return self::determineStatusWithDefaults($scanHour);
+            }
+            
+            // Create time objects for today to ensure proper comparison
+            $today = Carbon::today();
+            $startTime = $today->copy()->setTimeFromTimeString($settings['start_time']);
+            $endTime = $today->copy()->setTimeFromTimeString($settings['end_time']);
+            $scanTimeObj = $today->copy()->setTimeFromTimeString($scanHour);
+            
+            // Calculate boundaries
+            $lateEndTime = $endTime->copy()->addMinutes($settings['late_tolerance']);
+            $absentTime = $endTime->copy()->addMinutes($settings['absent_threshold']);
+            
+            \Log::info('Attendance Status Calculation:', [
+                'scan_time' => $scanHour,
+                'settings' => $settings,
+                'boundaries' => [
+                    'start' => $startTime->format('H:i'),
+                    'end' => $endTime->format('H:i'),
+                    'late_end' => $lateEndTime->format('H:i'),
+                    'absent_start' => $absentTime->format('H:i')
+                ]
+            ]);
+            
+            // Determine status based on time ranges
+            if ($scanTimeObj->between($startTime, $endTime)) {
+                \Log::info('Status: HADIR - Within attendance window');
+                return 'hadir';
+            } elseif ($scanTimeObj->between($endTime->copy()->addSecond(), $lateEndTime)) {
+                \Log::info('Status: TERLAMBAT - Within late tolerance');
+                return 'terlambat';
+            } else {
+                \Log::info('Status: ALPHA - Beyond late tolerance');
+                return 'alpha';
+            }
+            
+        } catch (\Exception $e) {
+            \Log::error('Error determining attendance status:', [
+                'error' => $e->getMessage(),
+                'scan_time' => $scanTime,
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            // Fallback to default logic
+            return self::determineStatusWithDefaults($scanTime);
+        }
+    }
+    
+    /**
+     * Fallback method with default time rules
+     */
+    private static function determineStatusWithDefaults($scanTime): string
+    {
         $scanHour = Carbon::parse($scanTime)->format('H:i');
         
-        // Aturan waktu (bisa disesuaikan)
+        \Log::info('Using default attendance rules for status determination', [
+            'scan_time' => $scanHour
+        ]);
+        
         if ($scanHour <= '07:30') {
             return 'hadir';
         } elseif ($scanHour <= '08:00') {
             return 'terlambat';
         } else {
-            return 'alpha'; // Terlalu terlambat
+            return 'alpha';
         }
     }
 
@@ -105,5 +205,37 @@ class AttendanceLog extends Model
             'alpha' => 'Alpha',
             default => 'Unknown'
         };
+    }
+    
+    /**
+     * Get current attendance time boundaries for display
+     */
+    public static function getAttendanceTimeBoundaries(): array
+    {
+        $settings = self::getAttendanceSettings();
+        
+        $today = Carbon::today();
+        $startTime = $today->copy()->setTimeFromTimeString($settings['start_time']);
+        $endTime = $today->copy()->setTimeFromTimeString($settings['end_time']);
+        $lateEndTime = $endTime->copy()->addMinutes($settings['late_tolerance']);
+        $absentTime = $endTime->copy()->addMinutes($settings['absent_threshold']);
+        
+        return [
+            'on_time' => [
+                'start' => $startTime->format('H:i'),
+                'end' => $endTime->format('H:i'),
+                'label' => 'Tepat Waktu'
+            ],
+            'late' => [
+                'start' => $endTime->copy()->addMinute()->format('H:i'),
+                'end' => $lateEndTime->format('H:i'),
+                'label' => 'Terlambat (Masih Ditoleransi)'
+            ],
+            'absent' => [
+                'start' => $lateEndTime->copy()->addMinute()->format('H:i'),
+                'label' => 'Alpha (Terlalu Terlambat)'
+            ],
+            'settings' => $settings
+        ];
     }
 }

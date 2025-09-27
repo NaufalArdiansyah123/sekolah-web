@@ -36,33 +36,41 @@ class AttendanceController extends Controller
         // Method 1: Try direct relation
         $student = $user->student;
         if ($student) {
+            // Load class relationship
+            $student->load('class');
             \Log::info('Student found via direct relation:', [
                 'student_id' => $student->id,
                 'student_name' => $student->name,
-                'student_nis' => $student->nis
+                'student_nis' => $student->nis,
+                'student_class_id' => $student->class_id,
+                'student_class_name' => $student->class ? $student->class->name : null
             ]);
             return $student;
         }
 
         // Method 2: Try query by user_id
-        $student = Student::where('user_id', $user->id)->first();
+        $student = Student::with('class')->where('user_id', $user->id)->first();
         if ($student) {
             \Log::info('Student found via user_id query:', [
                 'student_id' => $student->id,
                 'student_name' => $student->name,
-                'student_nis' => $student->nis
+                'student_nis' => $student->nis,
+                'student_class_id' => $student->class_id,
+                'student_class_name' => $student->class ? $student->class->name : null
             ]);
             return $student;
         }
 
         // Method 3: Try by email if user has email
         if ($user->email) {
-            $student = Student::where('email', $user->email)->first();
+            $student = Student::with('class')->where('email', $user->email)->first();
             if ($student) {
                 \Log::info('Student found via email match:', [
                     'student_id' => $student->id,
                     'student_name' => $student->name,
-                    'student_nis' => $student->nis
+                    'student_nis' => $student->nis,
+                    'student_class_id' => $student->class_id,
+                    'student_class_name' => $student->class ? $student->class->name : null
                 ]);
                 
                 // Update user_id if missing
@@ -77,12 +85,14 @@ class AttendanceController extends Controller
 
         // Method 4: Try by NIS if user has NIS field
         if (isset($user->nis) && $user->nis) {
-            $student = Student::where('nis', $user->nis)->first();
+            $student = Student::with('class')->where('nis', $user->nis)->first();
             if ($student) {
                 \Log::info('Student found via NIS match:', [
                     'student_id' => $student->id,
                     'student_name' => $student->name,
-                    'student_nis' => $student->nis
+                    'student_nis' => $student->nis,
+                    'student_class_id' => $student->class_id,
+                    'student_class_name' => $student->class ? $student->class->name : null
                 ]);
                 
                 // Update user_id if missing
@@ -294,13 +304,13 @@ class AttendanceController extends Controller
                             'id' => $student->id,
                             'name' => $student->name,
                             'nis' => $student->nis,
-                            'class' => $student->class
+                            'class' => $student->class ? $student->class->name : 'Kelas tidak ditemukan'
                         ],
                         'violator' => [
                             'id' => $currentStudent->id,
                             'name' => $currentStudent->name,
                             'nis' => $currentStudent->nis,
-                            'class' => $currentStudent->class
+                            'class' => $currentStudent->class ? $currentStudent->class->name : 'Kelas tidak ditemukan'
                         ],
                         'attempt_details' => [
                             'scan_time' => $violationTime->format('H:i:s'),
@@ -345,12 +355,12 @@ class AttendanceController extends Controller
                         'qr_owner' => [
                             'name' => $student->name,
                             'nis' => $student->nis,
-                            'class' => $student->class
+                            'class' => $student->class ? $student->class->name : 'Kelas tidak ditemukan'
                         ],
                         'current_user' => [
                             'name' => $currentStudent->name,
                             'nis' => $currentStudent->nis,
-                            'class' => $currentStudent->class
+                            'class' => $currentStudent->class ? $currentStudent->class->name : 'Kelas tidak ditemukan'
                         ],
                         'violation_id' => $violation->id,
                         'violation_time' => $violationTime->format('H:i:s')
@@ -422,7 +432,7 @@ class AttendanceController extends Controller
                 'attendance' => [
                     'student_name' => $student->name,
                     'nis' => $student->nis,
-                    'class' => $student->class,
+                    'class' => $student->class ? $student->class->name : 'Kelas tidak ditemukan',
                     'status' => $attendanceLog->status_text,
                     'scan_time' => $attendanceLog->scan_time->format('H:i:s'),
                     'attendance_date' => $attendanceLog->attendance_date->format('d/m/Y'),
@@ -486,7 +496,7 @@ class AttendanceController extends Controller
                 'student' => [
                     'name' => $student->name,
                     'nis' => $student->nis,
-                    'class' => $student->class,
+                    'class' => $student->class ? $student->class->name : 'Kelas tidak ditemukan',
                 ]
             ]);
 

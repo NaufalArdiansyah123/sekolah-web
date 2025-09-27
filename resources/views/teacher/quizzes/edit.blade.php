@@ -3,7 +3,7 @@
 @push('styles')
 <style>
     .question-item {
-        border: 2px solid #e5e7eb;
+        border: 2px solid var(--border-color, #e5e7eb);
         border-radius: 0.75rem;
         transition: all 0.3s ease;
     }
@@ -15,11 +15,7 @@
     
     .question-item.active {
         border-color: #3b82f6;
-        background-color: #eff6ff;
-    }
-    
-    .dark .question-item.active {
-        background-color: rgba(59, 130, 246, 0.1);
+        background-color: rgba(59, 130, 246, 0.05);
     }
     
     .option-input {
@@ -50,11 +46,11 @@
 @section('content')
 <div class="space-y-6">
     <!-- Header -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+    <div class="rounded-xl shadow-sm border p-6" style="background: var(--bg-secondary, #ffffff); border-color: var(--border-color, #e5e7eb);">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Edit Kuis</h1>
-                <p class="text-gray-600 dark:text-gray-400 mt-1">Perbarui informasi dan soal kuis</p>
+                <h1 class="text-2xl font-bold" style="color: var(--text-primary, #111827);">Edit Kuis</h1>
+                <p class="mt-1" style="color: var(--text-secondary, #6b7280);">Perbarui informasi dan soal kuis</p>
             </div>
             <a href="{{ route('teacher.quizzes.show', $quiz->id) }}" 
                class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
@@ -71,49 +67,73 @@
         @method('PUT')
         
         <!-- Quiz Information -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Informasi Kuis</h3>
+        <div class="rounded-xl shadow-sm border" style="background: var(--bg-secondary, #ffffff); border-color: var(--border-color, #e5e7eb);">
+            <div class="p-6 border-b" style="border-color: var(--border-color, #e5e7eb);">
+                <h3 class="text-lg font-semibold" style="color: var(--text-primary, #111827);">Informasi Kuis</h3>
             </div>
             <div class="p-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Title -->
                     <div class="md:col-span-2">
-                        <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="title" class="block text-sm font-medium mb-2" style="color: var(--text-primary, #374151);">
                             Judul Kuis <span class="text-red-500">*</span>
                         </label>
                         <input type="text" 
                                id="title" 
                                name="title" 
                                value="{{ old('title', $quiz->title) }}"
-                               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors"
+                               class="w-full px-4 py-3 border rounded-lg transition-colors" 
+                               style="border-color: var(--border-color, #d1d5db); background: var(--bg-primary, #ffffff); color: var(--text-primary, #111827);"
                                placeholder="Masukkan judul kuis"
                                required>
                         @error('title')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            <p class="mt-1 text-sm" style="color: #dc2626;">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Subject -->
                     <div>
-                        <label for="subject" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="subject" class="block text-sm font-medium mb-2" style="color: var(--text-primary, #374151);">
                             Mata Pelajaran <span class="text-red-500">*</span>
                         </label>
                         <input type="text" 
                                id="subject" 
                                name="subject" 
                                value="{{ old('subject', $quiz->subject) }}"
-                               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors"
+                               class="w-full px-4 py-3 border rounded-lg transition-colors" 
+                               style="border-color: var(--border-color, #d1d5db); background: var(--bg-primary, #ffffff); color: var(--text-primary, #111827);"
                                placeholder="Contoh: Matematika"
                                required>
                         @error('subject')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            <p class="mt-1 text-sm" style="color: #dc2626;">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Target Kelas -->
+                    <div>
+                        <label for="class_id" class="block text-sm font-medium mb-2" style="color: var(--text-primary, #374151);">
+                            Target Kelas <span class="text-red-500">*</span>
+                        </label>
+                        <select id="class_id" 
+                                name="class_id"
+                                class="w-full px-4 py-3 border rounded-lg transition-colors" 
+                                style="border-color: var(--border-color, #d1d5db); background: var(--bg-primary, #ffffff); color: var(--text-primary, #111827);"
+                                required>
+                            <option value="">Pilih Kelas</option>
+                            @foreach($classes as $class)
+                                <option value="{{ $class->id }}" {{ old('class_id', $quiz->class_id) == $class->id ? 'selected' : '' }}>
+                                    {{ $class->level }} {{ $class->name }} @if($class->program) - {{ $class->program }} @endif
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('class_id')
+                            <p class="mt-1 text-sm" style="color: #dc2626;">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Duration -->
                     <div>
-                        <label for="duration_minutes" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="duration_minutes" class="block text-sm font-medium mb-2" style="color: var(--text-primary, #374151);">
                             Durasi (menit) <span class="text-red-500">*</span>
                         </label>
                         <input type="number" 
@@ -122,54 +142,58 @@
                                value="{{ old('duration_minutes', $quiz->duration_minutes) }}"
                                min="1" 
                                max="300"
-                               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors"
+                               class="w-full px-4 py-3 border rounded-lg transition-colors" 
+                               style="border-color: var(--border-color, #d1d5db); background: var(--bg-primary, #ffffff); color: var(--text-primary, #111827);"
                                placeholder="60"
                                required>
                         @error('duration_minutes')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            <p class="mt-1 text-sm" style="color: #dc2626;">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Start Time -->
                     <div>
-                        <label for="start_time" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="start_time" class="block text-sm font-medium mb-2" style="color: var(--text-primary, #374151);">
                             Waktu Mulai <span class="text-red-500">*</span>
                         </label>
                         <input type="datetime-local" 
                                id="start_time" 
                                name="start_time" 
                                value="{{ old('start_time', $quiz->start_time->format('Y-m-d\TH:i')) }}"
-                               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors"
+                               class="w-full px-4 py-3 border rounded-lg transition-colors" 
+                               style="border-color: var(--border-color, #d1d5db); background: var(--bg-primary, #ffffff); color: var(--text-primary, #111827);"
                                required>
                         @error('start_time')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            <p class="mt-1 text-sm" style="color: #dc2626;">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- End Time -->
                     <div>
-                        <label for="end_time" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="end_time" class="block text-sm font-medium mb-2" style="color: var(--text-primary, #374151);">
                             Waktu Berakhir <span class="text-red-500">*</span>
                         </label>
                         <input type="datetime-local" 
                                id="end_time" 
                                name="end_time" 
                                value="{{ old('end_time', $quiz->end_time->format('Y-m-d\TH:i')) }}"
-                               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors"
+                               class="w-full px-4 py-3 border rounded-lg transition-colors" 
+                               style="border-color: var(--border-color, #d1d5db); background: var(--bg-primary, #ffffff); color: var(--text-primary, #111827);"
                                required>
                         @error('end_time')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            <p class="mt-1 text-sm" style="color: #dc2626;">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Max Attempts -->
                     <div>
-                        <label for="max_attempts" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="max_attempts" class="block text-sm font-medium mb-2" style="color: var(--text-primary, #374151);">
                             Maksimal Percobaan <span class="text-red-500">*</span>
                         </label>
                         <select id="max_attempts" 
                                 name="max_attempts"
-                                class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors"
+                                class="w-full px-4 py-3 border rounded-lg transition-colors" 
+                                style="border-color: var(--border-color, #d1d5db); background: var(--bg-primary, #ffffff); color: var(--text-primary, #111827);"
                                 required>
                             @for($i = 1; $i <= 10; $i++)
                                 <option value="{{ $i }}" {{ old('max_attempts', $quiz->max_attempts) == $i ? 'selected' : '' }}>
@@ -178,37 +202,39 @@
                             @endfor
                         </select>
                         @error('max_attempts')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            <p class="mt-1 text-sm" style="color: #dc2626;">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Description -->
                     <div class="md:col-span-2">
-                        <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="description" class="block text-sm font-medium mb-2" style="color: var(--text-primary, #374151);">
                             Deskripsi
                         </label>
                         <textarea id="description" 
                                   name="description" 
                                   rows="3"
-                                  class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors"
+                                  class="w-full px-4 py-3 border rounded-lg transition-colors" 
+                                  style="border-color: var(--border-color, #d1d5db); background: var(--bg-primary, #ffffff); color: var(--text-primary, #111827);"
                                   placeholder="Deskripsi singkat tentang kuis ini">{{ old('description', $quiz->description) }}</textarea>
                         @error('description')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            <p class="mt-1 text-sm" style="color: #dc2626;">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Instructions -->
                     <div class="md:col-span-2">
-                        <label for="instructions" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="instructions" class="block text-sm font-medium mb-2" style="color: var(--text-primary, #374151);">
                             Instruksi untuk Siswa
                         </label>
                         <textarea id="instructions" 
                                   name="instructions" 
                                   rows="3"
-                                  class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors"
+                                  class="w-full px-4 py-3 border rounded-lg transition-colors" 
+                                  style="border-color: var(--border-color, #d1d5db); background: var(--bg-primary, #ffffff); color: var(--text-primary, #111827);"
                                   placeholder="Instruksi khusus untuk mengerjakan kuis ini">{{ old('instructions', $quiz->instructions) }}</textarea>
                         @error('instructions')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            <p class="mt-1 text-sm" style="color: #dc2626;">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -221,8 +247,8 @@
                                        name="show_results" 
                                        value="1"
                                        {{ old('show_results', $quiz->show_results) ? 'checked' : '' }}
-                                       class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                <label for="show_results" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                                       class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+                                <label for="show_results" class="ml-2 text-sm font-medium" style="color: var(--text-primary, #374151);">
                                     Tampilkan hasil kepada siswa setelah selesai
                                 </label>
                             </div>
@@ -233,8 +259,8 @@
                                        name="randomize_questions" 
                                        value="1"
                                        {{ old('randomize_questions', $quiz->randomize_questions) ? 'checked' : '' }}
-                                       class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                <label for="randomize_questions" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                                       class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+                                <label for="randomize_questions" class="ml-2 text-sm font-medium" style="color: var(--text-primary, #374151);">
                                     Acak urutan soal
                                 </label>
                             </div>
@@ -264,10 +290,10 @@
     </form>
 
     <!-- Questions Management -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+    <div class="rounded-xl shadow-sm border" style="background: var(--bg-secondary, #ffffff); border-color: var(--border-color, #e5e7eb);">
+        <div class="p-6 border-b" style="border-color: var(--border-color, #e5e7eb);">
             <div class="flex items-center justify-between">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                <h3 class="text-lg font-semibold" style="color: var(--text-primary, #111827);">
                     Kelola Soal ({{ $quiz->questions->count() }})
                 </h3>
                 <button type="button" 
@@ -285,12 +311,14 @@
                 @foreach($quiz->questions as $index => $question)
                     <div class="question-item p-6" data-question-index="{{ $index }}">
                         <div class="flex items-start justify-between mb-4">
-                            <h4 class="text-lg font-medium text-gray-900 dark:text-white">
+                            <h4 class="text-lg font-medium" style="color: var(--text-primary, #111827);">
                                 Soal {{ $index + 1 }}
                             </h4>
                             <button type="button" 
                                     onclick="removeQuestion({{ $index }})" 
-                                    class="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">
+                                    style="color: #dc2626;"
+                                    onmouseover="this.style.color='#b91c1c'"
+                                    onmouseout="this.style.color='#dc2626'">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                 </svg>
@@ -299,11 +327,12 @@
 
                         <!-- Question Type -->
                         <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <label class="block text-sm font-medium mb-2" style="color: var(--text-primary, #374151);">
                                 Tipe Soal
                             </label>
                             <select name="questions[{{ $index }}][type]" 
-                                    class="question-type w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                    class="question-type w-full px-4 py-3 border rounded-lg" 
+                                    style="border-color: var(--border-color, #d1d5db); background: var(--bg-primary, #ffffff); color: var(--text-primary, #111827);"
                                     onchange="updateQuestionType({{ $index }}, this.value)">
                                 <option value="multiple_choice" {{ $question->type === 'multiple_choice' ? 'selected' : '' }}>Pilihan Ganda</option>
                                 <option value="true_false" {{ $question->type === 'true_false' ? 'selected' : '' }}>Benar/Salah</option>
@@ -313,19 +342,20 @@
 
                         <!-- Question Text -->
                         <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <label class="block text-sm font-medium mb-2" style="color: var(--text-primary, #374151);">
                                 Pertanyaan <span class="text-red-500">*</span>
                             </label>
                             <textarea name="questions[{{ $index }}][question]" 
                                       rows="3"
-                                      class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                      class="w-full px-4 py-3 border rounded-lg" 
+                                      style="border-color: var(--border-color, #d1d5db); background: var(--bg-primary, #ffffff); color: var(--text-primary, #111827);"
                                       placeholder="Masukkan pertanyaan"
                                       required>{{ $question->question }}</textarea>
                         </div>
 
                         <!-- Points -->
                         <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <label class="block text-sm font-medium mb-2" style="color: var(--text-primary, #374151);">
                                 Poin <span class="text-red-500">*</span>
                             </label>
                             <input type="number" 
@@ -333,14 +363,15 @@
                                    value="{{ $question->points }}"
                                    min="1" 
                                    max="100"
-                                   class="w-32 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                   class="w-32 px-4 py-3 border rounded-lg" 
+                                   style="border-color: var(--border-color, #d1d5db); background: var(--bg-primary, #ffffff); color: var(--text-primary, #111827);"
                                    required>
                         </div>
 
                         <!-- Options (for multiple choice) -->
                         @if($question->type === 'multiple_choice')
                             <div class="options-container mb-4">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <label class="block text-sm font-medium mb-2" style="color: var(--text-primary, #374151);">
                                     Pilihan Jawaban <span class="text-red-500">*</span>
                                 </label>
                                 <div class="space-y-3">
@@ -350,14 +381,15 @@
                                                    name="questions[{{ $index }}][correct_answer]" 
                                                    value="{{ $optionKey }}"
                                                    {{ $question->correct_answer === $optionKey ? 'checked' : '' }}
-                                                   class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                            <span class="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center text-sm font-medium">
+                                                   class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
+                                            <span class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium" style="background: var(--bg-tertiary, #f3f4f6);">
                                                 {{ $optionKey }}
                                             </span>
                                             <input type="text" 
                                                    name="questions[{{ $index }}][options][{{ $optionKey }}]" 
                                                    value="{{ $question->options[$optionKey] ?? '' }}"
-                                                   class="flex-1 option-input px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                                   class="flex-1 option-input px-4 py-3 border rounded-lg" 
+                                                   style="border-color: var(--border-color, #d1d5db); background: var(--bg-primary, #ffffff); color: var(--text-primary, #111827);"
                                                    placeholder="Masukkan pilihan {{ $optionKey }}"
                                                    required>
                                         </div>
@@ -366,7 +398,7 @@
                             </div>
                         @elseif($question->type === 'true_false')
                             <div class="options-container mb-4">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <label class="block text-sm font-medium mb-2" style="color: var(--text-primary, #374151);">
                                     Jawaban Benar <span class="text-red-500">*</span>
                                 </label>
                                 <div class="space-y-2">
@@ -375,23 +407,23 @@
                                                name="questions[{{ $index }}][correct_answer]" 
                                                value="true"
                                                {{ $question->correct_answer === 'true' ? 'checked' : '' }}
-                                               class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                        <label class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">Benar</label>
+                                               class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
+                                        <label class="ml-2 text-sm font-medium" style="color: var(--text-primary, #374151);">Benar</label>
                                     </div>
                                     <div class="flex items-center">
                                         <input type="radio" 
                                                name="questions[{{ $index }}][correct_answer]" 
                                                value="false"
                                                {{ $question->correct_answer === 'false' ? 'checked' : '' }}
-                                               class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                        <label class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">Salah</label>
+                                               class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
+                                        <label class="ml-2 text-sm font-medium" style="color: var(--text-primary, #374151);">Salah</label>
                                     </div>
                                 </div>
                             </div>
                         @else
                             <div class="options-container mb-4">
-                                <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
-                                    <p class="text-sm text-yellow-800 dark:text-yellow-200">
+                                <div class="border rounded-lg p-4" style="background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.2);">
+                                    <p class="text-sm" style="color: #b45309;">
                                         <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                         </svg>
@@ -407,11 +439,11 @@
 
             @if($quiz->questions->count() === 0)
                 <div class="text-center py-12">
-                    <svg class="w-16 h-16 text-gray-400 dark:text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-16 h-16 mx-auto mb-4" style="color: var(--text-tertiary, #9ca3af);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
                     </svg>
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Belum ada soal</h3>
-                    <p class="text-gray-500 dark:text-gray-400 mb-4">Tambahkan soal untuk melengkapi kuis ini</p>
+                    <h3 class="text-lg font-medium mb-2" style="color: var(--text-primary, #111827);">Belum ada soal</h3>
+                    <p class="mb-4" style="color: var(--text-secondary, #6b7280);">Tambahkan soal untuk melengkapi kuis ini</p>
                     <button type="button" 
                             onclick="addQuestion()" 
                             class="btn-add-question text-white px-6 py-3 rounded-lg font-medium transition-all duration-300">
@@ -430,12 +462,14 @@
 <template id="question-template">
     <div class="question-item p-6" data-question-index="">
         <div class="flex items-start justify-between mb-4">
-            <h4 class="text-lg font-medium text-gray-900 dark:text-white">
+            <h4 class="text-lg font-medium" style="color: var(--text-primary, #111827);">
                 Soal <span class="question-number"></span>
             </h4>
             <button type="button" 
                     onclick="removeQuestion(this)" 
-                    class="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">
+                    style="color: #dc2626;"
+                    onmouseover="this.style.color='#b91c1c'"
+                    onmouseout="this.style.color='#dc2626'">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                 </svg>
@@ -444,11 +478,12 @@
 
         <!-- Question Type -->
         <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label class="block text-sm font-medium mb-2" style="color: var(--text-primary, #374151);">
                 Tipe Soal
             </label>
             <select name="questions[][type]" 
-                    class="question-type w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                    class="question-type w-full px-4 py-3 border rounded-lg" 
+                    style="border-color: var(--border-color, #d1d5db); background: var(--bg-primary, #ffffff); color: var(--text-primary, #111827);"
                     onchange="updateQuestionType(this)">
                 <option value="multiple_choice">Pilihan Ganda</option>
                 <option value="true_false">Benar/Salah</option>
@@ -458,19 +493,20 @@
 
         <!-- Question Text -->
         <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label class="block text-sm font-medium mb-2" style="color: var(--text-primary, #374151);">
                 Pertanyaan <span class="text-red-500">*</span>
             </label>
             <textarea name="questions[][question]" 
                       rows="3"
-                      class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                      class="w-full px-4 py-3 border rounded-lg" 
+                      style="border-color: var(--border-color, #d1d5db); background: var(--bg-primary, #ffffff); color: var(--text-primary, #111827);"
                       placeholder="Masukkan pertanyaan"
                       required></textarea>
         </div>
 
         <!-- Points -->
         <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label class="block text-sm font-medium mb-2" style="color: var(--text-primary, #374151);">
                 Poin <span class="text-red-500">*</span>
             </label>
             <input type="number" 
@@ -478,7 +514,8 @@
                    value="10"
                    min="1" 
                    max="100"
-                   class="w-32 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                   class="w-32 px-4 py-3 border rounded-lg" 
+                   style="border-color: var(--border-color, #d1d5db); background: var(--bg-primary, #ffffff); color: var(--text-primary, #111827);"
                    required>
         </div>
 
@@ -585,7 +622,7 @@ function updateQuestionTypeContent(container, type, index) {
     
     if (type === 'multiple_choice') {
         html = `
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label class="block text-sm font-medium mb-2" style="color: var(--text-primary, #374151);">
                 Pilihan Jawaban <span class="text-red-500">*</span>
             </label>
             <div class="space-y-3">
@@ -594,13 +631,14 @@ function updateQuestionTypeContent(container, type, index) {
                         <input type="radio" 
                                name="questions[${index}][correct_answer]" 
                                value="${option}"
-                               class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                        <span class="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center text-sm font-medium">
+                               class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
+                        <span class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium" style="background: var(--bg-tertiary, #f3f4f6);">
                             ${option}
                         </span>
                         <input type="text" 
                                name="questions[${index}][options][${option}]" 
-                               class="flex-1 option-input px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                               class="flex-1 option-input px-4 py-3 border rounded-lg" 
+                               style="border-color: var(--border-color, #d1d5db); background: var(--bg-primary, #ffffff); color: var(--text-primary, #111827);"
                                placeholder="Masukkan pilihan ${option}"
                                required>
                     </div>
@@ -609,7 +647,7 @@ function updateQuestionTypeContent(container, type, index) {
         `;
     } else if (type === 'true_false') {
         html = `
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label class="block text-sm font-medium mb-2" style="color: var(--text-primary, #374151);">
                 Jawaban Benar <span class="text-red-500">*</span>
             </label>
             <div class="space-y-2">
@@ -617,22 +655,22 @@ function updateQuestionTypeContent(container, type, index) {
                     <input type="radio" 
                            name="questions[${index}][correct_answer]" 
                            value="true"
-                           class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                    <label class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">Benar</label>
+                           class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
+                    <label class="ml-2 text-sm font-medium" style="color: var(--text-primary, #374151);">Benar</label>
                 </div>
                 <div class="flex items-center">
                     <input type="radio" 
                            name="questions[${index}][correct_answer]" 
                            value="false"
-                           class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                    <label class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">Salah</label>
+                           class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
+                    <label class="ml-2 text-sm font-medium" style="color: var(--text-primary, #374151);">Salah</label>
                 </div>
             </div>
         `;
     } else if (type === 'essay') {
         html = `
-            <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
-                <p class="text-sm text-yellow-800 dark:text-yellow-200">
+            <div class="border rounded-lg p-4" style="background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.2);">
+                <p class="text-sm" style="color: #b45309;">
                     <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>

@@ -19,6 +19,9 @@ class DashboardController extends Controller
     public function index()
     {
         try {
+            // Get current student info for debugging
+            $student = \App\Models\Student::where('user_id', auth()->id())->with('class')->first();
+            
             // Get statistics for student dashboard with error handling
             $stats = [
                 'total_materials' => $this->safeCount(LearningMaterial::class, 'published'),
@@ -31,6 +34,14 @@ class DashboardController extends Controller
                 'total_attendance_sessions' => $this->getAttendanceStats('total'),
                 'available_quizzes' => $this->getQuizStats('available'),
                 'completed_quizzes' => $this->getQuizStats('completed'),
+            ];
+            
+            // Debug info for troubleshooting
+            $debugInfo = [
+                'user_id' => auth()->id(),
+                'student_found' => $student ? true : false,
+                'student_class_id' => $student ? $student->class_id : null,
+                'student_class_name' => $student && $student->class ? $student->class->name : null,
             ];
 
             // Get recent materials with error handling
@@ -59,6 +70,13 @@ class DashboardController extends Controller
             $recentMaterials = collect();
             $recentAssignments = collect();
             $recentQuizzes = collect();
+            $debugInfo = [
+                'user_id' => auth()->id(),
+                'student_found' => false,
+                'student_class_id' => null,
+                'student_class_name' => null,
+                'error' => $e->getMessage()
+            ];
         }
 
         return view('student.dashboard', [
@@ -67,7 +85,8 @@ class DashboardController extends Controller
             'stats' => $stats,
             'recentMaterials' => $recentMaterials,
             'recentAssignments' => $recentAssignments,
-            'recentQuizzes' => $recentQuizzes
+            'recentQuizzes' => $recentQuizzes,
+            'debugInfo' => $debugInfo
         ]);
     }
 
@@ -77,28 +96,31 @@ class DashboardController extends Controller
     private function safeCount($model, $type = 'all')
     {
         try {
+            // Get current student's class for filtering
+            $userId = auth()->id();
+            $student = \App\Models\Student::where('user_id', $userId)->first();
+            
             switch ($type) {
                 case 'published':
-                    if (method_exists($model, 'published')) {
-                        return $model::published()->count();
+                    $query = $model::published();
+                    if ($student && $student->class_id && $model === LearningMaterial::class) {
+                        $query->forStudent($student->class_id);
                     }
-                    return $model::where('status', 'published')->count();
+                    return $query->count();
                     
                 case 'recent':
-                    if (method_exists($model, 'published')) {
-                        return $model::published()->where('created_at', '>=', now()->subDays(7))->count();
+                    $query = $model::published()->where('created_at', '>=', now()->subDays(7));
+                    if ($student && $student->class_id && $model === LearningMaterial::class) {
+                        $query->forStudent($student->class_id);
                     }
-                    return $model::where('status', 'published')
-                                 ->where('created_at', '>=', now()->subDays(7))
-                                 ->count();
+                    return $query->count();
                     
                 case 'categories':
-                    if (method_exists($model, 'published')) {
-                        return $model::published()->distinct('subject')->count('subject');
+                    $query = $model::published();
+                    if ($student && $student->class_id && $model === LearningMaterial::class) {
+                        $query->forStudent($student->class_id);
                     }
-                    return $model::where('status', 'published')
-                                 ->distinct('subject')
-                                 ->count('subject');
+                    return $query->distinct('subject')->count('subject');
                     
                 default:
                     return $model::count();
@@ -117,9 +139,16 @@ class DashboardController extends Controller
         try {
             $userId = auth()->id();
             
+            // Get current student's class
+            $student = \App\Models\Student::where('user_id', $userId)->first();
+            if (!$student || !$student->class_id) {
+                return 0;
+            }
+            
             switch ($type) {
                 case 'available':
                     return Quiz::where('status', 'published')
+                        ->where('class_id', $student->class_id)
                         ->where('start_time', '<=', now())
                         ->where('end_time', '>=', now())
                         ->whereDoesntHave('attempts', function($q) use ($userId) {
@@ -130,10 +159,14 @@ class DashboardController extends Controller
                 case 'completed':
                     return QuizAttempt::where('student_id', $userId)
                         ->where('status', 'completed')
+                        ->whereHas('quiz', function($q) use ($student) {
+                            $q->where('class_id', $student->class_id);
+                        })
                         ->count();
                         
                 case 'upcoming':
                     return Quiz::where('status', 'published')
+                        ->where('class_id', $student->class_id)
                         ->where('start_time', '>', now())
                         ->count();
                         
@@ -169,11 +202,19 @@ class DashboardController extends Controller
     {
         try {
             if (class_exists('App\Models\LearningMaterial')) {
-                return LearningMaterial::with('teacher')
+                $userId = auth()->id();
+                $student = \App\Models\Student::where('user_id', $userId)->first();
+                
+                $query = LearningMaterial::with(['teacher', 'class'])
                     ->published()
-                    ->latest()
-                    ->take(6)
-                    ->get();
+                    ->latest();
+                
+                // Filter by student's class if student found
+                if ($student && $student->class_id) {
+                    $query->forStudent($student->class_id);
+                }
+                
+                return $query->take(6)->get();
             }
             
             // Fallback to mock data
@@ -215,12 +256,21 @@ class DashboardController extends Controller
         try {
             $userId = auth()->id();
             
+            // Get current student's class
+            $student = \App\Models\Student::where('user_id', $userId)->first();
+            if (!$student || !$student->class_id) {
+                return collect();
+            }
+            
             // Get assignments that haven't been submitted by current user and are still active
             $submittedAssignmentIds = AssignmentSubmission::where('student_id', $userId)
                 ->pluck('assignment_id')
                 ->toArray();
             
-            return Assignment::whereNotIn('id', $submittedAssignmentIds)
+            return Assignment::with(['teacher', 'class'])
+                ->where('class_id', $student->class_id) // Filter by student's class
+                ->whereIn('status', ['published', 'active']) // Only published assignments
+                ->whereNotIn('id', $submittedAssignmentIds)
                 ->where('due_date', '>=', now())
                 ->latest('created_at')
                 ->take(3)
@@ -246,14 +296,21 @@ class DashboardController extends Controller
         try {
             $userId = auth()->id();
             
+            // Get current student's class
+            $student = \App\Models\Student::where('user_id', $userId)->first();
+            if (!$student || !$student->class_id) {
+                return collect();
+            }
+            
             // Get available quizzes that haven't been attempted by current user
             return Quiz::where('status', 'published')
+                ->where('class_id', $student->class_id) // Filter by student's class
                 ->where('start_time', '<=', now())
                 ->where('end_time', '>=', now())
                 ->whereDoesntHave('attempts', function($q) use ($userId) {
                     $q->where('student_id', $userId);
                 })
-                ->with('teacher')
+                ->with(['teacher', 'class'])
                 ->latest('created_at')
                 ->take(3)
                 ->get()
@@ -278,9 +335,17 @@ class DashboardController extends Controller
         try {
             $userId = auth()->id();
             
+            // Get current student's class
+            $student = \App\Models\Student::where('user_id', $userId)->first();
+            if (!$student || !$student->class_id) {
+                return 0;
+            }
+            
             switch ($type) {
                 case 'total':
-                    return Assignment::count();
+                    return Assignment::where('class_id', $student->class_id)
+                        ->whereIn('status', ['published', 'active'])
+                        ->count();
                     
                 case 'pending':
                     // Get assignments that haven't been submitted by current user
@@ -288,12 +353,18 @@ class DashboardController extends Controller
                         ->pluck('assignment_id')
                         ->toArray();
                     
-                    return Assignment::whereNotIn('id', $submittedAssignmentIds)
+                    return Assignment::where('class_id', $student->class_id)
+                        ->whereIn('status', ['published', 'active'])
+                        ->whereNotIn('id', $submittedAssignmentIds)
                         ->where('due_date', '>=', now())
                         ->count();
                         
                 case 'submitted':
-                    return AssignmentSubmission::where('student_id', $userId)->count();
+                    return AssignmentSubmission::where('student_id', $userId)
+                        ->whereHas('assignment', function($q) use ($student) {
+                            $q->where('class_id', $student->class_id);
+                        })
+                        ->count();
                     
                 default:
                     return 0;
@@ -362,7 +433,16 @@ class DashboardController extends Controller
     public function materials(Request $request)
     {
         try {
-            $query = LearningMaterial::published();
+            // Get current student's class
+            $userId = auth()->id();
+            $student = \App\Models\Student::where('user_id', $userId)->first();
+            
+            $query = LearningMaterial::with(['teacher', 'class'])->published();
+            
+            // Filter by student's class if student found
+            if ($student && $student->class_id) {
+                $query->forStudent($student->class_id);
+            }
 
             // Search filter
             if ($request->filled('search')) {

@@ -92,41 +92,51 @@ class CalendarController extends Controller
     public function storeEvent(Request $request)
     {
         try {
+            // Log incoming request for debugging
+            Log::info('Calendar event store request:', $request->all());
+            
             $request->validate([
                 'title' => 'required|string|max:255',
                 'start_date' => 'required|date',
                 'end_date' => 'nullable|date|after_or_equal:start_date',
                 'start_time' => 'nullable|date_format:H:i',
                 'end_time' => 'nullable|date_format:H:i',
-                'type' => 'required|in:event,agenda,meeting,holiday,exam'
+                'type' => 'required|in:event,agenda,meeting,holiday,exam',
+                'description' => 'nullable|string',
+                'location' => 'nullable|string|max:255',
+                'color' => 'nullable|string|max:7',
+                'is_all_day' => 'nullable|boolean'
             ]);
 
             DB::beginTransaction();
 
+            // Handle boolean conversion for is_all_day
+            $isAllDay = $request->has('is_all_day') && ($request->is_all_day === '1' || $request->is_all_day === 1 || $request->is_all_day === true);
+            
             // Handle datetime combination
             $startDateTime = $request->start_date;
             $endDateTime = $request->end_date ?? $request->start_date;
             
             // If not all day and time is provided, combine date and time
-            if (!$request->is_all_day && $request->start_time) {
+            if (!$isAllDay && $request->start_time) {
                 $startDateTime = $request->start_date . ' ' . $request->start_time;
             }
             
-            if (!$request->is_all_day && $request->end_time && $request->end_date) {
+            if (!$isAllDay && $request->end_time && $request->end_date) {
                 $endDateTime = $request->end_date . ' ' . $request->end_time;
-            } elseif (!$request->is_all_day && $request->end_time) {
+            } elseif (!$isAllDay && $request->end_time) {
                 $endDateTime = $request->start_date . ' ' . $request->end_time;
             }
-
+            
             // Create calendar event
             $event = CalendarEvent::create([
                 'title' => $request->title,
                 'description' => $request->description,
                 'start_date' => $startDateTime,
                 'end_date' => $endDateTime,
-                'start_time' => $request->is_all_day ? null : $request->start_time,
-                'end_time' => $request->is_all_day ? null : $request->end_time,
-                'is_all_day' => $request->is_all_day ? true : false,
+                'start_time' => $isAllDay ? null : $request->start_time,
+                'end_time' => $isAllDay ? null : $request->end_time,
+                'is_all_day' => $isAllDay,
                 'color' => $request->color ?? '#3b82f6',
                 'type' => $request->type,
                 'location' => $request->location,
@@ -163,18 +173,24 @@ class CalendarController extends Controller
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollback();
+            Log::error('Calendar event validation failed:', $e->errors());
             return response()->json([
                 'success' => false,
-                'message' => 'Data tidak valid',
+                'message' => 'Data tidak valid: ' . implode(', ', array_map(function($errors) {
+                    return implode(', ', $errors);
+                }, $e->errors())),
                 'errors' => $e->errors()
             ], 422);
             
         } catch (\Exception $e) {
             DB::rollback();
-            Log::error('Error creating calendar event: ' . $e->getMessage());
+            Log::error('Error creating calendar event: ' . $e->getMessage(), [
+                'request' => $request->all(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal menambahkan event'
+                'message' => 'Gagal menambahkan event: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -416,6 +432,69 @@ class CalendarController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal sinkronisasi agenda: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get upcoming events for dashboard widget
+     */
+    public function getUpcomingEvents($limit = 5)
+    {
+        try {
+            if (!\Schema::hasTable('calendar_events')) {
+                return collect();
+            }
+
+            return CalendarEvent::where('start_date', '>=', now())
+                ->where('status', 'active')
+                ->orderBy('start_date', 'asc')
+                ->limit($limit)
+                ->get();
+
+        } catch (\Exception $e) {
+            Log::error('Error getting upcoming events: ' . $e->getMessage());
+            return collect();
+        }
+    }
+
+    /**
+     * API endpoint for upcoming events
+     */
+    public function upcomingEventsApi(Request $request)
+    {
+        try {
+            $limit = $request->get('limit', 5);
+            $events = $this->getUpcomingEvents($limit);
+
+            return response()->json([
+                'success' => true,
+                'events' => $events->map(function($event) {
+                    return [
+                        'id' => $event->id,
+                        'title' => $event->title,
+                        'description' => $event->description,
+                        'start_date' => $event->start_date->format('Y-m-d'),
+                        'start_time' => $event->start_time,
+                        'end_time' => $event->end_time,
+                        'location' => $event->location,
+                        'type' => $event->type,
+                        'color' => $event->color,
+                        'is_all_day' => $event->is_all_day,
+                        'formatted_date' => $event->start_date->format('d M Y'),
+                        'is_today' => $event->start_date->isToday(),
+                        'is_tomorrow' => $event->start_date->isTomorrow(),
+                        'days_until' => $event->start_date->diffInDays(now())
+                    ];
+                })
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error in upcoming events API: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data event',
+                'events' => []
             ], 500);
         }
     }

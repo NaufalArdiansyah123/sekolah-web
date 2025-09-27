@@ -5,18 +5,16 @@ namespace App\Http\Controllers\Teacher;
 use App\Http\Controllers\Controller;
 use App\Models\Grade;
 use App\Models\User;
+use App\Models\Student;
 use App\Models\Assignment;
 use App\Models\Quiz;
+use App\Exports\GradesExport;
+use App\Exports\GradesTemplateExport;
+use App\Imports\GradesImport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Response;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use PhpOffice\PhpSpreadsheet\Style\Border;
-use PhpOffice\PhpSpreadsheet\Style\Fill;
+use Maatwebsite\Excel\Facades\Excel;
 
 class GradeController extends Controller
 {
@@ -50,7 +48,7 @@ class GradeController extends Controller
         $search = $request->get('search');
         
         // Build query
-        $query = Grade::with(['student', 'assignment', 'quiz'])
+        $query = Grade::with(['student', 'assignment', 'quiz', 'teacher'])
                      ->where('teacher_id', $teacherId)
                      ->where('semester', $semester)
                      ->where('year', $year);
@@ -97,9 +95,10 @@ class GradeController extends Controller
         
         // Get classes for filter
         $classes = User::role('student')
-                      ->whereNotNull('class')
-                      ->distinct('class')
+                      ->active()
+                      ->distinct()
                       ->pluck('class')
+                      ->filter()
                       ->sort();
         
         return view('teacher.grades.index', compact(
@@ -342,24 +341,33 @@ class GradeController extends Controller
         $teacherId = Auth::id();
         
         // Get filters
-        $subject = $request->get('subject');
-        $class = $request->get('class');
-        $semester = $request->get('semester', $this->getCurrentSemester());
-        $year = $request->get('year', now()->year);
+        $filters = [
+            'subject' => $request->get('subject'),
+            'class' => $request->get('class'),
+            'semester' => $request->get('semester', $this->getCurrentSemester()),
+            'year' => $request->get('year', now()->year),
+            'search' => $request->get('search')
+        ];
         
         // Build query
-        $query = Grade::with(['student', 'assignment', 'quiz'])
+        $query = Grade::with(['student', 'assignment', 'quiz', 'teacher'])
                      ->where('teacher_id', $teacherId)
-                     ->where('semester', $semester)
-                     ->where('year', $year);
+                     ->where('semester', $filters['semester'])
+                     ->where('year', $filters['year']);
         
-        if ($subject) {
-            $query->where('subject', $subject);
+        if ($filters['subject']) {
+            $query->where('subject', $filters['subject']);
         }
         
-        if ($class) {
-            $query->whereHas('student', function($q) use ($class) {
-                $q->where('class', $class);
+        if ($filters['class']) {
+            $query->whereHas('student', function($q) use ($filters) {
+                $q->where('class', $filters['class']);
+            });
+        }
+        
+        if ($filters['search']) {
+            $query->whereHas('student', function($q) use ($filters) {
+                $q->where('name', 'like', '%' . $filters['search'] . '%');
             });
         }
         
@@ -370,92 +378,20 @@ class GradeController extends Controller
         
         $grades = $query->orderBy('created_at', 'desc')->get();
         
-        return $this->exportToExcel($grades, $semester, $year);
-    }
-    
-    /**
-     * Export grades to Excel
-     */
-    private function exportToExcel($grades, $semester, $year)
-    {
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        
-        // Set document properties
-        $spreadsheet->getProperties()
-                   ->setCreator('Sistem Manajemen Sekolah')
-                   ->setTitle('Data Nilai Siswa')
-                   ->setSubject('Laporan Nilai')
-                   ->setDescription('Data nilai siswa semester ' . $semester . ' tahun ' . $year);
-        
-        // Set headers
-        $headers = [
-            'A1' => 'No',
-            'B1' => 'Nama Siswa',
-            'C1' => 'Kelas',
-            'D1' => 'Mata Pelajaran',
-            'E1' => 'Jenis Penilaian',
-            'F1' => 'Nilai',
-            'G1' => 'Nilai Maksimal',
-            'H1' => 'Persentase',
-            'I1' => 'Grade',
-            'J1' => 'Tanggal Input'
-        ];
-        
-        foreach ($headers as $cell => $value) {
-            $sheet->setCellValue($cell, $value);
+        // Generate filename
+        $filename = 'nilai-siswa';
+        if ($filters['subject']) {
+            $filename .= '-' . str_replace(' ', '-', strtolower($filters['subject']));
         }
-        
-        // Style headers
-        $headerStyle = [
-            'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
-            'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '059669']],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
-            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]]
-        ];
-        
-        $sheet->getStyle('A1:J1')->applyFromArray($headerStyle);
-        
-        // Add data
-        $row = 2;
-        foreach ($grades as $index => $grade) {
-            $sheet->setCellValue('A' . $row, $index + 1);
-            $sheet->setCellValue('B' . $row, $grade->student->name);
-            $sheet->setCellValue('C' . $row, $grade->student->class ?? 'N/A');
-            $sheet->setCellValue('D' . $row, $grade->subject);
-            $sheet->setCellValue('E' . $row, ucfirst($grade->type));
-            $sheet->setCellValue('F' . $row, $grade->score);
-            $sheet->setCellValue('G' . $row, $grade->max_score);
-            $sheet->setCellValue('H' . $row, number_format($grade->percentage, 1) . '%');
-            $sheet->setCellValue('I' . $row, $grade->letter_grade);
-            $sheet->setCellValue('J' . $row, $grade->created_at->format('d/m/Y H:i'));
-            
-            $row++;
+        if ($filters['class']) {
+            $filename .= '-kelas-' . str_replace(' ', '-', strtolower($filters['class']));
         }
+        $filename .= '-semester-' . $filters['semester'];
+        $filename .= '-' . $filters['year'];
+        $filename .= '-' . date('Y-m-d');
+        $filename .= '.xlsx';
         
-        // Style data rows
-        $dataStyle = [
-            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT]
-        ];
-        
-        $sheet->getStyle('A2:J' . ($row - 1))->applyFromArray($dataStyle);
-        
-        // Auto-size columns
-        foreach (range('A', 'J') as $column) {
-            $sheet->getColumnDimension($column)->setAutoSize(true);
-        }
-        
-        // Create writer and download
-        $writer = new Xlsx($spreadsheet);
-        $filename = 'nilai-siswa-semester-' . $semester . '-' . $year . '-' . date('Y-m-d') . '.xlsx';
-        
-        return Response::streamDownload(function() use ($writer) {
-            $writer->save('php://output');
-        }, $filename, [
-            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'Cache-Control' => 'max-age=0',
-        ]);
+        return Excel::download(new GradesExport($grades, $filters), $filename);
     }
     
     /**
@@ -463,59 +399,8 @@ class GradeController extends Controller
      */
     private function downloadTemplate()
     {
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        
-        // Set headers
-        $headers = [
-            'A1' => 'Nama Siswa',
-            'B1' => 'Mata Pelajaran',
-            'C1' => 'Jenis Penilaian',
-            'D1' => 'Nilai',
-            'E1' => 'Nilai Maksimal',
-            'F1' => 'Semester',
-            'G1' => 'Tahun',
-            'H1' => 'Catatan'
-        ];
-        
-        foreach ($headers as $cell => $value) {
-            $sheet->setCellValue($cell, $value);
-        }
-        
-        // Add sample data
-        $sheet->setCellValue('A2', 'John Doe');
-        $sheet->setCellValue('B2', 'Matematika');
-        $sheet->setCellValue('C2', 'quiz');
-        $sheet->setCellValue('D2', '85');
-        $sheet->setCellValue('E2', '100');
-        $sheet->setCellValue('F2', '1');
-        $sheet->setCellValue('G2', date('Y'));
-        $sheet->setCellValue('H2', 'Contoh catatan');
-        
-        // Style headers
-        $headerStyle = [
-            'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
-            'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '059669']],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
-            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]]
-        ];
-        
-        $sheet->getStyle('A1:H1')->applyFromArray($headerStyle);
-        
-        // Auto-size columns
-        foreach (range('A', 'H') as $column) {
-            $sheet->getColumnDimension($column)->setAutoSize(true);
-        }
-        
-        $writer = new Xlsx($spreadsheet);
-        $filename = 'template-import-nilai.xlsx';
-        
-        return Response::streamDownload(function() use ($writer) {
-            $writer->save('php://output');
-        }, $filename, [
-            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'Cache-Control' => 'max-age=0',
-        ]);
+        $filename = 'template-import-nilai-' . date('Y-m-d') . '.xlsx';
+        return Excel::download(new GradesTemplateExport(), $filename);
     }
     
     /**
@@ -524,88 +409,39 @@ class GradeController extends Controller
     private function handleImport(Request $request)
     {
         $request->validate([
-            'excel_file' => 'required|file|mimes:xlsx,xls|max:2048'
+            'excel_file' => 'required|file|mimes:xlsx,xls|max:5120' // 5MB max
         ]);
         
         try {
-            $file = $request->file('excel_file');
-            $spreadsheet = IOFactory::load($file->getPathname());
-            $sheet = $spreadsheet->getActiveSheet();
-            $rows = $sheet->toArray();
-            
-            // Remove header row
-            array_shift($rows);
-            
-            $imported = 0;
-            $errors = [];
-            
             DB::beginTransaction();
             
-            foreach ($rows as $index => $row) {
-                $rowNumber = $index + 2; // +2 because we removed header and arrays are 0-indexed
-                
-                // Skip empty rows
-                if (empty(array_filter($row))) {
-                    continue;
-                }
-                
-                // Validate required fields
-                if (empty($row[0]) || empty($row[1]) || empty($row[2]) || empty($row[3]) || empty($row[4])) {
-                    $errors[] = "Baris {$rowNumber}: Data tidak lengkap";
-                    continue;
-                }
-                
-                // Find student
-                $student = User::role('student')->where('name', $row[0])->first();
-                if (!$student) {
-                    $errors[] = "Baris {$rowNumber}: Siswa '{$row[0]}' tidak ditemukan";
-                    continue;
-                }
-                
-                // Validate grade type
-                $validTypes = ['assignment', 'quiz', 'exam', 'manual'];
-                if (!in_array(strtolower($row[2]), $validTypes)) {
-                    $errors[] = "Baris {$rowNumber}: Jenis penilaian '{$row[2]}' tidak valid";
-                    continue;
-                }
-                
-                // Validate scores
-                if (!is_numeric($row[3]) || !is_numeric($row[4]) || $row[3] < 0 || $row[4] <= 0) {
-                    $errors[] = "Baris {$rowNumber}: Nilai tidak valid";
-                    continue;
-                }
-                
-                // Create grade
-                Grade::create([
-                    'student_id' => $student->id,
-                    'teacher_id' => Auth::id(),
-                    'subject' => $row[1],
-                    'type' => strtolower($row[2]),
-                    'score' => $row[3],
-                    'max_score' => $row[4],
-                    'semester' => $row[5] ?? $this->getCurrentSemester(),
-                    'year' => $row[6] ?? now()->year,
-                    'notes' => $row[7] ?? null,
-                ]);
-                
-                $imported++;
-            }
+            $import = new GradesImport();
+            Excel::import($import, $request->file('excel_file'));
+            
+            $results = $import->getResults();
             
             DB::commit();
             
-            $message = "Berhasil mengimpor {$imported} data nilai";
-            if (!empty($errors)) {
-                $message .= ". Terdapat " . count($errors) . " error: " . implode(', ', array_slice($errors, 0, 3));
-                if (count($errors) > 3) {
-                    $message .= " dan " . (count($errors) - 3) . " error lainnya";
-                }
+            $message = "Berhasil mengimpor {$results['imported_count']} data nilai";
+            
+            if ($results['total_errors'] > 0) {
+                $message .= ". Terdapat {$results['total_errors']} error";
+                
+                return response()->json([
+                    'success' => $results['imported_count'] > 0,
+                    'message' => $message,
+                    'imported' => $results['imported_count'],
+                    'errors' => $results['errors'],
+                    'total_errors' => $results['total_errors']
+                ]);
             }
             
             return response()->json([
                 'success' => true,
                 'message' => $message,
-                'imported' => $imported,
-                'errors' => $errors
+                'imported' => $results['imported_count'],
+                'errors' => [],
+                'total_errors' => 0
             ]);
             
         } catch (\Exception $e) {
@@ -613,7 +449,10 @@ class GradeController extends Controller
             
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage()
+                'message' => 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage(),
+                'imported' => 0,
+                'errors' => [$e->getMessage()],
+                'total_errors' => 1
             ]);
         }
     }

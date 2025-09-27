@@ -2,213 +2,294 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\StudentRegistration;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 use Carbon\Carbon;
 
 class StudentRegistrationSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     * This seeder creates sample student registrations for testing
+     * 
+     * This seeder creates student users with complete registration data
+     * including class, parent information, and various statuses for testing
      */
     public function run(): void
     {
-        $faker = \Faker\Factory::create('id_ID');
+        $this->command->info('🧹 Creating student registration test data...');
         
-        // Sample student registrations with different statuses
-        $registrations = [
+        // Ensure student role exists
+        $studentRole = Role::firstOrCreate([
+            'name' => 'student',
+            'guard_name' => 'web'
+        ]);
+        
+        // Get admin user for approval
+        $adminUser = User::whereHas('roles', function($q) {
+            $q->where('name', 'admin');
+        })->first();
+        
+        if (!$adminUser) {
+            $this->command->error('❌ Admin user not found. Please run AdminUserSeeder first.');
+            return;
+        }
+        
+        // Sample student registration data
+        $studentsData = [
             // Pending registrations
             [
-                'name' => 'Andi Setiawan',
-                'email' => 'andi.setiawan.new@gmail.com',
-                'nis' => '2024051',
-                'nisn' => '0123456850',
-                'class' => 'X-1',
-                'gender' => 'male',
+                'name' => 'Ahmad Rizki Pratama',
+                'email' => 'ahmad.rizki@student.test',
+                'nis' => '2024101001',
+                'class' => 'X TKJ 1',
+                'parent_name' => 'Budi Pratama',
+                'parent_phone' => '081234567890',
+                'parent_email' => 'budi.pratama@gmail.com',
+                'status' => 'pending',
+                'birth_date' => '2008-05-15',
                 'birth_place' => 'Jakarta',
-                'birth_date' => '2008-03-15',
-                'address' => 'Jl. Kebon Jeruk No. 123, Jakarta Barat',
-                'phone' => '081234567950',
-                'parent_name' => 'Setiawan Budi',
-                'parent_phone' => '081234567951',
-                'status' => 'pending',
-                'rejection_reason' => null,
-            ],
-            [
-                'name' => 'Sari Wulandari',
-                'email' => 'sari.wulan@gmail.com',
-                'nis' => '2024052',
-                'nisn' => '0123456851',
-                'class' => 'X-2',
-                'gender' => 'female',
-                'birth_place' => 'Bandung',
-                'birth_date' => '2008-05-22',
-                'address' => 'Jl. Cihampelas No. 456, Bandung',
-                'phone' => '081234567952',
-                'parent_name' => 'Wulan Sari',
-                'parent_phone' => '081234567953',
-                'status' => 'pending',
-                'rejection_reason' => null,
-            ],
-            [
-                'name' => 'Budi Hartono',
-                'email' => 'budi.hartono@gmail.com',
-                'nis' => '2024053',
-                'nisn' => '0123456852',
-                'class' => 'X-1',
                 'gender' => 'male',
-                'birth_place' => 'Surabaya',
-                'birth_date' => '2008-01-10',
-                'address' => 'Jl. Gubeng No. 789, Surabaya',
-                'phone' => '081234567954',
-                'parent_name' => 'Hartono Wijaya',
-                'parent_phone' => '081234567955',
+                'religion' => 'Islam',
+                'phone' => '085678901234',
+                'address' => 'Jl. Merdeka No. 123, Jakarta Pusat'
+            ],
+            [
+                'name' => 'Siti Nurhaliza',
+                'email' => 'siti.nurhaliza@student.test',
+                'nis' => '2024101002',
+                'class' => 'X TKJ 1',
+                'parent_name' => 'Hasan Nurdin',
+                'parent_phone' => '081234567891',
+                'parent_email' => 'hasan.nurdin@gmail.com',
                 'status' => 'pending',
-                'rejection_reason' => null,
+                'birth_date' => '2008-03-20',
+                'birth_place' => 'Bandung',
+                'gender' => 'female',
+                'religion' => 'Islam',
+                'phone' => '085678901235',
+                'address' => 'Jl. Sudirman No. 456, Bandung'
+            ],
+            [
+                'name' => 'Dedi Setiawan',
+                'email' => 'dedi.setiawan@student.test',
+                'nis' => '2024111001',
+                'class' => 'XI RPL 1',
+                'parent_name' => 'Eko Setiawan',
+                'parent_phone' => '081234567892',
+                'parent_email' => 'eko.setiawan@gmail.com',
+                'status' => 'pending',
+                'birth_date' => '2007-08-10',
+                'birth_place' => 'Surabaya',
+                'gender' => 'male',
+                'religion' => 'Kristen',
+                'phone' => '085678901236',
+                'address' => 'Jl. Diponegoro No. 789, Surabaya'
             ],
             
-            // Approved registrations
+            // Active/Approved registrations
             [
-                'name' => 'Dewi Lestari',
-                'email' => 'dewi.lestari@gmail.com',
-                'nis' => '2024054',
-                'nisn' => '0123456853',
-                'class' => 'X-2',
-                'gender' => 'female',
+                'name' => 'Maya Sari Dewi',
+                'email' => 'maya.sari@student.test',
+                'nis' => '2024111002',
+                'class' => 'XI RPL 1',
+                'parent_name' => 'Agus Dewi',
+                'parent_phone' => '081234567893',
+                'parent_email' => 'agus.dewi@gmail.com',
+                'status' => 'active',
+                'birth_date' => '2007-12-05',
                 'birth_place' => 'Yogyakarta',
-                'birth_date' => '2008-07-18',
+                'gender' => 'female',
+                'religion' => 'Islam',
+                'phone' => '085678901237',
                 'address' => 'Jl. Malioboro No. 321, Yogyakarta',
-                'phone' => '081234567956',
-                'parent_name' => 'Lestari Indah',
-                'parent_phone' => '081234567957',
-                'status' => 'approved',
-                'rejection_reason' => null,
+                'approved_at' => now(),
+                'approved_by' => $adminUser->id
             ],
             [
-                'name' => 'Reza Pratama',
-                'email' => 'reza.pratama@gmail.com',
-                'nis' => '2024055',
-                'nisn' => '0123456854',
-                'class' => 'X-1',
+                'name' => 'Fajar Nugroho',
+                'email' => 'fajar.nugroho@student.test',
+                'nis' => '2024121001',
+                'class' => 'XII DKV 1',
+                'parent_name' => 'Bambang Nugroho',
+                'parent_phone' => '081234567894',
+                'parent_email' => 'bambang.nugroho@gmail.com',
+                'status' => 'active',
+                'birth_date' => '2006-09-18',
+                'birth_place' => 'Semarang',
                 'gender' => 'male',
-                'birth_place' => 'Medan',
-                'birth_date' => '2008-09-25',
-                'address' => 'Jl. Gatot Subroto No. 654, Medan',
-                'phone' => '081234567958',
-                'parent_name' => 'Pratama Jaya',
-                'parent_phone' => '081234567959',
-                'status' => 'approved',
-                'rejection_reason' => null,
+                'religion' => 'Islam',
+                'phone' => '085678901238',
+                'address' => 'Jl. Pemuda No. 654, Semarang',
+                'approved_at' => now(),
+                'approved_by' => $adminUser->id
             ],
             
             // Rejected registrations
             [
-                'name' => 'Maya Sari',
-                'email' => 'maya.sari.reject@gmail.com',
-                'nis' => '2024056',
-                'nisn' => '0123456855',
-                'class' => 'X-2',
-                'gender' => 'female',
-                'birth_place' => 'Semarang',
-                'birth_date' => '2008-02-14',
-                'address' => 'Jl. Diponegoro No. 987, Semarang',
-                'phone' => '081234567960',
-                'parent_name' => 'Sari Maya',
-                'parent_phone' => '081234567961',
+                'name' => 'Kartika Sari',
+                'email' => 'kartika.sari@student.test',
+                'nis' => '2024101003',
+                'class' => 'X TKJ 2',
+                'parent_name' => 'Wawan Sari',
+                'parent_phone' => '081234567895',
+                'parent_email' => 'wawan.sari@gmail.com',
                 'status' => 'rejected',
-                'rejection_reason' => 'data',
-            ],
-            [
-                'name' => 'Andi Wijaya',
-                'email' => 'andi.wijaya.reject@gmail.com',
-                'nis' => '2024057',
-                'nisn' => '0123456856',
-                'class' => 'X-1',
-                'gender' => 'male',
-                'birth_place' => 'Palembang',
-                'birth_date' => '2008-04-30',
-                'address' => 'Jl. Ahmad Yani No. 147, Palembang',
-                'phone' => '081234567962',
-                'parent_name' => 'Wijaya Kusuma',
-                'parent_phone' => '081234567963',
-                'status' => 'rejected',
-                'rejection_reason' => 'verifikasi',
-            ],
-            [
-                'name' => 'Lina Marlina',
-                'email' => 'lina.marlina.reject@gmail.com',
-                'nis' => '2024058',
-                'nisn' => '0123456857',
-                'class' => 'X-2',
+                'birth_date' => '2008-01-25',
+                'birth_place' => 'Medan',
                 'gender' => 'female',
+                'religion' => 'Katolik',
+                'phone' => '085678901239',
+                'address' => 'Jl. Gatot Subroto No. 987, Medan',
+                'rejected_at' => now(),
+                'rejected_by' => $adminUser->id,
+                'rejection_reason' => 'Data yang dimasukkan tidak dapat diverifikasi dengan database sekolah. Silakan hubungi bagian administrasi untuk verifikasi data.'
+            ],
+            
+            // More pending registrations for testing bulk actions
+            [
+                'name' => 'Galih Permana',
+                'email' => 'galih.permana@student.test',
+                'nis' => '2024121002',
+                'class' => 'XII DKV 1',
+                'parent_name' => 'Indra Permana',
+                'parent_phone' => '081234567896',
+                'parent_email' => 'indra.permana@gmail.com',
+                'status' => 'pending',
+                'birth_date' => '2006-11-30',
                 'birth_place' => 'Makassar',
-                'birth_date' => '2008-06-12',
-                'address' => 'Jl. Hasanuddin No. 258, Makassar',
-                'phone' => '081234567964',
-                'parent_name' => 'Marlina Sari',
-                'parent_phone' => '081234567965',
-                'status' => 'rejected',
-                'rejection_reason' => 'sistem',
+                'gender' => 'male',
+                'religion' => 'Islam',
+                'phone' => '085678901240',
+                'address' => 'Jl. Ahmad Yani No. 147, Makassar'
             ],
+            [
+                'name' => 'Hani Rahmawati',
+                'email' => 'hani.rahmawati@student.test',
+                'nis' => '2024111003',
+                'class' => 'XI RPL 2',
+                'parent_name' => 'Joko Rahmawati',
+                'parent_phone' => '081234567897',
+                'parent_email' => 'joko.rahmawati@gmail.com',
+                'status' => 'pending',
+                'birth_date' => '2007-04-12',
+                'birth_place' => 'Palembang',
+                'gender' => 'female',
+                'religion' => 'Islam',
+                'phone' => '085678901241',
+                'address' => 'Jl. Sudirman No. 258, Palembang'
+            ],
+            [
+                'name' => 'Lukman Hakim',
+                'email' => 'lukman.hakim@student.test',
+                'nis' => '2024101004',
+                'class' => 'X TKJ 2',
+                'parent_name' => 'Muhammad Hakim',
+                'parent_phone' => '081234567898',
+                'parent_email' => 'muhammad.hakim@gmail.com',
+                'status' => 'pending',
+                'birth_date' => '2008-07-08',
+                'birth_place' => 'Balikpapan',
+                'gender' => 'male',
+                'religion' => 'Islam',
+                'phone' => '085678901242',
+                'address' => 'Jl. Jenderal Sudirman No. 369, Balikpapan'
+            ],
+            [
+                'name' => 'Olivia Rodrigo',
+                'email' => 'olivia.rodrigo@student.test',
+                'nis' => '2024121003',
+                'class' => 'XII DKV 2',
+                'parent_name' => 'Robert Rodrigo',
+                'parent_phone' => '081234567899',
+                'parent_email' => 'robert.rodrigo@gmail.com',
+                'status' => 'pending',
+                'birth_date' => '2006-02-14',
+                'birth_place' => 'Denpasar',
+                'gender' => 'female',
+                'religion' => 'Kristen',
+                'phone' => '085678901243',
+                'address' => 'Jl. Gajah Mada No. 741, Denpasar'
+            ]
         ];
         
-        foreach ($registrations as $registration) {
-            StudentRegistration::create([
-                'name' => $registration['name'],
-                'email' => $registration['email'],
-                'nis' => $registration['nis'],
-                'nisn' => $registration['nisn'],
-                'class' => $registration['class'],
-                'gender' => $registration['gender'],
-                'birth_place' => $registration['birth_place'],
-                'birth_date' => Carbon::parse($registration['birth_date']),
-                'address' => $registration['address'],
-                'phone' => $registration['phone'],
-                'parent_name' => $registration['parent_name'],
-                'parent_phone' => $registration['parent_phone'],
-                'status' => $registration['status'],
-                'rejection_reason' => $registration['rejection_reason'],
-                'created_at' => now()->subDays(rand(1, 30)),
-                'updated_at' => now()->subDays(rand(0, 5)),
+        $created = 0;
+        $skipped = 0;
+        
+        foreach ($studentsData as $studentData) {
+            // Check if user already exists
+            if (User::where('email', $studentData['email'])->exists()) {
+                $this->command->warn("   ⚠️  User {$studentData['email']} already exists, skipping...");
+                $skipped++;
+                continue;
+            }
+            
+            // Create user with complete student registration data
+            $user = User::create([
+                'name' => $studentData['name'],
+                'email' => $studentData['email'],
+                'password' => Hash::make('password'),
+                'email_verified_at' => now(),
+                'phone' => $studentData['phone'],
+                'address' => $studentData['address'],
+                'birth_date' => $studentData['birth_date'],
+                'birth_place' => $studentData['birth_place'],
+                'gender' => $studentData['gender'],
+                'religion' => $studentData['religion'],
+                'nis' => $studentData['nis'],
+                'class' => $studentData['class'],
+                'parent_name' => $studentData['parent_name'],
+                'parent_phone' => $studentData['parent_phone'],
+                'parent_email' => $studentData['parent_email'],
+                'status' => $studentData['status'],
+                'approved_at' => $studentData['approved_at'] ?? null,
+                'approved_by' => $studentData['approved_by'] ?? null,
+                'rejected_at' => $studentData['rejected_at'] ?? null,
+                'rejected_by' => $studentData['rejected_by'] ?? null,
+                'rejection_reason' => $studentData['rejection_reason'] ?? null,
+                'enrollment_date' => $studentData['status'] === 'active' ? now() : null,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
             
-            $this->command->info("Created student registration: {$registration['name']} ({$registration['status']})");
-        }
-        
-        // Create additional random registrations
-        for ($i = 1; $i <= 15; $i++) {
-            $genderCode = $faker->randomElement(['L', 'P']);
-            $gender = $genderCode === 'L' ? 'male' : 'female';
-            $firstName = $genderCode === 'L' ? $faker->firstNameMale : $faker->firstNameFemale;
-            $lastName = $faker->lastName;
-            $fullName = $firstName . ' ' . $lastName;
-            $status = $faker->randomElement(['pending', 'pending', 'pending', 'approved', 'rejected']);
-            $rejectionReason = $status === 'rejected' ? $faker->randomElement(['data', 'verifikasi', 'sistem']) : null;
+            // Assign student role
+            $user->assignRole($studentRole);
             
-            StudentRegistration::create([
-                'name' => $fullName,
-                'email' => strtolower(str_replace(' ', '.', $fullName)) . $i . '@gmail.com',
-                'nis' => '2024' . str_pad(59 + $i, 3, '0', STR_PAD_LEFT),
-                'nisn' => '01234' . str_pad(56858 + $i, 5, '0', STR_PAD_LEFT),
-                'class' => $faker->randomElement(['X-1', 'X-2', 'X-3', 'X-4']),
-                'gender' => $gender,
-                'birth_place' => $faker->city,
-                'birth_date' => $faker->dateTimeBetween('2008-01-01', '2008-12-31'),
-                'address' => $faker->address,
-                'phone' => '08' . $faker->numerify('##########'),
-                'parent_name' => $faker->name,
-                'parent_phone' => '08' . $faker->numerify('##########'),
-                'status' => $status,
-                'rejection_reason' => $rejectionReason,
-                'created_at' => now()->subDays(rand(1, 60)),
-                'updated_at' => now()->subDays(rand(0, 10)),
-            ]);
+            $this->command->info("   ✅ Created: {$user->name} ({$user->email}) - Status: {$user->status}");
+            $created++;
         }
         
-        $this->command->info('Student registration seeder completed successfully!');
-        $this->command->info('Total registrations created: ' . (count($registrations) + 15));
-        $this->command->info('Status distribution: Pending, Approved, Rejected');
+        $this->command->info('');
+        $this->command->info("📊 SUMMARY:");
+        $this->command->info("   ✅ Created: {$created} student registrations");
+        $this->command->info("   ⚠️  Skipped: {$skipped} existing users");
+        $this->command->info("   🔑 Default password: 'password'");
+        $this->command->info('');
+        
+        // Display statistics
+        $totalStudents = User::whereHas('roles', function($q) {
+            $q->where('name', 'student');
+        })->count();
+        
+        $pendingCount = User::whereHas('roles', function($q) {
+            $q->where('name', 'student');
+        })->where('status', 'pending')->count();
+        
+        $activeCount = User::whereHas('roles', function($q) {
+            $q->where('name', 'student');
+        })->where('status', 'active')->count();
+        
+        $rejectedCount = User::whereHas('roles', function($q) {
+            $q->where('name', 'student');
+        })->where('status', 'rejected')->count();
+        
+        $this->command->info("📈 CURRENT STATISTICS:");
+        $this->command->info("   👥 Total student users: {$totalStudents}");
+        $this->command->info("   ⏳ Pending: {$pendingCount}");
+        $this->command->info("   ✅ Active: {$activeCount}");
+        $this->command->info("   ❌ Rejected: {$rejectedCount}");
+        $this->command->info('');
+        $this->command->info('🎯 You can now test the student registration management features!');
     }
 }

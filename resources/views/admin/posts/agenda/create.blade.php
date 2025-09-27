@@ -88,6 +88,12 @@
         box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
     }
     
+    .btn-primary:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
     .btn-secondary {
         background: var(--bg-tertiary);
         color: var(--text-primary);
@@ -109,84 +115,6 @@
         color: #ef4444;
     }
     
-    /* Rich Text Editor Styles */
-    .editor-container {
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        overflow: hidden;
-        background: var(--bg-primary);
-    }
-    
-    .editor-toolbar {
-        background: var(--bg-secondary);
-        border-bottom: 1px solid var(--border-color);
-        padding: 0.5rem;
-        display: flex;
-        gap: 0.25rem;
-        flex-wrap: wrap;
-    }
-    
-    .editor-btn {
-        padding: 0.375rem 0.5rem;
-        border: none;
-        background: transparent;
-        color: var(--text-primary);
-        border-radius: 4px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        font-size: 0.875rem;
-    }
-    
-    .editor-btn:hover {
-        background: var(--bg-tertiary);
-    }
-    
-    .editor-btn.active {
-        background: var(--accent-color);
-        color: white;
-    }
-    
-    .editor-content {
-        min-height: 200px;
-        padding: 1rem;
-        outline: none;
-        color: var(--text-primary);
-        line-height: 1.6;
-    }
-    
-    .editor-content:focus {
-        background: var(--bg-primary);
-    }
-    
-    /* Preview Section */
-    .preview-section {
-        background: var(--bg-secondary);
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
-        padding: 1.5rem;
-        margin-top: 2rem;
-    }
-    
-    .preview-title {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: var(--text-primary);
-        margin-bottom: 1rem;
-    }
-    
-    .preview-meta {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 1rem;
-        font-size: 0.875rem;
-        color: var(--text-secondary);
-    }
-    
-    .preview-content {
-        color: var(--text-primary);
-        line-height: 1.6;
-    }
-    
     /* Responsive */
     @media (max-width: 768px) {
         .form-container {
@@ -196,15 +124,18 @@
         .datetime-grid {
             grid-template-columns: 1fr;
         }
-        
-        .editor-toolbar {
-            padding: 0.375rem;
-        }
-        
-        .editor-btn {
-            padding: 0.25rem 0.375rem;
-            font-size: 0.75rem;
-        }
+    }
+    
+    .error-message {
+        color: #ef4444;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+    }
+    
+    .success-message {
+        color: #10b981;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
     }
 </style>
 
@@ -224,6 +155,25 @@
         </a>
     </div>
 
+    <!-- Error Messages -->
+    @if ($errors->any())
+        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+            <div class="flex">
+                <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-red-800">Terdapat kesalahan pada form:</h3>
+                    <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <!-- Form -->
     <div class="form-container">
         <form method="POST" action="{{ route('admin.posts.agenda.store') }}" id="agendaForm">
@@ -237,13 +187,13 @@
                 <input type="text" 
                        name="title" 
                        id="title"
-                       class="form-input"
+                       class="form-input @error('title') border-red-500 @enderror"
                        value="{{ old('title') }}"
                        placeholder="Masukkan judul agenda"
                        required>
                 <div class="form-help">Judul agenda yang akan ditampilkan di halaman public</div>
                 @error('title')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    <p class="error-message">{{ $message }}</p>
                 @enderror
             </div>
 
@@ -256,18 +206,18 @@
                     <input type="datetime-local" 
                            name="event_date" 
                            id="event_date"
-                           class="form-input"
+                           class="form-input @error('event_date') border-red-500 @enderror"
                            value="{{ old('event_date') }}"
                            required>
                     <select name="timezone" class="form-input form-select">
-                        <option value="WIB">WIB</option>
-                        <option value="WITA">WITA</option>
-                        <option value="WIT">WIT</option>
+                        <option value="WIB" {{ old('timezone') == 'WIB' ? 'selected' : '' }}>WIB</option>
+                        <option value="WITA" {{ old('timezone') == 'WITA' ? 'selected' : '' }}>WITA</option>
+                        <option value="WIT" {{ old('timezone') == 'WIT' ? 'selected' : '' }}>WIT</option>
                     </select>
                 </div>
                 <div class="form-help">Pilih tanggal dan waktu pelaksanaan kegiatan</div>
                 @error('event_date')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    <p class="error-message">{{ $message }}</p>
                 @enderror
             </div>
 
@@ -277,12 +227,12 @@
                 <input type="text" 
                        name="location" 
                        id="location"
-                       class="form-input"
+                       class="form-input @error('location') border-red-500 @enderror"
                        value="{{ old('location') }}"
                        placeholder="Contoh: Aula Sekolah, Lapangan Upacara, dll">
                 <div class="form-help">Lokasi pelaksanaan kegiatan (opsional)</div>
                 @error('location')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    <p class="error-message">{{ $message }}</p>
                 @enderror
             </div>
 
@@ -291,44 +241,14 @@
                 <label for="content" class="form-label">
                     Deskripsi Agenda <span class="required">*</span>
                 </label>
-                <div class="editor-container">
-                    <div class="editor-toolbar">
-                        <button type="button" class="editor-btn" onclick="formatText('bold')">
-                            <strong>B</strong>
-                        </button>
-                        <button type="button" class="editor-btn" onclick="formatText('italic')">
-                            <em>I</em>
-                        </button>
-                        <button type="button" class="editor-btn" onclick="formatText('underline')">
-                            <u>U</u>
-                        </button>
-                        <button type="button" class="editor-btn" onclick="formatText('insertUnorderedList')">
-                            • List
-                        </button>
-                        <button type="button" class="editor-btn" onclick="formatText('insertOrderedList')">
-                            1. List
-                        </button>
-                        <button type="button" class="editor-btn" onclick="formatText('justifyLeft')">
-                            ←
-                        </button>
-                        <button type="button" class="editor-btn" onclick="formatText('justifyCenter')">
-                            ↔
-                        </button>
-                        <button type="button" class="editor-btn" onclick="formatText('justifyRight')">
-                            →
-                        </button>
-                    </div>
-                    <div class="editor-content" 
-                         contenteditable="true" 
-                         id="contentEditor"
-                         data-placeholder="Masukkan deskripsi lengkap agenda kegiatan...">
-                        {!! old('content') !!}
-                    </div>
-                </div>
-                <textarea name="content" id="content" style="display: none;" required>{{ old('content') }}</textarea>
+                <textarea name="content" 
+                          id="content" 
+                          class="form-input form-textarea @error('content') border-red-500 @enderror"
+                          placeholder="Masukkan deskripsi lengkap agenda kegiatan..."
+                          required>{{ old('content') }}</textarea>
                 <div class="form-help">Deskripsi lengkap tentang agenda kegiatan</div>
                 @error('content')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    <p class="error-message">{{ $message }}</p>
                 @enderror
             </div>
 
@@ -337,7 +257,7 @@
                 <label for="status" class="form-label">
                     Status <span class="required">*</span>
                 </label>
-                <select name="status" id="status" class="form-input form-select" required>
+                <select name="status" id="status" class="form-input form-select @error('status') border-red-500 @enderror" required>
                     <option value="">Pilih Status</option>
                     <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
                     <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>Dipublikasi</option>
@@ -345,25 +265,17 @@
                 </select>
                 <div class="form-help">Status publikasi agenda</div>
                 @error('status')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    <p class="error-message">{{ $message }}</p>
                 @enderror
             </div>
 
             <!-- Submit Buttons -->
             <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary" id="submitBtn">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>
                     Simpan Agenda
-                </button>
-                
-                <button type="button" onclick="showPreview()" class="btn btn-secondary">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                    </svg>
-                    Preview
                 </button>
                 
                 <a href="{{ route('admin.posts.agenda') }}" class="btn btn-secondary">
@@ -375,129 +287,144 @@
             </div>
         </form>
     </div>
-
-    <!-- Preview Section -->
-    <div id="previewSection" class="preview-section" style="display: none;">
-        <h3 class="preview-title">Preview Agenda</h3>
-        <div class="preview-meta">
-            <span id="previewDate"></span>
-            <span id="previewLocation"></span>
-            <span id="previewStatus"></span>
-        </div>
-        <div class="preview-content" id="previewContent"></div>
-    </div>
 </div>
 
 <script>
-// Rich Text Editor Functions
-function formatText(command) {
-    document.execCommand(command, false, null);
-    updateContent();
-}
-
-function updateContent() {
-    const editor = document.getElementById('contentEditor');
-    const textarea = document.getElementById('content');
-    textarea.value = editor.innerHTML;
-}
-
-// Update content when editor changes
-document.getElementById('contentEditor').addEventListener('input', updateContent);
-
-// Preview Function
-function showPreview() {
-    const title = document.getElementById('title').value;
-    const eventDate = document.getElementById('event_date').value;
-    const location = document.getElementById('location').value;
-    const content = document.getElementById('contentEditor').innerHTML;
-    const status = document.getElementById('status').value;
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing form...');
     
-    if (!title || !eventDate || !content) {
-        alert('Mohon lengkapi data agenda terlebih dahulu');
+    const form = document.getElementById('agendaForm');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    if (!form) {
+        console.error('Form not found!');
         return;
     }
     
-    // Update preview
-    document.querySelector('.preview-title').textContent = title;
+    // Form submission handler
+    form.addEventListener('submit', function(e) {
+        console.log('Form submit event triggered');
+        
+        // Get form data
+        const formData = new FormData(form);
+        const title = formData.get('title')?.trim();
+        const eventDate = formData.get('event_date');
+        const content = formData.get('content')?.trim();
+        const status = formData.get('status');
+        
+        console.log('Form data:', {
+            title: title,
+            eventDate: eventDate,
+            content: content,
+            status: status
+        });
+        
+        // Basic validation
+        if (!title) {
+            e.preventDefault();
+            alert('Mohon isi judul agenda');
+            document.getElementById('title').focus();
+            return false;
+        }
+        
+        if (!eventDate) {
+            e.preventDefault();
+            alert('Mohon pilih tanggal kegiatan');
+            document.getElementById('event_date').focus();
+            return false;
+        }
+        
+        if (!content) {
+            e.preventDefault();
+            alert('Mohon isi deskripsi agenda');
+            document.getElementById('content').focus();
+            return false;
+        }
+        
+        if (!status) {
+            e.preventDefault();
+            alert('Mohon pilih status agenda');
+            document.getElementById('status').focus();
+            return false;
+        }
+        
+        console.log('Validation passed, submitting form...');
+        
+        // Show loading state
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `
+                <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Menyimpan...
+            `;
+        }
+        
+        return true;
+    });
     
-    // Format date
-    if (eventDate) {
-        const date = new Date(eventDate);
-        document.getElementById('previewDate').textContent = date.toLocaleDateString('id-ID', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        }) + ' WIB';
+    // Auto-save draft functionality
+    let autoSaveTimer;
+    function autoSave() {
+        clearTimeout(autoSaveTimer);
+        autoSaveTimer = setTimeout(() => {
+            const formData = new FormData(form);
+            const draftData = {};
+            for (let [key, value] of formData.entries()) {
+                draftData[key] = value;
+            }
+            localStorage.setItem('agenda_draft', JSON.stringify(draftData));
+            console.log('Draft saved to localStorage');
+        }, 2000);
     }
     
-    document.getElementById('previewLocation').textContent = location ? `📍 ${location}` : '';
-    const statusText = {
-        'draft': 'Draft',
-        'published': 'Dipublikasi',
-        'archived': 'Diarsipkan'
-    };
-    document.getElementById('previewStatus').textContent = status ? `Status: ${statusText[status] || status}` : '';
-    document.getElementById('previewContent').innerHTML = content;
-    
-    // Show preview
-    document.getElementById('previewSection').style.display = 'block';
-    document.getElementById('previewSection').scrollIntoView({ behavior: 'smooth' });
-}
-
-// Form validation
-document.getElementById('agendaForm').addEventListener('submit', function(e) {
-    updateContent();
-    
-    const title = document.getElementById('title').value;
-    const eventDate = document.getElementById('event_date').value;
-    const content = document.getElementById('content').value;
-    const status = document.getElementById('status').value;
-    
-    if (!title || !eventDate || !content || !status) {
-        e.preventDefault();
-        alert('Mohon lengkapi semua field yang wajib diisi');
-        return false;
+    // Load draft on page load
+    const savedDraft = localStorage.getItem('agenda_draft');
+    if (savedDraft) {
+        try {
+            const draftData = JSON.parse(savedDraft);
+            console.log('Loading draft data:', draftData);
+            
+            if (draftData.title) document.getElementById('title').value = draftData.title;
+            if (draftData.event_date) document.getElementById('event_date').value = draftData.event_date;
+            if (draftData.location) document.getElementById('location').value = draftData.location;
+            if (draftData.content) document.getElementById('content').value = draftData.content;
+            if (draftData.status) document.getElementById('status').value = draftData.status;
+        } catch (e) {
+            console.error('Error loading draft:', e);
+        }
     }
+    
+    // Add auto-save listeners
+    ['title', 'event_date', 'location', 'content', 'status'].forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.addEventListener('input', autoSave);
+            field.addEventListener('change', autoSave);
+        }
+    });
+    
+    // Clear draft on successful submit
+    form.addEventListener('submit', function() {
+        localStorage.removeItem('agenda_draft');
+    });
+    
+    console.log('Form initialization complete');
 });
 
-// Auto-save draft (optional)
-let autoSaveTimer;
-function autoSave() {
-    clearTimeout(autoSaveTimer);
-    autoSaveTimer = setTimeout(() => {
-        updateContent();
-        const formData = new FormData(document.getElementById('agendaForm'));
-        localStorage.setItem('agenda_draft', JSON.stringify(Object.fromEntries(formData)));
-        console.log('Draft saved');
-    }, 2000);
-}
-
-// Load draft on page load
-window.addEventListener('load', function() {
-    const draft = localStorage.getItem('agenda_draft');
-    if (draft) {
-        const data = JSON.parse(draft);
-        if (data.title) document.getElementById('title').value = data.title;
-        if (data.event_date) document.getElementById('event_date').value = data.event_date;
-        if (data.location) document.getElementById('location').value = data.location;
-        if (data.content) document.getElementById('contentEditor').innerHTML = data.content;
-        if (data.status) document.getElementById('status').value = data.status;
+// Add CSS for spinner animation
+const style = document.createElement('style');
+style.textContent = `
+    .animate-spin {
+        animation: spin 1s linear infinite;
     }
-});
-
-// Add auto-save listeners
-document.getElementById('title').addEventListener('input', autoSave);
-document.getElementById('event_date').addEventListener('change', autoSave);
-document.getElementById('location').addEventListener('input', autoSave);
-document.getElementById('contentEditor').addEventListener('input', autoSave);
-document.getElementById('status').addEventListener('change', autoSave);
-
-// Clear draft on successful submit
-document.getElementById('agendaForm').addEventListener('submit', function() {
-    localStorage.removeItem('agenda_draft');
-});
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+`;
+document.head.appendChild(style);
 </script>
 @endsection

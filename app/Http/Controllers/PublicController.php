@@ -583,11 +583,10 @@ class PublicController extends Controller
         ]);
     }
 
-    public function announcementDetail($slug)
+    public function announcementDetail($id)
     {
         $announcement = Announcement::published()
-                                   ->where('slug', $slug)
-                                   ->firstOrFail();
+                                   ->findOrFail($id);
         
         // Increment view count
         $announcement->incrementViews();

@@ -80,15 +80,7 @@
                     </div>
                 @endif
 
-                <!-- Debug Information (only show in development) -->
-                @if(config('app.debug') && isset($debug_info))
-                    <div class="mt-6 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 mb-2">
-                            <i class="fas fa-code mr-2"></i>Debug Information
-                        </h3>
-                        <pre class="text-xs text-gray-600 dark:text-gray-400 overflow-x-auto">{{ json_encode($debug_info, JSON_PRETTY_PRINT) }}</pre>
-                    </div>
-                @endif
+
             </div>
         </div>
 

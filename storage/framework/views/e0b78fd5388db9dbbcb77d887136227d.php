@@ -131,8 +131,8 @@
                         <select name="class" id="class" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
                             <option value="">Semua Kelas</option>
                             <?php $__currentLoopData = $classes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $class): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <option value="<?php echo e($class); ?>" <?php echo e(request('class') == $class ? 'selected' : ''); ?>>
-                                    <?php echo e($class); ?>
+                                <option value="<?php echo e($class->id); ?>" <?php echo e(request('class') == $class->id ? 'selected' : ''); ?>>
+                                    <?php echo e($class->name); ?>
 
                                 </option>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -215,8 +215,12 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white"><?php echo e($student->nis); ?></td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                                        <?php echo e($student->class); ?>
+                                        <?php if($student->class_id && $student->class): ?>
+                                            <?php echo e($student->class->name); ?>
 
+                                        <?php else: ?>
+                                            Kelas Belum Ditentukan
+                                        <?php endif; ?>
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
@@ -822,7 +826,7 @@ function closeModal(modalId) {
     document.getElementById(modalId).classList.remove('flex');
 }
 
-// Debug function to test SweetAlert
+
 function testSweetAlert() {
     if (typeof Swal !== 'undefined') {
         Swal.fire({

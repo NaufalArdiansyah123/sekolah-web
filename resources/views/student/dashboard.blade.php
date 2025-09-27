@@ -5,6 +5,7 @@
 
 @section('content')
 <div class="space-y-6">
+    
     <!-- Welcome Section -->
     <div class="bg-gradient-to-r from-emerald-500 to-teal-600 dark:from-emerald-600 dark:to-teal-700 rounded-xl p-6 text-white shadow-lg">
         <div class="flex items-center justify-between">

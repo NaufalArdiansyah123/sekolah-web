@@ -571,7 +571,7 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                     </svg>
-                    Export Data
+                    Export Excel
                 </button>
                 <a href="{{ route('teacher.students.create') }}" class="btn btn-primary">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -601,7 +601,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                 </svg>
             </div>
-            <div class="stat-value">{{ collect($students->items())->unique('class')->count() }}</div>
+            <div class="stat-value">{{ collect($students->items())->pluck('class.name')->filter()->unique()->count() }}</div>
             <div class="stat-title">Active Classes</div>
         </div>
 
@@ -694,7 +694,7 @@
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                             </svg>
-                            {{ $student->class }}
+                            {{ $student->class ? $student->class->name : 'No Class' }}
                         </div>
                     </div>
                 </div>
@@ -807,7 +807,20 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Export functionality
     window.exportStudents = function() {
-        alert('Export students functionality would be implemented here');
+        // Get current filters
+        const params = new URLSearchParams(window.location.search);
+        params.append('export', 'excel');
+        
+        // Create download link
+        const link = document.createElement('a');
+        link.href = `{{ route('teacher.students.index') }}?${params.toString()}`;
+        link.download = `data-siswa-${new Date().toISOString().split('T')[0]}.xlsx`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Show success message
+        showNotification('Data siswa berhasil diekspor!', 'success');
     };
 
     // Delete student functionality

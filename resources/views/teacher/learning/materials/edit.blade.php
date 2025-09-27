@@ -657,24 +657,35 @@
                         @enderror
                     </div>
 
+
+
                     <div class="form-group">
-                        <label class="form-label required">Class</label>
-                        <select name="class" class="form-select" required>
-                            <option value="">Select Class</option>
-                            <option value="X IPA 1" {{ old('class', $material->class) == 'X IPA 1' ? 'selected' : '' }}>X IPA 1</option>
-                            <option value="X IPA 2" {{ old('class', $material->class) == 'X IPA 2' ? 'selected' : '' }}>X IPA 2</option>
-                            <option value="X IPS 1" {{ old('class', $material->class) == 'X IPS 1' ? 'selected' : '' }}>X IPS 1</option>
-                            <option value="X IPS 2" {{ old('class', $material->class) == 'X IPS 2' ? 'selected' : '' }}>X IPS 2</option>
-                            <option value="XI IPA 1" {{ old('class', $material->class) == 'XI IPA 1' ? 'selected' : '' }}>XI IPA 1</option>
-                            <option value="XI IPA 2" {{ old('class', $material->class) == 'XI IPA 2' ? 'selected' : '' }}>XI IPA 2</option>
-                            <option value="XI IPS 1" {{ old('class', $material->class) == 'XI IPS 1' ? 'selected' : '' }}>XI IPS 1</option>
-                            <option value="XI IPS 2" {{ old('class', $material->class) == 'XI IPS 2' ? 'selected' : '' }}>XI IPS 2</option>
-                            <option value="XII IPA 1" {{ old('class', $material->class) == 'XII IPA 1' ? 'selected' : '' }}>XII IPA 1</option>
-                            <option value="XII IPA 2" {{ old('class', $material->class) == 'XII IPA 2' ? 'selected' : '' }}>XII IPA 2</option>
-                            <option value="XII IPS 1" {{ old('class', $material->class) == 'XII IPS 1' ? 'selected' : '' }}>XII IPS 1</option>
-                            <option value="XII IPS 2" {{ old('class', $material->class) == 'XII IPS 2' ? 'selected' : '' }}>XII IPS 2</option>
+                        <label class="form-label">Target Kelas</label>
+                        <select name="class_id" class="form-select">
+                            <option value="">Semua Kelas (Umum)</option>
+                            @if(isset($activeClasses) && $activeClasses->count() > 0)
+                                @foreach($activeClasses as $level => $classes)
+                                    <optgroup label="Kelas {{ $level }}">
+                                        @foreach($classes as $class)
+                                            <option value="{{ $class->id }}" {{ old('class_id', $material->class_id) == $class->id ? 'selected' : '' }}>
+                                                {{ $class->name }} - {{ $class->program }}
+                                            </option>
+                                        @endforeach
+                                    </optgroup>
+                                @endforeach
+                            @endif
                         </select>
-                        @error('class')
+                        <div class="success-message">
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            @if($material->class_id)
+                                Saat ini ditargetkan untuk: {{ $material->class ? $material->class->name : 'Kelas tidak ditemukan' }}
+                            @else
+                                Saat ini untuk semua kelas (umum)
+                            @endif
+                        </div>
+                        @error('class_id')
                             <div class="error-message">
                                 <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>

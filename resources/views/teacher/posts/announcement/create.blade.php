@@ -143,6 +143,30 @@
         box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
     }
 
+    /* Dark mode form adjustments */
+    .dark .form-control,
+    .dark .form-select {
+        background: var(--bg-secondary);
+        border-color: var(--border-color);
+        color: var(--text-primary);
+    }
+
+    .dark .form-control:focus,
+    .dark .form-select:focus {
+        border-color: #10b981;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+
+    .dark .form-control.is-invalid,
+    .dark .form-select.is-invalid {
+        border-color: #f87171;
+        box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.1);
+    }
+
+    .dark .invalid-feedback {
+        color: #f87171;
+    }
+
     .textarea-large {
         min-height: 200px;
         font-family: inherit;
@@ -196,6 +220,28 @@
         box-shadow: 0 6px 20px rgba(5, 150, 105, 0.3);
     }
 
+    /* Dark mode button adjustments */
+    .dark .btn-secondary {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+    }
+
+    .dark .btn-secondary:hover {
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
+        border-color: var(--border-color);
+    }
+
+    .dark .btn-success {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+    }
+
+    .dark .btn-success:hover {
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+    }
+
     .form-help {
         font-size: 0.75rem;
         color: var(--text-secondary);
@@ -244,6 +290,13 @@
         background: rgba(239, 68, 68, 0.1);
         color: #dc2626;
         border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    /* Dark mode alert adjustments */
+    .dark .alert-danger {
+        background: rgba(239, 68, 68, 0.2);
+        color: #f87171;
+        border: 1px solid rgba(239, 68, 68, 0.3);
     }
 
     /* Responsive Design */
@@ -602,6 +655,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         border-radius: 8px;
                         padding: 0.5rem;
                         background: var(--bg-secondary);
+                        transition: all 0.3s ease;
                     `;
                     preview.innerHTML = `
                         <img src="${e.target.result}" 

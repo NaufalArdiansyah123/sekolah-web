@@ -1346,15 +1346,12 @@
             }
         })();
 
-        // Debug function
-        function debugLog(message, data = null) {
-            console.log('[EXTRACURRICULAR DEBUG]', message, data);
-        }
+
 
         // Get correct base URL for current environment
         function getBaseUrl() {
             const currentUrl = window.location.href;
-            debugLog('Current URL:', currentUrl);
+
 
             // If we're on Laravel dev server (port 8000)
             if (currentUrl.includes(':8000')) {
@@ -1375,21 +1372,21 @@
         }
 
         function showPendingRegistrations() {
-            debugLog('showPendingRegistrations called');
+
 
             // Check if modal exists
             const modal = document.getElementById('pendingRegistrationsModal');
             if (!modal) {
-                debugLog('ERROR: Modal not found');
+                console.error('ERROR: Modal not found');
                 alert('Error: Modal tidak ditemukan');
                 return;
             }
 
-            debugLog('Opening modal and loading content');
+
 
             // Try jQuery first, fallback to vanilla JS
             if (typeof $ !== 'undefined' && typeof $.fn.modal !== 'undefined') {
-                debugLog('Using jQuery for modal');
+
                 // Show modal with jQuery
                 $('#pendingRegistrationsModal').modal('show');
 
@@ -1405,7 +1402,7 @@
                 </div>
             `);
             } else {
-                debugLog('Using vanilla JS for modal (jQuery not available)');
+
                 // Fallback to vanilla JS
                 if (typeof bootstrap !== 'undefined') {
                     const bootstrapModal = new bootstrap.Modal(modal);
@@ -1433,7 +1430,7 @@
 
             // Make AJAX request - use dynamic URL (test first, then real route)
             const url = window.PENDING_REGISTRATIONS_URL || '/admin/test-pending-registrations';
-            debugLog('Fetching from URL:', url, '(test mode:', !window.PENDING_REGISTRATIONS_URL, ')');
+
 
             fetch(url, {
                 method: 'GET',

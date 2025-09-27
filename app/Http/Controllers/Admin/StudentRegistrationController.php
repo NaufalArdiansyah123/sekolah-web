@@ -4,19 +4,26 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Exports\StudentRegistrationsExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StudentRegistrationController extends Controller
 {
     /**
-     * Display a listing of student account registrations.
+     * Display a listing of student account registrations (Tampilkan daftar pendaftaran akun siswa).
      */
     public function index(Request $request)
     {
+        // Handle export requests
+        if ($request->has('export')) {
+            return $this->handleExport($request);
+        }
+        
         $query = User::whereHas('roles', function($q) {
             $q->where('name', 'student');
         });
@@ -68,7 +75,7 @@ class StudentRegistrationController extends Controller
     }
 
     /**
-     * Display the specified student account registration.
+     * Display the specified student account registration (Tampilkan detail pendaftaran akun siswa).
      */
     public function show($id)
     {
@@ -80,7 +87,7 @@ class StudentRegistrationController extends Controller
     }
 
     /**
-     * Approve a student account registration.
+     * Approve a student account registration (Setujui pendaftaran akun siswa).
      */
     public function approve(Request $request, $id)
     {
@@ -151,7 +158,7 @@ class StudentRegistrationController extends Controller
     }
 
     /**
-     * Reject a student account registration.
+     * Reject a student account registration (Tolak pendaftaran akun siswa).
      */
     public function reject(Request $request, $id)
     {
@@ -613,82 +620,60 @@ class StudentRegistrationController extends Controller
     }
 
     /**
-     * Export student registrations.
+     * Export student registrations (Ekspor data pendaftaran akun siswa).
      */
     public function export(Request $request)
     {
+        return $this->handleExport($request);
+    }
+    
+    /**
+     * Handle export functionality
+     */
+    private function handleExport(Request $request)
+    {
         try {
+            // Get filters
+            $filters = [
+                'status' => $request->get('status'),
+                'search' => $request->get('search')
+            ];
+            
+            // Build query with same filters as index
             $query = User::whereHas('roles', function($q) {
                 $q->where('name', 'student');
             });
 
-            if ($request->filled('status')) {
-                $query->where('status', $request->status);
+            if ($filters['status']) {
+                $query->where('status', $filters['status']);
+            }
+
+            if ($filters['search']) {
+                $search = $filters['search'];
+                $query->where(function($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%");
+                      
+                    if (Schema::hasColumn('users', 'nis')) {
+                        $q->orWhere('nis', 'like', "%{$search}%");
+                    }
+                    if (Schema::hasColumn('users', 'class')) {
+                        $q->orWhere('class', 'like', "%{$search}%");
+                    }
+                });
             }
 
             $registrations = $query->orderBy('created_at', 'desc')->get();
-
-            $filename = 'student_registrations_' . date('Y-m-d_H-i-s') . '.csv';
-
-            $headers = [
-                'Content-Type' => 'text/csv',
-                'Content-Disposition' => "attachment; filename=\"{$filename}\"",
-            ];
-
-            $callback = function() use ($registrations) {
-                $file = fopen('php://output', 'w');
-                
-                // CSV Headers
-                $csvHeaders = [
-                    'ID',
-                    'Nama',
-                    'Email',
-                    'Status',
-                    'Tanggal Daftar'
-                ];
-
-                // Add optional columns if they exist
-                if (Schema::hasColumn('users', 'nis')) {
-                    $csvHeaders[] = 'NIS';
-                }
-                if (Schema::hasColumn('users', 'class')) {
-                    $csvHeaders[] = 'Kelas';
-                }
-                if (Schema::hasColumn('users', 'phone')) {
-                    $csvHeaders[] = 'No. Telepon';
-                }
-
-                fputcsv($file, $csvHeaders);
-
-                // CSV Data
-                foreach ($registrations as $registration) {
-                    $csvData = [
-                        $registration->id,
-                        $registration->name,
-                        $registration->email,
-                        ucfirst($registration->status),
-                        $registration->created_at->format('Y-m-d H:i:s')
-                    ];
-
-                    // Add optional data if columns exist
-                    if (Schema::hasColumn('users', 'nis')) {
-                        $csvData[] = $registration->nis ?? '';
-                    }
-                    if (Schema::hasColumn('users', 'class')) {
-                        $csvData[] = $registration->class ?? '';
-                    }
-                    if (Schema::hasColumn('users', 'phone')) {
-                        $csvData[] = $registration->phone ?? '';
-                    }
-
-                    fputcsv($file, $csvData);
-                }
-
-                fclose($file);
-            };
-
-            return response()->stream($callback, 200, $headers);
-
+            
+            // Generate filename
+            $filename = 'pendaftaran-siswa';
+            if ($filters['status']) {
+                $filename .= '-' . $filters['status'];
+            }
+            $filename .= '-' . date('Y-m-d') . '.xlsx';
+            
+            return Excel::download(new StudentRegistrationsExport($registrations, $filters), $filename);
+            
         } catch (\Exception $e) {
             Log::error('Error exporting student registrations', [
                 'error' => $e->getMessage()

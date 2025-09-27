@@ -12,14 +12,23 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Role;
+use App\Models\Setting;
 
 class StudentRegisterController extends Controller
 {
     /**
-     * Show the student account registration form.
+     * Show the student account registration form (Tampilkan form pendaftaran akun siswa).
      */
     public function showRegistrationForm()
     {
+        // Check if registration is allowed
+        $allowRegistration = Setting::get('allow_registration', '1');
+        
+        if ($allowRegistration !== '1') {
+            return view('auth.registration-closed')
+                ->with('message', 'Pendaftaran akun siswa saat ini sedang ditutup. Silakan hubungi administrator sekolah untuk informasi lebih lanjut.');
+        }
+        
         return view('auth.student-register');
     }
     
@@ -28,6 +37,16 @@ class StudentRegisterController extends Controller
      */
     public function checkStudentData(Request $request)
     {
+        // Check if registration is allowed
+        $allowRegistration = Setting::get('allow_registration', '1');
+        
+        if ($allowRegistration !== '1') {
+            return response()->json([
+                'exists' => false,
+                'message' => 'Pendaftaran akun siswa saat ini sedang ditutup'
+            ], 403);
+        }
+        
         try {
             $nis = $request->get('nis');
             
@@ -98,10 +117,18 @@ class StudentRegisterController extends Controller
     }
 
     /**
-     * Handle a student account registration request.
+     * Handle a student account registration request (Tangani permintaan pendaftaran akun siswa).
      */
     public function register(Request $request)
     {
+        // Check if registration is allowed
+        $allowRegistration = Setting::get('allow_registration', '1');
+        
+        if ($allowRegistration !== '1') {
+            return redirect()->route('home')
+                ->with('error', 'Pendaftaran akun siswa saat ini sedang ditutup.');
+        }
+        
         try {
             // Validate the request
             $this->validator($request->all())->validate();
@@ -118,11 +145,11 @@ class StudentRegisterController extends Controller
             if ($student) {
                 // Auto-approved, redirect to login
                 return redirect()->route('login')
-                    ->with('success', 'Pendaftaran akun berhasil! Akun Anda telah diaktifkan karena data ditemukan dalam database siswa. Silakan login.');
+                    ->with('success', 'Pendaftaran akun siswa berhasil! Akun Anda telah diaktifkan karena data ditemukan dalam database siswa. Silakan login.');
             } else {
                 // Needs manual approval
                 return redirect()->route('student.registration.pending')
-                    ->with('success', 'Pendaftaran akun berhasil! Akun Anda sedang menunggu konfirmasi dari admin. Anda akan dapat login setelah akun dikonfirmasi.');
+                    ->with('success', 'Pendaftaran akun siswa berhasil! Akun Anda sedang menunggu konfirmasi dari admin. Anda akan dapat login setelah akun dikonfirmasi.');
             }
             
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -137,7 +164,7 @@ class StudentRegisterController extends Controller
             
             return redirect()->back()
                 ->withInput($request->except('password', 'password_confirmation'))
-                ->with('error', 'Terjadi kesalahan saat mendaftarkan akun. Silakan coba lagi atau hubungi administrator.');
+                ->with('error', 'Terjadi kesalahan saat mendaftarkan akun siswa. Silakan coba lagi atau hubungi administrator.');
         }
     }
 
@@ -296,6 +323,16 @@ class StudentRegisterController extends Controller
      */
     public function checkNis(Request $request)
     {
+        // Check if registration is allowed
+        $allowRegistration = Setting::get('allow_registration', '1');
+        
+        if ($allowRegistration !== '1') {
+            return response()->json([
+                'available' => false,
+                'message' => 'Pendaftaran akun siswa saat ini sedang ditutup'
+            ], 403);
+        }
+        
         try {
             $nis = $request->get('nis');
             
@@ -353,6 +390,16 @@ class StudentRegisterController extends Controller
      */
     public function checkEmail(Request $request)
     {
+        // Check if registration is allowed
+        $allowRegistration = Setting::get('allow_registration', '1');
+        
+        if ($allowRegistration !== '1') {
+            return response()->json([
+                'available' => false,
+                'message' => 'Pendaftaran akun siswa saat ini sedang ditutup'
+            ], 403);
+        }
+        
         try {
             $email = $request->get('email');
             

@@ -1007,7 +1007,7 @@ document.addEventListener('DOMContentLoaded', function () {
     
     console.log('Enhanced agenda page animations loaded successfully!');
     
-    // Debug filter form
+
     const filterForm = document.getElementById('filterForm');
     if (filterForm) {
         console.log('Filter form found:', filterForm);
@@ -1123,7 +1123,7 @@ function submitFilterForm() {
     }
 }
 
-// Test function for debugging
+
 function testButtonClick() {
     console.log('Test button click function called');
     alert('Button is working!');

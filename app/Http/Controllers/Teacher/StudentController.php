@@ -3,8 +3,16 @@
 namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
+use App\Models\Student;
+use App\Models\User;
+use App\Models\Grade;
+use App\Models\Classes;
+use App\Exports\StudentsExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StudentController extends Controller
 {
@@ -14,375 +22,118 @@ class StudentController extends Controller
         $this->middleware('role:teacher');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        // Mock data for students - replace with actual model
-        $students = collect([
-            (object)[
-                'id' => 1,
-                'nis' => '2023001',
-                'name' => 'Ahmad Rizki Pratama',
-                'class' => 'VIII A',
-                'gender' => 'L',
-                'birth_date' => '2008-05-15',
-                'birth_place' => 'Jakarta',
-                'address' => 'Jl. Merdeka No. 123, Jakarta Pusat',
-                'phone' => '081234567890',
-                'email' => 'ahmad.rizki@student.school.id',
-                'parent_name' => 'Budi Pratama',
-                'parent_phone' => '081234567891',
-                'enrollment_date' => '2023-07-15',
-                'status' => 'active',
-                'photo' => null,
-                'religion' => 'Islam',
-                'blood_type' => 'A',
-                'height' => 165,
-                'weight' => 55
-            ],
-            (object)[
-                'id' => 2,
-                'nis' => '2023002',
-                'name' => 'Siti Nurhaliza',
-                'class' => 'VIII A',
-                'gender' => 'P',
-                'birth_date' => '2008-03-22',
-                'birth_place' => 'Bandung',
-                'address' => 'Jl. Sudirman No. 456, Bandung',
-                'phone' => '081234567892',
-                'email' => 'siti.nurhaliza@student.school.id',
-                'parent_name' => 'Sari Nurhaliza',
-                'parent_phone' => '081234567893',
-                'enrollment_date' => '2023-07-15',
-                'status' => 'active',
-                'photo' => null,
-                'religion' => 'Islam',
-                'blood_type' => 'B',
-                'height' => 158,
-                'weight' => 48
-            ],
-            (object)[
-                'id' => 3,
-                'nis' => '2023003',
-                'name' => 'Budi Santoso',
-                'class' => 'VIII B',
-                'gender' => 'L',
-                'birth_date' => '2008-08-10',
-                'birth_place' => 'Surabaya',
-                'address' => 'Jl. Pahlawan No. 789, Surabaya',
-                'phone' => '081234567894',
-                'email' => 'budi.santoso@student.school.id',
-                'parent_name' => 'Agus Santoso',
-                'parent_phone' => '081234567895',
-                'enrollment_date' => '2023-07-15',
-                'status' => 'active',
-                'photo' => null,
-                'religion' => 'Kristen',
-                'blood_type' => 'O',
-                'height' => 170,
-                'weight' => 60
-            ],
-            (object)[
-                'id' => 4,
-                'nis' => '2023004',
-                'name' => 'Dewi Lestari',
-                'class' => 'VII A',
-                'gender' => 'P',
-                'birth_date' => '2009-01-18',
-                'birth_place' => 'Yogyakarta',
-                'address' => 'Jl. Malioboro No. 321, Yogyakarta',
-                'phone' => '081234567896',
-                'email' => 'dewi.lestari@student.school.id',
-                'parent_name' => 'Indra Lestari',
-                'parent_phone' => '081234567897',
-                'enrollment_date' => '2023-07-15',
-                'status' => 'active',
-                'photo' => null,
-                'religion' => 'Hindu',
-                'blood_type' => 'AB',
-                'height' => 155,
-                'weight' => 45
-            ],
-            (object)[
-                'id' => 5,
-                'nis' => '2023005',
-                'name' => 'Andi Wijaya',
-                'class' => 'IX A',
-                'gender' => 'L',
-                'birth_date' => '2007-11-05',
-                'birth_place' => 'Medan',
-                'address' => 'Jl. Gatot Subroto No. 654, Medan',
-                'phone' => '081234567898',
-                'email' => 'andi.wijaya@student.school.id',
-                'parent_name' => 'Rudi Wijaya',
-                'parent_phone' => '081234567899',
-                'enrollment_date' => '2022-07-15',
-                'status' => 'active',
-                'photo' => null,
-                'religion' => 'Islam',
-                'blood_type' => 'A',
-                'height' => 172,
-                'weight' => 65
-            ],
-            (object)[
-                'id' => 6,
-                'nis' => '2023006',
-                'name' => 'Maya Sari',
-                'class' => 'IX B',
-                'gender' => 'P',
-                'birth_date' => '2007-09-12',
-                'birth_place' => 'Makassar',
-                'address' => 'Jl. Hasanuddin No. 987, Makassar',
-                'phone' => '081234567900',
-                'email' => 'maya.sari@student.school.id',
-                'parent_name' => 'Hasan Sari',
-                'parent_phone' => '081234567901',
-                'enrollment_date' => '2022-07-15',
-                'status' => 'active',
-                'photo' => null,
-                'religion' => 'Islam',
-                'blood_type' => 'B',
-                'height' => 160,
-                'weight' => 50
-            ],
-            (object)[
-                'id' => 7,
-                'nis' => '2023007',
-                'name' => 'Rudi Hermawan',
-                'class' => 'VII B',
-                'gender' => 'L',
-                'birth_date' => '2009-04-28',
-                'birth_place' => 'Palembang',
-                'address' => 'Jl. Ampera No. 147, Palembang',
-                'phone' => '081234567902',
-                'email' => 'rudi.hermawan@student.school.id',
-                'parent_name' => 'Dedi Hermawan',
-                'parent_phone' => '081234567903',
-                'enrollment_date' => '2023-07-15',
-                'status' => 'active',
-                'photo' => null,
-                'religion' => 'Islam',
-                'blood_type' => 'O',
-                'height' => 162,
-                'weight' => 52
-            ],
-            (object)[
-                'id' => 8,
-                'nis' => '2023008',
-                'name' => 'Lina Marlina',
-                'class' => 'VIII A',
-                'gender' => 'P',
-                'birth_date' => '2008-07-03',
-                'birth_place' => 'Semarang',
-                'address' => 'Jl. Pandanaran No. 258, Semarang',
-                'phone' => '081234567904',
-                'email' => 'lina.marlina@student.school.id',
-                'parent_name' => 'Tono Marlina',
-                'parent_phone' => '081234567905',
-                'enrollment_date' => '2023-07-15',
-                'status' => 'active',
-                'photo' => null,
-                'religion' => 'Kristen',
-                'blood_type' => 'A',
-                'height' => 157,
-                'weight' => 47
-            ],
-            (object)[
-                'id' => 9,
-                'nis' => '2022001',
-                'name' => 'Fajar Nugroho',
-                'class' => 'IX A',
-                'gender' => 'L',
-                'birth_date' => '2007-12-20',
-                'birth_place' => 'Solo',
-                'address' => 'Jl. Slamet Riyadi No. 369, Solo',
-                'phone' => '081234567906',
-                'email' => 'fajar.nugroho@student.school.id',
-                'parent_name' => 'Bambang Nugroho',
-                'parent_phone' => '081234567907',
-                'enrollment_date' => '2022-07-15',
-                'status' => 'active',
-                'photo' => null,
-                'religion' => 'Islam',
-                'blood_type' => 'AB',
-                'height' => 175,
-                'weight' => 68
-            ],
-            (object)[
-                'id' => 10,
-                'nis' => '2022002',
-                'name' => 'Rina Kusuma',
-                'class' => 'IX B',
-                'gender' => 'P',
-                'birth_date' => '2007-06-14',
-                'birth_place' => 'Denpasar',
-                'address' => 'Jl. Gajah Mada No. 741, Denpasar',
-                'phone' => '081234567908',
-                'email' => 'rina.kusuma@student.school.id',
-                'parent_name' => 'Wayan Kusuma',
-                'parent_phone' => '081234567909',
-                'enrollment_date' => '2022-07-15',
-                'status' => 'active',
-                'photo' => null,
-                'religion' => 'Hindu',
-                'blood_type' => 'B',
-                'height' => 159,
-                'weight' => 49
-            ],
-            (object)[
-                'id' => 11,
-                'nis' => '2023009',
-                'name' => 'Doni Prasetyo',
-                'class' => 'VII A',
-                'gender' => 'L',
-                'birth_date' => '2009-02-08',
-                'birth_place' => 'Balikpapan',
-                'address' => 'Jl. Jenderal Sudirman No. 852, Balikpapan',
-                'phone' => '081234567910',
-                'email' => 'doni.prasetyo@student.school.id',
-                'parent_name' => 'Eko Prasetyo',
-                'parent_phone' => '081234567911',
-                'enrollment_date' => '2023-07-15',
-                'status' => 'active',
-                'photo' => null,
-                'religion' => 'Islam',
-                'blood_type' => 'O',
-                'height' => 160,
-                'weight' => 50
-            ],
-            (object)[
-                'id' => 12,
-                'nis' => '2023010',
-                'name' => 'Sari Indah',
-                'class' => 'VII B',
-                'gender' => 'P',
-                'birth_date' => '2009-10-25',
-                'birth_place' => 'Pontianak',
-                'address' => 'Jl. Tanjungpura No. 963, Pontianak',
-                'phone' => '081234567912',
-                'email' => 'sari.indah@student.school.id',
-                'parent_name' => 'Joko Indah',
-                'parent_phone' => '081234567913',
-                'enrollment_date' => '2023-07-15',
-                'status' => 'active',
-                'photo' => null,
-                'religion' => 'Kristen',
-                'blood_type' => 'A',
-                'height' => 154,
-                'weight' => 44
-            ]
-        ]);
+        // Handle export requests
+        if ($request->has('export')) {
+            return $this->handleExport($request);
+        }
+        
+        // Get students from database
+        $query = Student::with(['user', 'class'])->active();
 
         // Apply filters
         if (request('search')) {
-            $students = $students->filter(function ($student) {
-                return stripos($student->name, request('search')) !== false ||
-                       stripos($student->nis, request('search')) !== false ||
-                       stripos($student->email, request('search')) !== false;
+            $search = request('search');
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('nis', 'like', '%' . $search . '%')
+                  ->orWhere('email', 'like', '%' . $search . '%');
             });
         }
 
         if (request('class')) {
-            $students = $students->filter(function ($student) {
-                return $student->class === request('class');
+            $query->whereHas('class', function($q) {
+                $q->where('name', request('class'));
             });
         }
 
         if (request('gender')) {
-            $students = $students->filter(function ($student) {
-                return $student->gender === request('gender');
-            });
+            $query->where('gender', request('gender'));
         }
 
         if (request('status')) {
-            $students = $students->filter(function ($student) {
-                return $student->status === request('status');
-            });
+            $query->where('status', request('status'));
         }
 
         // Apply sorting
         $sortBy = request('sort', 'name');
+        $sortDirection = request('direction', 'asc');
+        
         switch ($sortBy) {
             case 'name':
-                $students = $students->sortBy('name');
+                $query->orderBy('name', $sortDirection);
                 break;
             case 'nis':
-                $students = $students->sortBy('nis');
+                $query->orderBy('nis', $sortDirection);
                 break;
             case 'class':
-                $students = $students->sortBy('class');
+                $query->join('classes', 'students.class_id', '=', 'classes.id')
+                      ->orderBy('classes.name', $sortDirection)
+                      ->select('students.*');
                 break;
             case 'enrollment_date':
-                $students = $students->sortByDesc('enrollment_date');
+                $query->orderBy('enrollment_date', $sortDirection);
+                break;
+            case 'enrollment_date':
+                $query->orderBy('enrollment_date', $sortDirection);
+                break;
+            case 'created_at':
+                $query->orderBy('created_at', $sortDirection);
                 break;
             default:
-                $students = $students->sortBy('name');
+                $query->orderBy('name', 'asc');
         }
 
-        // Paginate manually
-        $perPage = 12;
-        $currentPage = request('page', 1);
-        $total = $students->count();
-        $students = $students->slice(($currentPage - 1) * $perPage, $perPage);
+        // Paginate
+        $students = $query->paginate(12)->appends(request()->query());
 
-        $students = new \Illuminate\Pagination\LengthAwarePaginator(
-            $students,
-            $total,
-            $perPage,
-            $currentPage,
-            ['path' => request()->url(), 'pageName' => 'page']
-        );
+        // Get filter options
+        $classes = Classes::where('is_active', true)->pluck('name')->sort();
+        $genders = [
+            'L' => 'Laki-laki',
+            'P' => 'Perempuan'
+        ];
+        $statuses = [
+            'active' => 'Aktif',
+            'inactive' => 'Tidak Aktif',
+            'graduated' => 'Lulus'
+        ];
 
-        return view('teacher.students.index', compact('students'));
+        return view('teacher.students.index', compact('students', 'classes', 'genders', 'statuses'));
     }
 
     public function show($id)
     {
-        // Mock data for single student
-        $student = (object)[
-            'id' => $id,
-            'nis' => '2023001',
-            'name' => 'Ahmad Rizki Pratama',
-            'class' => 'VIII A',
-            'gender' => 'L',
-            'birth_date' => '2008-05-15',
-            'birth_place' => 'Jakarta',
-            'address' => 'Jl. Merdeka No. 123, Jakarta Pusat',
-            'phone' => '081234567890',
-            'email' => 'ahmad.rizki@student.school.id',
-            'parent_name' => 'Budi Pratama',
-            'parent_phone' => '081234567891',
-            'parent_email' => 'budi.pratama@gmail.com',
-            'enrollment_date' => '2023-07-15',
-            'status' => 'active',
-            'photo' => null,
-            'religion' => 'Islam',
-            'blood_type' => 'A',
-            'height' => 165,
-            'weight' => 55,
-            'emergency_contact' => 'Siti Pratama (Ibu)',
-            'emergency_phone' => '081234567892',
-            'previous_school' => 'SD Negeri 01 Jakarta',
-            'hobbies' => 'Membaca, Bermain Sepak Bola',
-            'achievements' => 'Juara 1 Olimpiade Matematika Tingkat Kota',
-            'medical_notes' => 'Tidak ada riwayat penyakit khusus'
-        ];
+        // Get student from database
+        $student = Student::with(['user', 'extracurricularRegistrations.extracurricular', 'attendanceLogs'])
+                          ->findOrFail($id);
 
-        // Mock academic data
+        // Get academic data from database
+        $grades = Grade::where('student_id', $student->user_id ?? $student->id)
+                      ->with(['assignment', 'quiz'])
+                      ->latest()
+                      ->take(10)
+                      ->get();
+
         $academicData = [
-            'current_semester' => 'Ganjil 2023/2024',
-            'total_subjects' => 12,
-            'average_score' => 85.5,
-            'rank_in_class' => 3,
-            'total_students_in_class' => 25,
-            'attendance_percentage' => 96.5,
-            'total_absences' => 2,
-            'recent_grades' => [
-                ['subject' => 'Matematika', 'score' => 88, 'grade' => 'A-'],
-                ['subject' => 'Bahasa Indonesia', 'score' => 85, 'grade' => 'B+'],
-                ['subject' => 'IPA', 'score' => 90, 'grade' => 'A'],
-                ['subject' => 'IPS', 'score' => 82, 'grade' => 'B+'],
-                ['subject' => 'Bahasa Inggris', 'score' => 87, 'grade' => 'A-']
-            ]
+            'current_semester' => 'Ganjil 2024/2025',
+            'total_subjects' => $grades->pluck('subject')->unique()->count(),
+            'average_score' => $grades->avg('score') ?? 0,
+            'rank_in_class' => $this->getStudentRankInClass($student),
+            'total_students_in_class' => Student::where('class_id', $student->class_id)->active()->count(),
+            'attendance_percentage' => $this->getAttendancePercentage($student),
+            'total_absences' => $student->attendanceLogs()->where('status', 'absent')->count(),
+            'recent_grades' => $grades->map(function($grade) {
+                return [
+                    'subject' => $grade->subject,
+                    'score' => $grade->score,
+                    'max_score' => $grade->max_score,
+                    'grade' => $grade->letter_grade,
+                    'assessment_name' => $grade->assessment_name,
+                    'created_at' => $grade->created_at
+                ];
+            })
         ];
 
         return view('teacher.students.show', compact('student', 'academicData'));
@@ -390,7 +141,10 @@ class StudentController extends Controller
 
     public function create()
     {
-        return view('teacher.students.create');
+        $classes = Classes::where('is_active', true)->get();
+        $religions = ['Islam', 'Kristen', 'Katolik', 'Hindu', 'Buddha', 'Konghucu'];
+        
+        return view('teacher.students.create', compact('classes', 'religions'));
     }
 
     public function store(Request $request)
@@ -398,7 +152,7 @@ class StudentController extends Controller
         $request->validate([
             'nis' => 'required|string|unique:students,nis',
             'name' => 'required|string|max:255',
-            'class' => 'required|string',
+            'class_id' => 'required|exists:classes,id',
             'gender' => 'required|in:L,P',
             'birth_date' => 'required|date',
             'birth_place' => 'required|string|max:255',
@@ -407,10 +161,13 @@ class StudentController extends Controller
             'email' => 'required|email|unique:students,email',
             'parent_name' => 'required|string|max:255',
             'parent_phone' => 'required|string|max:20',
-            'enrollment_date' => 'required|date',
             'religion' => 'required|string',
-            'blood_type' => 'required|in:A,B,AB,O',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+        ]);
+
+        $data = $request->only([
+            'nis', 'name', 'class_id', 'gender', 'birth_date', 'birth_place',
+            'address', 'phone', 'email', 'parent_name', 'parent_phone', 'religion'
         ]);
 
         // Handle file upload
@@ -418,89 +175,219 @@ class StudentController extends Controller
             $file = $request->file('photo');
             $filename = time() . '_' . $file->getClientOriginalName();
             $path = $file->storeAs('students/photos', $filename, 'public');
+            $data['photo'] = $path;
         }
 
-        // Here you would save to database
-        // Student::create([...]);
+        // Set default status and enrollment date
+        $data['status'] = 'active';
+        $data['enrollment_date'] = now()->toDateString();
+
+        // Save to database
+        Student::create($data);
 
         return redirect()->route('teacher.students.index')
-            ->with('success', 'Student data has been added successfully!');
+            ->with('success', 'Data siswa berhasil ditambahkan!');
     }
 
     public function edit($id)
     {
-        // Mock data for editing
-        $student = (object)[
-            'id' => $id,
-            'nis' => '2023001',
-            'name' => 'Ahmad Rizki Pratama',
-            'class' => 'VIII A',
-            'gender' => 'L',
-            'birth_date' => '2008-05-15',
-            'birth_place' => 'Jakarta',
-            'address' => 'Jl. Merdeka No. 123, Jakarta Pusat',
-            'phone' => '081234567890',
-            'email' => 'ahmad.rizki@student.school.id',
-            'parent_name' => 'Budi Pratama',
-            'parent_phone' => '081234567891',
-            'parent_email' => 'budi.pratama@gmail.com',
-            'enrollment_date' => '2023-07-15',
-            'status' => 'active',
-            'religion' => 'Islam',
-            'blood_type' => 'A',
-            'height' => 165,
-            'weight' => 55
-        ];
+        $student = Student::findOrFail($id);
+        $classes = Classes::where('is_active', true)->get();
+        $religions = ['Islam', 'Kristen', 'Katolik', 'Hindu', 'Buddha', 'Konghucu'];
 
-        return view('teacher.students.edit', compact('student'));
+        return view('teacher.students.edit', compact('student', 'classes', 'religions'));
     }
 
     public function update(Request $request, $id)
     {
+        $student = Student::findOrFail($id);
+
         $request->validate([
-            'nis' => 'required|string',
+            'nis' => 'required|string|unique:students,nis,' . $id,
             'name' => 'required|string|max:255',
-            'class' => 'required|string',
+            'class_id' => 'required|exists:classes,id',
             'gender' => 'required|in:L,P',
             'birth_date' => 'required|date',
             'birth_place' => 'required|string|max:255',
             'address' => 'required|string',
             'phone' => 'required|string|max:20',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:students,email,' . $id,
             'parent_name' => 'required|string|max:255',
             'parent_phone' => 'required|string|max:20',
-            'enrollment_date' => 'required|date',
             'religion' => 'required|string',
-            'blood_type' => 'required|in:A,B,AB,O',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+        ]);
+
+        $data = $request->only([
+            'nis', 'name', 'class_id', 'gender', 'birth_date', 'birth_place',
+            'address', 'phone', 'email', 'parent_name', 'parent_phone', 'religion'
         ]);
 
         // Handle file upload if new photo provided
         if ($request->hasFile('photo')) {
+            // Delete old photo if exists
+            if ($student->photo) {
+                Storage::disk('public')->delete($student->photo);
+            }
+
             $file = $request->file('photo');
             $filename = time() . '_' . $file->getClientOriginalName();
             $path = $file->storeAs('students/photos', $filename, 'public');
+            $data['photo'] = $path;
         }
 
-        // Here you would update in database
-        // Student::find($id)->update([...]);
+        // Update in database
+        $student->update($data);
 
         return redirect()->route('teacher.students.index')
-            ->with('success', 'Student data has been updated successfully!');
+            ->with('success', 'Data siswa berhasil diperbarui!');
     }
 
     public function destroy($id)
     {
-        // Here you would delete from database
-        // Student::find($id)->delete();
+        $student = Student::findOrFail($id);
+
+        // Delete photo if exists
+        if ($student->photo) {
+            Storage::disk('public')->delete($student->photo);
+        }
+
+        // Delete from database
+        $student->delete();
 
         return redirect()->route('teacher.students.index')
-            ->with('success', 'Student data has been deleted successfully!');
+            ->with('success', 'Data siswa berhasil dihapus!');
     }
 
-    public function export()
+    public function export(Request $request)
     {
-        // Export functionality would be implemented here
-        return response()->json(['message' => 'Export functionality would be implemented here']);
+        return $this->handleExport($request);
+    }
+    
+    /**
+     * Handle export functionality
+     */
+    private function handleExport(Request $request)
+    {
+        // Get filters
+        $filters = [
+            'search' => $request->get('search'),
+            'class' => $request->get('class'),
+            'gender' => $request->get('gender'),
+            'status' => $request->get('status')
+        ];
+        
+        // Build query with same filters as index
+        $query = Student::with(['user', 'class'])->active();
+        
+        if ($filters['search']) {
+            $search = $filters['search'];
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('nis', 'like', '%' . $search . '%')
+                  ->orWhere('email', 'like', '%' . $search . '%');
+            });
+        }
+        
+        if ($filters['class']) {
+            $query->whereHas('class', function($q) use ($filters) {
+                $q->where('name', $filters['class']);
+            });
+        }
+        
+        if ($filters['gender']) {
+            $query->where('gender', $filters['gender']);
+        }
+        
+        if ($filters['status']) {
+            $query->where('status', $filters['status']);
+        }
+        
+        // Apply sorting
+        $sortBy = $request->get('sort', 'name');
+        $sortDirection = $request->get('direction', 'asc');
+        
+        switch ($sortBy) {
+            case 'name':
+                $query->orderBy('name', $sortDirection);
+                break;
+            case 'nis':
+                $query->orderBy('nis', $sortDirection);
+                break;
+            case 'class':
+                $query->join('classes', 'students.class_id', '=', 'classes.id')
+                      ->orderBy('classes.name', $sortDirection)
+                      ->select('students.*');
+                break;
+            case 'created_at':
+                $query->orderBy('created_at', $sortDirection);
+                break;
+            default:
+                $query->orderBy('name', 'asc');
+        }
+        
+        $students = $query->with(['user', 'class'])->get();
+        
+        // Generate filename
+        $filename = 'data-siswa';
+        if ($filters['class']) {
+            $filename .= '-kelas-' . str_replace(' ', '-', strtolower($filters['class']));
+        }
+        if ($filters['status']) {
+            $filename .= '-status-' . $filters['status'];
+        }
+        $filename .= '-' . date('Y-m-d') . '.xlsx';
+        
+        return Excel::download(new StudentsExport($students, $filters), $filename);
+    }
+
+    /**
+     * Get student rank in class
+     */
+    private function getStudentRankInClass($student)
+    {
+        $classmates = Student::where('class_id', $student->class_id)
+                            ->active()
+                            ->with(['user'])
+                            ->get();
+
+        $rankings = [];
+        foreach ($classmates as $classmate) {
+            $avgScore = Grade::where('student_id', $classmate->user_id ?? $classmate->id)
+                           ->avg('score') ?? 0;
+            $rankings[] = [
+                'student_id' => $classmate->id,
+                'avg_score' => $avgScore
+            ];
+        }
+
+        // Sort by average score descending
+        usort($rankings, function($a, $b) {
+            return $b['avg_score'] <=> $a['avg_score'];
+        });
+
+        // Find student's rank
+        foreach ($rankings as $index => $ranking) {
+            if ($ranking['student_id'] == $student->id) {
+                return $index + 1;
+            }
+        }
+
+        return '-';
+    }
+
+    /**
+     * Get attendance percentage
+     */
+    private function getAttendancePercentage($student)
+    {
+        $totalDays = $student->attendanceLogs()->count();
+        if ($totalDays == 0) return 0;
+
+        $presentDays = $student->attendanceLogs()
+                              ->whereIn('status', ['present', 'late'])
+                              ->count();
+
+        return round(($presentDays / $totalDays) * 100, 1);
     }
 }

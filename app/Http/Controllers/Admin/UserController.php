@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Exports\UsersExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
@@ -16,6 +18,11 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
+        // Handle export requests
+        if ($request->has('export')) {
+            return $this->handleExport($request);
+        }
+        
         $query = User::with('roles');
 
         // Search functionality
@@ -276,6 +283,66 @@ class UserController extends Controller
         }
         
         return $password;
+    }
+    
+    /**
+     * Handle export functionality
+     */
+    public function export(Request $request)
+    {
+        return $this->handleExport($request);
+    }
+    
+    /**
+     * Handle export functionality
+     */
+    private function handleExport(Request $request)
+    {
+        // Get filters
+        $filters = [
+            'search' => $request->get('search'),
+            'role' => $request->get('role'),
+            'status' => $request->get('status')
+        ];
+        
+        // Build query with same filters as index
+        $query = User::with('roles');
+        
+        if ($filters['search']) {
+            $search = $filters['search'];
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+        
+        if ($filters['role']) {
+            $query->whereHas('roles', function($q) use ($filters) {
+                $q->where('name', $filters['role']);
+            });
+        }
+        
+        if ($filters['status']) {
+            if ($filters['status'] === 'active') {
+                $query->whereNull('email_verified_at');
+            } elseif ($filters['status'] === 'verified') {
+                $query->whereNotNull('email_verified_at');
+            }
+        }
+        
+        $users = $query->latest()->get();
+        
+        // Generate filename
+        $filename = 'data-pengguna';
+        if ($filters['role']) {
+            $filename .= '-' . $filters['role'];
+        }
+        if ($filters['status']) {
+            $filename .= '-' . $filters['status'];
+        }
+        $filename .= '-' . date('Y-m-d') . '.xlsx';
+        
+        return Excel::download(new UsersExport($users, $filters), $filename);
     }
 
     /**

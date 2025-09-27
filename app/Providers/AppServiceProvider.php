@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Schema;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,23 +21,49 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Force HTTPS for ngrok and production
-        if (config('app.env') === 'production' || 
-            request()->header('x-forwarded-proto') === 'https' ||
-            str_contains(request()->getHost(), 'ngrok.io')) {
-            \URL::forceScheme('https');
-        }
-        
-        // Trust ngrok proxy headers
-        if (request()->header('x-forwarded-proto') === 'https') {
-            request()->server->set('HTTPS', 'on');
-        }
-        
-        // Set secure cookie settings for ngrok
-        if (str_contains(request()->getHost(), 'ngrok.io')) {
-            config([
-                'session.secure' => true,
-                'session.same_site' => 'none'
+        // Load helper files
+        require_once app_path('Helpers/RegistrationHelper.php');
+    }
+    
+    /**
+     * Share school settings to all views
+     */
+    private function shareSchoolSettings()
+    {
+        try {
+            if (Schema::hasTable('settings')) {
+                $schoolSettings = \App\Models\Setting::getByGroup('school');
+                
+                // Add default values if not set
+                $schoolSettings = array_merge([
+                    'school_name' => 'SMK PGRI 2 PONOROGO',
+                    'school_logo' => '',
+                    'school_address' => '',
+                    'school_phone' => '',
+                    'school_email' => '',
+                    'school_website' => '',
+                    'principal_name' => '',
+                    'school_accreditation' => '',
+                ], $schoolSettings);
+                
+                View::share('schoolSettings', $schoolSettings);
+                
+                // Share individual settings for backward compatibility
+                foreach ($schoolSettings as $key => $value) {
+                    View::share($key, $value);
+                }
+            }
+        } catch (\Exception $e) {
+            // Silently fail if settings table doesn't exist yet
+            View::share('schoolSettings', [
+                'school_name' => 'SMK PGRI 2 PONOROGO',
+                'school_logo' => '',
+                'school_address' => '',
+                'school_phone' => '',
+                'school_email' => '',
+                'school_website' => '',
+                'principal_name' => '',
+                'school_accreditation' => '',
             ]);
         }
     }

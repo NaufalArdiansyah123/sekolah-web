@@ -1,608 +1,1110 @@
 @extends('layouts.admin')
 
-@section('title', $album['title'] . ' - Galeri Foto - SMA Negeri 1 Balong')
+@section('title', 'Album Photos - ' . $album['title'])
 
 @push('styles')
 <style>
     :root {
-        --primary-blue: #1e40af;
-        --secondary-blue: #3b82f6;
-        --accent-blue: #60a5fa;
-        --gray-50: #f9fafb;
-        --gray-100: #f3f4f6;
-        --gray-800: #1f2937;
-        --gray-900: #111827;
+        --primary-color: #3b82f6;
+        --primary-dark: #2563eb;
+        --secondary-color: #8b5cf6;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --info-color: #06b6d4;
+        
+        /* Light theme */
+        --bg-primary: #ffffff;
+        --bg-secondary: #f8fafc;
+        --bg-tertiary: #f1f5f9;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --text-muted: #94a3b8;
+        --border-color: #e2e8f0;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        
+        /* Action buttons */
+        --btn-view-bg: rgba(59, 130, 246, 0.9);
+        --btn-download-bg: rgba(16, 185, 129, 0.9);
+        --btn-delete-bg: rgba(239, 68, 68, 0.9);
+        
+        /* Modal */
+        --modal-bg: rgba(0, 0, 0, 0.9);
+        --modal-nav-bg: rgba(0, 0, 0, 0.5);
+        --modal-nav-hover-bg: rgba(0, 0, 0, 0.8);
     }
 
-    .photo-gallery-hero {
-        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
-        color: white;
-        padding: 3rem 0 2rem;
-        margin-bottom: 3rem;
+    .dark {
+        --bg-primary: #1e293b;
+        --bg-secondary: #334155;
+        --bg-tertiary: #475569;
+        --text-primary: #f1f5f9;
+        --text-secondary: #cbd5e1;
+        --text-muted: #94a3b8;
+        --border-color: #475569;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+        --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.4);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.4), 0 8px 10px -6px rgb(0 0 0 / 0.4);
+        
+        /* Action buttons for dark mode */
+        --btn-view-bg: rgba(59, 130, 246, 0.8);
+        --btn-download-bg: rgba(16, 185, 129, 0.8);
+        --btn-delete-bg: rgba(239, 68, 68, 0.8);
+        
+        /* Modal for dark mode */
+        --modal-bg: rgba(0, 0, 0, 0.95);
+        --modal-nav-bg: rgba(0, 0, 0, 0.7);
+        --modal-nav-hover-bg: rgba(0, 0, 0, 0.9);
     }
 
-    .hero-content {
-        max-width: 1000px;
-        margin: 0 auto;
-        padding: 0 1rem;
-        text-align: center;
+    .photos-container {
+        background: var(--bg-secondary);
+        min-height: 100vh;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
     }
 
-    .hero-title {
-        font-size: 2.5rem;
-        font-weight: 800;
-        margin-bottom: 1rem;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    .page-header {
+        background: var(--bg-primary);
+        border-radius: 1rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
     }
 
-    .hero-description {
-        font-size: 1.1rem;
-        opacity: 0.9;
-        margin-bottom: 1.5rem;
-        line-height: 1.6;
-    }
-
-    .hero-meta {
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
         display: flex;
-        justify-content: center;
-        gap: 2rem;
-        flex-wrap: wrap;
-        margin-top: 1.5rem;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .page-subtitle {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        margin: 0;
+    }
+
+    .album-info {
+        background: var(--bg-primary);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+    }
+
+    .album-meta {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
     }
 
     .meta-item {
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        font-size: 0.9rem;
-        opacity: 0.9;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
     }
 
-    .back-button {
-        display: inline-flex;
+    .meta-icon {
+        width: 1.5rem;
+        height: 1.5rem;
+        background: var(--bg-tertiary);
+        border-radius: 0.375rem;
+        display: flex;
         align-items: center;
-        gap: 0.5rem;
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-        padding: 0.75rem 1.5rem;
-        border-radius: 25px;
-        text-decoration: none;
+        justify-content: center;
+        color: var(--primary-color);
+    }
+
+    .category-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
         font-weight: 600;
-        transition: all 0.3s ease;
-        margin-bottom: 1rem;
-        backdrop-filter: blur(10px);
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
     }
 
-    .back-button:hover {
-        background: rgba(255, 255, 255, 0.2);
-        color: white;
-        text-decoration: none;
-        transform: translateY(-2px);
+    .category-school_events {
+        background: rgba(239, 68, 68, 0.1);
+        color: #dc2626;
     }
 
-    .gallery-container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 0 1rem 4rem;
+    .category-academic {
+        background: rgba(59, 130, 246, 0.1);
+        color: #2563eb;
     }
 
-    .gallery-controls {
+    .category-extracurricular {
+        background: rgba(16, 185, 129, 0.1);
+        color: #059669;
+    }
+
+    .category-achievements {
+        background: rgba(245, 158, 11, 0.1);
+        color: #d97706;
+    }
+
+    .category-facilities {
+        background: rgba(139, 92, 246, 0.1);
+        color: #7c3aed;
+    }
+
+    .category-general {
+        background: rgba(107, 114, 128, 0.1);
+        color: #374151;
+    }
+
+    .dark .category-school_events {
+        background: rgba(239, 68, 68, 0.2);
+        color: #fca5a5;
+    }
+
+    .dark .category-academic {
+        background: rgba(59, 130, 246, 0.2);
+        color: #93c5fd;
+    }
+
+    .dark .category-extracurricular {
+        background: rgba(16, 185, 129, 0.2);
+        color: #6ee7b7;
+    }
+
+    .dark .category-achievements {
+        background: rgba(245, 158, 11, 0.2);
+        color: #fbbf24;
+    }
+
+    .dark .category-facilities {
+        background: rgba(139, 92, 246, 0.2);
+        color: #c4b5fd;
+    }
+
+    .dark .category-general {
+        background: rgba(107, 114, 128, 0.2);
+        color: #d1d5db;
+    }
+
+    .toolbar {
+        background: var(--bg-primary);
+        border-radius: 1rem;
+        padding: 1rem 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border-color);
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 2rem;
-        background: white;
-        padding: 1rem 1.5rem;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        flex-wrap: wrap;
+        gap: 1rem;
     }
 
-    .photo-count {
-        font-weight: 600;
-        color: var(--gray-800);
-    }
-
-    .view-toggle {
+    .view-controls {
         display: flex;
-        background: var(--gray-100);
-        border-radius: 8px;
-        padding: 0.25rem;
+        gap: 0.5rem;
+        align-items: center;
     }
 
-    .toggle-btn {
-        padding: 0.5rem 1rem;
-        background: transparent;
-        border: none;
-        border-radius: 6px;
+    .view-btn {
+        padding: 0.5rem;
+        border: 1px solid var(--border-color);
+        background: var(--bg-secondary);
+        color: var(--text-secondary);
+        border-radius: 0.5rem;
         cursor: pointer;
-        font-weight: 500;
-        color: var(--gray-800);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    .view-btn.active {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+
+    .view-btn:hover {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+
+    .search-box {
+        position: relative;
+        max-width: 300px;
+        flex: 1;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.5rem 1rem 0.5rem 2.5rem;
+        border: 1px solid var(--border-color);
+        border-radius: 0.5rem;
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        font-size: 0.875rem;
         transition: all 0.3s ease;
     }
 
-    .toggle-btn.active {
-        background: var(--secondary-blue);
-        color: white;
+    .search-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
     }
 
     .photos-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 1.5rem;
+        gap: 1rem;
         transition: all 0.3s ease;
     }
 
-    .photos-grid.masonry {
-        column-count: 4;
-        column-gap: 1.5rem;
-        grid-template-columns: none;
+    .photos-grid.grid-view {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+
+    .photos-grid.masonry-view {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-auto-rows: 10px;
+    }
+
+    .photos-grid.list-view {
+        grid-template-columns: 1fr;
     }
 
     .photo-item {
-        background: white;
-        border-radius: 12px;
+        background: var(--bg-primary);
+        border-radius: 1rem;
         overflow: hidden;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+        position: relative;
         cursor: pointer;
-        break-inside: avoid;
-        margin-bottom: 1.5rem;
-    }
-
-    .photos-grid.masonry .photo-item {
-        margin-bottom: 1.5rem;
     }
 
     .photo-item:hover {
         transform: translateY(-4px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        box-shadow: var(--shadow-xl);
+    }
+
+    .photo-item.masonry-view {
+        grid-row-end: span var(--row-span);
     }
 
     .photo-image {
         width: 100%;
-        height: auto;
-        display: block;
+        height: 200px;
+        object-fit: cover;
         transition: transform 0.3s ease;
     }
 
-    .photos-grid:not(.masonry) .photo-image {
-        height: 220px;
-        object-fit: cover;
+    .photo-item.masonry-view .photo-image {
+        height: auto;
+        aspect-ratio: auto;
+    }
+
+    .photo-item.list-view .photo-image {
+        width: 150px;
+        height: 100px;
+        flex-shrink: 0;
     }
 
     .photo-item:hover .photo-image {
         transform: scale(1.05);
     }
 
-    /* Lightbox Styles */
-    .lightbox {
-        display: none;
-        position: fixed;
+    .photo-overlay {
+        position: absolute;
         top: 0;
         left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.9);
-        z-index: 1000;
-        backdrop-filter: blur(10px);
-    }
-
-    .lightbox.active {
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
         display: flex;
-        align-items: center;
-        justify-content: center;
-        animation: fadeIn 0.3s ease;
+        align-items: flex-end;
+        padding: 1rem;
     }
 
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
+    .photo-item:hover .photo-overlay {
+        opacity: 1;
     }
 
-    .lightbox-content {
-        position: relative;
-        max-width: 90vw;
-        max-height: 90vh;
-        background: white;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    }
-
-    .lightbox-image {
-        width: 100%;
-        height: auto;
-        max-height: 70vh;
-        object-fit: contain;
-        display: block;
-    }
-
-    .lightbox-info {
-        padding: 1.5rem;
-        background: white;
-    }
-
-    .lightbox-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: var(--gray-900);
-        margin-bottom: 0.5rem;
-    }
-
-    .lightbox-meta {
-        color: #6b7280;
-        font-size: 0.9rem;
-    }
-
-    .lightbox-close {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        background: rgba(0, 0, 0, 0.7);
+    .photo-info {
         color: white;
+        width: 100%;
+    }
+
+    .photo-name {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        font-size: 0.875rem;
+    }
+
+    .photo-size {
+        font-size: 0.75rem;
+        opacity: 0.8;
+    }
+
+    .photo-actions {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        display: flex;
+        gap: 0.5rem;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .photo-item:hover .photo-actions {
+        opacity: 1;
+    }
+
+    .action-btn {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 0.5rem;
         border: none;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
+        cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        cursor: pointer;
+        font-size: 0.75rem;
         transition: all 0.3s ease;
     }
 
-    .lightbox-close:hover {
-        background: rgba(0, 0, 0, 0.9);
+    .btn-view {
+        background: var(--btn-view-bg);
+        color: white;
+    }
+
+    .btn-download {
+        background: var(--btn-download-bg);
+        color: white;
+    }
+
+    .btn-delete {
+        background: var(--btn-delete-bg);
+        color: white;
+    }
+
+    .action-btn:hover {
         transform: scale(1.1);
     }
 
-    .lightbox-nav {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        background: rgba(0, 0, 0, 0.7);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 50px;
-        height: 50px;
+    .photo-item.list-view {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .photo-item.list-view .photo-overlay {
+        display: none;
+    }
+
+    .photo-item.list-view .photo-actions {
+        position: static;
+        opacity: 1;
+        margin-left: auto;
+    }
+
+    .photo-details {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .photo-title {
+        font-weight: 600;
+        color: var(--text-primary);
+        font-size: 1rem;
+    }
+
+    .photo-meta {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: var(--bg-primary);
+        border-radius: 1rem;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
+    }
+
+    .empty-icon {
+        width: 5rem;
+        height: 5rem;
+        margin: 0 auto 1.5rem;
+        background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary));
+        border-radius: 1rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
+        font-size: 2.5rem;
+        color: var(--text-muted);
     }
 
-    .lightbox-nav:hover {
-        background: rgba(0, 0, 0, 0.9);
-        transform: translateY(-50%) scale(1.1);
+    .empty-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
     }
 
-    .lightbox-prev { left: 1rem; }
-    .lightbox-next { right: 1rem; }
+    .empty-description {
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+    }
 
-    .download-all {
-        background: var(--secondary-blue);
+    .btn-primary-custom {
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
         color: white;
+        border: none;
         padding: 0.75rem 1.5rem;
-        border-radius: 8px;
-        text-decoration: none;
+        border-radius: 0.75rem;
         font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-md);
+    }
+
+    .btn-primary-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-xl);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-secondary-custom {
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        text-decoration: none;
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
         transition: all 0.3s ease;
     }
 
-    .download-all:hover {
-        background: var(--primary-blue);
-        color: white;
+    .btn-secondary-custom:hover {
+        background: var(--border-color);
+        color: var(--text-primary);
         text-decoration: none;
-        transform: translateY(-1px);
+        transform: translateY(-2px);
     }
 
-    @media (max-width: 1200px) {
-        .photos-grid.masonry {
-            column-count: 3;
-        }
+    /* Modal Styles */
+    .photo-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--modal-bg);
+        z-index: 9999;
+        padding: 2rem;
     }
 
+    .modal-content {
+        position: relative;
+        max-width: 90vw;
+        max-height: 90vh;
+        margin: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+    }
+
+    .modal-image {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        border-radius: 0.5rem;
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: var(--modal-nav-bg);
+        color: white;
+        border: none;
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .modal-close:hover {
+        background: var(--modal-nav-hover-bg);
+        transform: scale(1.1);
+    }
+
+    .modal-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: var(--modal-nav-bg);
+        color: white;
+        border: none;
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .modal-nav:hover {
+        background: var(--modal-nav-hover-bg);
+        transform: translateY(-50%) scale(1.1);
+    }
+
+    .modal-prev {
+        left: 1rem;
+    }
+
+    .modal-next {
+        right: 1rem;
+    }
+
+    /* Responsive Design */
     @media (max-width: 768px) {
-        .hero-title {
-            font-size: 2rem;
+        .photos-container {
+            padding: 1rem;
         }
-        
-        .hero-meta {
+
+        .page-header {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            justify-content: center;
+        }
+
+        .toolbar {
             flex-direction: column;
-            gap: 0.75rem;
+            align-items: stretch;
         }
-        
-        .gallery-controls {
-            flex-direction: column;
-            gap: 1rem;
+
+        .view-controls {
+            justify-content: center;
         }
-        
-        .photos-grid {
+
+        .photos-grid.grid-view {
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        }
+
+        .photos-grid.masonry-view {
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
         }
-        
-        .photos-grid.masonry {
-            column-count: 2;
+
+        .photo-item.list-view {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .photo-item.list-view .photo-image {
+            width: 100%;
+            height: 150px;
         }
     }
 
     @media (max-width: 480px) {
-        .photos-grid.masonry {
-            column-count: 1;
+        .photos-grid.grid-view,
+        .photos-grid.masonry-view {
+            grid-template-columns: 1fr;
+        }
+
+        .album-meta {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Animation */
+    .fade-in {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.6s ease forwards;
+    }
+
+    .fade-in:nth-child(1) { animation-delay: 0.1s; }
+    .fade-in:nth-child(2) { animation-delay: 0.2s; }
+    .fade-in:nth-child(3) { animation-delay: 0.3s; }
+    .fade-in:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
     }
 </style>
 @endpush
 
 @section('content')
-<div class="photo-gallery-hero">
-    <div class="hero-content">
-        <a href="{{ url('/gallery') }}" class="back-button">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-            </svg>
-            Kembali ke Galeri
-        </a>
-        
-        <h1 class="hero-title">{{ $album['title'] }}</h1>
-        
-        @if(!empty($album['description']))
-            <p class="hero-description">{{ $album['description'] }}</p>
-        @endif
-        
-        <div class="hero-meta">
-            <div class="meta-item">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                {{ count($album['photos']) }} Foto
+<div class="photos-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+            <div>
+                <h1 class="page-title">
+                    <i class="fas fa-images"></i>
+                    {{ $album['title'] }}
+                </h1>
+                <p class="page-subtitle">
+                    Manage photos in this album
+                </p>
             </div>
-            
-            <div class="meta-item">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m4 0V7a2 2 0 00-2-2H6a2 2 0 00-2 2v0M8 7v8a2 2 0 002 2h4a2 2 0 002-2V7M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V9a2 2 0 00-2-2h-2"/>
-                </svg>
-                {{ isset($album['created_at']) ? \Carbon\Carbon::parse($album['created_at'])->locale('id')->isoFormat('D MMMM Y') : 'Tanggal tidak tersedia' }}
-            </div>
-            
-            @php
-                $categoryLabels = [
-                    'school_events' => 'Kegiatan Sekolah',
-                    'academic' => 'Akademik',
-                    'extracurricular' => 'Ekstrakurikuler',
-                    'achievements' => 'Prestasi',
-                    'facilities' => 'Fasilitas',
-                    'general' => 'Umum'
-                ];
-            @endphp
-            
-            <div class="meta-item">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-                </svg>
-                {{ $categoryLabels[$album['category']] ?? ucfirst(str_replace('_', ' ', $album['category'])) }}
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="gallery-container">
-    @if(count($album['photos']) > 0)
-        <!-- Gallery Controls -->
-        <div class="gallery-controls">
-            <div class="photo-count">
-                Menampilkan {{ count($album['photos']) }} foto
-            </div>
-            
-            <div style="display: flex; gap: 1rem; align-items: center;">
-                <div class="view-toggle">
-                    <button class="toggle-btn active" id="gridBtn" onclick="toggleView('grid')">
-                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
-                        </svg>
-                        Grid
-                    </button>
-                    <button class="toggle-btn" id="masonryBtn" onclick="toggleView('masonry')">
-                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/>
-                        </svg>
-                        Masonry
-                    </button>
-                </div>
-                
-                <a href="#" class="download-all" id="downloadAll">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-4-4m4 4l4-4m-6 0a8 8 0 1100-16 8 8 0 010 16z"/>
-                    </svg>
-                    Download Semua
+            <div class="d-flex gap-2">
+                <a href="{{ route('gallery.show', $album['slug']) }}" target="_blank" class="btn-secondary-custom">
+                    <i class="fas fa-external-link-alt"></i>
+                    View Public
+                </a>
+                <a href="{{ route('admin.gallery.index') }}" class="btn-secondary-custom">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Gallery
                 </a>
             </div>
         </div>
+    </div>
 
-        <!-- Photos Grid -->
-        <div class="photos-grid" id="photosGrid">
+    <!-- Album Info -->
+    <div class="album-info fade-in">
+        <div class="album-meta">
+            <div class="meta-item">
+                <div class="meta-icon">
+                    <i class="fas fa-tag"></i>
+                </div>
+                <span class="category-badge category-{{ $album['category'] }}">
+                    {{ ucfirst(str_replace('_', ' ', $album['category'])) }}
+                </span>
+            </div>
+            <div class="meta-item">
+                <div class="meta-icon">
+                    <i class="fas fa-images"></i>
+                </div>
+                <span>{{ count($album['photos']) }} photos</span>
+            </div>
+            <div class="meta-item">
+                <div class="meta-icon">
+                    <i class="fas fa-calendar"></i>
+                </div>
+                <span>{{ \Carbon\Carbon::parse($album['created_at'])->format('M d, Y') }}</span>
+            </div>
+            <div class="meta-item">
+                <div class="meta-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <span>by {{ $album['created_by'] }}</span>
+            </div>
+        </div>
+        @if($album['description'])
+            <p style="color: var(--text-secondary); margin: 0;">{{ $album['description'] }}</p>
+        @endif
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar fade-in">
+        <div class="view-controls">
+            <span style="color: var(--text-secondary); font-size: 0.875rem; margin-right: 0.5rem;">View:</span>
+            <button class="view-btn active" data-view="grid" title="Grid View">
+                <i class="fas fa-th"></i>
+            </button>
+            <button class="view-btn" data-view="masonry" title="Masonry View">
+                <i class="fas fa-th-large"></i>
+            </button>
+            <button class="view-btn" data-view="list" title="List View">
+                <i class="fas fa-list"></i>
+            </button>
+        </div>
+        
+        <div class="search-box">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-input" placeholder="Search photos..." id="searchInput">
+        </div>
+    </div>
+
+    <!-- Photos Grid -->
+    @if(count($album['photos']) > 0)
+        <div class="photos-grid grid-view" id="photosGrid">
             @foreach($album['photos'] as $index => $photo)
-                <div class="photo-item" onclick="openLightbox({{ $index }})">
-                    <img src="{{ asset('storage/' . $photo['path']) }}" 
-                         alt="{{ $photo['original_name'] }}"
+                <div class="photo-item fade-in" data-photo-name="{{ strtolower($photo['original_name']) }}">
+                    <img src="{{ asset('storage/' . $photo['thumbnail_path']) }}" 
+                         alt="{{ $photo['original_name'] }}" 
                          class="photo-image"
-                         loading="lazy"
-                         onerror="this.src='{{ asset('images/placeholder-gallery.jpg') }}'">
+                         data-full-src="{{ asset('storage/' . $photo['file_path']) }}"
+                         onclick="openPhotoModal({{ $index }})">
+                    
+                    <div class="photo-overlay">
+                        <div class="photo-info">
+                            <div class="photo-name">{{ $photo['original_name'] }}</div>
+                            <div class="photo-size">{{ formatFileSize($photo['file_size']) }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="photo-actions">
+                        <button class="action-btn btn-view" onclick="openPhotoModal({{ $index }})" title="View">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <a href="{{ asset('storage/' . $photo['file_path']) }}" 
+                           download="{{ $photo['original_name'] }}"
+                           class="action-btn btn-download" title="Download">
+                            <i class="fas fa-download"></i>
+                        </a>
+                        <button class="action-btn btn-delete" 
+                                onclick="deletePhoto('{{ $photo['id'] }}', '{{ $photo['original_name'] }}')" 
+                                title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- List view content -->
+                    <div class="photo-details" style="display: none;">
+                        <div class="photo-title">{{ $photo['original_name'] }}</div>
+                        <div class="photo-meta">
+                            Size: {{ formatFileSize($photo['file_size']) }} • 
+                            Uploaded: {{ \Carbon\Carbon::parse($photo['created_at'])->format('M d, Y') }}
+                        </div>
+                    </div>
                 </div>
             @endforeach
         </div>
     @else
-        <div style="text-align: center; padding: 4rem 2rem; background: var(--gray-50); border-radius: 16px;">
-            <div style="width: 80px; height: 80px; margin: 0 auto 1.5rem; background: var(--gray-100); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
+        <!-- Empty State -->
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-images"></i>
             </div>
-            <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--gray-800); margin-bottom: 0.5rem;">Album Kosong</h2>
-            <p style="color: #6b7280;">Belum ada foto yang tersedia di album ini.</p>
+            <h3 class="empty-title">No Photos in This Album</h3>
+            <p class="empty-description">
+                This album doesn't contain any photos yet. Upload some photos to get started.
+            </p>
+            <a href="{{ route('admin.gallery.upload') }}" class="btn-primary-custom">
+                <i class="fas fa-plus"></i>
+                Upload Photos
+            </a>
         </div>
     @endif
 </div>
 
-<!-- Lightbox -->
-<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
-    <div class="lightbox-content" onclick="event.stopPropagation()">
-        <button class="lightbox-close" onclick="closeLightbox()">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
+<!-- Photo Modal -->
+<div class="photo-modal" id="photoModal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closePhotoModal()">
+            <i class="fas fa-times"></i>
         </button>
-        
-        <button class="lightbox-nav lightbox-prev" onclick="previousPhoto()">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-            </svg>
+        <button class="modal-nav modal-prev" onclick="prevPhoto()">
+            <i class="fas fa-chevron-left"></i>
         </button>
-        
-        <button class="lightbox-nav lightbox-next" onclick="nextPhoto()">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
+        <button class="modal-nav modal-next" onclick="nextPhoto()">
+            <i class="fas fa-chevron-right"></i>
         </button>
-        
-        <img id="lightboxImage" class="lightbox-image" src="" alt="">
-        
-        <div class="lightbox-info">
-            <div class="lightbox-title" id="lightboxTitle"></div>
-            <div class="lightbox-meta" id="lightboxMeta"></div>
-        </div>
+        <img class="modal-image" id="modalImage" src="" alt="">
     </div>
 </div>
+@endsection
 
+@push('scripts')
 <script>
+// Photo data for modal navigation
+const photos = @json($album['photos']);
+let currentPhotoIndex = 0;
+
 document.addEventListener('DOMContentLoaded', function() {
-    const photos = @json($album['photos']);
-    let currentPhotoIndex = 0;
-
-    // View toggle functionality
-    window.toggleView = function(view) {
-        const photosGrid = document.getElementById('photosGrid');
-        const gridBtn = document.getElementById('gridBtn');
-        const masonryBtn = document.getElementById('masonryBtn');
-        
-        if (view === 'masonry') {
-            photosGrid.classList.add('masonry');
-            gridBtn.classList.remove('active');
-            masonryBtn.classList.add('active');
-        } else {
-            photosGrid.classList.remove('masonry');
-            masonryBtn.classList.remove('active');
-            gridBtn.classList.add('active');
-        }
-    };
-
-    // Lightbox functionality
-    window.openLightbox = function(index) {
-        currentPhotoIndex = index;
-        updateLightboxContent();
-        document.getElementById('lightbox').classList.add('active');
-        document.body.style.overflow = 'hidden';
-    };
-
-    window.closeLightbox = function(event) {
-        if (event && event.target !== event.currentTarget) return;
-        document.getElementById('lightbox').classList.remove('active');
-        document.body.style.overflow = 'auto';
-    };
-
-    window.nextPhoto = function() {
-        currentPhotoIndex = (currentPhotoIndex + 1) % photos.length;
-        updateLightboxContent();
-    };
-
-    window.previousPhoto = function() {
-        currentPhotoIndex = (currentPhotoIndex - 1 + photos.length) % photos.length;
-        updateLightboxContent();
-    };
-
-    function updateLightboxContent() {
-        const photo = photos[currentPhotoIndex];
-        document.getElementById('lightboxImage').src = '{{ asset("storage") }}/' + photo.path;
-        document.getElementById('lightboxTitle').textContent = photo.original_name;
-        document.getElementById('lightboxMeta').textContent = `${formatFileSize(photo.size)} • ${photo.mime_type}`;
-    }
-
-    function formatFileSize(bytes) {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    }
-
-    // Keyboard navigation
-    document.addEventListener('keydown', function(e) {
-        if (document.getElementById('lightbox').classList.contains('active')) {
-            switch(e.key) {
-                case 'Escape':
-                    closeLightbox();
-                    break;
-                case 'ArrowLeft':
-                    previousPhoto();
-                    break;
-                case 'ArrowRight':
-                    nextPhoto();
-                    break;
-            }
-        }
-    });
-
-    // Download all functionality
-    document.getElementById('downloadAll')?.addEventListener('click', function(e) {
-        e.preventDefault();
-        
-        if (photos.length === 0) {
-            alert('Tidak ada foto untuk diunduh');
-            return;
-        }
-        
-        // Download each photo
-        photos.forEach((photo, index) => {
-            setTimeout(() => {
-                const link = document.createElement('a');
-                link.href = '{{ asset("storage") }}/' + photo.path;
-                link.download = photo.original_name;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }, index * 200);
-        });
-        
-        alert(`Mulai mengunduh ${photos.length} foto. Silakan periksa folder unduhan Anda.`);
-    });
-
-    // Add staggered animation to photo items
+    // View switching
+    const viewButtons = document.querySelectorAll('.view-btn');
+    const photosGrid = document.getElementById('photosGrid');
     const photoItems = document.querySelectorAll('.photo-item');
-    photoItems.forEach((item, index) => {
-        item.style.animation = `fadeInUp 0.6s ease forwards ${index * 0.05}s`;
-        item.style.opacity = '0';
+
+    viewButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const view = this.dataset.view;
+            
+            // Update active button
+            viewButtons.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Update grid class
+            photosGrid.className = `photos-grid ${view}-view`;
+            
+            // Update photo items
+            photoItems.forEach(item => {
+                item.className = `photo-item ${view}-view fade-in`;
+                
+                // Show/hide details for list view
+                const details = item.querySelector('.photo-details');
+                if (view === 'list') {
+                    details.style.display = 'flex';
+                } else {
+                    details.style.display = 'none';
+                }
+            });
+            
+            // Handle masonry layout
+            if (view === 'masonry') {
+                handleMasonryLayout();
+            }
+        });
     });
 
-    // Add fadeInUp animation
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        
+        photoItems.forEach(item => {
+            const photoName = item.dataset.photoName;
+            if (photoName.includes(searchTerm)) {
+                item.style.display = 'block';
+                setTimeout(() => {
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                }, 50);
+            } else {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    item.style.display = 'none';
+                }, 300);
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        });
+    });
+
+    // Initialize masonry layout
+    handleMasonryLayout();
+    
+    // Handle window resize for masonry
+    window.addEventListener('resize', handleMasonryLayout);
+});
+
+function handleMasonryLayout() {
+    const grid = document.getElementById('photosGrid');
+    if (!grid.classList.contains('masonry-view')) return;
+    
+    const items = grid.querySelectorAll('.photo-item');
+    items.forEach(item => {
+        const img = item.querySelector('.photo-image');
+        if (img.complete) {
+            setMasonryHeight(item, img);
+        } else {
+            img.onload = () => setMasonryHeight(item, img);
         }
-    `;
-    document.head.appendChild(style);
+    });
+}
+
+function setMasonryHeight(item, img) {
+    const aspectRatio = img.naturalHeight / img.naturalWidth;
+    const rowHeight = 10; // CSS grid-auto-rows value
+    const rowSpan = Math.ceil((250 * aspectRatio + 10) / rowHeight);
+    item.style.setProperty('--row-span', rowSpan);
+}
+
+// Photo modal functions
+function openPhotoModal(index) {
+    currentPhotoIndex = index;
+    const modal = document.getElementById('photoModal');
+    const modalImage = document.getElementById('modalImage');
+    
+    modalImage.src = photos[index].file_path.startsWith('http') 
+        ? photos[index].file_path 
+        : `{{ asset('storage') }}/${photos[index].file_path}`;
+    modalImage.alt = photos[index].original_name;
+    
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    
+    // Add keyboard event listener
+    document.addEventListener('keydown', handleModalKeydown);
+}
+
+function closePhotoModal() {
+    const modal = document.getElementById('photoModal');
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+    
+    // Remove keyboard event listener
+    document.removeEventListener('keydown', handleModalKeydown);
+}
+
+function prevPhoto() {
+    currentPhotoIndex = currentPhotoIndex > 0 ? currentPhotoIndex - 1 : photos.length - 1;
+    updateModalImage();
+}
+
+function nextPhoto() {
+    currentPhotoIndex = currentPhotoIndex < photos.length - 1 ? currentPhotoIndex + 1 : 0;
+    updateModalImage();
+}
+
+function updateModalImage() {
+    const modalImage = document.getElementById('modalImage');
+    modalImage.style.opacity = '0';
+    
+    setTimeout(() => {
+        modalImage.src = photos[currentPhotoIndex].file_path.startsWith('http') 
+            ? photos[currentPhotoIndex].file_path 
+            : `{{ asset('storage') }}/${photos[currentPhotoIndex].file_path}`;
+        modalImage.alt = photos[currentPhotoIndex].original_name;
+        modalImage.style.opacity = '1';
+    }, 150);
+}
+
+function handleModalKeydown(e) {
+    switch(e.key) {
+        case 'Escape':
+            closePhotoModal();
+            break;
+        case 'ArrowLeft':
+            prevPhoto();
+            break;
+        case 'ArrowRight':
+            nextPhoto();
+            break;
+    }
+}
+
+// Delete photo function
+function deletePhoto(photoId, photoName) {
+    if (confirm(`Are you sure you want to delete "${photoName}"? This action cannot be undone.`)) {
+        // Create form and submit
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/admin/gallery/photos/${photoId}`;
+        form.style.display = 'none';
+        
+        // Add CSRF token
+        const csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = '_token';
+        csrfToken.value = '{{ csrf_token() }}';
+        form.appendChild(csrfToken);
+        
+        // Add method override
+        const methodInput = document.createElement('input');
+        methodInput.type = 'hidden';
+        methodInput.name = '_method';
+        methodInput.value = 'DELETE';
+        form.appendChild(methodInput);
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+// Utility function to format file size
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+// Click outside modal to close
+document.getElementById('photoModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closePhotoModal();
+    }
+});
+
+// Smooth scroll animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, observerOptions);
+
+// Observe all fade-in elements
+document.querySelectorAll('.fade-in').forEach(el => {
+    observer.observe(el);
+});
+
+// Enhanced hover effects for photo items
+document.querySelectorAll('.photo-item').forEach(item => {
+    item.addEventListener('mouseenter', function() {
+        if (!this.classList.contains('list-view')) {
+            this.style.transform = 'translateY(-8px) scale(1.02)';
+        }
+    });
+    
+    item.addEventListener('mouseleave', function() {
+        if (!this.classList.contains('list-view')) {
+            this.style.transform = 'translateY(0) scale(1)';
+        }
+    });
 });
 </script>
-@endsection
+
+@php
+function formatFileSize($bytes) {
+    if ($bytes == 0) return '0 Bytes';
+    $k = 1024;
+    $sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    $i = floor(log($bytes) / log($k));
+    return round($bytes / pow($k, $i), 2) . ' ' . $sizes[$i];
+}
+@endphp
+@endpush

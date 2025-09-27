@@ -13,7 +13,6 @@ class LearningMaterial extends Model
     protected $fillable = [
         'title',
         'subject',
-        'class',
         'type',
         'description',
         'file_name',
@@ -24,6 +23,7 @@ class LearningMaterial extends Model
         'downloads',
         'status',
         'teacher_id',
+        'class_id',
         'created_by',
         'updated_by'
     ];
@@ -45,6 +45,11 @@ class LearningMaterial extends Model
     public function teacher()
     {
         return $this->belongsTo(User::class, 'teacher_id');
+    }
+
+    public function class()
+    {
+        return $this->belongsTo(Classes::class, 'class_id');
     }
 
     public function creator()
@@ -73,14 +78,24 @@ class LearningMaterial extends Model
         return $query->where('subject', $subject);
     }
 
-    public function scopeByClass($query, $class)
-    {
-        return $query->where('class', $class);
-    }
+
 
     public function scopeByType($query, $type)
     {
         return $query->where('type', $type);
+    }
+
+    public function scopeByClass($query, $classId)
+    {
+        return $query->where('class_id', $classId);
+    }
+
+    public function scopeForStudent($query, $studentClassId)
+    {
+        return $query->where(function($q) use ($studentClassId) {
+            $q->where('class_id', $studentClassId)
+              ->orWhereNull('class_id'); // Include materials without specific class
+        });
     }
 
     public function scopeSearch($query, $search)

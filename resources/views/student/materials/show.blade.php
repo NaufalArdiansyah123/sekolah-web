@@ -5,6 +5,7 @@
 
 @section('content')
 <div class="space-y-6">
+    
     <!-- Back Button -->
     <div class="flex items-center space-x-4">
         <a href="{{ route('student.materials.index') }}" 
@@ -24,7 +25,7 @@
                 <div class="flex-1">
                     <!-- Type and Status -->
                     <div class="flex items-center space-x-3 mb-4">
-                        <div class="text-4xl">{{ $material->type_icon }}</div>
+                        <div class="text-4xl">{{ $material->type_icon ?? '📄' }}</div>
                         <div class="flex flex-wrap gap-2">
                             <span class="px-3 py-1 text-sm font-medium rounded-full 
                                 {{ $material->type == 'document' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : '' }}
@@ -54,24 +55,45 @@
                             <span class="text-lg font-medium text-emerald-600 dark:text-emerald-400">{{ $material->subject }}</span>
                         </div>
                         <span class="text-gray-400">•</span>
-                        <div class="flex items-center">
-                            <svg class="w-5 h-5 text-gray-600 dark:text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                            </svg>
-                            <span class="text-lg font-medium text-gray-600 dark:text-gray-400">Kelas {{ $material->class }}</span>
-                        </div>
+                        @if($material->class_id && $material->class)
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 text-gray-600 dark:text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                </svg>
+                                <span class="text-lg font-medium text-gray-600 dark:text-gray-400">{{ $material->class->name }}</span>
+                            </div>
+                        @else
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 text-gray-600 dark:text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                                <span class="text-lg font-medium text-gray-600 dark:text-gray-400">Semua Kelas</span>
+                            </div>
+                        @endif
                     </div>
 
                     <!-- Teacher Info -->
-                    <div class="flex items-center mb-6">
-                        <img class="w-12 h-12 rounded-full mr-4" 
-                             src="{{ $material->teacher->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($material->teacher->name ?? 'Teacher').'&color=10B981&background=D1FAE5' }}" 
-                             alt="{{ $material->teacher->name ?? 'Teacher' }}">
-                        <div>
-                            <p class="text-lg font-medium text-gray-900 dark:text-white">{{ $material->teacher->name ?? 'Unknown Teacher' }}</p>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">Guru Mata Pelajaran {{ $material->subject }}</p>
+                    @if($material->teacher)
+                        <div class="flex items-center mb-6">
+                            <img class="w-12 h-12 rounded-full mr-4" 
+                                 src="{{ $material->teacher->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($material->teacher->name).'&color=10B981&background=D1FAE5' }}" 
+                                 alt="{{ $material->teacher->name }}">
+                            <div>
+                                <p class="text-lg font-medium text-gray-900 dark:text-white">{{ $material->teacher->name }}</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Guru Mata Pelajaran {{ $material->subject }}</p>
+                            </div>
                         </div>
-                    </div>
+                    @else
+                        <div class="flex items-center mb-6">
+                            <img class="w-12 h-12 rounded-full mr-4" 
+                                 src="https://ui-avatars.com/api/?name=Teacher&color=10B981&background=D1FAE5" 
+                                 alt="Teacher">
+                            <div>
+                                <p class="text-lg font-medium text-gray-900 dark:text-white">Unknown Teacher</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Guru Mata Pelajaran {{ $material->subject }}</p>
+                            </div>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Download Section -->
@@ -84,8 +106,8 @@
                         </div>
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Download Materi</h3>
                         <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                            File: {{ $material->original_name ?? $material->file_name }}<br>
-                            Ukuran: {{ $material->formatted_file_size }}
+                            File: {{ $material->original_name ?? $material->file_name ?? 'Unknown' }}<br>
+                            Ukuran: {{ $material->formatted_file_size ?? 'Unknown' }}
                         </p>
                         <a href="{{ route('student.materials.download', $material->id) }}" 
                            class="inline-flex items-center bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200">
@@ -113,19 +135,19 @@
             <!-- Material Stats -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                 <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 text-center">
-                    <div class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{ $material->downloads }}</div>
+                    <div class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{ $material->downloads ?? 0 }}</div>
                     <div class="text-sm text-gray-600 dark:text-gray-400">Total Download</div>
                 </div>
                 <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 text-center">
-                    <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ $material->formatted_file_size }}</div>
+                    <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ $material->formatted_file_size ?? 'Unknown' }}</div>
                     <div class="text-sm text-gray-600 dark:text-gray-400">Ukuran File</div>
                 </div>
                 <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 text-center">
-                    <div class="text-2xl font-bold text-purple-600 dark:text-purple-400">{{ $material->created_at->format('d M Y') }}</div>
+                    <div class="text-2xl font-bold text-purple-600 dark:text-purple-400">{{ $material->created_at ? $material->created_at->format('d M Y') : 'Unknown' }}</div>
                     <div class="text-sm text-gray-600 dark:text-gray-400">Tanggal Upload</div>
                 </div>
                 <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 text-center">
-                    <div class="text-2xl font-bold text-orange-600 dark:text-orange-400">{{ ucfirst($material->type) }}</div>
+                    <div class="text-2xl font-bold text-orange-600 dark:text-orange-400">{{ ucfirst($material->type ?? 'unknown') }}</div>
                     <div class="text-sm text-gray-600 dark:text-gray-400">Jenis Materi</div>
                 </div>
             </div>

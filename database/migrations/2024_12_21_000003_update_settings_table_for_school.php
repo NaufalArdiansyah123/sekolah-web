@@ -69,7 +69,7 @@ return new class extends Migration
             
             // System Settings
             ['key' => 'maintenance_mode', 'value' => '0', 'type' => 'boolean', 'group' => 'system', 'description' => 'Mode pemeliharaan sistem'],
-            ['key' => 'allow_registration', 'value' => '1', 'type' => 'boolean', 'group' => 'system', 'description' => 'Izinkan pendaftaran user baru'],
+            ['key' => 'allow_registration', 'value' => '1', 'type' => 'boolean', 'group' => 'system', 'description' => 'Izinkan pendaftaran akun siswa baru'],
             ['key' => 'max_upload_size', 'value' => '10', 'type' => 'integer', 'group' => 'system', 'description' => 'Ukuran maksimal upload (MB)'],
             ['key' => 'session_lifetime', 'value' => '120', 'type' => 'integer', 'group' => 'system', 'description' => 'Durasi session (menit)'],
             ['key' => 'max_login_attempts', 'value' => '5', 'type' => 'integer', 'group' => 'system', 'description' => 'Maksimal percobaan login'],

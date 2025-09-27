@@ -14,7 +14,7 @@ class Quiz extends Model
         'title',
         'description',
         'subject',
-        'class',
+        'class_id',
         'teacher_id',
         'start_time',
         'end_time',
@@ -39,6 +39,14 @@ class Quiz extends Model
     public function teacher()
     {
         return $this->belongsTo(User::class, 'teacher_id');
+    }
+
+    /**
+     * Get the class that this quiz belongs to
+     */
+    public function class()
+    {
+        return $this->belongsTo(Classes::class, 'class_id');
     }
 
     /**
@@ -139,5 +147,21 @@ class Quiz extends Model
         return $query->where('status', 'published')
                     ->where('start_time', '<=', now())
                     ->where('end_time', '>=', now());
+    }
+
+    /**
+     * Scope for quizzes by class
+     */
+    public function scopeByClass($query, $classId)
+    {
+        return $query->where('class_id', $classId);
+    }
+
+    /**
+     * Scope for quizzes visible to student
+     */
+    public function scopeVisibleToStudent($query, $studentClassId)
+    {
+        return $query->where('class_id', $studentClassId)->published();
     }
 }

@@ -437,9 +437,9 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                     </svg>
                 </div>
-                <h1 class="register-title">Daftar Siswa Baru</h1>
+                <h1 class="register-title">Daftar Akun Siswa</h1>
                 <p class="register-subtitle">
-                    Bergabunglah dengan SMA Negeri 1 dan mulai perjalanan pendidikan yang luar biasa. 
+                    Buat akun siswa untuk mengakses sistem informasi sekolah. 
                     Isi formulir di bawah ini dengan lengkap dan benar.
                 </p>
             </div>
@@ -845,11 +845,11 @@
                 </div>
 
                 <!-- Submit Button -->
-                <button type="submit" 
-                        class="register-button"
-                        :disabled="isSubmitting"
-                        x-text="isSubmitting ? 'Mendaftar...' : 'Daftar Sekarang'">
-                </button>
+                        <button type="submit" 
+                                class="register-button"
+                                :disabled="isSubmitting"
+                                x-text="isSubmitting ? 'Membuat Akun...' : 'Buat Akun Sekarang'">
+                        </button>
 
                 <!-- Login Link -->
                 <div class="login-link">
@@ -1073,7 +1073,7 @@
                             // Sync Alpine.js model values to DOM elements before submit
                             this.syncFormValues();
                             
-                            // Debug: Log form values before submit
+
                             console.log('Form submission - Alpine.js model:', this.form);
                             console.log('Form submission - DOM values:', {
                                 class: document.getElementById('class')?.value,

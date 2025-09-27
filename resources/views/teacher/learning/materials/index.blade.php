@@ -568,18 +568,7 @@
                         <option value="Bahasa Indonesia" {{ request('subject') == 'Bahasa Indonesia' ? 'selected' : '' }}>Bahasa Indonesia</option>
                     </select>
                 </div>
-                <div class="filter-group">
-                    <label class="filter-label">Class</label>
-                    <select name="class" class="filter-input">
-                        <option value="">All Classes</option>
-                        <option value="VII A" {{ request('class') == 'VII A' ? 'selected' : '' }}>VII A</option>
-                        <option value="VII B" {{ request('class') == 'VII B' ? 'selected' : '' }}>VII B</option>
-                        <option value="VIII A" {{ request('class') == 'VIII A' ? 'selected' : '' }}>VIII A</option>
-                        <option value="VIII B" {{ request('class') == 'VIII B' ? 'selected' : '' }}>VIII B</option>
-                        <option value="IX A" {{ request('class') == 'IX A' ? 'selected' : '' }}>IX A</option>
-                        <option value="IX B" {{ request('class') == 'IX B' ? 'selected' : '' }}>IX B</option>
-                    </select>
-                </div>
+
                 <div class="filter-group">
                     <label class="filter-label">Type</label>
                     <select name="type" class="filter-input">
@@ -622,8 +611,6 @@
                         <div class="material-title">{{ $material->title }}</div>
                         <div class="material-meta">
                             <span>{{ $material->subject }}</span>
-                            <span>•</span>
-                            <span>{{ $material->class }}</span>
                             <span>•</span>
                             <span>{{ \Carbon\Carbon::parse($material->created_at)->format('d M Y') }}</span>
                         </div>
@@ -686,13 +673,13 @@
             </div>
             <h3 class="empty-title">No Learning Materials Found</h3>
             <p class="empty-description">
-                @if(request()->hasAny(['search', 'subject', 'class', 'type']))
+                @if(request()->hasAny(['search', 'subject', 'type']))
                     No materials match your current filters. Try adjusting your search criteria.
                 @else
                     No learning materials have been uploaded yet. Start by adding your first material.
                 @endif
             </p>
-            @if(!request()->hasAny(['search', 'subject', 'class', 'type']))
+            @if(!request()->hasAny(['search', 'subject', 'type']))
             <a href="{{ route('teacher.learning.materials.create') }}" class="btn btn-primary">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>

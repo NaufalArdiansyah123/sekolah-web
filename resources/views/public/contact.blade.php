@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kontak - SMA Negeri 1 Balong</title>
+    <title>Kontak - SMK PGRI 2 PONOROGO</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -667,7 +667,7 @@
     <section class="hero">
         <div class="hero-content">
             <h1>Hubungi Kami</h1>
-            <p>Kami siap membantu dan menjawab pertanyaan Anda seputar SMA Negeri 1 Balong. Jangan ragu untuk menghubungi kami melalui berbagai cara di bawah ini.</p>
+            <p>Kami siap membantu Anda untuk informasi seputar SMK PGRI 2 PONOROGO.<br> Jangan ragu untuk menghubungi kami melalui berbagai cara di bawah ini.</p>
         </div>
     </section>
 
@@ -675,7 +675,7 @@
     <section class="contact-section">
         <div class="section-title animate-on-scroll">
             <h2>Informasi Kontak</h2>
-            <p>Berbagai cara untuk menghubungi SMA Negeri 1 Balong</p>
+            <p>Berbagai cara untuk menghubungi SMK PGRI 2 PONOROGO</p>
         </div>
 
         <div class="contact-grid">
@@ -689,7 +689,7 @@
                     </div>
                     <div class="contact-details">
                         <h4>Alamat Sekolah</h4>
-                        <p>Jl. Pendidikan No. 123<br>Balong, Kabupaten Ponorogo<br>Jawa Timur 63462</p>
+                        <p>Jl. Raya Ponorogo - Madiun, Kertosari, Kec. Babadan, Kabupaten Ponorogo, Jawa Timur 63491</p>
                     </div>
                 </div>
 
@@ -699,7 +699,7 @@
                     </div>
                     <div class="contact-details">
                         <h4>Email</h4>
-                        <p>info@sman1balong.sch.id<br>admin@sman1balong.sch.id</p>
+                        <p>info@smkpgri2ponorogo.sch.id<br>admin@smkpgri2ponorogo.sch.id</p>
                     </div>
                 </div>
 
@@ -719,7 +719,7 @@
                     </div>
                     <div class="contact-details">
                         <h4>Jam Operasional</h4>
-                        <p>Senin - Jumat: 07.00 - 15.00 WIB<br>Sabtu: 07.00 - 12.00 WIB</p>
+                        <p>Senin - Kamis: 06.45 - 14.00 WIB<br>Jumat: 06.45 - 11.00 WIB<br>Sabtu: 06.45 - 10.00 WIB</p>
                     </div>
                 </div>
             </div>
@@ -730,7 +730,7 @@
                 <div class="whatsapp-section">
                     <h3>Kontak WhatsApp</h3>
                     <div class="whatsapp-buttons">
-                        <a href="https://wa.me/6285755216048?text=Halo,%20saya%20ingin%20bertanya%20tentang%20SMA%20Negeri%201%20Balong" 
+                        <a href="https://wa.me/6285755216048?text=Halo,%20saya%20ingin%20bertanya%20tentang%20SMK%20PGRI%202%20PONOROGO" 
                            target="_blank" 
                            class="whatsapp-btn">
                             <i class="fab fa-whatsapp"></i>
@@ -776,12 +776,7 @@
                 <div class="map-section">
                     <h3>Lokasi Sekolah</h3>
                     <div class="map-container">
-                        <iframe 
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d698.5187961715578!2d111.4149188224645!3d-7.955576481830881!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e797544dcd2e443%3A0x5646c1765ea4a5ef!2sRostifa%20Fashion!5e0!3m2!1sen!2sid!4v1756515501291!5m2!1sen!2sid"
-                            allowfullscreen="" 
-                            loading="lazy" 
-                            referrerpolicy="no-referrer-when-downgrade">
-                        </iframe>
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d23687.597645473674!2d111.46019656855499!3d-7.8538656188164016!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e799f86913d49b1%3A0x2eb724e320c5ce2c!2sSMK%20PGRI%202%20Ponorogo!5e0!3m2!1sen!2sid!4v1758501868621!5m2!1sen!2sid" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                     </div>
                     <p style="margin-top: 20px; color: #666; font-style: italic;">
                         Klik peta untuk melihat lokasi lebih detail di Google Maps

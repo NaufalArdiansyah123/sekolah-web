@@ -785,7 +785,7 @@
                 <a href="<?php echo e(route('admin.student-registrations.index')); ?>" 
                    class="nav-dropdown-item <?php echo e(request()->routeIs('admin.student-registrations.*') ? 'active' : ''); ?>"
                    @click="sidebarOpen = false">
-                    📝 Pendaftaran Akun Siswa
+                    <span class="nav-text">Pendaftaran Akun Siswa</span>
                     <?php
                         $pendingCount = \App\Models\User::where('status', 'pending')->whereHas('roles', function($q) {
                             $q->where('name', 'student');
@@ -808,7 +808,7 @@
         </div>
 
         <!-- Settings -->
-        <a href="<?php echo e(route('admin.settings')); ?>" 
+        <a href="<?php echo e(route('admin.settings.index')); ?>" 
            class="sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg <?php echo e(request()->routeIs('admin.settings*') ? 'active' : ''); ?>"
            @click="sidebarOpen = false">
             <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">

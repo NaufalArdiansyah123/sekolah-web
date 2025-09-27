@@ -21,9 +21,31 @@ class MaterialController extends Controller
      */
     public function index(Request $request)
     {
-        $query = LearningMaterial::with('teacher')
+        // Get current student's class
+        $userId = Auth::id();
+        $student = \App\Models\Student::where('user_id', $userId)->with('class')->first();
+        
+        // Debug info for troubleshooting
+        $debugInfo = [
+            'user_id' => $userId,
+            'student_found' => $student ? true : false,
+            'student_class_id' => $student ? $student->class_id : null,
+            'student_class_name' => $student && $student->class ? $student->class->name : null,
+        ];
+        
+        $query = LearningMaterial::with(['teacher', 'class'])
                                 ->published()
                                 ->latest();
+        
+        // Filter by student's class if student found
+        if ($student && $student->class_id) {
+            $query->forStudent($student->class_id);
+            $debugInfo['filtering_applied'] = true;
+            $debugInfo['filter_class_id'] = $student->class_id;
+        } else {
+            $debugInfo['filtering_applied'] = false;
+            $debugInfo['reason'] = !$student ? 'Student not found' : 'Student has no class';
+        }
 
         // Search filter
         if ($request->filled('search')) {
@@ -34,11 +56,6 @@ class MaterialController extends Controller
         // Subject filter
         if ($request->filled('subject')) {
             $query->bySubject($request->subject);
-        }
-
-        // Class filter
-        if ($request->filled('class')) {
-            $query->byClass($request->class);
         }
 
         // Type filter
@@ -66,18 +83,22 @@ class MaterialController extends Controller
 
         $materials = $query->paginate(12);
         
-        // Get filter options
-        $subjects = LearningMaterial::published()
+        // Add debug info
+        $debugInfo['total_materials_found'] = $materials->total();
+        $debugInfo['materials_on_current_page'] = $materials->count();
+        
+        // Get filter options (filtered by student's class)
+        $subjectsQuery = LearningMaterial::published()
             ->select('subject')
             ->distinct()
-            ->orderBy('subject')
-            ->pluck('subject');
-
-        $classes = LearningMaterial::published()
-            ->select('class')
-            ->distinct()
-            ->orderBy('class')
-            ->pluck('class');
+            ->orderBy('subject');
+        
+        // Filter subjects by student's class if student found
+        if ($student && $student->class_id) {
+            $subjectsQuery->forStudent($student->class_id);
+        }
+        
+        $subjects = $subjectsQuery->pluck('subject');
 
         $types = [
             'document' => 'Dokumen',
@@ -87,12 +108,23 @@ class MaterialController extends Controller
             'audio' => 'Audio'
         ];
 
-        // Get statistics
+        // Get statistics (filtered by student's class)
+        $totalMaterialsQuery = LearningMaterial::published();
+        $totalDownloadsQuery = LearningMaterial::published();
+        $recentMaterialsQuery = LearningMaterial::published()->where('created_at', '>=', now()->subDays(7));
+        
+        // Filter statistics by student's class if student found
+        if ($student && $student->class_id) {
+            $totalMaterialsQuery->forStudent($student->class_id);
+            $totalDownloadsQuery->forStudent($student->class_id);
+            $recentMaterialsQuery->forStudent($student->class_id);
+        }
+        
         $stats = [
-            'total_materials' => LearningMaterial::published()->count(),
-            'total_downloads' => LearningMaterial::published()->sum('downloads'),
+            'total_materials' => $totalMaterialsQuery->count(),
+            'total_downloads' => $totalDownloadsQuery->sum('downloads'),
             'subjects_count' => $subjects->count(),
-            'recent_materials' => LearningMaterial::published()->where('created_at', '>=', now()->subDays(7))->count(),
+            'recent_materials' => $recentMaterialsQuery->count(),
         ];
 
         return view('student.materials.index', [
@@ -102,16 +134,15 @@ class MaterialController extends Controller
             ],
             'materials' => $materials,
             'subjects' => $subjects,
-            'classes' => $classes,
             'types' => $types,
             'stats' => $stats,
             'currentFilters' => [
                 'search' => $request->search,
                 'subject' => $request->subject,
-                'class' => $request->class,
                 'type' => $request->type,
                 'sort' => $request->get('sort', 'latest')
-            ]
+            ],
+            'debugInfo' => $debugInfo
         ]);
     }
 
@@ -120,9 +151,19 @@ class MaterialController extends Controller
      */
     public function show($id)
     {
-        $material = LearningMaterial::with('teacher')
-                                   ->published()
-                                   ->findOrFail($id);
+        // Get current student's class
+        $userId = Auth::id();
+        $student = \App\Models\Student::where('user_id', $userId)->first();
+        
+        $query = LearningMaterial::with(['teacher', 'class'])
+                                ->published();
+        
+        // Filter by student's class if student found
+        if ($student && $student->class_id) {
+            $query->forStudent($student->class_id);
+        }
+        
+        $material = $query->findOrFail($id);
 
         return view('student.materials.show', [
             'pageTitle' => $material->title,
@@ -130,7 +171,14 @@ class MaterialController extends Controller
                 ['title' => 'Materi Pembelajaran', 'url' => route('student.materials.index')],
                 ['title' => $material->title]
             ],
-            'material' => $material
+            'material' => $material,
+            'debugInfo' => [
+                'material_id' => $material->id,
+                'material_class_id' => $material->class_id,
+                'material_class_name' => $material->class ? $material->class->name : null,
+                'student_class_id' => $student ? $student->class_id : null,
+                'student_class_name' => $student && $student->class ? $student->class->name : null,
+            ]
         ]);
     }
 
@@ -139,7 +187,18 @@ class MaterialController extends Controller
      */
     public function download($id)
     {
-        $material = LearningMaterial::published()->findOrFail($id);
+        // Get current student's class
+        $userId = Auth::id();
+        $student = \App\Models\Student::where('user_id', $userId)->first();
+        
+        $query = LearningMaterial::published();
+        
+        // Filter by student's class if student found
+        if ($student && $student->class_id) {
+            $query->forStudent($student->class_id);
+        }
+        
+        $material = $query->findOrFail($id);
 
         // Check if file exists
         if (!$material->file_path || !Storage::disk('public')->exists($material->file_path)) {
@@ -164,8 +223,4 @@ class MaterialController extends Controller
             $material->original_name ?? $material->file_name
         );
     }
-
-
-
-
 }

@@ -36,7 +36,7 @@ class CalendarEvent extends Model
 
     protected $attributes = [
         'status' => 'active',
-        'is_all_day' => false,
+        'is_all_day' => true,
         'color' => '#3b82f6'
     ];
 

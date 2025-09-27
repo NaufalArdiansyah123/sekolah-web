@@ -46,33 +46,13 @@
         transform: scale(1);
     }
 
+    /* Removed overlay backgrounds for transparent effect */
     .slide::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(
-            135deg,
-            rgba(15, 23, 42, 0.75) 0%,
-            rgba(30, 58, 138, 0.6) 35%,
-            rgba(15, 23, 42, 0.8) 100%
-        );
-        z-index: 1;
+        display: none;
     }
 
     .slide::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: 
-            radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.2) 0%, transparent 50%),
-            radial-gradient(circle at 80% 70%, rgba(147, 51, 234, 0.15) 0%, transparent 50%);
-        z-index: 2;
+        display: none;
     }
 
     .slide-content {
@@ -85,6 +65,88 @@
         z-index: 10;
         max-width: 900px;
         padding: 0 20px;
+        display: none; /* Hide all slide content */
+    }
+
+    /* Bottom buttons container */
+    .slideshow-bottom-buttons {
+        position: absolute;
+        bottom: 60px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 20px;
+        z-index: 20;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-slideshow-bottom {
+        padding: 12px 24px;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 50px;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        backdrop-filter: blur(20px);
+        position: relative;
+        overflow: hidden;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        min-width: 160px;
+        justify-content: center;
+    }
+
+    .btn-slideshow-bottom::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .btn-slideshow-bottom:hover::before {
+        left: 100%;
+    }
+
+    .btn-primary-slideshow {
+        background: rgba(251, 191, 36, 0.9);
+        color: white;
+        border: 2px solid var(--gold-color);
+        box-shadow: 0 8px 32px rgba(251, 191, 36, 0.4);
+    }
+
+    .btn-primary-slideshow:hover {
+        background: var(--gold-color);
+        border-color: var(--gold-color);
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 15px 40px rgba(251, 191, 36, 0.6);
+        color: #1a202c;
+        text-decoration: none;
+    }
+
+    .btn-secondary-slideshow {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        border: 2px solid rgba(255,255,255,0.4);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+
+    .btn-secondary-slideshow:hover {
+        background: rgba(255,255,255,0.3);
+        border-color: rgba(255,255,255,0.7);
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        color: white;
+        text-decoration: none;
     }
 
     .slide-subtitle {
@@ -801,6 +863,22 @@
         .section-title h2 {
             font-size: 2rem;
         }
+
+        /* Mobile responsive for bottom buttons */
+        .slideshow-bottom-buttons {
+            bottom: 50px;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding: 0 20px;
+        }
+
+        .btn-slideshow-bottom {
+            width: 200px;
+            font-size: 0.9rem;
+            padding: 10px 20px;
+            min-width: auto;
+        }
     }
 
     @media (max-width: 480px) {
@@ -818,6 +896,19 @@
 
         .btn-slide {
             width: 220px;
+            font-size: 0.85rem;
+            padding: 8px 16px;
+        }
+
+        /* Extra small mobile responsive for bottom buttons */
+        .slideshow-bottom-buttons {
+            bottom: 40px;
+            gap: 10px;
+            padding: 0 15px;
+        }
+
+        .btn-slideshow-bottom {
+            width: 180px;
             font-size: 0.85rem;
             padding: 8px 16px;
         }
@@ -909,13 +1000,25 @@
         {{-- Progress Bar --}}
         <div class="slide-progress"></div>
     @endif
+
+    {{-- Bottom Buttons --}}
+    <div class="slideshow-bottom-buttons">
+        <a href="{{ route('about.profile') }}" class="btn-slideshow-bottom btn-primary-slideshow">
+            <i class="fas fa-info-circle"></i>
+            Tentang Kami
+        </a>
+        <a href="{{ route('news.index') }}" class="btn-slideshow-bottom btn-secondary-slideshow">
+            <i class="fas fa-newspaper"></i>
+            Berita
+        </a>
+    </div>
 </section>
 
 <!-- Enhanced Quick Stats with Counting Animation -->
 <section class="stats-section">
     <div class="container">
         <div class="section-title">
-            <h2>SMA Negeri 1 Balong</h2>
+            <h2>SMK PGRI 2 PONOROGO</h2>
             <p>Pencapaian dan prestasi yang membanggakan</p>
         </div>
         <div class="row text-center g-4">
@@ -1260,7 +1363,7 @@
 
         // Initialize slideshow
         function initEnhancedSlideshow() {
-            showSlideEnhanced(slideIndex);
+            showSlideEnhanced(slideIndex);bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
             startAutoSlideEnhanced();
         }
 

@@ -7,6 +7,7 @@ use App\Models\Quiz;
 use App\Models\QuizQuestion;
 use App\Models\QuizAttempt;
 use App\Models\QuizAnswer;
+use App\Models\Classes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -25,7 +26,7 @@ class QuizController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Quiz::with(['teacher', 'questions'])
+        $query = Quiz::with(['teacher', 'questions', 'class'])
             ->where('teacher_id', Auth::id())
             ->latest();
 
@@ -78,12 +79,15 @@ class QuizController extends Controller
      */
     public function create()
     {
+        $classes = Classes::active()->orderBy('level')->orderBy('name')->get();
+        
         return view('teacher.quizzes.create', [
             'pageTitle' => 'Buat Kuis Baru',
             'breadcrumb' => [
                 ['title' => 'Kelola Kuis', 'url' => route('teacher.quizzes.index')],
                 ['title' => 'Buat Kuis Baru']
-            ]
+            ],
+            'classes' => $classes
         ]);
     }
 
@@ -96,6 +100,7 @@ class QuizController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'subject' => 'required|string|max:100',
+            'class_id' => 'required|exists:classes,id',
             'start_time' => 'required|date|after:now',
             'end_time' => 'required|date|after:start_time',
             'duration_minutes' => 'required|integer|min:1|max:300',
@@ -116,6 +121,7 @@ class QuizController extends Controller
                 'title' => $request->title,
                 'description' => $request->description,
                 'subject' => $request->subject,
+                'class_id' => $request->class_id,
                 'teacher_id' => Auth::id(),
                 'start_time' => $request->start_time,
                 'end_time' => $request->end_time,
@@ -177,9 +183,11 @@ class QuizController extends Controller
      */
     public function edit($id)
     {
-        $quiz = Quiz::with('questions')
+        $quiz = Quiz::with(['questions', 'class'])
             ->where('teacher_id', Auth::id())
             ->findOrFail($id);
+        
+        $classes = Classes::active()->orderBy('level')->orderBy('name')->get();
 
         return view('teacher.quizzes.edit', [
             'pageTitle' => 'Edit Kuis: ' . $quiz->title,
@@ -188,7 +196,8 @@ class QuizController extends Controller
                 ['title' => $quiz->title, 'url' => route('teacher.quizzes.show', $id)],
                 ['title' => 'Edit']
             ],
-            'quiz' => $quiz
+            'quiz' => $quiz,
+            'classes' => $classes
         ]);
     }
 
@@ -203,6 +212,7 @@ class QuizController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'subject' => 'required|string|max:100',
+            'class_id' => 'required|exists:classes,id',
             'start_time' => 'required|date',
             'end_time' => 'required|date|after:start_time',
             'duration_minutes' => 'required|integer|min:1|max:300',
@@ -216,6 +226,7 @@ class QuizController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'subject' => $request->subject,
+            'class_id' => $request->class_id,
             'start_time' => $request->start_time,
             'end_time' => $request->end_time,
             'duration_minutes' => $request->duration_minutes,

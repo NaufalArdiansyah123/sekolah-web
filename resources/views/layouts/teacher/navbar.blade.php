@@ -1,83 +1,220 @@
-<?php
-// resources/views/layouts/teacher/navbar.blade.php - Enhanced Teacher Navbar for Mobile
-?>
-
-<!-- Enhanced CSS for Mobile Compatibility -->
+<!-- Enhanced Modern Teacher Navbar -->
 <style>
-    /* Mobile-first responsive navbar styles */
+    /* Reset any conflicting styles */
+    .teacher-navbar * {
+        box-sizing: border-box;
+    }
+    /* Modern Teacher Navbar Styles */
     .teacher-navbar {
-        width: 100%;
-        position: relative;
-        z-index: 30;
-        flex-shrink: 0;
-        height: 4rem;
-        background-color: #ffffff;
-        border-bottom: 1px solid #e5e7eb;
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-        display: flex;
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(229, 231, 235, 0.3);
+        box-shadow: 
+            0 1px 3px rgba(0, 0, 0, 0.05),
+            0 20px 25px -5px rgba(0, 0, 0, 0.02),
+            0 10px 10px -5px rgba(0, 0, 0, 0.02);
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        height: 4.5rem;
+        transition: all 0.3s ease;
     }
     
     .dark .teacher-navbar {
-        background-color: #1f2937;
-        border-bottom-color: #374151;
+        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+        border-bottom-color: rgba(55, 65, 81, 0.3);
+        box-shadow: 
+            0 1px 3px rgba(0, 0, 0, 0.3),
+            0 20px 25px -5px rgba(0, 0, 0, 0.4),
+            0 10px 10px -5px rgba(0, 0, 0, 0.3);
     }
     
     .navbar-container {
-        flex: 1;
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+        height: 100%;
         display: flex;
-        justify-content: space-between;
-        padding: 0 1rem;
         align-items: center;
-    }
-    
-    @media (min-width: 640px) {
-        .navbar-container {
-            padding: 0 1.5rem;
-        }
+        justify-content: space-between;
     }
     
     .navbar-left {
         display: flex;
         align-items: center;
-        gap: 1rem;
+        gap: 1.5rem;
+        flex: 1;
     }
     
     .mobile-menu-btn {
-        border-right: 1px solid #e5e7eb;
-        padding-right: 1rem;
-        color: #6b7280;
-        outline: none;
-        border: none;
-        background: none;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 12px;
+        background: rgba(5, 150, 105, 0.1);
+        border: 1px solid rgba(5, 150, 105, 0.2);
+        color: #059669;
         cursor: pointer;
-        display: block;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .mobile-menu-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(5, 150, 105, 0.2), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .mobile-menu-btn:hover::before {
+        left: 100%;
+    }
+    
+    .mobile-menu-btn:hover {
+        background: rgba(5, 150, 105, 0.15);
+        border-color: rgba(5, 150, 105, 0.3);
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
     }
     
     .dark .mobile-menu-btn {
-        border-right-color: #374151;
-        color: #9ca3af;
+        background: rgba(16, 185, 129, 0.1);
+        border-color: rgba(16, 185, 129, 0.2);
+        color: #10b981;
     }
     
-    .mobile-menu-btn:focus {
-        outline: 2px solid #10b981;
-        outline-offset: -2px;
-    }
-    
-    @media (min-width: 768px) {
+    @media (max-width: 768px) {
         .mobile-menu-btn {
-            display: none;
+            display: flex;
         }
     }
     
+    .page-title-section {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex: 1;
+    }
+    
     .page-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #111827;
+        font-size: 1.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #111827, #059669);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
         margin: 0;
+        letter-spacing: -0.025em;
     }
     
     .dark .page-title {
+        background: linear-gradient(135deg, #ffffff, #10b981);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .page-breadcrumb {
+        display: none;
+        align-items: center;
+        gap: 0.5rem;
+        color: #6b7280;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+    
+    .dark .page-breadcrumb {
+        color: #9ca3af;
+    }
+    
+    @media (min-width: 1024px) {
+        .page-breadcrumb {
+            display: flex;
+        }
+    }
+    
+    .breadcrumb-separator {
+        width: 1rem;
+        height: 1rem;
+        color: #d1d5db;
+    }
+    
+    .dark .breadcrumb-separator {
+        color: #6b7280;
+    }
+    
+    .navbar-center {
+        display: none;
+        align-items: center;
+        gap: 1rem;
+        flex: 1;
+        justify-content: center;
+        max-width: 24rem;
+    }
+    
+    @media (min-width: 1024px) {
+        .navbar-center {
+            display: flex;
+        }
+    }
+    
+    .search-container {
+        position: relative;
+        width: 100%;
+        max-width: 20rem;
+    }
+    
+    .search-input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.75rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        font-size: 0.875rem;
+        color: #111827;
+        transition: all 0.3s ease;
+        outline: none;
+    }
+    
+    .search-input::placeholder {
+        color: #9ca3af;
+    }
+    
+    .search-input:focus {
+        border-color: #059669;
+        box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+        background: rgba(255, 255, 255, 0.95);
+    }
+    
+    .dark .search-input {
+        background: rgba(31, 41, 55, 0.8);
+        border-color: #374151;
         color: #ffffff;
+    }
+    
+    .dark .search-input:focus {
+        border-color: #10b981;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        background: rgba(31, 41, 55, 0.95);
+    }
+    
+    .search-icon {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 1.25rem;
+        height: 1.25rem;
+        color: #9ca3af;
+        pointer-events: none;
     }
     
     .navbar-right {
@@ -86,68 +223,87 @@
         gap: 1rem;
     }
     
-    .dark-mode-btn {
-        background-color: #f3f4f6;
-        padding: 0.5rem;
-        border-radius: 0.5rem;
+    .navbar-action-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(229, 231, 235, 0.5);
         color: #6b7280;
-        border: none;
         cursor: pointer;
-        outline: none;
-        transition: all 0.2s;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(10px);
     }
     
-    .dark .dark-mode-btn {
-        background-color: #374151;
+    .navbar-action-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(5, 150, 105, 0.1), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .navbar-action-btn:hover::before {
+        left: 100%;
+    }
+    
+    .navbar-action-btn:hover {
+        background: rgba(5, 150, 105, 0.1);
+        border-color: rgba(5, 150, 105, 0.2);
+        color: #059669;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15);
+    }
+    
+    .dark .navbar-action-btn {
+        background: rgba(31, 41, 55, 0.8);
+        border-color: rgba(55, 65, 81, 0.5);
         color: #9ca3af;
     }
     
-    .dark-mode-btn:hover {
-        color: #374151;
-    }
-    
-    .dark .dark-mode-btn:hover {
-        color: #e5e7eb;
-    }
-    
-    .dark-mode-btn:focus {
-        outline: 2px solid #10b981;
+    .dark .navbar-action-btn:hover {
+        background: rgba(16, 185, 129, 0.1);
+        border-color: rgba(16, 185, 129, 0.2);
+        color: #10b981;
     }
     
     .notification-btn {
-        background-color: #ffffff;
-        padding: 0.25rem;
-        border-radius: 9999px;
-        color: #9ca3af;
-        border: none;
-        cursor: pointer;
-        outline: none;
         position: relative;
-        transition: all 0.2s;
-    }
-    
-    .dark .notification-btn {
-        background-color: #1f2937;
-    }
-    
-    .notification-btn:hover {
-        color: #6b7280;
-    }
-    
-    .notification-btn:focus {
-        outline: 2px solid #10b981;
-        outline-offset: 2px;
     }
     
     .notification-badge {
         position: absolute;
-        top: 0;
-        right: 0;
-        display: block;
-        height: 0.5rem;
-        width: 0.5rem;
-        border-radius: 9999px;
-        background-color: #10b981;
+        top: -0.25rem;
+        right: -0.25rem;
+        width: 1.25rem;
+        height: 1.25rem;
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.625rem;
+        font-weight: 700;
+        color: white;
+        border: 2px solid #ffffff;
+        animation: pulse 2s infinite;
+    }
+    
+    .dark .notification-badge {
+        border-color: #1f2937;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
     }
     
     .user-dropdown {
@@ -155,56 +311,109 @@
     }
     
     .user-btn {
-        max-width: 12rem;
-        background-color: #ffffff;
-        border-radius: 9999px;
         display: flex;
         align-items: center;
-        font-size: 0.875rem;
-        border: none;
+        gap: 0.75rem;
+        padding: 0.5rem;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(229, 231, 235, 0.5);
         cursor: pointer;
-        outline: none;
-        transition: all 0.2s;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .user-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(5, 150, 105, 0.1), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .user-btn:hover::before {
+        left: 100%;
+    }
+    
+    .user-btn:hover {
+        background: rgba(5, 150, 105, 0.1);
+        border-color: rgba(5, 150, 105, 0.2);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15);
     }
     
     .dark .user-btn {
-        background-color: #1f2937;
+        background: rgba(31, 41, 55, 0.8);
+        border-color: rgba(55, 65, 81, 0.5);
     }
     
-    .user-btn:focus {
-        outline: 2px solid #10b981;
-        outline-offset: 2px;
+    .dark .user-btn:hover {
+        background: rgba(16, 185, 129, 0.1);
+        border-color: rgba(16, 185, 129, 0.2);
     }
     
     .user-avatar {
-        height: 2rem;
-        width: 2rem;
-        border-radius: 9999px;
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 10px;
+        object-fit: cover;
+        border: 2px solid rgba(5, 150, 105, 0.2);
+        transition: all 0.3s ease;
     }
     
-    .user-name {
+    .user-btn:hover .user-avatar {
+        border-color: rgba(5, 150, 105, 0.4);
+        transform: scale(1.05);
+    }
+    
+    .user-info {
         display: none;
-        margin-left: 0.75rem;
-        color: #374151;
-        font-weight: 500;
-    }
-    
-    .dark .user-name {
-        color: #d1d5db;
+        flex-direction: column;
+        align-items: flex-start;
+        min-width: 0;
     }
     
     @media (min-width: 768px) {
-        .user-name {
-            display: block;
+        .user-info {
+            display: flex;
         }
     }
     
-    .user-chevron {
-        display: none;
-        margin-left: 0.5rem;
-        height: 1rem;
-        width: 1rem;
+    .user-name {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #111827;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 8rem;
+    }
+    
+    .dark .user-name {
+        color: #ffffff;
+    }
+    
+    .user-role {
+        font-size: 0.75rem;
+        color: #6b7280;
+        font-weight: 500;
+    }
+    
+    .dark .user-role {
         color: #9ca3af;
+    }
+    
+    .user-chevron {
+        width: 1rem;
+        height: 1rem;
+        color: #9ca3af;
+        transition: transform 0.3s ease;
+        display: none;
     }
     
     @media (min-width: 768px) {
@@ -213,89 +422,243 @@
         }
     }
     
-    .user-menu {
-        position: absolute;
-        right: 0;
-        margin-top: 0.5rem;
-        width: 12rem;
-        background-color: #ffffff;
-        border-radius: 0.375rem;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        padding: 0.25rem 0;
-        border: 1px solid #e5e7eb;
-        z-index: 9999;
-        display: none;
+    .user-btn.active .user-chevron {
+        transform: rotate(180deg);
     }
     
-    .dark .user-menu {
-        background-color: #1f2937;
-        border-color: #374151;
+    .user-menu {
+        position: absolute;
+        top: calc(100% + 0.5rem);
+        right: 0;
+        width: 16rem;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(229, 231, 235, 0.3);
+        border-radius: 16px;
+        box-shadow: 
+            0 20px 25px -5px rgba(0, 0, 0, 0.1),
+            0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        padding: 0.5rem;
+        z-index: 50;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
     }
     
     .user-menu.show {
-        display: block;
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+    
+    .dark .user-menu {
+        background: rgba(31, 41, 55, 0.95);
+        border-color: rgba(55, 65, 81, 0.3);
+        box-shadow: 
+            0 20px 25px -5px rgba(0, 0, 0, 0.4),
+            0 10px 10px -5px rgba(0, 0, 0, 0.2);
+    }
+    
+    .user-menu-header {
+        padding: 1rem;
+        border-bottom: 1px solid rgba(229, 231, 235, 0.3);
+        margin-bottom: 0.5rem;
+    }
+    
+    .dark .user-menu-header {
+        border-bottom-color: rgba(55, 65, 81, 0.3);
+    }
+    
+    .user-menu-name {
+        font-weight: 600;
+        color: #111827;
+        font-size: 0.875rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .dark .user-menu-name {
+        color: #ffffff;
+    }
+    
+    .user-menu-email {
+        font-size: 0.75rem;
+        color: #6b7280;
+    }
+    
+    .dark .user-menu-email {
+        color: #9ca3af;
     }
     
     .user-menu-item {
-        display: block;
-        padding: 0.5rem 1rem;
-        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
         color: #374151;
         text-decoration: none;
-        transition: all 0.2s;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .user-menu-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(5, 150, 105, 0.1), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .user-menu-item:hover::before {
+        left: 100%;
+    }
+    
+    .user-menu-item:hover {
+        background: rgba(5, 150, 105, 0.1);
+        color: #059669;
+        text-decoration: none;
+        transform: translateX(5px);
     }
     
     .dark .user-menu-item {
         color: #d1d5db;
     }
     
-    .user-menu-item:hover {
-        background-color: #f3f4f6;
-        text-decoration: none;
+    .dark .user-menu-item:hover {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
     }
     
-    .dark .user-menu-item:hover {
-        background-color: #374151;
+    .user-menu-icon {
+        width: 1.25rem;
+        height: 1.25rem;
+        flex-shrink: 0;
     }
     
     .user-menu-divider {
-        border-top: 1px solid #f3f4f6;
-        margin: 0.25rem 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
+        margin: 0.5rem 0;
     }
     
     .dark .user-menu-divider {
-        border-top-color: #374151;
+        background: linear-gradient(90deg, transparent, #374151, transparent);
     }
     
     .logout-btn {
-        display: block;
         width: 100%;
-        text-align: left;
-        padding: 0.5rem 1rem;
-        font-size: 0.875rem;
-        color: #374151;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
         background: none;
         border: none;
+        color: #ef4444;
+        text-align: left;
+        font-size: 0.875rem;
+        font-weight: 500;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
     }
     
-    .dark .logout-btn {
-        color: #d1d5db;
+    .logout-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.1), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .logout-btn:hover::before {
+        left: 100%;
     }
     
     .logout-btn:hover {
-        background-color: #f3f4f6;
+        background: rgba(239, 68, 68, 0.1);
+        transform: translateX(5px);
     }
     
-    .dark .logout-btn:hover {
-        background-color: #374151;
+    /* Quick Actions */
+    .quick-actions {
+        display: none;
+        align-items: center;
+        gap: 0.5rem;
     }
     
-    /* Icon styles */
+    @media (min-width: 1280px) {
+        .quick-actions {
+            display: flex;
+        }
+    }
+    
+    .quick-action-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 10px;
+        background: rgba(5, 150, 105, 0.1);
+        border: 1px solid rgba(5, 150, 105, 0.2);
+        color: #059669;
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .quick-action-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(5, 150, 105, 0.2), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .quick-action-btn:hover::before {
+        left: 100%;
+    }
+    
+    .quick-action-btn:hover {
+        background: rgba(5, 150, 105, 0.15);
+        border-color: rgba(5, 150, 105, 0.3);
+        text-decoration: none;
+        color: #047857;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+    }
+    
+    .dark .quick-action-btn {
+        background: rgba(16, 185, 129, 0.1);
+        border-color: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+    }
+    
+    .dark .quick-action-btn:hover {
+        background: rgba(16, 185, 129, 0.15);
+        border-color: rgba(16, 185, 129, 0.3);
+        color: #34d399;
+    }
+    
+    /* Icon Styles */
     .icon {
-        height: 1.5rem;
-        width: 1.5rem;
         stroke: currentColor;
         fill: none;
         stroke-width: 2;
@@ -303,84 +666,148 @@
         stroke-linejoin: round;
     }
     
-    .icon-sm {
-        height: 1.25rem;
-        width: 1.25rem;
-    }
-    
-    .icon-xs {
-        height: 1rem;
-        width: 1rem;
+    /* Responsive Adjustments */
+    @media (max-width: 640px) {
+        .navbar-container {
+            padding: 0 1rem;
+        }
+        
+        .page-title {
+            font-size: 1.25rem;
+        }
+        
+        .navbar-right {
+            gap: 0.5rem;
+        }
+        
+        .user-btn {
+            padding: 0.375rem;
+        }
+        
+        .user-avatar {
+            width: 2rem;
+            height: 2rem;
+        }
     }
 </style>
 
 <header class="teacher-navbar">
     <div class="navbar-container">
-        <!-- Left Side -->
+        <!-- Left Section -->
         <div class="navbar-left">
-            <!-- Mobile menu button -->
-            <button onclick="toggleSidebar()" class="mobile-menu-btn">
-                <svg class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+            <!-- Mobile Menu Button -->
+            <button onclick="toggleSidebar()" class="mobile-menu-btn" title="Toggle Menu">
+                <svg class="icon" width="20" height="20" viewBox="0 0 24 24">
+                    <path d="M3 12h18M3 6h18M3 18h18"/>
                 </svg>
             </button>
 
-            <!-- Page Title -->
-            <h1 class="page-title">
-                {{ $pageTitle ?? 'Teacher Dashboard' }}
-            </h1>
+            <!-- Page Title Section -->
+            <div class="page-title-section">
+                <h1 class="page-title">
+                    {{ $pageTitle ?? 'Teacher Dashboard' }}
+                </h1>
+                
+                <div class="page-breadcrumb">
+                    <svg class="breadcrumb-separator" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 111.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>
+                        @if(is_array($breadcrumb ?? null))
+                            @if(count($breadcrumb) > 0)
+                                {{ end($breadcrumb)['title'] ?? 'Dashboard' }}
+                            @else
+                                Dashboard
+                            @endif
+                        @else
+                            {{ $breadcrumb ?? 'Dashboard' }}
+                        @endif
+                    </span>
+                </div>
+            </div>
         </div>
 
-        <!-- Right Side -->
+        <!-- Center Section - Search -->
+        
+
+        <!-- Right Section -->
         <div class="navbar-right">
+            <!-- Quick Actions -->
+            
+
             <!-- Dark Mode Toggle -->
-            <button onclick="toggleDarkMode()" class="dark-mode-btn" title="Toggle Dark Mode">
-                <svg id="sun-icon" class="icon-sm" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
+            <button onclick="toggleDarkMode()" class="navbar-action-btn" title="Toggle Dark Mode">
+                <svg id="sun-icon" class="icon" width="20" height="20" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="5"/>
+                    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
                 </svg>
-                <svg id="moon-icon" class="icon-sm" fill="currentColor" viewBox="0 0 20 20" style="display: none;">
-                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                <svg id="moon-icon" class="icon" width="20" height="20" viewBox="0 0 24 24" style="display: none;">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
                 </svg>
             </button>
 
             <!-- Notifications -->
-            <div class="relative">
-                <button class="notification-btn">
-                    <svg class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                    </svg>
-                    <span class="notification-badge"></span>
-                </button>
-            </div>
+            
 
-            <!-- User dropdown -->
+            <!-- User Dropdown -->
             <div class="user-dropdown">
-                <button onclick="toggleUserMenu()" class="user-btn">
+                <button onclick="toggleUserMenu()" class="user-btn" id="user-menu-btn">
                     <img class="user-avatar" 
                          src="{{ auth()->user()->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&color=059669&background=D1FAE5' }}" 
                          alt="{{ auth()->user()->name }}">
-                    <span class="user-name">{{ auth()->user()->name }}</span>
-                    <svg class="user-chevron" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    
+                    <div class="user-info">
+                        <div class="user-name">{{ auth()->user()->name }}</div>
+                        <div class="user-role">Teacher</div>
+                    </div>
+                    
+                    <svg class="user-chevron icon" width="16" height="16" viewBox="0 0 24 24">
+                        <path d="M6 9l6 6 6-6"/>
                     </svg>
                 </button>
                 
-                <!-- User dropdown menu -->
+                <!-- User Menu Dropdown -->
                 <div id="user-menu" class="user-menu">
+                    <div class="user-menu-header">
+                        <div class="user-menu-name">{{ auth()->user()->name }}</div>
+                        <div class="user-menu-email">{{ auth()->user()->email }}</div>
+                    </div>
+                    
                     <a href="{{ route('profile.edit') }}" class="user-menu-item">
-                        <i class="fas fa-user-cog" style="margin-right: 0.5rem;"></i>Your Profile
+                        <svg class="user-menu-icon icon" width="20" height="20" viewBox="0 0 24 24">
+                            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        <span>Profile Settings</span>
                     </a>
+                    
                     <a href="#" class="user-menu-item">
-                        <i class="fas fa-cog" style="margin-right: 0.5rem;"></i>Settings
+                        <svg class="user-menu-icon icon" width="20" height="20" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+                        </svg>
+                        <span>Preferences</span>
                     </a>
+                    
                     <a href="{{ route('home') }}" class="user-menu-item">
-                        <i class="fas fa-home" style="margin-right: 0.5rem;"></i>Home
+                        <svg class="user-menu-icon icon" width="20" height="20" viewBox="0 0 24 24">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                            <polyline points="9,22 9,12 15,12 15,22"/>
+                        </svg>
+                        <span>Back to Home</span>
                     </a>
+                    
                     <div class="user-menu-divider"></div>
+                    
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="logout-btn">
-                            <i class="fas fa-sign-out-alt" style="margin-right: 0.5rem;"></i>Sign out
+                            <svg class="user-menu-icon icon" width="20" height="20" viewBox="0 0 24 24">
+                                <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+                                <polyline points="16,17 21,12 16,7"/>
+                                <line x1="21" y1="12" x2="9" y2="12"/>
+                            </svg>
+                            <span>Sign Out</span>
                         </button>
                     </form>
                 </div>
@@ -389,14 +816,15 @@
     </div>
 </header>
 
-<!-- Enhanced JavaScript for Mobile Compatibility -->
+<!-- Enhanced JavaScript -->
 <script>
     // Global variables
     let sidebarOpen = false;
     let darkMode = localStorage.getItem('darkMode') === 'true';
     
-    // Initialize dark mode
+    // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
+        // Initialize dark mode
         if (darkMode) {
             document.documentElement.classList.add('dark');
             document.getElementById('sun-icon').style.display = 'none';
@@ -406,7 +834,10 @@
         // Close dropdowns when clicking outside
         document.addEventListener('click', function(e) {
             if (!e.target.closest('.user-dropdown')) {
-                document.getElementById('user-menu').classList.remove('show');
+                const userMenu = document.getElementById('user-menu');
+                const userBtn = document.getElementById('user-menu-btn');
+                userMenu.classList.remove('show');
+                userBtn.classList.remove('active');
             }
         });
         
@@ -426,6 +857,9 @@
             sidebarOpen = true;
         }
         updateSidebarVisibility();
+        
+        // Initialize search functionality
+        initializeSearch();
     });
     
     // Toggle sidebar function
@@ -467,11 +901,47 @@
     // Toggle user menu function
     function toggleUserMenu() {
         const userMenu = document.getElementById('user-menu');
+        const userBtn = document.getElementById('user-menu-btn');
+        
         userMenu.classList.toggle('show');
+        userBtn.classList.toggle('active');
+    }
+    
+    // Toggle notifications (placeholder)
+    function toggleNotifications() {
+        // Placeholder for notifications functionality
+        console.log('Notifications clicked');
+        // You can implement notification dropdown here
+    }
+    
+    // Initialize search functionality
+    function initializeSearch() {
+        const searchInput = document.getElementById('global-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.trim();
+                if (query.length > 2) {
+                    // Implement search functionality here
+                    console.log('Searching for:', query);
+                    // You can add AJAX search here
+                }
+            });
+            
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const query = e.target.value.trim();
+                    if (query) {
+                        // Implement search redirect here
+                        console.log('Search submitted:', query);
+                    }
+                }
+            });
+        }
     }
     
     // Make functions globally available
     window.toggleSidebar = toggleSidebar;
     window.toggleDarkMode = toggleDarkMode;
     window.toggleUserMenu = toggleUserMenu;
+    window.toggleNotifications = toggleNotifications;
 </script>

@@ -31,7 +31,7 @@
         --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
     }
 
-    [data-bs-theme="dark"] {
+    .dark {
         --light-bg: #1f2937;
         --white: #374151;
         --gray-50: #374151;
@@ -246,7 +246,7 @@
         margin-left: 0.5rem;
     }
 
-    [data-bs-theme="dark"] .age-badge {
+    .dark .age-badge {
         background: #1e3a8a;
         color: #bfdbfe;
     }
@@ -449,7 +449,7 @@
         color: #1e40af;
     }
 
-    [data-bs-theme="dark"] .qr-info {
+    .dark .qr-info {
         background: #1e3a8a;
         border-color: #3730a3;
         color: #bfdbfe;
@@ -464,7 +464,7 @@
         color: #92400e;
     }
 
-    [data-bs-theme="dark"] .no-qr-message {
+    .dark .no-qr-message {
         background: #78350f;
         border-color: #92400e;
         color: #fde68a;
@@ -647,24 +647,30 @@
                 <div class="col-md-4 text-center">
                     <div class="position-relative d-inline-block">
                         @if($student->photo)
-                            <img src="{{ $student->photo_url }}" alt="{{ $student->name }}" class="student-photo">
+                            <img src="{{ $student->photo_url ?? asset('images/default-avatar.png') }}" alt="{{ $student->name }}" class="student-photo">
                         @else
                             <div class="student-initials">
-                                {{ $student->initials }}
+                                {{ $student->initials ?? strtoupper(substr($student->name, 0, 2)) }}
                             </div>
                         @endif
                         
                         <div class="status-badge status-{{ $student->status }}">
-                            {{ $student->status_label }}
+                            {{ $student->status_label ?? ucfirst($student->status) }}
                         </div>
                     </div>
                 </div>
                 
                 <div class="col-md-8">
                     <h2 class="student-name">{{ $student->name }}</h2>
-                    <div class="student-class">
-                        <i class="fas fa-graduation-cap me-2"></i>{{ $student->class }}
-                    </div>
+                    @if($student->class)
+                        <div class="student-class">
+                            <i class="fas fa-graduation-cap me-2"></i>{{ $student->class->name ?? $student->class }}
+                        </div>
+                    @else
+                        <div class="student-class" style="background: var(--gray-400);">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Belum ada kelas
+                        </div>
+                    @endif
                     
                     <div class="student-meta">
                         <div class="meta-item">
@@ -680,7 +686,13 @@
                         <div class="meta-item">
                             <i class="fas fa-calendar meta-icon"></i>
                             <strong>Umur:</strong> 
-                            <span class="age-badge">{{ $student->age ?? 'N/A' }} tahun</span>
+                            <span class="age-badge">
+                                @if($student->birth_date)
+                                    {{ $student->age ?? \Carbon\Carbon::parse($student->birth_date)->age }} tahun
+                                @else
+                                    N/A
+                                @endif
+                            </span>
                         </div>
                         <div class="meta-item">
                             <i class="fas fa-{{ $student->gender === 'male' ? 'mars' : 'venus' }} meta-icon"></i>
@@ -716,8 +728,14 @@
                     <div class="info-item">
                         <div class="info-label">Tanggal Lahir</div>
                         <div class="info-value">
-                            {{ $student->birth_date->format('d F Y') }}
-                            <span class="age-badge">{{ $student->age ?? 'N/A' }} tahun</span>
+                            @if($student->birth_date)
+                                {{ \Carbon\Carbon::parse($student->birth_date)->format('d F Y') }}
+                                <span class="age-badge">
+                                    {{ $student->age ?? \Carbon\Carbon::parse($student->birth_date)->age }} tahun
+                                </span>
+                            @else
+                                <span class="empty">Tidak ada data</span>
+                            @endif
                         </div>
                     </div>
                     
@@ -830,9 +848,13 @@
                     <div class="info-item">
                         <div class="info-label">Kelas</div>
                         <div class="info-value">
-                            <span class="student-class" style="margin: 0; padding: 0.25rem 1rem; font-size: 0.875rem;">
-                                <i class="fas fa-graduation-cap me-1"></i>{{ $student->class }}
-                            </span>
+                            @if($student->class)
+                                <span class="student-class" style="margin: 0; padding: 0.25rem 1rem; font-size: 0.875rem;">
+                                    <i class="fas fa-graduation-cap me-1"></i>{{ $student->class->name ?? $student->class }}
+                                </span>
+                            @else
+                                <span class="empty">Belum ada kelas</span>
+                            @endif
                         </div>
                     </div>
                     
@@ -840,7 +862,7 @@
                         <div class="info-label">Status</div>
                         <div class="info-value">
                             <span class="status-badge status-{{ $student->status }}" style="position: static; margin: 0; border: none; box-shadow: none;">
-                                {{ $student->status_label }}
+                                {{ $student->status_label ?? ucfirst($student->status) }}
                             </span>
                         </div>
                     </div>
@@ -849,7 +871,7 @@
                         <div class="info-label">Terdaftar</div>
                         <div class="info-value">
                             <i class="fas fa-calendar-plus text-primary me-1"></i>
-                            {{ $student->created_at->format('d F Y') }}
+                            {{ $student->created_at ? \Carbon\Carbon::parse($student->created_at)->format('d F Y') : 'N/A' }}
                         </div>
                     </div>
                     
@@ -857,7 +879,7 @@
                         <div class="info-label">Terakhir Update</div>
                         <div class="info-value">
                             <i class="fas fa-clock text-primary me-1"></i>
-                            {{ $student->updated_at->format('d F Y H:i') }}
+                            {{ $student->updated_at ? \Carbon\Carbon::parse($student->updated_at)->format('d F Y H:i') : 'N/A' }}
                         </div>
                     </div>
                 </div>
@@ -871,7 +893,7 @@
                         QR Code Absensi
                     </h3>
                     
-                    @if($student->qrAttendance)
+                    @if(isset($student->qrAttendance) && $student->qrAttendance)
                         <div class="qr-section">
                             <div class="qr-code-container">
                                 @if($student->qrAttendance->qr_image_path && file_exists(storage_path('app/public/' . $student->qrAttendance->qr_image_path)))
@@ -919,7 +941,9 @@
                                 <i class="fas fa-info-circle me-2"></i>
                                 <strong>Informasi QR Code:</strong><br>
                                 QR Code ini digunakan untuk absensi siswa. Siswa dapat memindai QR Code ini untuk melakukan absensi harian.
-                                Dibuat pada: {{ $student->qrAttendance->created_at->format('d F Y H:i') }}
+                                @if($student->qrAttendance->created_at)
+                                    Dibuat pada: {{ \Carbon\Carbon::parse($student->qrAttendance->created_at)->format('d F Y H:i') }}
+                                @endif
                             </div>
                         </div>
                     @else
@@ -953,7 +977,7 @@
     <a href="{{ route('admin.students.edit', $student) }}" class="floating-btn floating-btn-primary" title="Edit Data Siswa">
         <i class="fas fa-edit"></i>
     </a>
-    @if($student->qrAttendance)
+    @if(isset($student->qrAttendance) && $student->qrAttendance)
         <button type="button" onclick="regenerateQR({{ $student->id }})" class="floating-btn floating-btn-warning" title="Regenerate QR Code">
             <i class="fas fa-sync-alt"></i>
         </button>

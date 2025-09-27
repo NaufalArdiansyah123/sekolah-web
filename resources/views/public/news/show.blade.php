@@ -255,7 +255,7 @@
                         </div>
                         <div class="d-flex align-items-start">
                             <i class="fas fa-map-marker-alt text-primary me-3 mt-1"></i>
-                            <span>Jl. Pendidikan No. 123, Kota Balong</span>
+                            <span>Jl. Pendidikan No. 123, Ponorogo</span>
                         </div>
                     </div>
                 </div>

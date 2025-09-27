@@ -31,7 +31,7 @@
         --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
     }
 
-    [data-bs-theme="dark"] {
+    .dark {
         --light-bg: #1f2937;
         --white: #374151;
         --gray-50: #374151;
@@ -211,14 +211,14 @@
         background: #f0fdf4;
     }
 
-    [data-bs-theme="dark"] .form-control.is-invalid,
-    [data-bs-theme="dark"] .form-select.is-invalid {
+    .dark .form-control.is-invalid,
+    .dark .form-select.is-invalid {
         background: #7f1d1d;
         color: #fecaca;
     }
 
-    [data-bs-theme="dark"] .form-control.is-valid,
-    [data-bs-theme="dark"] .form-select.is-valid {
+    .dark .form-control.is-valid,
+    .dark .form-select.is-valid {
         background: #14532d;
         color: #bbf7d0;
     }
@@ -275,7 +275,7 @@
         margin-top: 1rem;
     }
 
-    [data-bs-theme="dark"] .user-account-card {
+    .dark .user-account-card {
         background: #1e3a8a;
         border-color: #3730a3;
     }
@@ -456,17 +456,17 @@
         border-left: 4px solid var(--info-color);
     }
 
-    [data-bs-theme="dark"] .alert-danger-custom {
+    .dark .alert-danger-custom {
         background: #7f1d1d;
         color: #fecaca;
     }
 
-    [data-bs-theme="dark"] .alert-success-custom {
+    .dark .alert-success-custom {
         background: #14532d;
         color: #bbf7d0;
     }
 
-    [data-bs-theme="dark"] .alert-info-custom {
+    .dark .alert-info-custom {
         background: #1e3a8a;
         color: #bfdbfe;
     }
@@ -720,26 +720,22 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="class" class="form-label">
+                                <label for="class_id" class="form-label">
                                     Kelas <span class="required">*</span>
                                 </label>
-                                <select class="form-select @error('class') is-invalid @enderror" id="class" name="class" required>
+                                <select class="form-select @error('class_id') is-invalid @enderror" id="class_id" name="class_id" required>
                                     <option value="">Pilih Kelas</option>
                                     @foreach($classOptions as $grade => $classes)
                                         <optgroup label="Kelas {{ $grade }}">
                                             @foreach($classes as $class)
-                                                @php
-                                                    $parsed = \App\Helpers\ClassHelper::parseClass($class);
-                                                    $majorName = \App\Helpers\ClassHelper::getMajors()[$parsed['major']] ?? $parsed['major'];
-                                                @endphp
-                                                <option value="{{ $class }}" {{ old('class') == $class ? 'selected' : '' }}>
-                                                    {{ $class }} - {{ $majorName }}
+                                                <option value="{{ $class->id }}" {{ old('class_id') == $class->id ? 'selected' : '' }}>
+                                                    {{ $class->name }} - {{ $class->program }}
                                                 </option>
                                             @endforeach
                                         </optgroup>
                                     @endforeach
                                 </select>
-                                @error('class')
+                                @error('class_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -1155,7 +1151,7 @@ nisnInput.addEventListener('input', function() {
 
 // Generate NIS button
 document.getElementById('generateNisBtn').addEventListener('click', function() {
-    const classSelect = document.getElementById('class');
+    const classSelect = document.getElementById('class_id');
     const selectedClass = classSelect.value;
     
     if (!selectedClass) {
@@ -1167,7 +1163,7 @@ document.getElementById('generateNisBtn').addEventListener('click', function() {
     this.disabled = true;
     this.innerHTML = '<i class="fas fa-spinner spinner"></i>';
     
-    fetch(`{{ route('admin.students.generate-nis') }}?class=${selectedClass}`)
+    fetch(`{{ route('admin.students.generate-nis') }}?class_id=${selectedClass}`)
         .then(response => response.json())
         .then(data => {
             if (data.suggested_nis) {
@@ -1376,7 +1372,7 @@ document.getElementById('password').addEventListener('input', function() {
 });
 
 // Auto-generate NIS based on class
-document.getElementById('class').addEventListener('change', function() {
+document.getElementById('class_id').addEventListener('change', function() {
     const nisField = document.getElementById('nis');
     if (!nisField.value && this.value) {
         document.getElementById('generateNisBtn').click();

@@ -31,7 +31,7 @@
         --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
     }
 
-    [data-bs-theme="dark"] {
+    .dark {
         --light-bg: #1f2937;
         --white: #374151;
         --gray-50: #374151;
@@ -212,14 +212,14 @@
         background: #f0fdf4;
     }
 
-    [data-bs-theme="dark"] .form-control.is-invalid,
-    [data-bs-theme="dark"] .form-select.is-invalid {
+    .dark .form-control.is-invalid,
+    .dark .form-select.is-invalid {
         background: #7f1d1d;
         color: #fecaca;
     }
 
-    [data-bs-theme="dark"] .form-control.is-valid,
-    [data-bs-theme="dark"] .form-select.is-valid {
+    .dark .form-control.is-valid,
+    .dark .form-select.is-valid {
         background: #14532d;
         color: #bbf7d0;
     }
@@ -286,7 +286,7 @@
         margin-bottom: 1rem;
     }
 
-    [data-bs-theme="dark"] .qr-status-card {
+    .dark .qr-status-card {
         background: #1e3a8a;
         border-color: #3730a3;
     }
@@ -465,17 +465,17 @@
         border-left: 4px solid var(--info-color);
     }
 
-    [data-bs-theme="dark"] .alert-danger-custom {
+    .dark .alert-danger-custom {
         background: #7f1d1d;
         color: #fecaca;
     }
 
-    [data-bs-theme="dark"] .alert-success-custom {
+    .dark .alert-success-custom {
         background: #14532d;
         color: #bbf7d0;
     }
 
-    [data-bs-theme="dark"] .alert-info-custom {
+    .dark .alert-info-custom {
         background: #1e3a8a;
         color: #bfdbfe;
     }
@@ -684,26 +684,22 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="class" class="form-label">
+                                <label for="class_id" class="form-label">
                                     Kelas <span class="required">*</span>
                                 </label>
-                                <select class="form-select @error('class') is-invalid @enderror" id="class" name="class" required>
+                                <select class="form-select @error('class_id') is-invalid @enderror" id="class_id" name="class_id" required>
                                     <option value="">Pilih Kelas</option>
                                     @foreach($classOptions as $grade => $classes)
                                         <optgroup label="Kelas {{ $grade }}">
                                             @foreach($classes as $class)
-                                                @php
-                                                    $parsed = \App\Helpers\ClassHelper::parseClass($class);
-                                                    $majorName = \App\Helpers\ClassHelper::getMajors()[$parsed['major']] ?? $parsed['major'];
-                                                @endphp
-                                                <option value="{{ $class }}" {{ old('class', $student->class) == $class ? 'selected' : '' }}>
-                                                    {{ $class }} - {{ $majorName }}
+                                                <option value="{{ $class->id }}" {{ old('class_id', $student->class_id) == $class->id ? 'selected' : '' }}>
+                                                    {{ $class->name }} - {{ $class->program }}
                                                 </option>
                                             @endforeach
                                         </optgroup>
                                     @endforeach
                                 </select>
-                                @error('class')
+                                @error('class_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>

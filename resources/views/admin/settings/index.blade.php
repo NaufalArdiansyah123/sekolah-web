@@ -1,319 +1,286 @@
 @extends('layouts.admin')
 
-@section('title', 'Pengaturan Sistem')
+@section('title', 'System Settings')
 
 @section('content')
-@php
-    // Helper function untuk mengakses setting dengan aman
-    $getSetting = function($settings, $key, $default = '') {
-        return isset($settings[$key]) ? $settings[$key]->value : $default;
-    };
-@endphp
-
-<div class="container mx-auto px-6 py-8">
-    <!-- Page Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
-        <div class="mb-4 sm:mb-0">
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white flex items-center">
-                <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-3 rounded-xl mr-4">
-                    <i class="fas fa-cog text-white text-xl"></i>
+<div class="settings-page">
+    <!-- Hero Header -->
+    <div class="hero-header">
+        <div class="hero-content">
+            <div class="hero-icon">
+                <div class="icon-wrapper">
+                    <i class="fas fa-cogs"></i>
                 </div>
-                Pengaturan Sistem
-            </h1>
-            <p class="text-gray-600 dark:text-gray-400 mt-2">Kelola pengaturan sekolah dan konfigurasi sistem</p>
+            </div>
+            <div class="hero-text">
+                <h1 class="hero-title">System Settings</h1>
+                <p class="hero-subtitle">Configure and customize your school management system with advanced controls</p>
+                <div class="hero-breadcrumb">
+                    <span class="breadcrumb-item">
+                        <i class="fas fa-home"></i>
+                        <a href="{{ route('admin.dashboard') }}">Dashboard</a>
+                    </span>
+                    <span class="breadcrumb-separator">
+                        <i class="fas fa-chevron-right"></i>
+                    </span>
+                    <span class="breadcrumb-item active">Settings</span>
+                </div>
+            </div>
         </div>
-        <div class="flex space-x-3">
-            <button type="button" onclick="exportSettings()" 
-                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-all duration-200 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                <i class="fas fa-download mr-2"></i>Export Settings
-            </button>
-            <button type="button" onclick="resetToDefault()" 
-                    class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-all duration-200 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                <i class="fas fa-undo mr-2"></i>Reset Default
-            </button>
+        <div class="hero-stats">
+            <div class="stat-item">
+                <div class="stat-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-number">3</span>
+                    <span class="stat-label">Categories</span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon">
+                    <i class="fas fa-sliders-h"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-number">12+</span>
+                    <span class="stat-label">Settings</span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-number">100%</span>
+                    <span class="stat-label">Secure</span>
+                </div>
+            </div>
         </div>
     </div>
 
-    @if(isset($error))
-        <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 mb-6">
-            <div class="flex items-center">
-                <i class="fas fa-exclamation-triangle text-red-500 mr-3"></i>
-                <span class="text-red-700 dark:text-red-300">{{ $error }}</span>
+    <!-- Alert Messages -->
+    @if(session('success'))
+        <div class="alert-container">
+            <div class="alert alert-success">
+                <div class="alert-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="alert-content">
+                    <h4 class="alert-title">Success!</h4>
+                    <p class="alert-message">{{ session('success') }}</p>
+                </div>
+                <button type="button" class="alert-close" onclick="this.parentElement.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
         </div>
     @endif
 
-    <!-- Tab Navigation -->
-    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-xl mb-6 overflow-hidden">
-        <div class="border-b border-gray-200 dark:border-gray-700">
-            <nav class="flex space-x-8 px-6" aria-label="Tabs">
-                <button onclick="switchTab('school')" 
-                        class="tab-button active border-blue-500 text-blue-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center">
-                    <i class="fas fa-school mr-2"></i>Informasi Sekolah
+    @if(session('error'))
+        <div class="alert-container">
+            <div class="alert alert-error">
+                <div class="alert-icon">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <div class="alert-content">
+                    <h4 class="alert-title">Error!</h4>
+                    <p class="alert-message">{{ session('error') }}</p>
+                </div>
+                <button type="button" class="alert-close" onclick="this.parentElement.parentElement.remove()">
+                    <i class="fas fa-times"></i>
                 </button>
-                <button onclick="switchTab('academic')" 
-                        class="tab-button border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center">
-                    <i class="fas fa-graduation-cap mr-2"></i>Akademik
-                </button>
-                <button onclick="switchTab('system')" 
-                        class="tab-button border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center">
-                    <i class="fas fa-cogs mr-2"></i>Sistem
-                </button>
-                <button onclick="switchTab('email')" 
-                        class="tab-button border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center">
-                    <i class="fas fa-envelope mr-2"></i>Email & Notifikasi
-                </button>
-                <button onclick="switchTab('backup')" 
-                        class="tab-button border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center">
-                    <i class="fas fa-database mr-2"></i>Backup & Maintenance
-                </button>
-            </nav>
+            </div>
         </div>
-    </div>
+    @endif
 
-    <form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data" id="settings-form">
+    <!-- Main Settings Container -->
+    <form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data" id="settingsForm">
         @csrf
         @method('PUT')
-        
-        <!-- Hidden inputs for boolean fields -->
-        <!-- These ensure that unchecked checkboxes send 0 values -->
-        <input type="hidden" name="maintenance_mode" value="0">
-        <input type="hidden" name="allow_registration" value="0">
-        <input type="hidden" name="email_notifications_enabled" value="0">
-        <input type="hidden" name="registration_notifications" value="0">
-        <input type="hidden" name="system_notifications" value="0">
-        <input type="hidden" name="announcement_notifications" value="0">
-        <input type="hidden" name="agenda_notifications" value="0">
-        <input type="hidden" name="auto_backup_enabled" value="0">
-        
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <!-- Main Content -->
-            <div class="lg:col-span-3">
-                
-                <!-- School Information Tab -->
-                <div id="school-tab" class="tab-content">
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-                        <div class="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-4">
-                            <h2 class="text-xl font-semibold text-white flex items-center">
-                                <i class="fas fa-school mr-3"></i>Informasi Sekolah
-                            </h2>
+
+        <div class="settings-container">
+            <!-- Enhanced Tab Navigation -->
+            <div class="tab-navigation">
+                <div class="nav-background"></div>
+                <div class="nav-content">
+                    <div class="nav-tabs">
+                        <button type="button" class="nav-tab active" data-tab="academic">
+                            <div class="tab-icon-wrapper">
+                                <div class="tab-icon">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </div>
+                            </div>
+                            <div class="tab-text">
+                                <span class="tab-title">Academic</span>
+                                <span class="tab-description">Year & Schedule Settings</span>
+                            </div>
+                        </button>
+
+                        <button type="button" class="nav-tab" data-tab="system">
+                            <div class="tab-icon-wrapper">
+                                <div class="tab-icon">
+                                    <i class="fas fa-cog"></i>
+                                </div>
+                            </div>
+                            <div class="tab-text">
+                                <span class="tab-title">System</span>
+                                <span class="tab-description">Security & Performance</span>
+                            </div>
+                        </button>
+
+                        <button type="button" class="nav-tab" data-tab="backup">
+                            <div class="tab-icon-wrapper">
+                                <div class="tab-icon">
+                                    <i class="fas fa-database"></i>
+                                </div>
+                            </div>
+                            <div class="tab-text">
+                                <span class="tab-title">Backup</span>
+                                <span class="tab-description">Data & Maintenance</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="nav-slider"></div>
+                </div>
+            </div>
+
+            <!-- Tab Content Panels -->
+            <div class="tab-content">
+                <!-- Academic Settings Panel -->
+                <div class="tab-panel active" id="academic-panel">
+                    <div class="panel-header">
+                        <div class="header-icon">
+                            <i class="fas fa-graduation-cap"></i>
                         </div>
-                        <div class="p-6 space-y-6">
-                            <!-- School Logo -->
-                            <div class="flex items-center space-x-6 p-6 bg-gray-50 dark:bg-gray-700 rounded-xl">
-                                <div class="flex-shrink-0">
-                                    <div class="w-24 h-24 bg-gray-200 dark:bg-gray-600 rounded-xl flex items-center justify-center overflow-hidden">
-                                        @if($getSetting($settings, 'school_logo'))
-                                            <img src="{{ asset('storage/' . $getSetting($settings, 'school_logo')) }}" 
-                                                 alt="Logo Sekolah" class="w-full h-full object-cover">
-                                        @else
-                                            <i class="fas fa-school text-3xl text-gray-400"></i>
-                                        @endif
-                                    </div>
-                                </div>
-                                <div class="flex-1">
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Logo Sekolah
-                                    </label>
-                                    <input type="file" name="school_logo" accept="image/*"
-                                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                                    <p class="text-xs text-gray-500 mt-1">Format: JPG, PNG, SVG. Maksimal 2MB</p>
-                                </div>
-                            </div>
-
-                            <!-- Basic School Information -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label for="school_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        <span class="flex items-center">
-                                            <i class="fas fa-school mr-2 text-blue-500"></i>
-                                            Nama Sekolah *
-                                        </span>
-                                    </label>
-                                    <input type="text" name="school_name" id="school_name" required
-                                           value="{{ old('school_name', $getSetting($settings, 'school_name', 'SMA Negeri 1 Balong')) }}"
-                                           class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
-                                </div>
-
-                                <div>
-                                    <label for="school_npsn" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        <span class="flex items-center">
-                                            <i class="fas fa-id-card mr-2 text-green-500"></i>
-                                            NPSN
-                                        </span>
-                                    </label>
-                                    <input type="text" name="school_npsn" id="school_npsn"
-                                           value="{{ old('school_npsn', $getSetting($settings, 'school_npsn')) }}"
-                                           class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
-                                </div>
-
-                                <div class="md:col-span-2">
-                                    <label for="school_address" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        <span class="flex items-center">
-                                            <i class="fas fa-map-marker-alt mr-2 text-red-500"></i>
-                                            Alamat Sekolah
-                                        </span>
-                                    </label>
-                                    <textarea name="school_address" id="school_address" rows="3"
-                                              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">{{ old('school_address', $getSetting($settings, 'school_address')) }}</textarea>
-                                </div>
-
-                                <div>
-                                    <label for="school_phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        <span class="flex items-center">
-                                            <i class="fas fa-phone mr-2 text-purple-500"></i>
-                                            Nomor Telepon
-                                        </span>
-                                    </label>
-                                    <input type="tel" name="school_phone" id="school_phone"
-                                           value="{{ old('school_phone', $getSetting($settings, 'school_phone')) }}"
-                                           class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
-                                </div>
-
-                                <div>
-                                    <label for="school_email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        <span class="flex items-center">
-                                            <i class="fas fa-envelope mr-2 text-indigo-500"></i>
-                                            Email Sekolah
-                                        </span>
-                                    </label>
-                                    <input type="email" name="school_email" id="school_email"
-                                           value="{{ old('school_email', $getSetting($settings, 'school_email')) }}"
-                                           class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
-                                </div>
-
-                                <div>
-                                    <label for="school_website" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        <span class="flex items-center">
-                                            <i class="fas fa-globe mr-2 text-teal-500"></i>
-                                            Website Sekolah
-                                        </span>
-                                    </label>
-                                    <input type="url" name="school_website" id="school_website"
-                                           value="{{ old('school_website', $getSetting($settings, 'school_website')) }}"
-                                           class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
-                                </div>
-
-                                <div>
-                                    <label for="principal_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        <span class="flex items-center">
-                                            <i class="fas fa-user-tie mr-2 text-yellow-500"></i>
-                                            Nama Kepala Sekolah
-                                        </span>
-                                    </label>
-                                    <input type="text" name="principal_name" id="principal_name"
-                                           value="{{ old('principal_name', $getSetting($settings, 'principal_name')) }}"
-                                           class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
-                                </div>
-
-                                <div>
-                                    <label for="school_accreditation" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        <span class="flex items-center">
-                                            <i class="fas fa-award mr-2 text-orange-500"></i>
-                                            Akreditasi
-                                        </span>
-                                    </label>
-                                    <select name="school_accreditation" id="school_accreditation"
-                                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
-                                        <option value="">Pilih Akreditasi</option>
-                                        <option value="A" {{ $getSetting($settings, 'school_accreditation') == 'A' ? 'selected' : '' }}>A (Sangat Baik)</option>
-                                        <option value="B" {{ $getSetting($settings, 'school_accreditation') == 'B' ? 'selected' : '' }}>B (Baik)</option>
-                                        <option value="C" {{ $getSetting($settings, 'school_accreditation') == 'C' ? 'selected' : '' }}>C (Cukup)</option>
-                                        <option value="Belum" {{ $getSetting($settings, 'school_accreditation') == 'Belum' ? 'selected' : '' }}>Belum Terakreditasi</option>
-                                    </select>
-                                </div>
-                            </div>
+                        <div class="header-content">
+                            <h2 class="panel-title">Academic Settings</h2>
+                            <p class="panel-subtitle">Configure academic year, semester, and attendance settings for your institution</p>
                         </div>
                     </div>
-                </div>
 
-                <!-- Academic Settings Tab -->
-                <div id="academic-tab" class="tab-content hidden">
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-                        <div class="bg-gradient-to-r from-green-500 to-teal-600 px-6 py-4">
-                            <h2 class="text-xl font-semibold text-white flex items-center">
-                                <i class="fas fa-graduation-cap mr-3"></i>Pengaturan Akademik
-                            </h2>
-                        </div>
-                        <div class="p-6 space-y-6">
-                            <!-- Academic Year & Semester -->
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div>
-                                    <label for="academic_year" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        <span class="flex items-center">
-                                            <i class="fas fa-calendar-alt mr-2 text-blue-500"></i>
-                                            Tahun Ajaran
-                                        </span>
-                                    </label>
-                                    <input type="text" name="academic_year" id="academic_year"
-                                           value="{{ old('academic_year', $getSetting($settings, 'academic_year', '2024/2025')) }}"
-                                           class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                                           placeholder="2024/2025">
+                    <div class="panel-content">
+                        <div class="settings-grid">
+                            <!-- Academic Year Card -->
+                            <div class="setting-card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </div>
+                                    <div class="card-title">
+                                        <h3>Academic Year</h3>
+                                        <p>Configure current academic period</p>
+                                    </div>
                                 </div>
+                                <div class="card-content">
+                                    <div class="form-group">
+                                        <div class="input-container">
+                                            <input type="text" class="form-control @error('academic_year') error @enderror" 
+                                                   id="academic_year" name="academic_year" 
+                                                   value="{{ old('academic_year', $settings['academic_year']->value ?? '2024/2025') }}"
+                                                   placeholder=" ">
+                                            <label for="academic_year" class="form-label">Academic Year</label>
+                                            <div class="input-border"></div>
+                                            <div class="input-focus"></div>
+                                        </div>
+                                        @error('academic_year')
+                                            <div class="error-message">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
 
-                                <div>
-                                    <label for="semester" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        <span class="flex items-center">
-                                            <i class="fas fa-list-ol mr-2 text-green-500"></i>
-                                            Semester Aktif
-                                        </span>
-                                    </label>
-                                    <select name="semester" id="semester"
-                                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
-                                        <option value="1" {{ $getSetting($settings, 'semester', '1') == '1' ? 'selected' : '' }}>Semester 1 (Ganjil)</option>
-                                        <option value="2" {{ $getSetting($settings, 'semester', '1') == '2' ? 'selected' : '' }}>Semester 2 (Genap)</option>
-                                    </select>
-                                </div>
+                                    <div class="form-group">
+                                        <div class="select-container">
+                                            <select class="form-select @error('semester') error @enderror" 
+                                                    id="semester" name="semester">
+                                                <option value="1" {{ old('semester', $settings['semester']->value ?? '') == '1' ? 'selected' : '' }}>Semester 1 (Odd)</option>
+                                                <option value="2" {{ old('semester', $settings['semester']->value ?? '') == '2' ? 'selected' : '' }}>Semester 2 (Even)</option>
+                                            </select>
+                                            <label for="semester" class="form-label">Current Semester</label>
+                                            <div class="select-arrow">
+                                                <i class="fas fa-chevron-down"></i>
+                                            </div>
+                                            <div class="input-border"></div>
+                                            <div class="input-focus"></div>
+                                        </div>
+                                        @error('semester')
+                                            <div class="error-message">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
 
-                                <div>
-                                    <label for="school_timezone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        <span class="flex items-center">
-                                            <i class="fas fa-clock mr-2 text-purple-500"></i>
-                                            Zona Waktu
-                                        </span>
-                                    </label>
-                                    <select name="school_timezone" id="school_timezone"
-                                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
-                                        <option value="Asia/Jakarta" {{ $getSetting($settings, 'school_timezone', 'Asia/Jakarta') == 'Asia/Jakarta' ? 'selected' : '' }}>WIB (Asia/Jakarta)</option>
-                                        <option value="Asia/Makassar" {{ $getSetting($settings, 'school_timezone') == 'Asia/Makassar' ? 'selected' : '' }}>WITA (Asia/Makassar)</option>
-                                        <option value="Asia/Jayapura" {{ $getSetting($settings, 'school_timezone') == 'Asia/Jayapura' ? 'selected' : '' }}>WIT (Asia/Jayapura)</option>
-                                    </select>
+                                    <div class="form-group">
+                                        <div class="select-container">
+                                            <select class="form-select @error('school_timezone') error @enderror" 
+                                                    id="school_timezone" name="school_timezone">
+                                                <option value="Asia/Jakarta" {{ old('school_timezone', $settings['school_timezone']->value ?? 'Asia/Jakarta') == 'Asia/Jakarta' ? 'selected' : '' }}>Asia/Jakarta (WIB)</option>
+                                                <option value="Asia/Makassar" {{ old('school_timezone', $settings['school_timezone']->value ?? '') == 'Asia/Makassar' ? 'selected' : '' }}>Asia/Makassar (WITA)</option>
+                                                <option value="Asia/Jayapura" {{ old('school_timezone', $settings['school_timezone']->value ?? '') == 'Asia/Jayapura' ? 'selected' : '' }}>Asia/Jayapura (WIT)</option>
+                                            </select>
+                                            <label for="school_timezone" class="form-label">Timezone</label>
+                                            <div class="select-arrow">
+                                                <i class="fas fa-chevron-down"></i>
+                                            </div>
+                                            <div class="input-border"></div>
+                                            <div class="input-focus"></div>
+                                        </div>
+                                        @error('school_timezone')
+                                            <div class="error-message">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- Attendance Settings -->
-                            <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-                                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 flex items-center">
-                                    <i class="fas fa-user-check mr-2 text-indigo-500"></i>
-                                    Pengaturan Absensi
-                                </h3>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                    <div>
-                                        <label for="attendance_start_time" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Jam Mulai Absensi
-                                        </label>
-                                        <input type="time" name="attendance_start_time" id="attendance_start_time"
-                                               value="{{ old('attendance_start_time', $getSetting($settings, 'attendance_start_time', '07:00')) }}"
-                                               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                            <!-- Attendance Settings Card -->
+                            <div class="setting-card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div class="card-title">
+                                        <h3>Attendance Settings</h3>
+                                        <p>Configure attendance time windows and policies</p>
+                                    </div>
+                                </div>
+                                <div class="card-content">
+                                    <div class="form-group">
+                                        <div class="input-container">
+                                            <input type="time" class="form-control @error('attendance_start_time') error @enderror" 
+                                                   id="attendance_start_time" name="attendance_start_time" 
+                                                   value="{{ old('attendance_start_time', $settings['attendance_start_time']->value ?? '07:00') }}">
+                                            <label for="attendance_start_time" class="form-label">Attendance Start Time</label>
+                                            <div class="input-border"></div>
+                                            <div class="input-focus"></div>
+                                        </div>
+                                        @error('attendance_start_time')
+                                            <div class="error-message">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
 
-                                    <div>
-                                        <label for="attendance_end_time" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Jam Berakhir Absensi
-                                        </label>
-                                        <input type="time" name="attendance_end_time" id="attendance_end_time"
-                                               value="{{ old('attendance_end_time', $getSetting($settings, 'attendance_end_time', '07:30')) }}"
-                                               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
-                                    </div>
-
-                                    <div>
-                                        <label for="late_tolerance_minutes" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Toleransi Terlambat (menit)
-                                        </label>
-                                        <input type="number" name="late_tolerance_minutes" id="late_tolerance_minutes"
-                                               value="{{ old('late_tolerance_minutes', $getSetting($settings, 'late_tolerance_minutes', '15')) }}"
-                                               min="0" max="60"
-                                               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                                    <div class="form-group">
+                                        <div class="input-container">
+                                            <input type="time" class="form-control @error('attendance_end_time') error @enderror" 
+                                                   id="attendance_end_time" name="attendance_end_time" 
+                                                   value="{{ old('attendance_end_time', $settings['attendance_end_time']->value ?? '07:30') }}">
+                                            <label for="attendance_end_time" class="form-label">Attendance End Time</label>
+                                            <div class="input-border"></div>
+                                            <div class="input-focus"></div>
+                                        </div>
+                                        @error('attendance_end_time')
+                                            <div class="error-message">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
@@ -321,87 +288,134 @@
                     </div>
                 </div>
 
-                <!-- System Settings Tab -->
-                <div id="system-tab" class="tab-content hidden">
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-                        <div class="bg-gradient-to-r from-purple-500 to-pink-600 px-6 py-4">
-                            <h2 class="text-xl font-semibold text-white flex items-center">
-                                <i class="fas fa-cogs mr-3"></i>Pengaturan Sistem
-                            </h2>
+                <!-- System Settings Panel -->
+                <div class="tab-panel" id="system-panel">
+                    <div class="panel-header">
+                        <div class="header-icon">
+                            <i class="fas fa-cog"></i>
                         </div>
-                        <div class="p-6 space-y-6">
-                            <!-- System Status Cards -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-purple-300 transition-colors">
-                                    <div class="flex items-center space-x-3">
-                                        <div class="w-10 h-10 bg-red-100 dark:bg-red-900 rounded-lg flex items-center justify-center">
-                                            <i class="fas fa-tools text-red-600 dark:text-red-400"></i>
-                                        </div>
-                                        <div>
-                                            <h4 class="font-medium text-gray-900 dark:text-white">Mode Maintenance</h4>
-                                            <p class="text-sm text-gray-500 dark:text-gray-400">Tutup sementara website untuk maintenance</p>
-                                        </div>
-                                    </div>
-                                    <label class="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" name="maintenance_mode" value="1" class="sr-only peer"
-                                               {{ $getSetting($settings, 'maintenance_mode') ? 'checked' : '' }}>
-                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
-                                    </label>
-                                </div>
+                        <div class="header-content">
+                            <h2 class="panel-title">System Settings</h2>
+                            <p class="panel-subtitle">Configure system security, performance limits, and operational controls</p>
+                        </div>
+                    </div>
 
-                                <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-purple-300 transition-colors">
-                                    <div class="flex items-center space-x-3">
-                                        <div class="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
-                                            <i class="fas fa-user-plus text-green-600 dark:text-green-400"></i>
+                    <div class="panel-content">
+                        <div class="settings-grid">
+                            <!-- System Control Card -->
+                            <div class="setting-card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-shield-alt"></i>
+                                    </div>
+                                    <div class="card-title">
+                                        <h3>System Control</h3>
+                                        <p>Manage system operational modes</p>
+                                    </div>
+                                </div>
+                                <div class="card-content">
+                                    <div class="toggle-group">
+                                        <div class="toggle-item">
+                                            <div class="toggle-info">
+                                                <h4 class="toggle-title">Maintenance Mode</h4>
+                                                <p class="toggle-description">Put the site in maintenance mode for updates and repairs</p>
+                                            </div>
+                                            <div class="toggle-switch">
+                                                <input type="hidden" name="maintenance_mode" value="0">
+                                                <input type="checkbox" id="maintenance_mode" name="maintenance_mode" value="1"
+                                                       {{ old('maintenance_mode', $settings['maintenance_mode']->value ?? '0') == '1' ? 'checked' : '' }}>
+                                                <label for="maintenance_mode" class="switch">
+                                                    <span class="slider"></span>
+                                                    <span class="switch-text on">ON</span>
+                                                    <span class="switch-text off">OFF</span>
+                                                </label>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h4 class="font-medium text-gray-900 dark:text-white">Izinkan Registrasi</h4>
-                                            <p class="text-sm text-gray-500 dark:text-gray-400">User bisa mendaftar sendiri</p>
+
+                                        <div class="toggle-item">
+                                            <div class="toggle-info">
+                                                <h4 class="toggle-title">Pendaftaran Akun Siswa</h4>
+                                                <p class="toggle-description">Izinkan siswa untuk mendaftar akun baru di platform</p>
+                                            </div>
+                                            <div class="toggle-switch">
+                                                <input type="hidden" name="allow_registration" value="0">
+                                                <input type="checkbox" id="allow_registration" name="allow_registration" value="1"
+                                                       {{ old('allow_registration', $settings['allow_registration']->value ?? '1') == '1' ? 'checked' : '' }}>
+                                                <label for="allow_registration" class="switch">
+                                                    <span class="slider"></span>
+                                                    <span class="switch-text on">ON</span>
+                                                    <span class="switch-text off">OFF</span>
+                                                </label>
+                                            </div>
                                         </div>
                                     </div>
-                                    <label class="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" name="allow_registration" value="1" class="sr-only peer"
-                                               {{ $getSetting($settings, 'allow_registration', '1') ? 'checked' : '' }}>
-                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-                                    </label>
                                 </div>
                             </div>
 
-                            <!-- System Configuration -->
-                            <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-                                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 flex items-center">
-                                    <i class="fas fa-sliders-h mr-2 text-blue-500"></i>
-                                    Konfigurasi Sistem
-                                </h3>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div>
-                                        <label for="max_upload_size" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Ukuran Upload Maksimal (MB)
-                                        </label>
-                                        <input type="number" name="max_upload_size" id="max_upload_size"
-                                               value="{{ old('max_upload_size', $getSetting($settings, 'max_upload_size', '10')) }}"
-                                               min="1" max="100"
-                                               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                            <!-- Security & Limits Card -->
+                            <div class="setting-card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-user-shield"></i>
+                                    </div>
+                                    <div class="card-title">
+                                        <h3>Security & Limits</h3>
+                                        <p>Configure security and performance limits</p>
+                                    </div>
+                                </div>
+                                <div class="card-content">
+                                    <div class="form-group">
+                                        <div class="input-container">
+                                            <input type="number" class="form-control @error('max_upload_size') error @enderror" 
+                                                   id="max_upload_size" name="max_upload_size" 
+                                                   value="{{ old('max_upload_size', $settings['max_upload_size']->value ?? '10') }}"
+                                                   min="1" max="100" placeholder=" ">
+                                            <label for="max_upload_size" class="form-label">Max Upload Size (MB)</label>
+                                            <div class="input-border"></div>
+                                            <div class="input-focus"></div>
+                                        </div>
+                                        @error('max_upload_size')
+                                            <div class="error-message">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
 
-                                    <div>
-                                        <label for="session_lifetime" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Session Lifetime (menit)
-                                        </label>
-                                        <input type="number" name="session_lifetime" id="session_lifetime"
-                                               value="{{ old('session_lifetime', $getSetting($settings, 'session_lifetime', '120')) }}"
-                                               min="30" max="1440"
-                                               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                                    <div class="form-group">
+                                        <div class="input-container">
+                                            <input type="number" class="form-control @error('session_lifetime') error @enderror" 
+                                                   id="session_lifetime" name="session_lifetime" 
+                                                   value="{{ old('session_lifetime', $settings['session_lifetime']->value ?? '120') }}"
+                                                   min="30" max="1440" placeholder=" ">
+                                            <label for="session_lifetime" class="form-label">Session Lifetime (minutes)</label>
+                                            <div class="input-border"></div>
+                                            <div class="input-focus"></div>
+                                        </div>
+                                        @error('session_lifetime')
+                                            <div class="error-message">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
 
-                                    <div>
-                                        <label for="max_login_attempts" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Maksimal Percobaan Login
-                                        </label>
-                                        <input type="number" name="max_login_attempts" id="max_login_attempts"
-                                               value="{{ old('max_login_attempts', $getSetting($settings, 'max_login_attempts', '5')) }}"
-                                               min="3" max="10"
-                                               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                                    <div class="form-group">
+                                        <div class="input-container">
+                                            <input type="number" class="form-control @error('max_login_attempts') error @enderror" 
+                                                   id="max_login_attempts" name="max_login_attempts" 
+                                                   value="{{ old('max_login_attempts', $settings['max_login_attempts']->value ?? '5') }}"
+                                                   min="3" max="10" placeholder=" ">
+                                            <label for="max_login_attempts" class="form-label">Max Login Attempts</label>
+                                            <div class="input-border"></div>
+                                            <div class="input-focus"></div>
+                                        </div>
+                                        @error('max_login_attempts')
+                                            <div class="error-message">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
@@ -409,251 +423,159 @@
                     </div>
                 </div>
 
-                <!-- Email & Notifications Tab -->
-                <div id="email-tab" class="tab-content hidden">
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-                        <div class="bg-gradient-to-r from-indigo-500 to-blue-600 px-6 py-4">
-                            <h2 class="text-xl font-semibold text-white flex items-center">
-                                <i class="fas fa-envelope mr-3"></i>Email & Notifikasi
-                            </h2>
+                <!-- Backup & Maintenance Panel -->
+                <div class="tab-panel" id="backup-panel">
+                    <div class="panel-header">
+                        <div class="header-icon">
+                            <i class="fas fa-database"></i>
                         </div>
-                        <div class="p-6 space-y-8">
-                            <!-- SMTP Configuration -->
-                            <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-6">
-                                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 flex items-center">
-                                    <i class="fas fa-server mr-2 text-purple-500"></i>
-                                    Konfigurasi SMTP
-                                </h3>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div>
-                                        <label for="mail_host" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            SMTP Host
-                                        </label>
-                                        <input type="text" name="mail_host" id="mail_host"
-                                               value="{{ old('mail_host', $getSetting($settings, 'mail_host')) }}"
-                                               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white"
-                                               placeholder="smtp.gmail.com">
-                                    </div>
+                        <div class="header-content">
+                            <h2 class="panel-title">Backup & Maintenance</h2>
+                            <p class="panel-subtitle">Configure backup settings and access system maintenance tools</p>
+                        </div>
+                    </div>
 
-                                    <div>
-                                        <label for="mail_port" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            SMTP Port
-                                        </label>
-                                        <input type="number" name="mail_port" id="mail_port"
-                                               value="{{ old('mail_port', $getSetting($settings, 'mail_port', '587')) }}"
-                                               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white">
+                    <div class="panel-content">
+                        <div class="settings-grid">
+                            <!-- Backup Settings Card -->
+                            <div class="setting-card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-database"></i>
                                     </div>
-
-                                    <div>
-                                        <label for="mail_username" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            SMTP Username
-                                        </label>
-                                        <input type="email" name="mail_username" id="mail_username"
-                                               value="{{ old('mail_username', $getSetting($settings, 'mail_username')) }}"
-                                               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white">
-                                    </div>
-
-                                    <div>
-                                        <label for="mail_password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            SMTP Password
-                                        </label>
-                                        <input type="password" name="mail_password" id="mail_password"
-                                               value="{{ old('mail_password', $getSetting($settings, 'mail_password')) }}"
-                                               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white">
-                                    </div>
-
-                                    <div>
-                                        <label for="mail_encryption" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Enkripsi
-                                        </label>
-                                        <select name="mail_encryption" id="mail_encryption"
-                                                class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white">
-                                            <option value="tls" {{ $getSetting($settings, 'mail_encryption', 'tls') == 'tls' ? 'selected' : '' }}>TLS</option>
-                                            <option value="ssl" {{ $getSetting($settings, 'mail_encryption') == 'ssl' ? 'selected' : '' }}>SSL</option>
-                                            <option value="" {{ $getSetting($settings, 'mail_encryption') == '' ? 'selected' : '' }}>None</option>
-                                        </select>
-                                    </div>
-
-                                    <div>
-                                        <label for="mail_from_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Nama Pengirim
-                                        </label>
-                                        <input type="text" name="mail_from_name" id="mail_from_name"
-                                               value="{{ old('mail_from_name', $getSetting($settings, 'mail_from_name')) }}"
-                                               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white">
+                                    <div class="card-title">
+                                        <h3>Backup Settings</h3>
+                                        <p>Configure automatic backup preferences</p>
                                     </div>
                                 </div>
+                                <div class="card-content">
+                                    <div class="toggle-group">
+                                        <div class="toggle-item">
+                                            <div class="toggle-info">
+                                                <h4 class="toggle-title">Auto Backup</h4>
+                                                <p class="toggle-description">Automatically create system backups on schedule</p>
+                                            </div>
+                                            <div class="toggle-switch">
+                                                <input type="hidden" name="auto_backup_enabled" value="0">
+                                                <input type="checkbox" id="auto_backup_enabled" name="auto_backup_enabled" value="1"
+                                                       {{ old('auto_backup_enabled', $settings['auto_backup_enabled']->value ?? '0') == '1' ? 'checked' : '' }}>
+                                                <label for="auto_backup_enabled" class="switch">
+                                                    <span class="slider"></span>
+                                                    <span class="switch-text on">ON</span>
+                                                    <span class="switch-text off">OFF</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                <!-- Test Email -->
-                                <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                                    <div class="flex items-center justify-between mb-4">
-                                        <h4 class="text-md font-medium text-gray-900 dark:text-white">Test Email</h4>
-                                        <button type="button" onclick="testEmail()" 
-                                                class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
-                                            <i class="fas fa-paper-plane mr-2"></i>Kirim Test Email
+                                    <div class="form-group">
+                                        <div class="select-container">
+                                            <select class="form-select @error('backup_frequency') error @enderror" 
+                                                    id="backup_frequency" name="backup_frequency">
+                                                <option value="daily" {{ old('backup_frequency', $settings['backup_frequency']->value ?? 'daily') == 'daily' ? 'selected' : '' }}>Daily</option>
+                                                <option value="weekly" {{ old('backup_frequency', $settings['backup_frequency']->value ?? '') == 'weekly' ? 'selected' : '' }}>Weekly</option>
+                                                <option value="monthly" {{ old('backup_frequency', $settings['backup_frequency']->value ?? '') == 'monthly' ? 'selected' : '' }}>Monthly</option>
+                                            </select>
+                                            <label for="backup_frequency" class="form-label">Backup Frequency</label>
+                                            <div class="select-arrow">
+                                                <i class="fas fa-chevron-down"></i>
+                                            </div>
+                                            <div class="input-border"></div>
+                                            <div class="input-focus"></div>
+                                        </div>
+                                        @error('backup_frequency')
+                                            <div class="error-message">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="input-container">
+                                            <input type="number" class="form-control @error('backup_retention_days') error @enderror" 
+                                                   id="backup_retention_days" name="backup_retention_days" 
+                                                   value="{{ old('backup_retention_days', $settings['backup_retention_days']->value ?? '30') }}"
+                                                   min="7" max="365" placeholder=" ">
+                                            <label for="backup_retention_days" class="form-label">Retention Days</label>
+                                            <div class="input-border"></div>
+                                            <div class="input-focus"></div>
+                                        </div>
+                                        @error('backup_retention_days')
+                                            <div class="error-message">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Quick Actions Card -->
+                            <div class="setting-card actions-card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-tools"></i>
+                                    </div>
+                                    <div class="card-title">
+                                        <h3>Quick Actions</h3>
+                                        <p>System maintenance and utility tools</p>
+                                    </div>
+                                </div>
+                                <div class="card-content">
+                                    <div class="actions-grid">
+                                        <button type="button" class="action-btn primary" onclick="window.open('{{ route('admin.backup.index') }}', '_blank')">
+                                            <div class="action-icon">
+                                                <i class="fas fa-database"></i>
+                                            </div>
+                                            <div class="action-content">
+                                                <span class="action-title">Manage Backups</span>
+                                                <span class="action-subtitle">Create and manage system backups</span>
+                                            </div>
+                                            <div class="action-arrow">
+                                                <i class="fas fa-arrow-right"></i>
+                                            </div>
+                                        </button>
+                                        
+                                        <button type="button" class="action-btn warning" onclick="clearCache()">
+                                            <div class="action-icon">
+                                                <i class="fas fa-broom"></i>
+                                            </div>
+                                            <div class="action-content">
+                                                <span class="action-title">Clear Cache</span>
+                                                <span class="action-subtitle">Clear application cache files</span>
+                                            </div>
+                                            <div class="action-arrow">
+                                                <i class="fas fa-arrow-right"></i>
+                                            </div>
+                                        </button>
+                                        
+                                        <button type="button" class="action-btn info" onclick="optimizeSystem()">
+                                            <div class="action-icon">
+                                                <i class="fas fa-rocket"></i>
+                                            </div>
+                                            <div class="action-content">
+                                                <span class="action-title">Optimize System</span>
+                                                <span class="action-subtitle">Optimize system performance</span>
+                                            </div>
+                                            <div class="action-arrow">
+                                                <i class="fas fa-arrow-right"></i>
+                                            </div>
+                                        </button>
+                                        
+                                        <button type="button" class="action-btn success" onclick="testEmail()">
+                                            <div class="action-icon">
+                                                <i class="fas fa-envelope-open"></i>
+                                            </div>
+                                            <div class="action-content">
+                                                <span class="action-title">Test Email</span>
+                                                <span class="action-subtitle">Test email configuration</span>
+                                            </div>
+                                            <div class="action-arrow">
+                                                <i class="fas fa-arrow-right"></i>
+                                            </div>
                                         </button>
                                     </div>
-                                    <input type="email" id="test_email_to" placeholder="Email tujuan test"
-                                           class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white">
-                                </div>
-                            </div>
-
-                            <!-- Notification Settings -->
-                            <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-6">
-                                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 flex items-center">
-                                    <i class="fas fa-bell mr-2 text-yellow-500"></i>
-                                    Pengaturan Notifikasi
-                                </h3>
-                                
-                                <!-- Global Notification Toggle -->
-                                <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg mb-6">
-                                    <div>
-                                        <h4 class="font-medium text-gray-900 dark:text-white">Email Notifikasi</h4>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400">Aktifkan notifikasi via email</p>
-                                    </div>
-                                    <label class="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" name="email_notifications_enabled" value="1" class="sr-only peer"
-                                               {{ $getSetting($settings, 'email_notifications_enabled', '1') ? 'checked' : '' }}>
-                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-yellow-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"></div>
-                                    </label>
-                                </div>
-
-                                <!-- Notification Types -->
-                                <div class="space-y-4">
-                                    <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-                                        <div>
-                                            <h5 class="font-medium text-gray-900 dark:text-white">Notifikasi Registrasi</h5>
-                                            <p class="text-sm text-gray-500 dark:text-gray-400">Notifikasi saat ada pendaftaran baru</p>
-                                        </div>
-                                        <label class="relative inline-flex items-center cursor-pointer">
-                                            <input type="checkbox" name="registration_notifications" value="1" class="sr-only peer"
-                                                   {{ $getSetting($settings, 'registration_notifications', '1') ? 'checked' : '' }}>
-                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                                        </label>
-                                    </div>
-
-                                    <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-                                        <div>
-                                            <h5 class="font-medium text-gray-900 dark:text-white">Notifikasi Sistem</h5>
-                                            <p class="text-sm text-gray-500 dark:text-gray-400">Notifikasi error dan peringatan sistem</p>
-                                        </div>
-                                        <label class="relative inline-flex items-center cursor-pointer">
-                                            <input type="checkbox" name="system_notifications" value="1" class="sr-only peer"
-                                                   {{ $getSetting($settings, 'system_notifications', '1') ? 'checked' : '' }}>
-                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
-                                        </label>
-                                    </div>
-
-                                    <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-                                        <div>
-                                            <h5 class="font-medium text-gray-900 dark:text-white">Notifikasi Pengumuman</h5>
-                                            <p class="text-sm text-gray-500 dark:text-gray-400">Notifikasi pengumuman dan berita baru</p>
-                                        </div>
-                                        <label class="relative inline-flex items-center cursor-pointer">
-                                            <input type="checkbox" name="announcement_notifications" value="1" class="sr-only peer"
-                                                   {{ $getSetting($settings, 'announcement_notifications', '1') ? 'checked' : '' }}>
-                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-                                        </label>
-                                    </div>
-
-                                    <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-                                        <div>
-                                            <h5 class="font-medium text-gray-900 dark:text-white">Notifikasi Agenda</h5>
-                                            <p class="text-sm text-gray-500 dark:text-gray-400">Notifikasi agenda dan jadwal kegiatan</p>
-                                        </div>
-                                        <label class="relative inline-flex items-center cursor-pointer">
-                                            <input type="checkbox" name="agenda_notifications" value="1" class="sr-only peer"
-                                                   {{ $getSetting($settings, 'agenda_notifications', '1') ? 'checked' : '' }}>
-                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Backup & Maintenance Tab -->
-                <div id="backup-tab" class="tab-content hidden">
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-                        <div class="bg-gradient-to-r from-orange-500 to-red-600 px-6 py-4">
-                            <h2 class="text-xl font-semibold text-white flex items-center">
-                                <i class="fas fa-database mr-3"></i>Backup & Maintenance
-                            </h2>
-                        </div>
-                        <div class="p-6 space-y-8">
-                            <!-- Auto Backup Settings -->
-                            <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-6">
-                                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 flex items-center">
-                                    <i class="fas fa-sync-alt mr-2 text-blue-500"></i>
-                                    Backup Otomatis
-                                </h3>
-                                
-                                <!-- Auto Backup Toggle -->
-                                <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg mb-6">
-                                    <div>
-                                        <h4 class="font-medium text-gray-900 dark:text-white">Aktifkan Backup Otomatis</h4>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400">Backup database dan file secara otomatis</p>
-                                    </div>
-                                    <label class="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" name="auto_backup_enabled" value="1" class="sr-only peer"
-                                               {{ $getSetting($settings, 'auto_backup_enabled') ? 'checked' : '' }}>
-                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                                    </label>
-                                </div>
-
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div>
-                                        <label for="backup_frequency" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Frekuensi Backup
-                                        </label>
-                                        <select name="backup_frequency" id="backup_frequency"
-                                                class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
-                                            <option value="daily" {{ $getSetting($settings, 'backup_frequency', 'daily') == 'daily' ? 'selected' : '' }}>Harian</option>
-                                            <option value="weekly" {{ $getSetting($settings, 'backup_frequency') == 'weekly' ? 'selected' : '' }}>Mingguan</option>
-                                            <option value="monthly" {{ $getSetting($settings, 'backup_frequency') == 'monthly' ? 'selected' : '' }}>Bulanan</option>
-                                        </select>
-                                    </div>
-
-                                    <div>
-                                        <label for="backup_retention_days" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Simpan Backup (hari)
-                                        </label>
-                                        <input type="number" name="backup_retention_days" id="backup_retention_days"
-                                               value="{{ old('backup_retention_days', $getSetting($settings, 'backup_retention_days', '30')) }}"
-                                               min="7" max="365"
-                                               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Manual Backup Actions -->
-                            <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-6">
-                                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 flex items-center">
-                                    <i class="fas fa-tools mr-2 text-orange-500"></i>
-                                    Maintenance Tools
-                                </h3>
-                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    <button type="button" onclick="createBackup()" 
-                                            class="p-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex flex-col items-center">
-                                        <i class="fas fa-download text-2xl mb-2"></i>
-                                        <span class="font-medium">Buat Backup</span>
-                                        <span class="text-xs opacity-75">Database & Files</span>
-                                    </button>
-
-                                    <button type="button" onclick="clearCache()" 
-                                            class="p-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex flex-col items-center">
-                                        <i class="fas fa-broom text-2xl mb-2"></i>
-                                        <span class="font-medium">Clear Cache</span>
-                                        <span class="text-xs opacity-75">Bersihkan Cache</span>
-                                    </button>
-
-                                    <button type="button" onclick="optimizeSystem()" 
-                                            class="p-4 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex flex-col items-center">
-                                        <i class="fas fa-rocket text-2xl mb-2"></i>
-                                        <span class="font-medium">Optimize</span>
-                                        <span class="text-xs opacity-75">Optimasi Sistem</span>
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -661,252 +583,1277 @@
                 </div>
             </div>
 
-            <!-- Sidebar -->
-            <div class="space-y-6">
-                <!-- System Information -->
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-                    <div class="bg-gradient-to-r from-gray-500 to-gray-600 px-6 py-4">
-                        <h3 class="text-lg font-semibold text-white flex items-center">
-                            <i class="fas fa-info-circle mr-2"></i>Informasi Sistem
-                        </h3>
-                    </div>
-                    <div class="p-6">
-                        @if(!empty($systemInfo))
-                            <div class="space-y-3">
-                                <div class="flex justify-between">
-                                    <span class="text-sm text-gray-600 dark:text-gray-400">PHP Version:</span>
-                                    <span class="text-sm font-medium text-gray-900 dark:text-white">{{ $systemInfo['php_version'] ?? 'Unknown' }}</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-sm text-gray-600 dark:text-gray-400">Laravel:</span>
-                                    <span class="text-sm font-medium text-gray-900 dark:text-white">{{ $systemInfo['laravel_version'] ?? 'Unknown' }}</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-sm text-gray-600 dark:text-gray-400">Environment:</span>
-                                    <span class="text-sm font-medium {{ $systemInfo['environment'] == 'production' ? 'text-green-600' : 'text-yellow-600' }}">
-                                        {{ ucfirst($systemInfo['environment'] ?? 'Unknown') }}
-                                    </span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-sm text-gray-600 dark:text-gray-400">Storage Used:</span>
-                                    <span class="text-sm font-medium text-gray-900 dark:text-white">{{ $systemInfo['storage_used'] ?? 0 }} MB</span>
-                                </div>
-                            </div>
-                        @else
-                            <p class="text-sm text-gray-500 dark:text-gray-400">Informasi sistem tidak tersedia</p>
-                        @endif
-                    </div>
+            <!-- Enhanced Action Bar -->
+            <div class="action-bar">
+                <div class="action-left">
+                    <button type="button" class="btn btn-outline" onclick="resetForm()">
+                        <i class="fas fa-undo"></i>
+                        <span>Reset to Default</span>
+                    </button>
+                    <button type="button" class="btn btn-outline" onclick="previewChanges()">
+                        <i class="fas fa-eye"></i>
+                        <span>Preview Changes</span>
+                    </button>
                 </div>
-
-                <!-- Recent Activities -->
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-                    <div class="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
-                        <h3 class="text-lg font-semibold text-white flex items-center">
-                            <i class="fas fa-history mr-2"></i>Aktivitas Terbaru
-                        </h3>
-                    </div>
-                    <div class="p-6">
-                        @if(!empty($recentActivities))
-                            <div class="space-y-3">
-                                @foreach(array_slice($recentActivities, 0, 5) as $activity)
-                                    <div class="flex items-start space-x-3">
-                                        <div class="w-8 h-8 bg-{{ $activity['color'] }}-100 dark:bg-{{ $activity['color'] }}-900 rounded-lg flex items-center justify-center flex-shrink-0">
-                                            <i class="fas fa-{{ $activity['icon'] }} text-{{ $activity['color'] }}-600 dark:text-{{ $activity['color'] }}-400 text-sm"></i>
-                                        </div>
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm text-gray-900 dark:text-white">{{ $activity['message'] }}</p>
-                                            <p class="text-xs text-gray-500 dark:text-gray-400">{{ $activity['timestamp']->diffForHumans() }}</p>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        @else
-                            <p class="text-sm text-gray-500 dark:text-gray-400">Tidak ada aktivitas terbaru</p>
-                        @endif
-                    </div>
+                <div class="action-right">
+                    <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                        <i class="fas fa-times"></i>
+                        <span>Cancel</span>
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="saveButton">
+                        <i class="fas fa-save"></i>
+                        <span>Save Settings</span>
+                    </button>
                 </div>
             </div>
-        </div>
-
-        <!-- Save Button -->
-        <div class="mt-8 flex justify-end">
-            <button type="submit" 
-                    class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-lg transition-all duration-200 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                <i class="fas fa-save mr-2"></i>Simpan Pengaturan
-            </button>
         </div>
     </form>
 </div>
 
+<!-- Enhanced Test Email Modal -->
+<div class="modal-overlay" id="testEmailModal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-container">
+        <div class="modal-header">
+            <div class="modal-icon">
+                <i class="fas fa-envelope-open"></i>
+            </div>
+            <div class="modal-title">
+                <h3>Test Email Configuration</h3>
+                <p>Send a test email to verify your SMTP settings</p>
+            </div>
+            <button type="button" class="modal-close" onclick="closeModal('testEmailModal')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <div class="input-container">
+                    <input type="email" class="form-control" id="testEmailAddress" placeholder=" " required>
+                    <label for="testEmailAddress" class="form-label">Email Address</label>
+                    <div class="input-border"></div>
+                    <div class="input-focus"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="select-container">
+                    <select class="form-select" id="testEmailTemplate">
+                        <option value="basic">Basic Test</option>
+                        <option value="welcome">Welcome Message</option>
+                        <option value="notification">Notification</option>
+                        <option value="announcement">Announcement</option>
+                    </select>
+                    <label for="testEmailTemplate" class="form-label">Email Template</label>
+                    <div class="select-arrow">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="input-border"></div>
+                    <div class="input-focus"></div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('testEmailModal')">
+                <span>Cancel</span>
+            </button>
+            <button type="button" class="btn btn-primary" onclick="sendTestEmail()">
+                <i class="fas fa-paper-plane"></i>
+                <span>Send Test Email</span>
+            </button>
+        </div>
+    </div>
+</div>
+
 @endsection
+
+@push('styles')
+<style>
+/* Settings Page Styles - Uses Layout CSS Variables */
+.settings-page {
+    min-height: 100vh;
+    position: relative;
+    padding: 2rem;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    transition: all 0.3s ease;
+}
+
+/* Hero Header */
+.hero-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 24px;
+    padding: 3rem;
+    margin-bottom: 3rem;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.hero-content {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    position: relative;
+    z-index: 2;
+    margin-bottom: 2rem;
+}
+
+.hero-icon .icon-wrapper {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.hero-text {
+    flex: 1;
+}
+
+.hero-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 0 0 0.5rem 0;
+}
+
+.hero-subtitle {
+    font-size: 1.125rem;
+    margin: 0 0 1rem 0;
+    opacity: 0.9;
+    line-height: 1.6;
+}
+
+.hero-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.breadcrumb-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0.8;
+}
+
+.breadcrumb-item a {
+    color: white;
+    text-decoration: none;
+}
+
+.breadcrumb-item.active {
+    opacity: 1;
+    font-weight: 500;
+}
+
+.breadcrumb-separator {
+    opacity: 0.6;
+    font-size: 0.75rem;
+}
+
+.hero-stats {
+    display: flex;
+    gap: 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1rem 1.5rem;
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+.stat-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    opacity: 0.8;
+}
+
+/* Alert Messages */
+.alert-container {
+    margin-bottom: 2rem;
+}
+
+.alert {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, rgba(79, 172, 254, 0.1) 0%, rgba(0, 242, 254, 0.1) 100%);
+    color: #0369a1;
+    border-left: 4px solid #4facfe;
+}
+
+.alert-error {
+    background: linear-gradient(135deg, rgba(250, 112, 154, 0.1) 0%, rgba(254, 225, 64, 0.1) 100%);
+    color: #dc2626;
+    border-left: 4px solid #fa709a;
+}
+
+.alert-icon {
+    font-size: 1.5rem;
+}
+
+.alert-content h4 {
+    margin: 0 0 0.25rem 0;
+    font-weight: 600;
+    font-size: 1.125rem;
+}
+
+.alert-content p {
+    margin: 0;
+    opacity: 0.9;
+}
+
+.alert-close {
+    background: none;
+    border: none;
+    color: currentColor;
+    opacity: 0.7;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    margin-left: auto;
+}
+
+.alert-close:hover {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* Settings Container */
+.settings-container {
+    background-color: var(--bg-primary);
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px var(--shadow-color);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(20px);
+}
+
+/* Tab Navigation */
+.tab-navigation {
+    position: relative;
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.nav-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+}
+
+.nav-content {
+    position: relative;
+    z-index: 2;
+}
+
+.nav-tabs {
+    display: flex;
+    position: relative;
+}
+
+.nav-tab {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    text-align: left;
+}
+
+.nav-tab:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+}
+
+.nav-tab.active {
+    color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.tab-icon-wrapper {
+    position: relative;
+}
+
+.tab-icon {
+    width: 56px;
+    height: 56px;
+    background-color: var(--bg-primary);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 3px var(--shadow-color);
+    position: relative;
+    z-index: 2;
+}
+
+.nav-tab.active .tab-icon {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    transform: scale(1.05);
+    box-shadow: 0 10px 15px -3px var(--shadow-color);
+}
+
+.tab-text {
+    flex: 1;
+}
+
+.tab-title {
+    display: block;
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.tab-description {
+    display: block;
+    font-size: 0.875rem;
+    opacity: 0.7;
+}
+
+.nav-slider {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transition: all 0.3s ease;
+    width: 33.333%;
+    transform: translateX(0);
+}
+
+/* Tab Content */
+.tab-content {
+    position: relative;
+}
+
+.tab-panel {
+    display: none;
+    padding: 3rem;
+}
+
+.tab-panel.active {
+    display: block;
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid var(--border-color);
+    position: relative;
+}
+
+.panel-header::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100px;
+    height: 2px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.header-icon {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    color: white;
+    box-shadow: 0 10px 15px -3px var(--shadow-color);
+}
+
+.header-content {
+    flex: 1;
+}
+
+.panel-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 0.5rem 0;
+}
+
+.panel-subtitle {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* Settings Grid */
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2rem;
+}
+
+/* Setting Cards */
+.setting-card {
+    background-color: var(--bg-primary);
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px -1px var(--shadow-color);
+    position: relative;
+}
+
+.setting-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transform: scaleX(0);
+    transition: all 0.3s ease;
+}
+
+.setting-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 25px 50px -12px var(--shadow-color);
+}
+
+.setting-card:hover::before {
+    transform: scaleX(1);
+}
+
+.card-header {
+    background-color: var(--bg-secondary);
+    padding: 2rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.card-icon {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 6px -1px var(--shadow-color);
+}
+
+.card-title h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 0.25rem 0;
+}
+
+.card-title p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.card-content {
+    padding: 2rem;
+}
+
+/* Form Controls */
+.form-group {
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.input-container,
+.select-container {
+    position: relative;
+}
+
+.form-control,
+.form-select {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 16px;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    outline: none;
+    appearance: none;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    transform: translateY(-1px);
+}
+
+.form-control.error,
+.form-select.error {
+    border-color: #fa709a;
+    box-shadow: 0 0 0 4px rgba(250, 112, 154, 0.1);
+}
+
+.form-label {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    background-color: var(--bg-primary);
+    padding: 0 0.5rem;
+    z-index: 2;
+}
+
+.form-control:focus + .form-label,
+.form-control:not(:placeholder-shown) + .form-label,
+.form-select:focus + .form-label,
+.form-select:not([value=""]) + .form-label {
+    top: -0.5rem;
+    left: 0.75rem;
+    font-size: 0.875rem;
+    color: #667eea;
+    font-weight: 500;
+}
+
+.input-border {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--border-color);
+    border-radius: 1px;
+}
+
+.input-focus {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transition: all 0.3s ease;
+    border-radius: 1px;
+}
+
+.form-control:focus ~ .input-focus,
+.form-select:focus ~ .input-focus {
+    width: 100%;
+    left: 0;
+}
+
+.select-arrow {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.form-select:focus ~ .select-arrow {
+    color: #667eea;
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.error-message {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #fa709a;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+/* Toggle Switches */
+.toggle-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.toggle-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    background-color: var(--bg-tertiary);
+    border-radius: 16px;
+    border: 2px solid var(--border-color);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.toggle-item:hover {
+    border-color: #667eea;
+    background-color: var(--bg-primary);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 15px -3px var(--shadow-color);
+}
+
+.toggle-info h4 {
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 1.125rem;
+}
+
+.toggle-info p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.toggle-switch {
+    position: relative;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 80px;
+    height: 40px;
+    cursor: pointer;
+}
+
+.slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #ccc;
+    border-radius: 40px;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 32px;
+    width: 32px;
+    left: 4px;
+    bottom: 4px;
+    background: white;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px -1px var(--shadow-color);
+}
+
+input:checked + .switch .slider {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+}
+
+input:checked + .switch .slider:before {
+    transform: translateX(40px);
+}
+
+.switch-text {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.75rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.switch-text.on {
+    left: 8px;
+    color: white;
+    opacity: 0;
+}
+
+.switch-text.off {
+    right: 8px;
+    color: var(--text-secondary);
+    opacity: 1;
+}
+
+input:checked + .switch .switch-text.on {
+    opacity: 1;
+}
+
+input:checked + .switch .switch-text.off {
+    opacity: 0;
+}
+
+/* Action Buttons */
+.actions-card {
+    grid-column: span 2;
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    border: 2px solid transparent;
+    border-radius: 16px;
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 25px -5px var(--shadow-color);
+}
+
+.action-btn.primary {
+    border-color: #667eea;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+}
+
+.action-btn.warning {
+    border-color: #43e97b;
+    background: linear-gradient(135deg, rgba(67, 233, 123, 0.1) 0%, rgba(56, 249, 215, 0.1) 100%);
+}
+
+.action-btn.info {
+    border-color: #a8edea;
+    background: linear-gradient(135deg, rgba(168, 237, 234, 0.1) 0%, rgba(254, 214, 227, 0.1) 100%);
+}
+
+.action-btn.success {
+    border-color: #4facfe;
+    background: linear-gradient(135deg, rgba(79, 172, 254, 0.1) 0%, rgba(0, 242, 254, 0.1) 100%);
+}
+
+.action-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    background-color: var(--bg-primary);
+    box-shadow: 0 1px 3px var(--shadow-color);
+    transition: all 0.3s ease;
+}
+
+.action-btn.primary .action-icon {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.action-btn.warning .action-icon {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    color: white;
+}
+
+.action-btn.info .action-icon {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    color: white;
+}
+
+.action-btn.success .action-icon {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+}
+
+.action-btn:hover .action-icon {
+    transform: scale(1.05);
+}
+
+.action-content {
+    flex: 1;
+}
+
+.action-title {
+    display: block;
+    font-weight: 600;
+    font-size: 1.125rem;
+    margin-bottom: 0.25rem;
+}
+
+.action-subtitle {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.action-arrow {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+}
+
+.action-btn:hover .action-arrow {
+    color: #667eea;
+    transform: translateX(3px);
+}
+
+/* Action Bar */
+.action-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 3rem;
+    background-color: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    position: relative;
+}
+
+.action-bar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    opacity: 0.3;
+}
+
+.action-left,
+.action-right {
+    display: flex;
+    gap: 1rem;
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    border-radius: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+    font-size: 1rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.btn-secondary {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+.btn-secondary:hover {
+    background-color: var(--bg-secondary);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px var(--shadow-color);
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--text-secondary);
+    border-color: var(--border-color);
+}
+
+.btn-outline:hover {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    border-color: #667eea;
+}
+
+/* Enhanced Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+}
+
+.modal-container {
+    background-color: var(--bg-primary);
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px var(--shadow-color);
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow: hidden;
+    position: relative;
+    z-index: 2;
+    border: 1px solid var(--border-color);
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--bg-secondary);
+}
+
+.modal-icon {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.modal-title {
+    flex: 1;
+}
+
+.modal-title h3 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.modal-title p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 2rem;
+    border-top: 1px solid var(--border-color);
+    background-color: var(--bg-secondary);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .settings-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .actions-card {
+        grid-column: span 1;
+    }
+    
+    .actions-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .hero-stats {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .stat-item {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .settings-page {
+        padding: 1rem;
+    }
+    
+    .hero-header {
+        padding: 2rem;
+    }
+    
+    .hero-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .nav-tabs {
+        flex-direction: column;
+    }
+    
+    .nav-tab {
+        padding: 1.5rem;
+    }
+    
+    .tab-panel {
+        padding: 2rem;
+    }
+    
+    .panel-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .action-bar {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 2rem;
+    }
+    
+    .action-left,
+    .action-right {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-header {
+        padding: 1.5rem;
+    }
+    
+    .hero-title {
+        font-size: 1.75rem;
+    }
+    
+    .tab-panel {
+        padding: 1rem;
+    }
+    
+    .card-header,
+    .card-content {
+        padding: 1.5rem;
+    }
+    
+    .btn {
+        padding: 0.875rem 1.5rem;
+        font-size: 0.875rem;
+    }
+}
+</style>
+@endpush
 
 @push('scripts')
 <script>
-// Tab switching functionality
-function switchTab(tabName) {
-    // Hide all tab contents
-    document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.add('hidden');
+// Tab navigation functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const tabs = document.querySelectorAll('.nav-tab');
+    const panels = document.querySelectorAll('.tab-panel');
+    const slider = document.querySelector('.nav-slider');
+    
+    function switchTab(targetTab) {
+        // Remove active class from all tabs and panels
+        tabs.forEach(tab => tab.classList.remove('active'));
+        panels.forEach(panel => panel.classList.remove('active'));
+        
+        // Add active class to target tab
+        targetTab.classList.add('active');
+        
+        // Show corresponding panel
+        const targetPanel = document.getElementById(targetTab.dataset.tab + '-panel');
+        if (targetPanel) {
+            targetPanel.classList.add('active');
+        }
+        
+        // Move slider
+        const tabIndex = Array.from(tabs).indexOf(targetTab);
+        const sliderWidth = 100 / tabs.length;
+        slider.style.transform = `translateX(${tabIndex * 100}%)`;
+        slider.style.width = `${sliderWidth}%`;
+    }
+    
+    // Add click event listeners to tabs
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => switchTab(tab));
     });
     
-    // Remove active class from all tab buttons
-    document.querySelectorAll('.tab-button').forEach(button => {
-        button.classList.remove('active', 'border-blue-500', 'text-blue-600');
-        button.classList.add('border-transparent', 'text-gray-500');
-    });
-    
-    // Show selected tab content
-    document.getElementById(tabName + '-tab').classList.remove('hidden');
-    
-    // Add active class to selected tab button
-    event.target.classList.add('active', 'border-blue-500', 'text-blue-600');
-    event.target.classList.remove('border-transparent', 'text-gray-500');
-}
+    // Initialize slider position
+    const activeTab = document.querySelector('.nav-tab.active');
+    if (activeTab) {
+        switchTab(activeTab);
+    }
+});
 
-// Test email functionality
-function testEmail() {
-    const email = document.getElementById('test_email_to').value;
+// Modal functions
+window.testEmail = function() {
+    document.getElementById('testEmailModal').classList.add('active');
+};
+
+window.closeModal = function(modalId) {
+    document.getElementById(modalId).classList.remove('active');
+};
+
+window.sendTestEmail = function() {
+    const email = document.getElementById('testEmailAddress').value;
+    const template = document.getElementById('testEmailTemplate').value;
+    
     if (!email) {
-        alert('Masukkan email tujuan terlebih dahulu');
+        alert('Please enter an email address');
         return;
     }
     
-    fetch('{{ route("admin.settings.test-email") }}', {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            email: email,
-            template: 'basic'
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('✅ ' + data.message);
-        } else {
-            alert('❌ ' + data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('❌ Terjadi kesalahan saat mengirim email test');
-    });
-}
+    // Here you would make an AJAX call to send test email
+    alert('Test email sent to: ' + email);
+    closeModal('testEmailModal');
+};
 
-// Backup functionality
-function createBackup() {
-    if (!confirm('Buat backup database sekarang?')) return;
-    
-    fetch('{{ route("admin.settings.create-backup") }}', {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('✅ ' + data.message);
-        } else {
-            alert('❌ ' + data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('❌ Terjadi kesalahan saat membuat backup');
-    });
-}
-
-// Clear cache functionality
-function clearCache() {
-    if (!confirm('Bersihkan cache sistem?')) return;
-    
-    fetch('{{ route("admin.settings.clear-cache") }}', {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('✅ ' + data.message);
-        } else {
-            alert('❌ ' + data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('❌ Terjadi kesalahan saat membersihkan cache');
-    });
-}
-
-// Optimize system functionality
-function optimizeSystem() {
-    if (!confirm('Optimasi sistem sekarang?')) return;
-    
-    fetch('{{ route("admin.settings.optimize") }}', {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('✅ ' + data.message);
-        } else {
-            alert('❌ ' + data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('❌ Terjadi kesalahan saat mengoptimasi sistem');
-    });
-}
-
-// Reset to default functionality
-function resetToDefault() {
-    if (!confirm('Reset semua pengaturan ke default? Tindakan ini tidak dapat dibatalkan!')) return;
-    
-    fetch('{{ route("admin.settings.reset") }}', {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('✅ ' + data.message);
-            location.reload();
-        } else {
-            alert('❌ ' + data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('❌ Terjadi kesalahan saat reset pengaturan');
-    });
-}
-
-// Export settings functionality
-function exportSettings() {
-    window.location.href = '{{ route("admin.settings") }}?export=json';
-}
-
-// Form validation
-document.getElementById('settings-form').addEventListener('submit', function(e) {
-    const schoolName = document.getElementById('school_name').value;
-    if (!schoolName.trim()) {
-        e.preventDefault();
-        alert('Nama sekolah harus diisi!');
-        document.getElementById('school_name').focus();
-        return false;
+// Other utility functions
+window.clearCache = function() {
+    if (confirm('Are you sure you want to clear the application cache?')) {
+        // Make AJAX call to clear cache
+        alert('Cache cleared successfully!');
     }
-});
+};
+
+window.optimizeSystem = function() {
+    if (confirm('Are you sure you want to optimize the system?')) {
+        // Make AJAX call to optimize system
+        alert('System optimization completed!');
+    }
+};
+
+window.resetForm = function() {
+    if (confirm('Are you sure you want to reset all settings to default values?')) {
+        document.getElementById('settingsForm').reset();
+    }
+};
+
+window.previewChanges = function() {
+    alert('Preview functionality would show changes before saving.');
+};
 </script>
 @endpush

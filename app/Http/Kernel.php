@@ -70,5 +70,6 @@ class Kernel extends HttpKernel
         'role' => \App\Http\Middleware\CheckRole::class,
         'check.user.status' => \App\Http\Middleware\CheckUserStatus::class,
         'maintenance' => \App\Http\Middleware\CheckMaintenanceMode::class,
+        'registration.enabled' => \App\Http\Middleware\CheckRegistrationEnabled::class,
     ];
 }

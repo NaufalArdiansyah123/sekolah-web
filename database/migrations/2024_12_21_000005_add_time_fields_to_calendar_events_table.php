@@ -18,9 +18,7 @@ return new class extends Migration
             if (!Schema::hasColumn('calendar_events', 'end_time')) {
                 $table->time('end_time')->nullable()->after('end_date');
             }
-            if (!Schema::hasColumn('calendar_events', 'is_all_day')) {
-                $table->boolean('is_all_day')->default(false)->after('end_time');
-            }
+            // is_all_day already exists in main migration, skip adding it
         });
     }
 
@@ -36,9 +34,7 @@ return new class extends Migration
             if (Schema::hasColumn('calendar_events', 'end_time')) {
                 $table->dropColumn('end_time');
             }
-            if (Schema::hasColumn('calendar_events', 'is_all_day')) {
-                $table->dropColumn('is_all_day');
-            }
+            // Don't drop is_all_day as it's part of main migration
         });
     }
 };

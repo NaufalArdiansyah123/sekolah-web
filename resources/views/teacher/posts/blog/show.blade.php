@@ -169,6 +169,16 @@
     .badge-draft { background: rgba(107, 114, 128, 0.2); }
     .badge-archived { background: rgba(75, 85, 99, 0.2); }
 
+    /* Dark mode badges */
+    .dark .badge-berita { background: rgba(59, 130, 246, 0.3); color: #60a5fa; }
+    .dark .badge-pengumuman { background: rgba(16, 185, 129, 0.3); color: #34d399; }
+    .dark .badge-kegiatan { background: rgba(245, 158, 11, 0.3); color: #fbbf24; }
+    .dark .badge-prestasi { background: rgba(139, 92, 246, 0.3); color: #a78bfa; }
+
+    .dark .badge-published { background: rgba(16, 185, 129, 0.3); color: #34d399; }
+    .dark .badge-draft { background: rgba(107, 114, 128, 0.3); color: #9ca3af; }
+    .dark .badge-archived { background: rgba(75, 85, 99, 0.3); color: #9ca3af; }
+
     .main-content {
         padding: 3rem 2rem;
         max-width: 1200px;
@@ -176,17 +186,17 @@
     }
 
     .article-content {
-        background: white;
+        background: var(--bg-primary, white);
         border-radius: 20px;
         overflow: hidden;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-        border: 1px solid #e5e7eb;
+        border: 1px solid var(--border-color, #e5e7eb);
         transition: all 0.3s ease;
     }
 
     .dark .article-content {
-        background: #374151;
-        border-color: #4b5563;
+        background: var(--bg-primary);
+        border-color: var(--border-color);
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     }
 
@@ -215,25 +225,27 @@
     .content-text {
         font-size: 1.125rem;
         line-height: 1.8;
-        color: #374151;
+        color: var(--text-primary, #374151);
         margin-bottom: 2rem;
+        transition: all 0.3s ease;
     }
 
     .dark .content-text {
-        color: #f9fafb;
+        color: var(--text-primary);
     }
 
     .content-text h1, .content-text h2, .content-text h3,
     .content-text h4, .content-text h5, .content-text h6 {
-        color: #1f2937;
+        color: var(--text-primary, #1f2937);
         font-weight: 700;
         margin: 2rem 0 1rem 0;
         line-height: 1.3;
+        transition: all 0.3s ease;
     }
 
     .dark .content-text h1, .dark .content-text h2, .dark .content-text h3,
     .dark .content-text h4, .dark .content-text h5, .dark .content-text h6 {
-        color: #f9fafb;
+        color: var(--text-primary);
     }
 
     .content-text p {
@@ -253,13 +265,14 @@
         border-left: 4px solid #4f46e5;
         padding: 1rem 2rem;
         margin: 2rem 0;
-        background: #f8fafc;
+        background: var(--bg-secondary, #f8fafc);
         border-radius: 0 12px 12px 0;
         font-style: italic;
+        transition: all 0.3s ease;
     }
 
     .dark .content-text blockquote {
-        background: #4b5563;
+        background: var(--bg-secondary);
         border-color: #60a5fa;
     }
 
@@ -273,18 +286,19 @@
 
     .article-footer {
         padding: 2rem 3rem;
-        background: #f8fafc;
-        border-top: 1px solid #e5e7eb;
+        background: var(--bg-secondary, #f8fafc);
+        border-top: 1px solid var(--border-color, #e5e7eb);
         display: flex;
         justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
         gap: 1rem;
+        transition: all 0.3s ease;
     }
 
     .dark .article-footer {
-        background: #4b5563;
-        border-color: #6b7280;
+        background: var(--bg-secondary);
+        border-color: var(--border-color);
     }
 
     .article-tags {
@@ -295,8 +309,8 @@
 
     .tag {
         padding: 0.25rem 0.75rem;
-        background: #e5e7eb;
-        color: #374151;
+        background: var(--bg-tertiary, #e5e7eb);
+        color: var(--text-primary, #374151);
         border-radius: 15px;
         font-size: 0.875rem;
         font-weight: 500;
@@ -304,8 +318,8 @@
     }
 
     .dark .tag {
-        background: #6b7280;
-        color: #f9fafb;
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
     }
 
     .tag:hover {

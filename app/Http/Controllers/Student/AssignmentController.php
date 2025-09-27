@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Models\Assignment;
 use App\Models\AssignmentSubmission;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -22,9 +23,49 @@ class AssignmentController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Assignment::with(['teacher', 'submissions' => function($q) {
+        // Get current student's class
+        $student = Student::where('user_id', Auth::id())->with('class')->first();
+        
+        // Debug information
+        $debugInfo = [
+            'user_id' => Auth::id(),
+            'student_found' => $student ? true : false,
+            'student_class_id' => $student ? $student->class_id : null,
+            'student_class_name' => $student && $student->class ? $student->class->name : null,
+        ];
+        
+        if (!$student || !$student->class_id) {
+            // Create empty paginated collection
+            $emptyAssignments = new \Illuminate\Pagination\LengthAwarePaginator(
+                collect(), // items
+                0, // total
+                12, // per page
+                1, // current page
+                ['path' => request()->url(), 'pageName' => 'page']
+            );
+            
+            return view('student.assignments.index', [
+                'pageTitle' => 'Tugas & Assignment',
+                'breadcrumb' => [['title' => 'Tugas & Assignment']],
+                'assignments' => $emptyAssignments,
+                'subjects' => collect(),
+                'stats' => ['total_assignments' => 0, 'submitted' => 0, 'pending' => 0, 'overdue' => 0],
+                'currentFilters' => ['subject' => null, 'status' => null],
+                'message' => 'Anda belum terdaftar dalam kelas manapun. Silakan hubungi admin.',
+                'debugInfo' => $debugInfo
+            ]);
+        }
+
+        // Add debug info for assignments query
+        $debugInfo['total_assignments_in_db'] = Assignment::count();
+        $debugInfo['assignments_for_class'] = Assignment::where('class_id', $student->class_id)->count();
+        $debugInfo['published_assignments_for_class'] = Assignment::where('class_id', $student->class_id)
+            ->whereIn('status', ['published', 'active'])->count();
+        
+        $query = Assignment::with(['teacher', 'class', 'submissions' => function($q) {
             $q->where('student_id', Auth::id());
         }])
+        ->where('class_id', $student->class_id)
         ->whereIn('status', ['published', 'active'])
         ->latest();
 
@@ -47,9 +88,11 @@ class AssignmentController extends Controller
         }
 
         $assignments = $query->paginate(12);
+        $debugInfo['assignments_found'] = $assignments->total();
         
         // Get filter options
-        $subjects = Assignment::whereIn('status', ['published', 'active'])
+        $subjects = Assignment::where('class_id', $student->class_id)
+            ->whereIn('status', ['published', 'active'])
             ->select('subject')
             ->distinct()
             ->orderBy('subject')
@@ -57,14 +100,20 @@ class AssignmentController extends Controller
 
         // Get statistics
         $stats = [
-            'total_assignments' => Assignment::whereIn('status', ['published', 'active'])->count(),
-            'submitted' => AssignmentSubmission::where('student_id', Auth::id())->count(),
-            'pending' => Assignment::whereIn('status', ['published', 'active'])
+            'total_assignments' => Assignment::where('class_id', $student->class_id)
+                ->whereIn('status', ['published', 'active'])->count(),
+            'submitted' => AssignmentSubmission::where('student_id', Auth::id())
+                ->whereHas('assignment', function($q) use ($student) {
+                    $q->where('class_id', $student->class_id);
+                })->count(),
+            'pending' => Assignment::where('class_id', $student->class_id)
+                ->whereIn('status', ['published', 'active'])
                 ->where('due_date', '>=', now())
                 ->whereDoesntHave('submissions', function($q) {
                     $q->where('student_id', Auth::id());
                 })->count(),
-            'overdue' => Assignment::whereIn('status', ['published', 'active'])
+            'overdue' => Assignment::where('class_id', $student->class_id)
+                ->whereIn('status', ['published', 'active'])
                 ->where('due_date', '<', now())
                 ->whereDoesntHave('submissions', function($q) {
                     $q->where('student_id', Auth::id());
@@ -82,7 +131,8 @@ class AssignmentController extends Controller
             'currentFilters' => [
                 'subject' => $request->subject,
                 'status' => $request->status,
-            ]
+            ],
+            'debugInfo' => $debugInfo
         ]);
     }
 
@@ -91,9 +141,17 @@ class AssignmentController extends Controller
      */
     public function show($id)
     {
-        $assignment = Assignment::with(['teacher', 'submissions' => function($q) {
+        // Get current student's class
+        $student = Student::where('user_id', Auth::id())->first();
+        if (!$student || !$student->class_id) {
+            abort(403, 'Anda belum terdaftar dalam kelas manapun.');
+        }
+
+        $assignment = Assignment::with(['teacher', 'class', 'submissions' => function($q) {
             $q->where('student_id', Auth::id());
-        }])->findOrFail($id);
+        }])
+        ->where('class_id', $student->class_id)
+        ->findOrFail($id);
 
         // Check if student has already submitted
         $submission = $assignment->submissions->first();

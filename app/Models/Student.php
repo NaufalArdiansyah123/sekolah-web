@@ -16,7 +16,7 @@ class Student extends Model
         'email',
         'phone',
         'address',
-        'class',
+        'class_id',
         'birth_date',
         'birth_place',
         'gender',
@@ -26,15 +26,25 @@ class Student extends Model
         'photo',
         'status',
         'user_id',
+        'enrollment_date',
     ];
 
     protected $casts = [
         'birth_date' => 'date',
+        'enrollment_date' => 'date',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the class that this student belongs to
+     */
+    public function class()
+    {
+        return $this->belongsTo(Classes::class, 'class_id');
     }
 
     public function achievements()

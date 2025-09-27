@@ -7,9 +7,11 @@ use App\Models\Student;
 use App\Models\QrAttendance;
 use App\Models\AttendanceLog;
 use App\Services\QrCodeService;
+use App\Services\CsvExportService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class QrAttendanceController extends Controller
 {
@@ -25,13 +27,13 @@ class QrAttendanceController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Student::with(['qrAttendance', 'attendanceLogs' => function($q) {
+        $query = Student::with(['qrAttendance', 'class', 'attendanceLogs' => function($q) {
             $q->whereDate('attendance_date', today());
         }]);
 
         // Filter by class
         if ($request->filled('class')) {
-            $query->where('class', $request->class);
+            $query->where('class_id', $request->class);
         }
 
         // Filter by search
@@ -47,7 +49,11 @@ class QrAttendanceController extends Controller
         $students = $query->paginate(20);
         
         // Get available classes
-        $classes = Student::distinct()->pluck('class')->filter()->sort();
+        $classes = \App\Models\Classes::where('is_active', true)
+            ->orderBy('level')
+            ->orderBy('program')
+            ->orderBy('name')
+            ->get();
         
         // Statistics
         $stats = [
@@ -143,7 +149,8 @@ class QrAttendanceController extends Controller
      */
     public function attendanceLogs(Request $request)
     {
-        $query = AttendanceLog::with(['student'])
+        
+        $query = AttendanceLog::with(['student.class'])
                              ->orderBy('scan_time', 'desc');
 
         // Filter by date
@@ -161,17 +168,88 @@ class QrAttendanceController extends Controller
         // Filter by class
         if ($request->filled('class')) {
             $query->whereHas('student', function($q) use ($request) {
-                $q->where('class', $request->class);
+                $q->where('class_id', $request->class);
             });
         }
 
         $logs = $query->paginate(20);
         
         // Get available classes and statuses
-        $classes = Student::distinct()->pluck('class')->filter()->sort();
+        $classes = \App\Models\Classes::where('is_active', true)
+            ->orderBy('level')
+            ->orderBy('program')
+            ->orderBy('name')
+            ->get();
         $statuses = ['hadir', 'terlambat', 'izin', 'sakit', 'alpha'];
 
         return view('admin.qr-attendance.logs', compact('logs', 'classes', 'statuses'));
+    }
+    
+    /**
+     * Export attendance logs to Excel
+     */
+    public function exportLogs(Request $request)
+    {
+        try {
+            Log::info('Export logs request started', $request->all());
+            // Get filters
+            $filters = [
+                'date' => $request->get('date', today()->format('Y-m-d')),
+                'status' => $request->get('status'),
+                'class' => $request->get('class')
+            ];
+            
+            // Build query with same filters as attendanceLogs method
+            $query = AttendanceLog::with(['student.class'])
+                                 ->orderBy('scan_time', 'desc');
+
+            // Apply filters
+            if ($filters['date']) {
+                $query->whereDate('attendance_date', $filters['date']);
+            }
+
+            if ($filters['status']) {
+                $query->where('status', $filters['status']);
+            }
+
+            if ($filters['class']) {
+                $query->whereHas('student', function($q) use ($filters) {
+                    $q->where('class_id', $filters['class']);
+                });
+            }
+
+            $logs = $query->get();
+            
+            Log::info('Export logs query executed', ['count' => $logs->count()]);
+            
+            // Generate filename
+            $filename = 'log-absensi-qr';
+            if ($filters['date']) {
+                $filename .= '-' . $filters['date'];
+            }
+            if ($filters['class']) {
+                $filename .= '-kelas-' . str_replace(' ', '-', strtolower($filters['class']));
+            }
+            if ($filters['status']) {
+                $filename .= '-' . $filters['status'];
+            }
+            $filename .= '.csv';
+            
+            Log::info('Starting CSV download', ['filename' => $filename]);
+            
+            // Use CSV service for better compatibility and maintainability
+            $headers = CsvExportService::getAttendanceLogsHeaders();
+            $data = CsvExportService::formatAttendanceLogsForCsv($logs);
+            
+            return CsvExportService::generateCsvResponse($data, $headers, $filename);
+            
+        } catch (\Exception $e) {
+            Log::error('Export logs failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return redirect()->back()->with('error', 'Gagal mengexport data: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -203,10 +281,11 @@ class QrAttendanceController extends Controller
         // Class statistics
         $classStats = AttendanceLog::byMonth($month, $year)
                                  ->join('students', 'attendance_logs.student_id', '=', 'students.id')
-                                 ->select('students.class', 'attendance_logs.status', DB::raw('count(*) as count'))
-                                 ->groupBy('students.class', 'attendance_logs.status')
+                                 ->join('classes', 'students.class_id', '=', 'classes.id')
+                                 ->select('classes.name as class_name', 'attendance_logs.status', DB::raw('count(*) as count'))
+                                 ->groupBy('classes.name', 'attendance_logs.status')
                                  ->get()
-                                 ->groupBy('class');
+                                 ->groupBy('class_name');
 
         return view('admin.qr-attendance.statistics', compact(
             'monthlyStats', 
@@ -239,7 +318,7 @@ class QrAttendanceController extends Controller
                 'student' => [
                     'name' => $student->name,
                     'nis' => $student->nis,
-                    'class' => $student->class,
+                    'class' => $student->class ? $student->class->name : 'Kelas tidak ditemukan',
                 ],
                 'download_url' => route('admin.qr-attendance.download', $student),
             ]);

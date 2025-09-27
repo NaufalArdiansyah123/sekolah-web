@@ -289,18 +289,19 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
-    /* Student List */
-    .students-section {
+    /* Attendance Table */
+    .attendance-table-section {
         background: var(--bg-primary);
         border-radius: 16px;
         padding: 1.5rem;
         border: 1px solid var(--border-color);
         box-shadow: 0 4px 20px var(--shadow-color);
+        overflow-x: auto;
     }
 
     .section-header {
         display: flex;
-        justify-content: between;
+        justify-content: space-between;
         align-items: center;
         margin-bottom: 1.5rem;
         padding-bottom: 1rem;
@@ -316,64 +317,76 @@
         gap: 0.5rem;
     }
 
-    .students-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: 1rem;
+    .attendance-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
     }
 
-    .student-card {
-        background: var(--bg-secondary);
-        border-radius: 12px;
+    .attendance-table th,
+    .attendance-table td {
         padding: 1rem;
-        border: 1px solid var(--border-color);
-        transition: all 0.3s ease;
-        position: relative;
+        text-align: left;
+        border-bottom: 1px solid var(--border-color);
+        vertical-align: middle;
     }
 
-    .student-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px var(--shadow-color);
+    .attendance-table th {
+        background: var(--bg-secondary);
+        font-weight: 600;
+        color: var(--text-primary);
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        position: sticky;
+        top: 0;
+        z-index: 10;
     }
 
-    .student-header {
+    .attendance-table td {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+    }
+
+    .attendance-table tbody tr:hover {
+        background: var(--bg-tertiary);
+    }
+
+    .student-info {
         display: flex;
         align-items: center;
-        gap: 1rem;
-        margin-bottom: 1rem;
+        gap: 0.75rem;
     }
 
     .student-avatar {
-        width: 50px;
-        height: 50px;
-        border-radius: 10px;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
         background: linear-gradient(135deg, #059669, #10b981);
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
         font-weight: 700;
-        font-size: 1rem;
+        font-size: 0.875rem;
         flex-shrink: 0;
     }
 
-    .student-info {
+    .student-details {
         flex: 1;
         min-width: 0;
     }
 
     .student-name {
-        font-size: 0.95rem;
         font-weight: 600;
         color: var(--text-primary);
-        margin-bottom: 0.25rem;
-        line-height: 1.3;
+        margin-bottom: 0.125rem;
+        font-size: 0.9rem;
     }
 
     .student-nis {
         font-size: 0.75rem;
         color: var(--text-secondary);
-        margin-bottom: 0.25rem;
     }
 
     .student-class {
@@ -388,32 +401,15 @@
         font-weight: 600;
     }
 
-    .attendance-status {
-        position: absolute;
-        top: 0.75rem;
-        right: 0.75rem;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        border: 2px solid var(--bg-secondary);
-    }
-
-    .status-present { background: #10b981; }
-    .status-absent { background: #ef4444; }
-    .status-sick { background: #f59e0b; }
-    .status-permission { background: #3b82f6; }
-    .status-unmarked { background: #9ca3af; }
-
-    .attendance-controls {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 0.5rem;
-        margin-bottom: 1rem;
+    .status-buttons {
+        display: flex;
+        gap: 0.25rem;
+        flex-wrap: wrap;
     }
 
     .status-btn {
-        padding: 0.5rem;
-        border-radius: 8px;
+        padding: 0.375rem 0.75rem;
+        border-radius: 6px;
         font-size: 0.7rem;
         font-weight: 600;
         border: none;
@@ -421,28 +417,34 @@
         transition: all 0.3s ease;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        position: relative;
+        min-width: 60px;
+        text-align: center;
     }
 
-    .status-btn.present { 
+    .status-btn.hadir { 
         background: rgba(16, 185, 129, 0.1); 
         color: #059669; 
         border: 1px solid rgba(16, 185, 129, 0.2); 
     }
-    .status-btn.absent { 
+    .status-btn.alpha { 
         background: rgba(239, 68, 68, 0.1); 
         color: #dc2626; 
         border: 1px solid rgba(239, 68, 68, 0.2); 
     }
-    .status-btn.sick { 
+    .status-btn.sakit { 
         background: rgba(245, 158, 11, 0.1); 
         color: #d97706; 
         border: 1px solid rgba(245, 158, 11, 0.2); 
     }
-    .status-btn.permission { 
+    .status-btn.izin { 
         background: rgba(59, 130, 246, 0.1); 
         color: #2563eb; 
         border: 1px solid rgba(59, 130, 246, 0.2); 
+    }
+    .status-btn.terlambat { 
+        background: rgba(245, 158, 11, 0.1); 
+        color: #d97706; 
+        border: 1px solid rgba(245, 158, 11, 0.2); 
     }
 
     .status-btn:hover {
@@ -455,52 +457,77 @@
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
 
-    .status-btn.active.present { background: #10b981; color: white; }
-    .status-btn.active.absent { background: #ef4444; color: white; }
-    .status-btn.active.sick { background: #f59e0b; color: white; }
-    .status-btn.active.permission { background: #3b82f6; color: white; }
+    .status-btn.active.hadir { background: #10b981; color: white; }
+    .status-btn.active.alpha { background: #ef4444; color: white; }
+    .status-btn.active.sakit { background: #f59e0b; color: white; }
+    .status-btn.active.izin { background: #3b82f6; color: white; }
+    .status-btn.active.terlambat { background: #f59e0b; color: white; }
 
-    .attendance-details {
-        display: none;
-        margin-top: 1rem;
-        padding: 1rem;
-        background: var(--bg-primary);
-        border-radius: 8px;
-        border: 1px solid var(--border-color);
-    }
-
-    .attendance-details.show {
-        display: block;
-        animation: slideDown 0.3s ease;
-    }
-
-    .detail-row {
-        display: flex;
-        justify-content: space-between;
+    .status-badge {
+        display: inline-flex;
         align-items: center;
-        margin-bottom: 0.5rem;
-        font-size: 0.75rem;
-    }
-
-    .detail-label {
-        color: var(--text-secondary);
-        font-weight: 500;
-    }
-
-    .detail-value {
-        color: var(--text-primary);
+        justify-content: center;
+        padding: 0.375rem 0.75rem;
+        border-radius: 8px;
         font-weight: 600;
+        font-size: 0.75rem;
+        min-width: 80px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .status-badge.hadir {
+        background: rgba(16, 185, 129, 0.1);
+        color: #059669;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .status-badge.terlambat {
+        background: rgba(245, 158, 11, 0.1);
+        color: #d97706;
+        border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    .status-badge.izin {
+        background: rgba(59, 130, 246, 0.1);
+        color: #2563eb;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    .status-badge.sakit {
+        background: rgba(245, 158, 11, 0.1);
+        color: #d97706;
+        border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    .status-badge.alpha {
+        background: rgba(239, 68, 68, 0.1);
+        color: #dc2626;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .status-badge.unmarked {
+        background: rgba(107, 114, 128, 0.1);
+        color: #374151;
+        border: 1px solid rgba(107, 114, 128, 0.2);
+    }
+
+    .time-display {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        margin-top: 0.25rem;
     }
 
     .notes-input {
         width: 100%;
-        padding: 0.5rem;
+        padding: 0.375rem 0.5rem;
         border: 1px solid var(--border-color);
         border-radius: 6px;
         font-size: 0.75rem;
         background: var(--bg-secondary);
         color: var(--text-primary);
-        margin-top: 0.5rem;
+        resize: vertical;
+        min-height: 60px;
     }
 
     .notes-input:focus {
@@ -509,26 +536,15 @@
         box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.1);
     }
 
-    /* Time inputs */
-    .time-inputs {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0.5rem;
-        margin-top: 0.5rem;
+    .checkbox-column {
+        width: 40px;
+        text-align: center;
     }
 
-    .time-input {
-        padding: 0.375rem 0.5rem;
-        border: 1px solid var(--border-color);
-        border-radius: 6px;
-        font-size: 0.75rem;
-        background: var(--bg-secondary);
-        color: var(--text-primary);
-    }
-
-    .time-input:focus {
-        border-color: #059669;
-        outline: none;
+    .student-checkbox {
+        width: 18px;
+        height: 18px;
+        accent-color: #059669;
     }
 
     /* Responsive Design */
@@ -555,54 +571,30 @@
             grid-template-columns: repeat(2, 1fr);
         }
 
-        .students-grid {
-            grid-template-columns: 1fr;
-        }
-
         .bulk-actions {
             flex-direction: column;
             align-items: stretch;
         }
 
-        .attendance-controls {
-            grid-template-columns: repeat(2, 1fr);
+        .attendance-table th,
+        .attendance-table td {
+            padding: 0.75rem 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .status-buttons {
+            flex-direction: column;
+        }
+
+        .status-btn {
+            min-width: auto;
+            width: 100%;
         }
     }
 
     @media (max-width: 576px) {
         .stats-container {
             grid-template-columns: 1fr;
-        }
-
-        .attendance-controls {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    /* Animation */
-    @keyframes slideDown {
-        from {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .student-card {
-        animation: slideUp 0.5s ease-out;
-    }
-
-    @keyframes slideUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
         }
     }
 
@@ -650,7 +642,7 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                     </svg>
-                    Export Report
+                    Export Excel
                 </button>
                 <button class="btn btn-primary" onclick="showAttendanceHistory()">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -765,126 +757,149 @@
     <!-- Bulk Actions -->
     <div class="bulk-actions">
         <span class="bulk-label">Bulk Actions:</span>
-        <button class="bulk-btn present" onclick="bulkMarkAttendance('present')">
-            ✓ Mark All Present
+        <input type="checkbox" id="selectAll" class="student-checkbox" onchange="toggleSelectAll()">
+        <label for="selectAll" style="margin-right: 1rem;">Select All</label>
+        <button class="bulk-btn present" onclick="bulkMarkAttendance('hadir')">
+            ✓ Mark Selected Present
         </button>
-        <button class="bulk-btn absent" onclick="bulkMarkAttendance('absent')">
-            ✗ Mark All Absent
+        <button class="bulk-btn absent" onclick="bulkMarkAttendance('alpha')">
+            ✗ Mark Selected Absent
         </button>
-        <button class="bulk-btn sick" onclick="bulkMarkAttendance('sick')">
-            🏥 Mark All Sick
+        <button class="bulk-btn sick" onclick="bulkMarkAttendance('sakit')">
+            🏥 Mark Selected Sick
         </button>
-        <button class="bulk-btn permission" onclick="bulkMarkAttendance('permission')">
-            📋 Mark All Permission
+        <button class="bulk-btn permission" onclick="bulkMarkAttendance('izin')">
+            📋 Mark Selected Permission
         </button>
-        <button class="btn-control" onclick="clearAllAttendance()">
-            🔄 Clear All
+        <button class="btn-control" onclick="clearSelectedAttendance()">
+            🔄 Clear Selected
         </button>
     </div>
 
-    <!-- Students Section -->
-    <div class="students-section">
+    <!-- Attendance Table -->
+    <div class="attendance-table-section">
         <div class="section-header">
             <h2 class="section-title">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                 </svg>
-                Student Attendance List
+                Student Attendance List ({{ count($students) }} students)
             </h2>
         </div>
 
-        <div class="students-grid">
-            @foreach($students as $student)
-                @php
-                    $attendance = $attendanceData[$student->id] ?? null;
-                    $status = $attendance ? $attendance->status : 'unmarked';
-                @endphp
-                <div class="student-card" data-student-id="{{ $student->id }}">
-                    <div class="attendance-status status-{{ $status }}"></div>
-                    
-                    <div class="student-header">
-                        <div class="student-avatar">
-                            {{ strtoupper(substr($student->name, 0, 2)) }}
-                        </div>
-                        <div class="student-info">
-                            <div class="student-name">{{ $student->name }}</div>
-                            <div class="student-nis">NIS: {{ $student->nis }}</div>
-                            <div class="student-class">
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                                </svg>
-                                {{ $student->class }}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="attendance-controls">
-                        <button class="status-btn present {{ $status == 'present' ? 'active' : '' }}" 
-                                onclick="markAttendance({{ $student->id }}, 'present', this)">
-                            ✓ Hadir
-                        </button>
-                        <button class="status-btn absent {{ $status == 'absent' ? 'active' : '' }}" 
-                                onclick="markAttendance({{ $student->id }}, 'absent', this)">
-                            ✗ Alpha
-                        </button>
-                        <button class="status-btn sick {{ $status == 'sick' ? 'active' : '' }}" 
-                                onclick="markAttendance({{ $student->id }}, 'sick', this)">
-                            🏥 Sakit
-                        </button>
-                        <button class="status-btn permission {{ $status == 'permission' ? 'active' : '' }}" 
-                                onclick="markAttendance({{ $student->id }}, 'permission', this)">
-                            📋 Izin
-                        </button>
-                    </div>
-
-                    <div class="attendance-details" id="details-{{ $student->id }}">
-                        <div class="detail-row">
-                            <span class="detail-label">Status:</span>
-                            <span class="detail-value" id="status-text-{{ $student->id }}">
-                                {{ $attendance ? ucfirst($attendance->status) : 'Not marked' }}
-                            </span>
-                        </div>
-                        @if($attendance && $attendance->time_in)
-                        <div class="detail-row">
-                            <span class="detail-label">Time In:</span>
-                            <span class="detail-value">{{ $attendance->time_in }}</span>
-                        </div>
-                        @endif
-                        @if($attendance && $attendance->time_out)
-                        <div class="detail-row">
-                            <span class="detail-label">Time Out:</span>
-                            <span class="detail-value">{{ $attendance->time_out }}</span>
-                        </div>
-                        @endif
-                        
-                        <div class="time-inputs">
-                            <input type="time" 
-                                   class="time-input" 
-                                   placeholder="Time In"
-                                   value="{{ $attendance && $attendance->time_in ? $attendance->time_in : '' }}"
-                                   id="time-in-{{ $student->id }}">
-                            <input type="time" 
-                                   class="time-input" 
-                                   placeholder="Time Out"
-                                   value="{{ $attendance && $attendance->time_out ? $attendance->time_out : '' }}"
-                                   id="time-out-{{ $student->id }}">
-                        </div>
-                        
-                        <textarea class="notes-input" 
-                                  placeholder="Add notes or remarks..."
-                                  id="notes-{{ $student->id }}">{{ $attendance ? $attendance->notes : '' }}</textarea>
-                    </div>
-
-                    <div style="margin-top: 0.5rem; text-align: center;">
-                        <button class="btn-control" 
-                                style="font-size: 0.7rem; padding: 0.25rem 0.5rem;"
-                                onclick="toggleDetails({{ $student->id }})">
-                            <span id="toggle-text-{{ $student->id }}">Show Details</span>
-                        </button>
-                    </div>
-                </div>
-            @endforeach
-        </div>
+        @if(count($students) > 0)
+            <table class="attendance-table">
+                <thead>
+                    <tr>
+                        <th class="checkbox-column">
+                            <input type="checkbox" id="selectAllTable" class="student-checkbox" onchange="toggleSelectAll()">
+                        </th>
+                        <th>Student</th>
+                        <th>Class</th>
+                        <th>Current Status</th>
+                        <th>Mark Attendance</th>
+                        <th>Time</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($students as $student)
+                        @php
+                            $attendance = $attendanceData[$student->id] ?? null;
+                            $status = $attendance ? $attendance->status : 'unmarked';
+                            $notes = $attendance ? $attendance->notes : '';
+                            $scanTime = $attendance && $attendance->scan_time ? $attendance->scan_time->format('H:i') : '';
+                        @endphp
+                        <tr data-student-id="{{ $student->id }}">
+                            <td class="checkbox-column">
+                                <input type="checkbox" class="student-checkbox" name="selected_students[]" value="{{ $student->id }}">
+                            </td>
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">
+                                        {{ strtoupper(substr($student->name, 0, 2)) }}
+                                    </div>
+                                    <div class="student-details">
+                                        <div class="student-name">{{ $student->name }}</div>
+                                        <div class="student-nis">NIS: {{ $student->nis }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="student-class">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                    </svg>
+                                    {{ $student->class ? $student->class->name : 'No Class' }}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="status-badge {{ $status }}" id="status-badge-{{ $student->id }}">
+                                    @if($attendance)
+                                        {{ $attendance->status_text }}
+                                    @else
+                                        Not Marked
+                                    @endif
+                                </div>
+                                @if($attendance && $attendance->scan_time)
+                                    <div class="time-display">
+                                        {{ $attendance->scan_time->format('H:i') }}
+                                    </div>
+                                @endif
+                            </td>
+                            <td>
+                                <div class="status-buttons">
+                                    <button class="status-btn hadir {{ $status == 'hadir' ? 'active' : '' }}" 
+                                            onclick="markAttendance({{ $student->id }}, 'hadir', this)">
+                                        Hadir
+                                    </button>
+                                    <button class="status-btn terlambat {{ $status == 'terlambat' ? 'active' : '' }}" 
+                                            onclick="markAttendance({{ $student->id }}, 'terlambat', this)">
+                                        Terlambat
+                                    </button>
+                                    <button class="status-btn izin {{ $status == 'izin' ? 'active' : '' }}" 
+                                            onclick="markAttendance({{ $student->id }}, 'izin', this)">
+                                        Izin
+                                    </button>
+                                    <button class="status-btn sakit {{ $status == 'sakit' ? 'active' : '' }}" 
+                                            onclick="markAttendance({{ $student->id }}, 'sakit', this)">
+                                        Sakit
+                                    </button>
+                                    <button class="status-btn alpha {{ $status == 'alpha' ? 'active' : '' }}" 
+                                            onclick="markAttendance({{ $student->id }}, 'alpha', this)">
+                                        Alpha
+                                    </button>
+                                </div>
+                            </td>
+                            <td>
+                                <input type="time" 
+                                       class="control-input" 
+                                       style="width: 120px; font-size: 0.75rem;"
+                                       value="{{ $scanTime }}"
+                                       id="time-{{ $student->id }}"
+                                       onchange="updateAttendanceTime({{ $student->id }}, this.value)"
+                                       data-original-value="{{ $scanTime }}">
+                            </td>
+                            <td>
+                                <textarea class="notes-input" 
+                                          placeholder="Add notes..."
+                                          id="notes-{{ $student->id }}"
+                                          onchange="updateAttendanceNotes({{ $student->id }}, this.value)"
+                                          data-original-value="{{ $notes }}">{{ $notes }}</textarea>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @else
+            <div style="text-align: center; padding: 4rem 2rem; color: var(--text-secondary);">
+                <svg class="w-16 h-16" style="margin: 0 auto 1.5rem; color: var(--text-tertiary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+                <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary);">No Students Found</h3>
+                <p style="color: var(--text-secondary); line-height: 1.6;">No students found in the selected class. Please select a different class or add students to this class.</p>
+            </div>
+        @endif
     </div>
 </div>
 
@@ -892,28 +907,29 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Mark individual attendance
     window.markAttendance = function(studentId, status, button) {
-        // Remove active class from all buttons in this student card
-        const card = button.closest('.student-card');
-        const allButtons = card.querySelectorAll('.status-btn');
+        // Remove active class from all buttons in this row
+        const row = button.closest('tr');
+        const allButtons = row.querySelectorAll('.status-btn');
         allButtons.forEach(btn => btn.classList.remove('active'));
         
         // Add active class to clicked button
         button.classList.add('active');
         
-        // Update status indicator
-        const statusIndicator = card.querySelector('.attendance-status');
-        statusIndicator.className = `attendance-status status-${status}`;
-        
-        // Update status text
-        const statusText = document.getElementById(`status-text-${studentId}`);
-        if (statusText) {
-            statusText.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+        // Update status badge
+        const statusBadge = document.getElementById(`status-badge-${studentId}`);
+        if (statusBadge) {
+            statusBadge.className = `status-badge ${status}`;
+            statusBadge.textContent = getStatusText(status);
         }
         
         // Get additional data
-        const timeIn = document.getElementById(`time-in-${studentId}`)?.value || null;
-        const timeOut = document.getElementById(`time-out-${studentId}`)?.value || null;
-        const notes = document.getElementById(`notes-${studentId}`)?.value || '';
+        const timeInput = document.getElementById(`time-${studentId}`);
+        const notesInput = document.getElementById(`notes-${studentId}`);
+        const scanTime = timeInput ? timeInput.value : null;
+        const notes = notesInput ? notesInput.value : '';
+        
+        // Show loading state for the row
+        row.style.opacity = '0.8';
         
         // Send AJAX request to save attendance
         fetch('{{ route("teacher.attendance.mark") }}', {
@@ -926,8 +942,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 student_id: studentId,
                 date: '{{ $selectedDate }}',
                 status: status,
-                time_in: timeIn,
-                time_out: timeOut,
+                scan_time: scanTime,
                 notes: notes
             })
         })
@@ -936,6 +951,28 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.success) {
                 showNotification('Attendance marked successfully', 'success');
                 updateStatistics();
+                
+                // Update stored values for time and notes
+                if (timeInput) {
+                    timeInput.setAttribute('data-original-value', data.data.scan_time || '');
+                }
+                if (notesInput) {
+                    notesInput.setAttribute('data-original-value', data.data.notes || '');
+                }
+                
+                // Update time display in status column
+                if (data.data.scan_time) {
+                    const statusBadge = document.getElementById(`status-badge-${studentId}`);
+                    if (statusBadge) {
+                        let timeDisplay = statusBadge.nextElementSibling;
+                        if (!timeDisplay || !timeDisplay.classList.contains('time-display')) {
+                            timeDisplay = document.createElement('div');
+                            timeDisplay.className = 'time-display';
+                            statusBadge.parentNode.appendChild(timeDisplay);
+                        }
+                        timeDisplay.textContent = data.data.scan_time;
+                    }
+                }
             } else {
                 showNotification('Failed to mark attendance', 'error');
             }
@@ -943,31 +980,168 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => {
             console.error('Error:', error);
             showNotification('An error occurred', 'error');
+        })
+        .finally(() => {
+            // Remove loading state
+            row.style.opacity = '1';
+        });
+    };
+
+    // Update attendance time
+    window.updateAttendanceTime = function(studentId, time) {
+        const timeInput = document.getElementById(`time-${studentId}`);
+        const originalValue = timeInput.getAttribute('data-original-value');
+        
+        // Only update if value has changed
+        if (time === originalValue) {
+            return;
+        }
+        
+        // Show loading state
+        timeInput.style.opacity = '0.6';
+        timeInput.disabled = true;
+        
+        // Send AJAX request to update time
+        fetch('{{ route("teacher.attendance.update-time") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                student_id: studentId,
+                date: '{{ $selectedDate }}',
+                time: time
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification('Time updated successfully', 'success');
+                timeInput.setAttribute('data-original-value', time);
+                
+                // Update time display in status column if exists
+                const statusBadge = document.getElementById(`status-badge-${studentId}`);
+                if (statusBadge && statusBadge.nextElementSibling) {
+                    const timeDisplay = statusBadge.nextElementSibling;
+                    if (timeDisplay.classList.contains('time-display')) {
+                        timeDisplay.textContent = data.data.scan_time || '';
+                    }
+                }
+            } else {
+                showNotification('Failed to update time', 'error');
+                // Revert to original value
+                timeInput.value = originalValue;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('An error occurred while updating time', 'error');
+            // Revert to original value
+            timeInput.value = originalValue;
+        })
+        .finally(() => {
+            // Remove loading state
+            timeInput.style.opacity = '1';
+            timeInput.disabled = false;
+        });
+    };
+
+    // Update attendance notes
+    window.updateAttendanceNotes = function(studentId, notes) {
+        const notesInput = document.getElementById(`notes-${studentId}`);
+        const originalValue = notesInput.getAttribute('data-original-value');
+        
+        // Only update if value has changed
+        if (notes === originalValue) {
+            return;
+        }
+        
+        // Show loading state
+        notesInput.style.opacity = '0.6';
+        notesInput.disabled = true;
+        
+        // Send AJAX request to update notes
+        fetch('{{ route("teacher.attendance.update-notes") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                student_id: studentId,
+                date: '{{ $selectedDate }}',
+                notes: notes
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification('Notes updated successfully', 'success');
+                notesInput.setAttribute('data-original-value', notes);
+            } else {
+                showNotification('Failed to update notes', 'error');
+                // Revert to original value
+                notesInput.value = originalValue;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('An error occurred while updating notes', 'error');
+            // Revert to original value
+            notesInput.value = originalValue;
+        })
+        .finally(() => {
+            // Remove loading state
+            notesInput.style.opacity = '1';
+            notesInput.disabled = false;
+        });
+    };
+
+    // Toggle select all
+    window.toggleSelectAll = function() {
+        const selectAllCheckbox = document.getElementById('selectAll') || document.getElementById('selectAllTable');
+        const studentCheckboxes = document.querySelectorAll('input[name="selected_students[]"]');
+        
+        studentCheckboxes.forEach(checkbox => {
+            checkbox.checked = selectAllCheckbox.checked;
         });
     };
 
     // Bulk mark attendance
     window.bulkMarkAttendance = function(status) {
-        if (!confirm(`Are you sure you want to mark all students as ${status}?`)) {
+        const selectedStudents = Array.from(document.querySelectorAll('input[name="selected_students[]"]:checked'))
+                                     .map(checkbox => parseInt(checkbox.value));
+        
+        if (selectedStudents.length === 0) {
+            showNotification('Please select at least one student', 'warning');
             return;
         }
 
-        const studentIds = [];
-        document.querySelectorAll('.student-card').forEach(card => {
-            const studentId = card.getAttribute('data-student-id');
-            studentIds.push(parseInt(studentId));
-            
-            // Update UI
-            const allButtons = card.querySelectorAll('.status-btn');
-            allButtons.forEach(btn => btn.classList.remove('active'));
-            
-            const targetButton = card.querySelector(`.status-btn.${status}`);
-            if (targetButton) {
-                targetButton.classList.add('active');
+        if (!confirm(`Are you sure you want to mark ${selectedStudents.length} students as ${getStatusText(status)}?`)) {
+            return;
+        }
+
+        // Update UI for selected students
+        selectedStudents.forEach(studentId => {
+            const row = document.querySelector(`tr[data-student-id="${studentId}"]`);
+            if (row) {
+                // Update buttons
+                const allButtons = row.querySelectorAll('.status-btn');
+                allButtons.forEach(btn => btn.classList.remove('active'));
+                
+                const targetButton = row.querySelector(`.status-btn.${status}`);
+                if (targetButton) {
+                    targetButton.classList.add('active');
+                }
+                
+                // Update status badge
+                const statusBadge = document.getElementById(`status-badge-${studentId}`);
+                if (statusBadge) {
+                    statusBadge.className = `status-badge ${status}`;
+                    statusBadge.textContent = getStatusText(status);
+                }
             }
-            
-            const statusIndicator = card.querySelector('.attendance-status');
-            statusIndicator.className = `attendance-status status-${status}`;
         });
 
         // Send bulk request
@@ -981,14 +1155,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 date: '{{ $selectedDate }}',
                 class: '{{ $selectedClass }}',
                 status: status,
-                student_ids: studentIds
+                student_ids: selectedStudents
             })
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                showNotification('Bulk attendance marked successfully', 'success');
+                showNotification(`Bulk attendance marked successfully for ${data.success_count} students`, 'success');
                 updateStatistics();
+                // Clear selections
+                document.querySelectorAll('input[name="selected_students[]"]').forEach(cb => cb.checked = false);
+                document.getElementById('selectAll').checked = false;
             } else {
                 showNotification('Failed to mark bulk attendance', 'error');
             }
@@ -999,36 +1176,36 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     };
 
-    // Clear all attendance
-    window.clearAllAttendance = function() {
-        if (!confirm('Are you sure you want to clear all attendance marks?')) {
+    // Clear selected attendance
+    window.clearSelectedAttendance = function() {
+        const selectedStudents = Array.from(document.querySelectorAll('input[name="selected_students[]"]:checked'))
+                                     .map(checkbox => parseInt(checkbox.value));
+        
+        if (selectedStudents.length === 0) {
+            showNotification('Please select at least one student', 'warning');
             return;
         }
 
-        document.querySelectorAll('.student-card').forEach(card => {
-            const allButtons = card.querySelectorAll('.status-btn');
-            allButtons.forEach(btn => btn.classList.remove('active'));
-            
-            const statusIndicator = card.querySelector('.attendance-status');
-            statusIndicator.className = 'attendance-status status-unmarked';
+        if (!confirm(`Are you sure you want to clear attendance for ${selectedStudents.length} students?`)) {
+            return;
+        }
+
+        selectedStudents.forEach(studentId => {
+            const row = document.querySelector(`tr[data-student-id="${studentId}"]`);
+            if (row) {
+                const allButtons = row.querySelectorAll('.status-btn');
+                allButtons.forEach(btn => btn.classList.remove('active'));
+                
+                const statusBadge = document.getElementById(`status-badge-${studentId}`);
+                if (statusBadge) {
+                    statusBadge.className = 'status-badge unmarked';
+                    statusBadge.textContent = 'Not Marked';
+                }
+            }
         });
 
-        showNotification('All attendance cleared', 'info');
+        showNotification(`Attendance cleared for ${selectedStudents.length} students`, 'info');
         updateStatistics();
-    };
-
-    // Toggle details
-    window.toggleDetails = function(studentId) {
-        const details = document.getElementById(`details-${studentId}`);
-        const toggleText = document.getElementById(`toggle-text-${studentId}`);
-        
-        if (details.classList.contains('show')) {
-            details.classList.remove('show');
-            toggleText.textContent = 'Show Details';
-        } else {
-            details.classList.add('show');
-            toggleText.textContent = 'Hide Details';
-        }
     };
 
     // Refresh attendance
@@ -1043,18 +1220,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Export attendance
     window.exportAttendance = function() {
-        const format = prompt('Export format (excel/pdf/csv):', 'excel');
-        if (format) {
-            fetch(`{{ route("teacher.attendance.export") }}?date={{ $selectedDate }}&class={{ $selectedClass }}&format=${format}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showNotification(data.message, 'success');
-                } else {
-                    showNotification('Export failed', 'error');
-                }
-            });
+        const selectedDate = '{{ $selectedDate }}';
+        const selectedClass = '{{ $selectedClass }}';
+        
+        if (!selectedClass) {
+            showNotification('Please select a class first!', 'warning');
+            return;
         }
+        
+        // Create download link
+        const link = document.createElement('a');
+        link.href = `{{ route("teacher.attendance.index") }}?date=${selectedDate}&class=${selectedClass}&export=excel`;
+        link.download = `attendance-${selectedClass}-${selectedDate}.xlsx`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        showNotification('Attendance data exported successfully!', 'success');
     };
 
     // Show attendance history
@@ -1062,10 +1244,21 @@ document.addEventListener('DOMContentLoaded', function() {
         alert('Attendance history and statistics feature would be implemented here');
     };
 
+    // Helper function to get status text
+    function getStatusText(status) {
+        const statusTexts = {
+            'hadir': 'Hadir',
+            'terlambat': 'Terlambat',
+            'izin': 'Izin',
+            'sakit': 'Sakit',
+            'alpha': 'Alpha'
+        };
+        return statusTexts[status] || 'Unknown';
+    }
+
     // Update statistics
     function updateStatistics() {
         // This would typically fetch updated statistics from the server
-        // For now, we'll just show a notification
         console.log('Statistics updated');
     }
 
@@ -1094,6 +1287,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 break;
             case 'info':
                 notification.style.background = '#3b82f6';
+                break;
+            case 'warning':
+                notification.style.background = '#f59e0b';
                 break;
             default:
                 notification.style.background = '#6b7280';

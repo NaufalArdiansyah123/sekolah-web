@@ -14,6 +14,7 @@
 
 <?php $__env->startSection('content'); ?>
 <div class="container mx-auto px-6 py-8">
+    
     <!-- Page Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
         <div class="mb-4 sm:mb-0">
@@ -236,8 +237,12 @@
                     <h4 class="text-xl font-bold text-gray-900 dark:text-white mb-1"><?php echo e($student->name); ?></h4>
                     <p class="text-gray-600 dark:text-gray-400 mb-2">NIS: <?php echo e($student->nis); ?></p>
                     <span class="bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 px-3 py-1 rounded-full text-sm font-medium">
-                        <?php echo e($student->class); ?>
+                        <?php if($student->class_id && $student->class): ?>
+                            <?php echo e($student->class->name); ?>
 
+                        <?php else: ?>
+                            Kelas Belum Ditentukan
+                        <?php endif; ?>
                     </span>
                 </div>
             </div>

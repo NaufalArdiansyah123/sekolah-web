@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\{Artisan, Storage, Hash, DB, Mail, File};
 use Illuminate\Http\Request;
-use App\Models\{User, Role, Permission, Setting};
-use Illuminate\Support\Facades\{Hash, Artisan, DB, Mail, Storage, File};
+use App\Models\{Setting, AttendanceLog, User};
 use Illuminate\Http\JsonResponse;
 use Carbon\Carbon;
 
@@ -37,63 +37,85 @@ class SettingController extends Controller
             ]);
         }
     }
+    
+    public function backup()
+    {
+        try {
+            // Get backup path
+            $backupPath = storage_path('app/backups');
+            
+            // Get backup list
+            $backups = $this->getBackupList();
+            
+            return view('admin.settings.backup', compact('backupPath', 'backups'));
+        } catch (\Exception $e) {
+            \Log::error('Error loading backup page:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return view('admin.settings.backup', [
+                'backupPath' => storage_path('app/backups'),
+                'backups' => [],
+                'error' => 'Terjadi kesalahan saat memuat halaman backup.'
+            ]);
+        }
+    }
 
     public function update(Request $request)
     {
         try {
-            $validationRules = [
-                // School Information
-                'school_name' => 'required|string|max:255',
-                'school_address' => 'nullable|string|max:500',
-                'school_phone' => 'nullable|string|max:20',
-                'school_email' => 'nullable|email|max:255',
-                'school_website' => 'nullable|url|max:255',
-                'principal_name' => 'nullable|string|max:255',
-                'school_npsn' => 'nullable|string|max:20',
-                'school_accreditation' => 'nullable|string|max:10',
-                
-                // Academic Settings
-                'academic_year' => 'nullable|string|max:20',
-                'semester' => 'nullable|in:1,2',
-                'school_timezone' => 'nullable|string|max:50',
-                'attendance_start_time' => 'nullable|date_format:H:i',
-                'attendance_end_time' => 'nullable|date_format:H:i',
-                'late_tolerance_minutes' => 'nullable|integer|min:0|max:60',
-                
-                // System Settings
-                'maintenance_mode' => 'nullable|boolean',
-                'allow_registration' => 'nullable|boolean',
-                'max_upload_size' => 'nullable|integer|min:1|max:100',
-                'session_lifetime' => 'nullable|integer|min:30|max:1440',
-                'max_login_attempts' => 'nullable|integer|min:3|max:10',
-                
-                // Email Settings
-                'mail_host' => 'nullable|string|max:255',
-                'mail_port' => 'nullable|integer|min:1|max:65535',
-                'mail_username' => 'nullable|email|max:255',
-                'mail_password' => 'nullable|string|max:255',
-                'mail_encryption' => 'nullable|in:tls,ssl,',
-                'mail_from_name' => 'nullable|string|max:255',
-                
-                // Notification Settings
-                'email_notifications_enabled' => 'nullable|boolean',
-                'notification_frequency' => 'nullable|in:instant,hourly,daily,weekly',
-                'registration_notifications' => 'nullable|boolean',
-                'system_notifications' => 'nullable|boolean',
-                'announcement_notifications' => 'nullable|boolean',
-                'agenda_notifications' => 'nullable|boolean',
-                
-                // Backup Settings
-                'auto_backup_enabled' => 'nullable|boolean',
-                'backup_frequency' => 'nullable|in:daily,weekly,monthly',
-                'backup_retention_days' => 'nullable|integer|min:7|max:365',
-                
-                // Files
-                'school_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-                'school_favicon' => 'nullable|image|mimes:ico,png|max:512',
-            ];
+            // Debug: Log the incoming request
+            \Log::info('Settings update request:', [
+                'all_data' => $request->all(),
+                'method' => $request->method(),
+                'content_type' => $request->header('Content-Type')
+            ]);
             
-            $request->validate($validationRules);
+            // Simplified validation - no strict rules
+            $validationRules = [];
+            
+            // Only validate if fields are present
+            if ($request->has('academic_year')) {
+                $validationRules['academic_year'] = 'nullable|string|max:20';
+            }
+            if ($request->has('semester')) {
+                $validationRules['semester'] = 'nullable|in:1,2';
+            }
+            if ($request->has('school_timezone')) {
+                $validationRules['school_timezone'] = 'nullable|string|max:50';
+            }
+            if ($request->has('attendance_start_time')) {
+                $validationRules['attendance_start_time'] = 'nullable|date_format:H:i';
+            }
+            if ($request->has('attendance_end_time')) {
+                $validationRules['attendance_end_time'] = 'nullable|date_format:H:i';
+            }
+            if ($request->has('late_tolerance_minutes')) {
+                $validationRules['late_tolerance_minutes'] = 'nullable|integer|min:0|max:60';
+            }
+            if ($request->has('absent_threshold_minutes')) {
+                $validationRules['absent_threshold_minutes'] = 'nullable|integer|min:15|max:120';
+            }
+            if ($request->has('max_upload_size')) {
+                $validationRules['max_upload_size'] = 'nullable|integer|min:1|max:100';
+            }
+            if ($request->has('session_lifetime')) {
+                $validationRules['session_lifetime'] = 'nullable|integer|min:30|max:1440';
+            }
+            if ($request->has('max_login_attempts')) {
+                $validationRules['max_login_attempts'] = 'nullable|integer|min:3|max:10';
+            }
+            if ($request->has('backup_frequency')) {
+                $validationRules['backup_frequency'] = 'nullable|in:daily,weekly,monthly';
+            }
+            if ($request->has('backup_retention_days')) {
+                $validationRules['backup_retention_days'] = 'nullable|integer|min:7|max:365';
+            }
+            
+            if (!empty($validationRules)) {
+                $request->validate($validationRules);
+            }
             
             // Process file uploads first
             $fileFields = ['school_logo', 'school_favicon'];
@@ -115,24 +137,20 @@ class SettingController extends Controller
                 }
             }
             
-            // Handle boolean fields that might not be present in request (unchecked checkboxes)
+            // Handle boolean fields - with hidden inputs, we always get values
             $booleanFields = [
-                'maintenance_mode', 'allow_registration', 'email_notifications_enabled',
-                'registration_notifications', 'system_notifications', 'announcement_notifications',
-                'agenda_notifications', 'auto_backup_enabled'
+                'maintenance_mode', 'allow_registration', 'auto_backup_enabled'
             ];
-            
-            // Set boolean fields to 0 if not present in request
-            foreach ($booleanFields as $field) {
-                if (!$request->has($field)) {
-                    $request->merge([$field => '0']);
-                }
-            }
             
             // Process other settings
             $settingsData = $request->except(['_token', '_method'] + $fileFields);
             
             foreach ($settingsData as $key => $value) {
+                // Skip empty values
+                if ($value === null || $value === '') {
+                    continue;
+                }
+                
                 // Determine setting group
                 $group = $this->getSettingGroup($key);
                 
@@ -140,24 +158,55 @@ class SettingController extends Controller
                 $type = $this->getSettingType($key, $value);
                 
                 // Convert boolean values
-                if (is_bool($value) || in_array($value, ['0', '1', 'true', 'false'])) {
-                    $value = $value ? '1' : '0';
+                if (in_array($key, $booleanFields)) {
+                    // With hidden inputs, checkbox will send array ['0', '1'] when checked, or just '0' when unchecked
+                    if (is_array($value)) {
+                        $value = in_array('1', $value) ? '1' : '0';
+                    } else {
+                        $value = ($value === '1' || $value === 1 || $value === true || $value === 'on') ? '1' : '0';
+                    }
                 }
                 
-                Setting::updateOrCreate(
-                    ['key' => $key],
-                    ['value' => $value, 'type' => $type, 'group' => $group]
-                );
+                try {
+                    Setting::updateOrCreate(
+                        ['key' => $key],
+                        ['value' => $value, 'type' => $type, 'group' => $group]
+                    );
+                } catch (\Exception $e) {
+                    \Log::error('Error saving setting: ' . $key, [
+                        'value' => $value,
+                        'type' => $type,
+                        'group' => $group,
+                        'error' => $e->getMessage()
+                    ]);
+                }
             }
             
             // Clear cache after updating settings
-            Artisan::call('config:clear');
-            Artisan::call('cache:clear');
+            try {
+                Artisan::call('config:clear');
+                Artisan::call('cache:clear');
+                
+                // Clear settings cache specifically
+                Setting::clearCache();
+                
+                // Clear static cache in AttendanceLog
+                \App\Models\AttendanceLog::clearSettingsCache();
+                \Log::info('Clearing attendance settings cache');
+                
+            } catch (\Exception $e) {
+                \Log::warning('Cache clear failed: ' . $e->getMessage());
+            }
             
-            return redirect()->route('admin.settings')
+            return redirect()->route('admin.settings.index')
                            ->with('success', 'Pengaturan berhasil diperbarui!');
                            
         } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Validation error in settings update:', [
+                'errors' => $e->errors(),
+                'request' => $request->all()
+            ]);
+            
             return redirect()->back()
                            ->withErrors($e->errors())
                            ->withInput()
@@ -166,12 +215,12 @@ class SettingController extends Controller
             \Log::error('Error updating settings:', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
-                'request' => $request->all()
+                'request' => $request->except(['_token', '_method'])
             ]);
             
             return redirect()->back()
                            ->withInput()
-                           ->with('error', 'Terjadi kesalahan saat menyimpan pengaturan: ' . $e->getMessage());
+                           ->with('error', 'Terjadi kesalahan saat menyimpan pengaturan. Silakan coba lagi.');
         }
     }
 
@@ -431,19 +480,7 @@ class SettingController extends Controller
     public function listBackups(Request $request)
     {
         try {
-            $backupPath = storage_path('app/backups');
-            $backups = [];
-
-            if (file_exists($backupPath)) {
-                $files = glob($backupPath . '/*.sql');
-                foreach ($files as $file) {
-                    $backups[] = [
-                        'filename' => basename($file),
-                        'size' => filesize($file),
-                        'created_at' => date('Y-m-d H:i:s', filemtime($file))
-                    ];
-                }
-            }
+            $backups = $this->getBackupList();
 
             return response()->json([
                 'success' => true,
@@ -561,7 +598,7 @@ class SettingController extends Controller
     {
         $groups = [
             'school' => ['school_name', 'school_address', 'school_phone', 'school_email', 'school_website', 'principal_name', 'school_npsn', 'school_accreditation', 'school_logo', 'school_favicon'],
-            'academic' => ['academic_year', 'semester', 'school_timezone', 'attendance_start_time', 'attendance_end_time', 'late_tolerance_minutes'],
+            'academic' => ['academic_year', 'semester', 'school_timezone', 'attendance_start_time', 'attendance_end_time', 'late_tolerance_minutes', 'absent_threshold_minutes'],
             'system' => ['maintenance_mode', 'allow_registration', 'max_upload_size', 'session_lifetime', 'max_login_attempts'],
             'email' => ['mail_host', 'mail_port', 'mail_username', 'mail_password', 'mail_encryption', 'mail_from_name'],
             'notification' => ['email_notifications_enabled', 'notification_frequency', 'registration_notifications', 'system_notifications', 'announcement_notifications', 'agenda_notifications'],
@@ -738,5 +775,68 @@ class SettingController extends Controller
             \Log::error('Error getting recent activities:', ['error' => $e->getMessage()]);
             return [];
         }
+    }
+    
+    /**
+     * Get backup list
+     */
+    private function getBackupList()
+    {
+        try {
+            $backupPath = storage_path('app/backups');
+            $backups = [];
+
+            if (file_exists($backupPath)) {
+                $files = File::files($backupPath);
+                foreach ($files as $file) {
+                    $backups[] = [
+                        'name' => $file->getFilename(),
+                        'type' => $this->getBackupType($file->getFilename()),
+                        'size' => $this->formatFileSize($file->getSize()),
+                        'date' => date('Y-m-d H:i:s', $file->getMTime())
+                    ];
+                }
+                
+                // Sort by date (newest first)
+                usort($backups, function($a, $b) {
+                    return strtotime($b['date']) - strtotime($a['date']);
+                });
+            }
+
+            return $backups;
+        } catch (\Exception $e) {
+            \Log::error('Error getting backup list:', ['error' => $e->getMessage()]);
+            return [];
+        }
+    }
+    
+    /**
+     * Get backup type from filename
+     */
+    private function getBackupType($filename)
+    {
+        if (strpos($filename, 'full_backup') !== false) {
+            return 'Full Backup';
+        } elseif (strpos($filename, 'database') !== false || strpos($filename, '.sql') !== false) {
+            return 'Database Only';
+        } elseif (strpos($filename, 'files') !== false) {
+            return 'Files Only';
+        } else {
+            return 'Unknown';
+        }
+    }
+    
+    /**
+     * Format file size
+     */
+    private function formatFileSize($bytes)
+    {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        
+        for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {
+            $bytes /= 1024;
+        }
+        
+        return round($bytes, 2) . ' ' . $units[$i];
     }
 }

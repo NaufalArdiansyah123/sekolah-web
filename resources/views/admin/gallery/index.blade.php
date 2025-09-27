@@ -1,169 +1,256 @@
-<?php
-// resources/views/admin/gallery/index.blade.php
-?>
 @extends('layouts.admin')
 
 @section('title', 'Gallery Management')
 
-@section('content')
+@push('styles')
 <style>
+    :root {
+        --primary-color: #3b82f6;
+        --primary-dark: #2563eb;
+        --secondary-color: #8b5cf6;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --info-color: #06b6d4;
+        
+        /* Light theme */
+        --bg-primary: #ffffff;
+        --bg-secondary: #f8fafc;
+        --bg-tertiary: #f1f5f9;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --text-muted: #94a3b8;
+        --border-color: #e2e8f0;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        
+        /* Button colors */
+        --btn-view-bg: rgba(59, 130, 246, 0.1);
+        --btn-view-border: rgba(59, 130, 246, 0.2);
+        --btn-view-hover-bg: rgba(59, 130, 246, 0.2);
+        --btn-delete-bg: rgba(239, 68, 68, 0.1);
+        --btn-delete-border: rgba(239, 68, 68, 0.2);
+        --btn-delete-hover-bg: rgba(239, 68, 68, 0.2);
+        --btn-delete-hover-color: #dc2626;
+    }
+
+    .dark {
+        --bg-primary: #1e293b;
+        --bg-secondary: #334155;
+        --bg-tertiary: #475569;
+        --text-primary: #f1f5f9;
+        --text-secondary: #cbd5e1;
+        --text-muted: #94a3b8;
+        --border-color: #475569;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+        --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.4);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.4), 0 8px 10px -6px rgb(0 0 0 / 0.4);
+        
+        /* Button colors for dark mode */
+        --btn-view-bg: rgba(59, 130, 246, 0.2);
+        --btn-view-border: rgba(59, 130, 246, 0.3);
+        --btn-view-hover-bg: rgba(59, 130, 246, 0.3);
+        --btn-delete-bg: rgba(239, 68, 68, 0.2);
+        --btn-delete-border: rgba(239, 68, 68, 0.3);
+        --btn-delete-hover-bg: rgba(239, 68, 68, 0.3);
+        --btn-delete-hover-color: #fca5a5;
+    }
+
     .gallery-container {
-        background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #ffffff 100%);
+        background: var(--bg-secondary);
         min-height: 100vh;
         padding: 1.5rem;
+        transition: all 0.3s ease;
     }
 
     .page-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        background: var(--bg-primary);
+        border-radius: 1rem;
+        padding: 2rem;
         margin-bottom: 2rem;
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(15px);
-        padding: 1.5rem 2rem;
-        border-radius: 16px;
-        border: 1px solid rgba(14, 165, 233, 0.1);
-        box-shadow: 0 4px 20px rgba(14, 165, 233, 0.08);
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
     }
 
     .page-title {
-        color: #0c4a6e;
-        font-size: 1.75rem;
-        font-weight: 600;
-        margin: 0 0 0.25rem 0;
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
     }
 
     .page-subtitle {
-        color: #64748b;
-        font-size: 0.9rem;
+        color: var(--text-secondary);
+        font-size: 1rem;
         margin: 0;
     }
 
-    .btn-primary {
-        background: linear-gradient(135deg, #0ea5e9, #0284c7);
+    .btn-primary-custom {
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
         color: white;
+        border: none;
         padding: 0.75rem 1.5rem;
-        border-radius: 12px;
+        border-radius: 0.75rem;
+        font-weight: 600;
         text-decoration: none;
-        font-weight: 500;
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
         transition: all 0.3s ease;
-        border: none;
-        box-shadow: 0 2px 8px rgba(14, 165, 233, 0.2);
+        box-shadow: var(--shadow-md);
     }
 
-    .btn-primary:hover {
+    .btn-primary-custom:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(14, 165, 233, 0.3);
+        box-shadow: var(--shadow-xl);
         color: white;
         text-decoration: none;
     }
 
-    /* Statistics Cards */
-    .stats-container {
+    .stats-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.25rem;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
         margin-bottom: 2rem;
     }
 
-    .stat-item {
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(10px);
+    .stat-card {
+        background: var(--bg-primary);
+        border-radius: 1rem;
         padding: 1.5rem;
-        border-radius: 14px;
-        border: 1px solid rgba(14, 165, 233, 0.1);
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
         transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
     }
 
-    .stat-item:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(14, 165, 233, 0.15);
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-xl);
     }
 
     .stat-icon {
-        width: 42px;
-        height: 42px;
-        background: linear-gradient(135deg, #dbeafe, #bae6fd);
-        border-radius: 10px;
+        width: 3rem;
+        height: 3rem;
+        border-radius: 0.75rem;
         display: flex;
         align-items: center;
         justify-content: center;
         margin-bottom: 1rem;
+        font-size: 1.5rem;
+    }
+
+    .stat-icon.primary {
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        color: white;
+    }
+
+    .stat-icon.success {
+        background: linear-gradient(135deg, var(--success-color), #059669);
+        color: white;
+    }
+
+    .stat-icon.warning {
+        background: linear-gradient(135deg, var(--warning-color), #d97706);
+        color: white;
+    }
+
+    .stat-icon.info {
+        background: linear-gradient(135deg, var(--info-color), #0891b2);
+        color: white;
     }
 
     .stat-value {
-        font-size: 1.75rem;
-        font-weight: 700;
-        color: #0c4a6e;
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--text-primary);
         margin-bottom: 0.25rem;
     }
 
-    .stat-title {
-        color: #64748b;
-        font-size: 0.85rem;
+    .stat-label {
+        color: var(--text-secondary);
         font-weight: 500;
+        font-size: 0.875rem;
     }
 
-    /* Albums Grid */
-    .albums-container {
+    .albums-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
         gap: 1.5rem;
     }
 
-    .album-item {
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(10px);
-        border-radius: 16px;
+    .album-card {
+        background: var(--bg-primary);
+        border-radius: 1rem;
         overflow: hidden;
-        border: 1px solid rgba(14, 165, 233, 0.1);
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
         transition: all 0.3s ease;
-        box-shadow: 0 2px 12px rgba(14, 165, 233, 0.05);
+        position: relative;
     }
 
-    .album-item:hover {
+    .album-card:hover {
         transform: translateY(-4px);
-        box-shadow: 0 8px 30px rgba(14, 165, 233, 0.15);
+        box-shadow: var(--shadow-xl);
     }
 
     .album-image {
         width: 100%;
-        height: 180px;
+        height: 200px;
         object-fit: cover;
         transition: transform 0.3s ease;
     }
 
-    .album-item:hover .album-image {
-        transform: scale(1.03);
+    .album-card:hover .album-image {
+        transform: scale(1.05);
     }
 
     .album-placeholder {
         width: 100%;
-        height: 180px;
-        background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+        height: 200px;
+        background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary));
         display: flex;
         align-items: center;
         justify-content: center;
+        color: var(--text-muted);
+        font-size: 3rem;
     }
 
-    .album-body {
-        padding: 1.25rem;
+    .album-content {
+        padding: 1.5rem;
     }
 
-    .album-name {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #0c4a6e;
+    .album-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-primary);
         margin-bottom: 0.5rem;
         line-height: 1.4;
     }
 
-    .album-desc {
-        color: #64748b;
-        font-size: 0.85rem;
+    .album-description {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
         line-height: 1.5;
         margin-bottom: 1rem;
         display: -webkit-box;
@@ -172,98 +259,167 @@
         overflow: hidden;
     }
 
-    .album-info {
+    .album-meta {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 0.75rem;
+        margin-bottom: 1rem;
         font-size: 0.75rem;
-        color: #64748b;
+        color: var(--text-muted);
     }
 
-    .category-tag {
+    .category-badge {
         padding: 0.25rem 0.75rem;
-        border-radius: 12px;
-        font-size: 0.7rem;
-        font-weight: 500;
-        background: rgba(14, 165, 233, 0.1);
-        color: #0c4a6e;
-        border: 1px solid rgba(14, 165, 233, 0.15);
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
     }
 
-    /* Category specific colors */
-    .category-school_events { background: rgba(239, 68, 68, 0.1); color: #dc2626; border-color: rgba(239, 68, 68, 0.2); }
-    .category-academic { background: rgba(14, 165, 233, 0.1); color: #0284c7; border-color: rgba(14, 165, 233, 0.2); }
-    .category-extracurricular { background: rgba(16, 185, 129, 0.1); color: #059669; border-color: rgba(16, 185, 129, 0.2); }
-    .category-achievements { background: rgba(245, 158, 11, 0.1); color: #d97706; border-color: rgba(245, 158, 11, 0.2); }
-    .category-facilities { background: rgba(139, 92, 246, 0.1); color: #7c3aed; border-color: rgba(139, 92, 246, 0.2); }
-    .category-general { background: rgba(107, 114, 128, 0.1); color: #374151; border-color: rgba(107, 114, 128, 0.2); }
+    .category-school_events {
+        background: rgba(239, 68, 68, 0.1);
+        color: #dc2626;
+    }
 
-    .album-controls {
+    .category-academic {
+        background: rgba(59, 130, 246, 0.1);
+        color: #2563eb;
+    }
+
+    .category-extracurricular {
+        background: rgba(16, 185, 129, 0.1);
+        color: #059669;
+    }
+
+    .category-achievements {
+        background: rgba(245, 158, 11, 0.1);
+        color: #d97706;
+    }
+
+    .category-facilities {
+        background: rgba(139, 92, 246, 0.1);
+        color: #7c3aed;
+    }
+
+    .category-general {
+        background: rgba(107, 114, 128, 0.1);
+        color: #374151;
+    }
+
+    .dark .category-school_events {
+        background: rgba(239, 68, 68, 0.2);
+        color: #fca5a5;
+    }
+
+    .dark .category-academic {
+        background: rgba(59, 130, 246, 0.2);
+        color: #93c5fd;
+    }
+
+    .dark .category-extracurricular {
+        background: rgba(16, 185, 129, 0.2);
+        color: #6ee7b7;
+    }
+
+    .dark .category-achievements {
+        background: rgba(245, 158, 11, 0.2);
+        color: #fbbf24;
+    }
+
+    .dark .category-facilities {
+        background: rgba(139, 92, 246, 0.2);
+        color: #c4b5fd;
+    }
+
+    .dark .category-general {
+        background: rgba(107, 114, 128, 0.2);
+        color: #d1d5db;
+    }
+
+    .album-actions {
         display: flex;
         gap: 0.5rem;
     }
 
-    .control-btn {
-        padding: 0.6rem 1rem;
-        border-radius: 8px;
-        font-size: 0.8rem;
+    .btn-action {
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
         font-weight: 500;
         text-decoration: none;
-        display: flex;
+        display: inline-flex;
         align-items: center;
-        justify-content: center;
         gap: 0.375rem;
         transition: all 0.3s ease;
         border: none;
         cursor: pointer;
-        letter-spacing: 0.01em;
     }
 
-    .btn-remove {
-        background: rgba(248, 113, 113, 0.1);
-        color: #ef4444;
-        border: 1px solid rgba(248, 113, 113, 0.2);
+    .btn-view {
+        background: var(--btn-view-bg);
+        color: var(--primary-color);
+        border: 1px solid var(--btn-view-border);
     }
 
-    .btn-remove:hover {
-        background: rgba(248, 113, 113, 0.2);
+    .btn-view:hover {
+        background: var(--btn-view-hover-bg);
+        color: var(--primary-color);
+        text-decoration: none;
         transform: translateY(-1px);
-        box-shadow: 0 3px 12px rgba(248, 113, 113, 0.25);
     }
 
-    /* Empty State */
-    .no-content {
+    .dark .btn-view:hover {
+        color: #93c5fd;
+    }
+
+    .btn-delete {
+        background: var(--btn-delete-bg);
+        color: var(--danger-color);
+        border: 1px solid var(--btn-delete-border);
+    }
+
+    .btn-delete:hover {
+        background: var(--btn-delete-hover-bg);
+        color: var(--btn-delete-hover-color);
+        transform: translateY(-1px);
+    }
+
+    .empty-state {
         text-align: center;
-        padding: 3rem 2rem;
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(10px);
-        border-radius: 16px;
-        border: 1px solid rgba(14, 165, 233, 0.1);
-        box-shadow: 0 4px 20px rgba(14, 165, 233, 0.08);
+        padding: 4rem 2rem;
+        background: var(--bg-primary);
+        border-radius: 1rem;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
     }
 
     .empty-icon {
-        width: 60px;
-        height: 60px;
-        background: linear-gradient(135deg, #dbeafe, #bae6fd);
-        border-radius: 15px;
+        width: 5rem;
+        height: 5rem;
+        margin: 0 auto 1.5rem;
+        background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary));
+        border-radius: 1rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 0 auto 1.25rem;
+        font-size: 2.5rem;
+        color: var(--text-muted);
     }
 
-    .empty-heading {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #0c4a6e;
+    .empty-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
         margin-bottom: 0.5rem;
     }
 
-    .empty-message {
-        color: #64748b;
-        margin-bottom: 1.5rem;
+    .empty-description {
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     /* Responsive Design */
@@ -273,152 +429,184 @@
         }
 
         .page-header {
-            flex-direction: column;
-            gap: 1rem;
+            padding: 1.5rem;
             text-align: center;
-            padding: 1.25rem;
         }
 
-        .albums-container {
+        .page-title {
+            font-size: 1.5rem;
+            justify-content: center;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .albums-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .album-actions {
+            flex-direction: column;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .stats-grid {
             grid-template-columns: 1fr;
         }
 
-        .stats-container {
-            grid-template-columns: repeat(2, 1fr);
+        .stat-card {
+            padding: 1rem;
+        }
+
+        .album-content {
+            padding: 1rem;
         }
     }
 
-    /* Smooth Animations */
-    .album-item {
-        animation: slideUp 0.5s ease-out;
+    /* Animation */
+    .fade-in {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.6s ease forwards;
     }
 
-    .album-item:nth-child(2n) {
-        animation-delay: 0.1s;
-    }
+    .fade-in:nth-child(1) { animation-delay: 0.1s; }
+    .fade-in:nth-child(2) { animation-delay: 0.2s; }
+    .fade-in:nth-child(3) { animation-delay: 0.3s; }
+    .fade-in:nth-child(4) { animation-delay: 0.4s; }
 
-    .album-item:nth-child(3n) {
-        animation-delay: 0.2s;
-    }
-
-    @keyframes slideUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
+    @keyframes fadeInUp {
         to {
             opacity: 1;
             transform: translateY(0);
         }
     }
-</style>
 
+    /* Loading skeleton */
+    .skeleton {
+        background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--bg-secondary) 50%, var(--bg-tertiary) 75%);
+        background-size: 200% 100%;
+        animation: loading 1.5s infinite;
+    }
+
+    @keyframes loading {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+</style>
+@endpush
+
+@section('content')
 <div class="gallery-container">
     <!-- Page Header -->
     <div class="page-header">
-        <div>
-            <h1 class="page-title">Gallery Management</h1>
-            <p class="page-subtitle">Manage your photo albums and gallery content</p>
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+            <div>
+                <h1 class="page-title">
+                    <i class="fas fa-images"></i>
+                    Gallery Management
+                </h1>
+                <p class="page-subtitle">
+                    Manage your photo albums and gallery content with ease
+                </p>
+            </div>
+            <a href="{{ route('admin.gallery.upload') }}" class="btn-primary-custom">
+                <i class="fas fa-plus"></i>
+                Upload Photos
+            </a>
         </div>
-        <a href="{{ route('admin.gallery.upload') }}" class="btn-primary">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-            </svg>
-            Upload Photos
-        </a>
     </div>
 
-    <!-- Statistics Section -->
-    <div class="stats-container">
-        <div class="stat-item">
-            <div class="stat-icon">
-                <svg class="w-6 h-6" style="color: #0284c7;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 7a2 2 0 002-2h10a2 2 0 002 2v2M5 7V5a2 2 0 012-2h6a2 2 0 012 2v2"/>
-                </svg>
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card fade-in">
+            <div class="stat-icon primary">
+                <i class="fas fa-folder"></i>
             </div>
             <div class="stat-value">{{ count($photos) }}</div>
-            <div class="stat-title">Total Albums</div>
+            <div class="stat-label">Total Albums</div>
         </div>
 
-        <div class="stat-item">
-            <div class="stat-icon">
-                <svg class="w-6 h-6" style="color: #0284c7;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
+        <div class="stat-card fade-in">
+            <div class="stat-icon success">
+                <i class="fas fa-images"></i>
             </div>
             <div class="stat-value">{{ array_sum(array_column($photos, 'photo_count')) }}</div>
-            <div class="stat-title">Total Photos</div>
+            <div class="stat-label">Total Photos</div>
         </div>
 
-        <div class="stat-item">
-            <div class="stat-icon">
-                <svg class="w-6 h-6" style="color: #0284c7;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-                </svg>
+        <div class="stat-card fade-in">
+            <div class="stat-icon warning">
+                <i class="fas fa-tags"></i>
             </div>
             <div class="stat-value">{{ count(array_unique(array_column($photos, 'category'))) }}</div>
-            <div class="stat-title">Categories</div>
+            <div class="stat-label">Categories</div>
+        </div>
+
+        <div class="stat-card fade-in">
+            <div class="stat-icon info">
+                <i class="fas fa-eye"></i>
+            </div>
+            <div class="stat-value">{{ number_format(array_sum(array_column($photos, 'views', 0))) }}</div>
+            <div class="stat-label">Total Views</div>
         </div>
     </div>
 
     <!-- Albums Grid -->
     @if(count($photos) > 0)
-        <div class="albums-container">
+        <div class="albums-grid">
             @foreach($photos as $album)
-                <div class="album-item">
+                <div class="album-card fade-in">
                     @if(isset($album['photos'][0]))
                         <img src="{{ asset('storage/' . $album['photos'][0]['thumbnail_path']) }}" 
                              alt="{{ $album['title'] }}" 
                              class="album-image"
-                             onerror="this.src='{{ asset('images/placeholder-image.png') }}'">
+                             onerror="this.parentElement.innerHTML='<div class=\'album-placeholder\'><i class=\'fas fa-image\'></i></div>'">
                     @else
                         <div class="album-placeholder">
-                            <svg class="w-16 h-16" style="color: #0284c7;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
+                            <i class="fas fa-image"></i>
                         </div>
                     @endif
                     
-                    <div class="album-body">
-                        <h3 class="album-name">{{ $album['title'] }}</h3>
+                    <div class="album-content">
+                        <h3 class="album-title">{{ $album['title'] }}</h3>
                         
                         @if($album['description'])
-                            <p class="album-desc">{{ $album['description'] }}</p>
+                            <p class="album-description">{{ $album['description'] }}</p>
                         @endif
                         
-                        <div class="album-info">
-                            <span class="category-tag category-{{ $album['category'] }}">
+                        <div class="album-meta">
+                            <span class="category-badge category-{{ $album['category'] }}">
                                 {{ ucfirst(str_replace('_', ' ', $album['category'])) }}
                             </span>
                             <span>{{ $album['photo_count'] }} photos</span>
                         </div>
                         
-                        <div class="album-info">
+                        <div class="album-meta">
                             <span>{{ \Carbon\Carbon::parse($album['created_at'])->format('M d, Y') }}</span>
                             <span>by {{ $album['created_by'] }}</span>
                         </div>
                         
-                        <div class="album-controls">
-                            <a href="{{ route('gallery.index', $album['slug']) }}" 
+                        <div class="album-actions">
+                            <a href="{{ route('gallery.show', $album['slug']) }}" 
                                target="_blank"
-                               class="control-btn btn-view-public">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                </svg>
+                               class="btn-action btn-view">
+                                <i class="fas fa-eye"></i>
                                 View Public
                             </a>
                             
                             <form action="{{ route('admin.gallery.destroy', $album['id']) }}" 
                                   method="POST" 
                                   style="display: inline;"
-                                  onsubmit="return confirm('Are you sure you want to delete this album? This action cannot be undone.')">
+                                  onsubmit="return confirmDelete('{{ $album['title'] }}')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="control-btn btn-remove">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H8a1 1 0 00-1 1v3M4 7h16"/>
-                                    </svg>
+                                <button type="submit" class="btn-action btn-delete">
+                                    <i class="fas fa-trash"></i>
                                     Delete
                                 </button>
                             </form>
@@ -429,31 +617,51 @@
         </div>
     @else
         <!-- Empty State -->
-        <div class="no-content">
+        <div class="empty-state">
             <div class="empty-icon">
-                <svg class="w-10 h-10" style="color: #0284c7;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
+                <i class="fas fa-images"></i>
             </div>
-            <h3 class="empty-heading">No Photo Albums Yet</h3>
-            <p class="empty-message">Start building your gallery by uploading your first photo album</p>
-            <a href="{{ route('admin.gallery.upload') }}" class="btn-primary">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                </svg>
+            <h3 class="empty-title">No Photo Albums Yet</h3>
+            <p class="empty-description">
+                Start building your gallery by uploading your first photo album. 
+                Share your school's memorable moments with the community.
+            </p>
+            <a href="{{ route('admin.gallery.upload') }}" class="btn-primary-custom">
+                <i class="fas fa-plus"></i>
                 Upload Your First Album
             </a>
         </div>
     @endif
 </div>
+@endsection
 
+@push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Smooth hover animations
-    const albumCards = document.querySelectorAll('.album-item');
-    albumCards.forEach(card => {
+    // Smooth animations on scroll
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+
+    // Observe all fade-in elements
+    document.querySelectorAll('.fade-in').forEach(el => {
+        observer.observe(el);
+    });
+
+    // Enhanced hover effects
+    document.querySelectorAll('.album-card').forEach(card => {
         card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-6px) scale(1.02)';
+            this.style.transform = 'translateY(-8px) scale(1.02)';
         });
         
         card.addEventListener('mouseleave', function() {
@@ -461,11 +669,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Button click effects
-    const buttons = document.querySelectorAll('.control-btn, .btn-primary');
-    buttons.forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            // Create ripple effect
+    // Ripple effect for buttons
+    document.querySelectorAll('.btn-primary-custom, .btn-action').forEach(button => {
+        button.addEventListener('click', function(e) {
             const ripple = document.createElement('div');
             const rect = this.getBoundingClientRect();
             const size = Math.max(rect.width, rect.height);
@@ -481,7 +687,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 background: rgba(255, 255, 255, 0.4);
                 border-radius: 50%;
                 transform: scale(0);
-                animation: buttonRipple 0.5s ease-out;
+                animation: ripple 0.6s ease-out;
                 pointer-events: none;
                 z-index: 10;
             `;
@@ -494,21 +700,79 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (ripple.parentNode) {
                     ripple.remove();
                 }
-            }, 500);
+            }, 600);
         });
     });
 
-    // Add ripple animation style
+    // Add ripple animation
     const style = document.createElement('style');
     style.textContent = `
-        @keyframes buttonRipple {
+        @keyframes ripple {
             to {
-                transform: scale(3);
+                transform: scale(2);
                 opacity: 0;
             }
         }
     `;
     document.head.appendChild(style);
 });
+
+// Confirm delete function
+function confirmDelete(albumTitle) {
+    return confirm(`Are you sure you want to delete the album "${albumTitle}"? This action cannot be undone and will remove all photos in this album.`);
+}
+
+// Loading state management
+function showLoading() {
+    document.querySelectorAll('.album-card').forEach(card => {
+        card.classList.add('skeleton');
+    });
+}
+
+function hideLoading() {
+    document.querySelectorAll('.album-card').forEach(card => {
+        card.classList.remove('skeleton');
+    });
+}
+
+// Auto-refresh functionality (optional)
+let autoRefreshInterval;
+
+function startAutoRefresh() {
+    autoRefreshInterval = setInterval(() => {
+        // Check for new albums or updates
+        fetch(window.location.href, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            // Update content if needed
+            console.log('Gallery refreshed');
+        })
+        .catch(error => {
+            console.error('Auto-refresh failed:', error);
+        });
+    }, 30000); // Refresh every 30 seconds
+}
+
+function stopAutoRefresh() {
+    if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval);
+    }
+}
+
+// Start auto-refresh when page is visible
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+        stopAutoRefresh();
+    } else {
+        startAutoRefresh();
+    }
+});
+
+// Initialize auto-refresh
+startAutoRefresh();
 </script>
-@endsection
+@endpush

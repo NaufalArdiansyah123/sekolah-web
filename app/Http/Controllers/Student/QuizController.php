@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
 use App\Models\QuizAnswer;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -23,9 +24,33 @@ class QuizController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Quiz::with(['teacher', 'attempts' => function($q) {
+        // Get current student's class
+        $student = Student::where('user_id', Auth::id())->first();
+        if (!$student || !$student->class_id) {
+            // Create empty paginated collection
+            $emptyQuizzes = new \Illuminate\Pagination\LengthAwarePaginator(
+                collect(), // items
+                0, // total
+                12, // per page
+                1, // current page
+                ['path' => request()->url(), 'pageName' => 'page']
+            );
+            
+            return view('student.quizzes.index', [
+                'pageTitle' => 'Kuis & Ujian',
+                'breadcrumb' => [['title' => 'Kuis & Ujian']],
+                'quizzes' => $emptyQuizzes,
+                'subjects' => collect(),
+                'stats' => ['total_quizzes' => 0, 'completed' => 0, 'available' => 0, 'upcoming' => 0],
+                'currentFilters' => ['subject' => null, 'status' => null],
+                'message' => 'Anda belum terdaftar dalam kelas manapun. Silakan hubungi admin.'
+            ]);
+        }
+
+        $query = Quiz::with(['teacher', 'class', 'attempts' => function($q) {
             $q->where('student_id', Auth::id());
         }])
+        ->where('class_id', $student->class_id)
         ->where('status', 'published')
         ->latest();
 
@@ -53,7 +78,8 @@ class QuizController extends Controller
         $quizzes = $query->paginate(12);
         
         // Get filter options
-        $subjects = Quiz::where('status', 'published')
+        $subjects = Quiz::where('class_id', $student->class_id)
+            ->where('status', 'published')
             ->select('subject')
             ->distinct()
             ->orderBy('subject')
@@ -61,16 +87,22 @@ class QuizController extends Controller
 
         // Get statistics
         $stats = [
-            'total_quizzes' => Quiz::where('status', 'published')->count(),
+            'total_quizzes' => Quiz::where('class_id', $student->class_id)
+                ->where('status', 'published')->count(),
             'completed' => QuizAttempt::where('student_id', Auth::id())
+                ->whereHas('quiz', function($q) use ($student) {
+                    $q->where('class_id', $student->class_id);
+                })
                 ->where('status', 'completed')->count(),
-            'available' => Quiz::where('status', 'published')
+            'available' => Quiz::where('class_id', $student->class_id)
+                ->where('status', 'published')
                 ->where('start_time', '<=', now())
                 ->where('end_time', '>=', now())
                 ->whereDoesntHave('attempts', function($q) {
                     $q->where('student_id', Auth::id());
                 })->count(),
-            'upcoming' => Quiz::where('status', 'published')
+            'upcoming' => Quiz::where('class_id', $student->class_id)
+                ->where('status', 'published')
                 ->where('start_time', '>', now())->count(),
         ];
 
@@ -94,9 +126,17 @@ class QuizController extends Controller
      */
     public function show($id)
     {
-        $quiz = Quiz::with(['teacher', 'questions', 'attempts' => function($q) {
+        // Get current student's class
+        $student = Student::where('user_id', Auth::id())->first();
+        if (!$student || !$student->class_id) {
+            abort(403, 'Anda belum terdaftar dalam kelas manapun.');
+        }
+
+        $quiz = Quiz::with(['teacher', 'class', 'questions', 'attempts' => function($q) {
             $q->where('student_id', Auth::id());
-        }])->findOrFail($id);
+        }])
+        ->where('class_id', $student->class_id)
+        ->findOrFail($id);
 
         // Check if student has already attempted
         $attempt = $quiz->attempts->first();
@@ -117,7 +157,15 @@ class QuizController extends Controller
      */
     public function start($id)
     {
-        $quiz = Quiz::with('questions')->findOrFail($id);
+        // Get current student's class
+        $student = Student::where('user_id', Auth::id())->first();
+        if (!$student || !$student->class_id) {
+            abort(403, 'Anda belum terdaftar dalam kelas manapun.');
+        }
+
+        $quiz = Quiz::with('questions')
+            ->where('class_id', $student->class_id)
+            ->findOrFail($id);
         
         // Check if quiz is available
         if ($quiz->start_time > now()) {

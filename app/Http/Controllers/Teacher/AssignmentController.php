@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Assignment;
 use App\Models\AssignmentSubmission;
 use App\Models\Grade;
+use App\Models\Classes;
+use App\Models\Student;
 use App\Helpers\ClassHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -192,12 +194,15 @@ class AssignmentController extends Controller
      */
     public function create()
     {
+        $classes = Classes::active()->orderBy('level')->orderBy('name')->get();
+        
         return view('teacher.learning.assignments.create', [
             'pageTitle' => 'Buat Tugas Baru',
             'breadcrumb' => [
                 ['title' => 'Kelola Tugas', 'url' => route('teacher.assignments.index')],
                 ['title' => 'Buat Tugas Baru']
-            ]
+            ],
+            'classes' => $classes
         ]);
     }
 
@@ -206,26 +211,22 @@ class AssignmentController extends Controller
      */
     public function store(Request $request)
     {
-        $validClasses = ClassHelper::getAllClasses();
-        
         $request->validate([
             'title' => 'required|string|max:255',
             'subject' => 'required|string|max:100',
-            'class' => 'required|string|in:' . implode(',', $validClasses),
+            'class_id' => 'required|exists:classes,id',
             'type' => 'required|in:homework,project,essay,quiz,presentation',
             'description' => 'required|string',
             'instructions' => 'nullable|string',
             'due_date' => 'required|date|after:now',
             'max_score' => 'required|integer|min:1|max:1000',
             'attachment' => 'nullable|file|max:10240|mimes:pdf,doc,docx,txt,jpg,jpeg,png'
-        ], [
-            'class.in' => 'Kelas yang dipilih tidak valid.'
         ]);
 
         $assignment = new Assignment();
         $assignment->title = $request->title;
         $assignment->subject = $request->subject;
-        $assignment->class = $request->class;
+        $assignment->class_id = $request->class_id;
         $assignment->type = $request->type;
         $assignment->description = $request->description;
         $assignment->instructions = $request->instructions;
@@ -260,7 +261,26 @@ class AssignmentController extends Controller
             ->findOrFail($id);
 
         // Calculate submission statistics
-        $totalStudents = \App\Models\User::role('student')->count(); // Assuming you have student role
+        // Get students from the specific class assigned to this assignment
+        $totalStudents = 0;
+        
+        if ($assignment->class_id) {
+            // Use class_id if available
+            $totalStudents = Student::where('class_id', $assignment->class_id)
+                ->where('status', 'active')
+                ->count();
+        } else {
+            // Fallback: If assignment doesn't have class_id, count students who have submitted
+            // This is for backward compatibility with old assignments
+            $submittedStudentIds = $assignment->submissions()->pluck('student_id')->unique();
+            $totalStudents = $submittedStudentIds->count();
+            
+            // If no submissions yet, we can't determine the target class, so use 0
+            if ($totalStudents === 0) {
+                $totalStudents = 0;
+            }
+        }
+        
         $totalSubmissions = $assignment->submissions()->count();
         $gradedSubmissions = $assignment->submissions()->whereNotNull('graded_at')->count();
         $ungradedSubmissions = $totalSubmissions - $gradedSubmissions;
@@ -305,7 +325,8 @@ class AssignmentController extends Controller
      */
     public function edit($id)
     {
-        $assignment = Assignment::where('teacher_id', Auth::id())->findOrFail($id);
+        $assignment = Assignment::with('class')->where('teacher_id', Auth::id())->findOrFail($id);
+        $classes = Classes::active()->orderBy('level')->orderBy('name')->get();
 
         return view('teacher.learning.assignments.edit', [
             'pageTitle' => 'Edit Tugas: ' . $assignment->title,
@@ -314,7 +335,8 @@ class AssignmentController extends Controller
                 ['title' => $assignment->title, 'url' => route('teacher.assignments.show', $id)],
                 ['title' => 'Edit']
             ],
-            'assignment' => $assignment
+            'assignment' => $assignment,
+            'classes' => $classes
         ]);
     }
 
@@ -324,25 +346,22 @@ class AssignmentController extends Controller
     public function update(Request $request, $id)
     {
         $assignment = Assignment::where('teacher_id', Auth::id())->findOrFail($id);
-        $validClasses = ClassHelper::getAllClasses();
 
         $request->validate([
             'title' => 'required|string|max:255',
             'subject' => 'required|string|max:100',
-            'class' => 'required|string|in:' . implode(',', $validClasses),
+            'class_id' => 'required|exists:classes,id',
             'type' => 'required|in:homework,project,essay,quiz,presentation',
             'description' => 'required|string',
             'instructions' => 'nullable|string',
             'due_date' => 'required|date',
             'max_score' => 'required|integer|min:1|max:1000',
             'attachment' => 'nullable|file|max:10240|mimes:pdf,doc,docx,txt,jpg,jpeg,png'
-        ], [
-            'class.in' => 'Kelas yang dipilih tidak valid.'
         ]);
 
         $assignment->title = $request->title;
         $assignment->subject = $request->subject;
-        $assignment->class = $request->class;
+        $assignment->class_id = $request->class_id;
         $assignment->type = $request->type;
         $assignment->description = $request->description;
         $assignment->instructions = $request->instructions;

@@ -1,10 +1,10 @@
 @extends('layouts.admin')
 
-@section('title', 'Pendaftaran Siswa')
+@section('title', 'Pendaftaran Akun Siswa')
 
 @section('content')
 <style>
-    /* Enhanced Student Registration Styles with Dark Mode Support */
+    /* Enhanced Student Account Registration Styles with Dark Mode Support */
     .registration-container {
         background: var(--bg-secondary);
         min-height: 100vh;
@@ -1027,7 +1027,7 @@
                 Pendaftaran Akun Siswa
             </h1>
             <p class="page-subtitle">
-                Kelola dan konfirmasi pendaftaran Akun siswa - {{ $stats['total'] ?? 0 }} total, {{ $stats['pending'] ?? 0 }} menunggu konfirmasi
+                Kelola dan konfirmasi pendaftaran akun siswa - {{ $stats['total'] ?? 0 }} total, {{ $stats['pending'] ?? 0 }} menunggu konfirmasi
             </p>
             <div class="header-actions">
                 <a href="{{ route('admin.student-registrations.export', request()->query()) }}" class="btn-header">
@@ -1195,7 +1195,7 @@
                                              class="user-avatar me-3">
                                         <div>
                                             <div style="font-weight: 600; color: var(--text-primary);">{{ $registration->name }}</div>
-                                            @if(isset($registration->nis))
+                                            @if($registration->nis)
                                             <small style="color: var(--text-secondary);">NIS: {{ $registration->nis }}</small>
                                             @endif
                                         </div>
@@ -1208,16 +1208,16 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if(isset($registration->class))
+                                    @if($registration->class)
                                     <span class="badge" style="background: #4f46e5; color: white; padding: 0.375rem 0.75rem; border-radius: 8px; font-size: 0.75rem;">{{ $registration->class }}</span>
                                     @else
                                     <span style="color: var(--text-secondary);">-</span>
                                     @endif
                                 </td>
                                 <td>
-                                    @if(isset($registration->parent_name))
+                                    @if($registration->parent_name)
                                     <div style="color: var(--text-primary);">{{ $registration->parent_name }}</div>
-                                    @if(isset($registration->parent_phone))
+                                    @if($registration->parent_phone)
                                     <small style="color: var(--text-secondary);">{{ $registration->parent_phone }}</small>
                                     @endif
                                     @else
@@ -1304,7 +1304,7 @@
                     @if(request()->hasAny(['search', 'status']))
                         Tidak ada pendaftaran yang sesuai dengan filter yang dipilih.
                     @else
-                        Pendaftaran siswa akan muncul di sini ketika ada yang mendaftar.
+                        Pendaftaran akun siswa akan muncul di sini ketika ada yang mendaftar.
                     @endif
                 </p>
                 @if(request()->hasAny(['search', 'status']))
@@ -1954,7 +1954,7 @@ function submitRejection() {
     `;
     submitBtn.disabled = true;
     
-    // Debug: Log the request details
+
     console.log('Submitting rejection for ID:', currentRegistrationId);
     console.log('Rejection reason:', reason);
     console.log('CSRF Token:', document.querySelector('meta[name="csrf-token"]').content);

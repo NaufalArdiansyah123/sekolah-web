@@ -31,20 +31,7 @@
                             $isEnded = $quiz->end_time < $now;
                         @endphp
                         
-                        @if(config('app.debug'))
-                            <!-- Debug Info (only shown in debug mode) -->
-                            <div class="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-xs">
-                                <strong>Debug Info:</strong><br>
-                                Current Time: {{ $now }}<br>
-                                Start Time: {{ $quiz->start_time }}<br>
-                                End Time: {{ $quiz->end_time }}<br>
-                                Is Active: {{ $isActive ? 'YES' : 'NO' }}<br>
-                                Is Upcoming: {{ $isUpcoming ? 'YES' : 'NO' }}<br>
-                                Is Ended: {{ $isEnded ? 'YES' : 'NO' }}<br>
-                                Start <= Now: {{ $quiz->start_time <= $now ? 'TRUE' : 'FALSE' }}<br>
-                                End >= Now: {{ $quiz->end_time >= $now ? 'TRUE' : 'FALSE' }}
-                            </div>
-                        @endif
+
                         
                         <div class="flex items-start justify-between mb-4">
                             <h1 class="text-2xl font-bold text-gray-900 dark:text-white">

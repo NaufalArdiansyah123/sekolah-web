@@ -432,7 +432,7 @@
     <div class="container">
         <div class="section-title text-center mb-5">
             <h2>Fasilitas Unggulan</h2>
-            <p>Berbagai sarana dan prasarana penunjang pendidikan di SMA Negeri 1 Balong</p>
+            <p>Berbagai sarana dan prasarana penunjang pendidikan di SMK PGRI 2 PONOROGO</p>
         </div>
         
         <div class="facility-filter fade-in-up">
@@ -626,7 +626,7 @@
     <div class="container">
         <div class="section-title text-center mb-5">
             <h2>Fasilitas dalam Angka</h2>
-            <p>Statistik lengkap sarana dan prasarana SMA Negeri 1 Balong</p>
+            <p>Statistik lengkap sarana dan prasarana SMK PGRI 2 PONOROGO</p>
         </div>
         
         <div class="row">

@@ -31,7 +31,7 @@
         --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
     }
 
-    [data-bs-theme="dark"] {
+    .dark {
         --light-bg: #1f2937;
         --white: #374151;
         --gray-50: #374151;
@@ -386,17 +386,17 @@
         color: var(--gray-700);
     }
 
-    [data-bs-theme="dark"] .status-active {
+    .dark .status-active {
         background: #14532d;
         color: #bbf7d0;
     }
 
-    [data-bs-theme="dark"] .status-inactive {
+    .dark .status-inactive {
         background: #78350f;
         color: #fde68a;
     }
 
-    [data-bs-theme="dark"] .status-graduated {
+    .dark .status-graduated {
         background: var(--gray-600);
         color: var(--gray-300);
     }
@@ -452,17 +452,17 @@
         transform: scale(1.1);
     }
 
-    [data-bs-theme="dark"] .btn-view {
+    .dark .btn-view {
         background: #1e3a8a;
         color: #bfdbfe;
     }
 
-    [data-bs-theme="dark"] .btn-edit {
+    .dark .btn-edit {
         background: #92400e;
         color: #fde68a;
     }
 
-    [data-bs-theme="dark"] .btn-delete {
+    .dark .btn-delete {
         background: #991b1b;
         color: #fecaca;
     }
@@ -518,7 +518,7 @@
         display: flex;
     }
 
-    [data-bs-theme="dark"] .bulk-actions {
+    .dark .bulk-actions {
         background: #1e3a8a;
     }
 
@@ -534,7 +534,7 @@
         font-size: 0.875rem;
     }
 
-    [data-bs-theme="dark"] .filter-stats {
+    .dark .filter-stats {
         background: #1e3a8a;
         border-color: #3730a3;
     }
@@ -555,7 +555,7 @@
         text-decoration: none;
     }
 
-    [data-bs-theme="dark"] .clear-filters:hover {
+    .dark .clear-filters:hover {
         background: #991b1b;
         color: #fecaca;
     }
@@ -628,6 +628,10 @@
                     </p>
                 </div>
                 <div class="header-actions">
+                    <button type="button" onclick="exportStudents()" class="btn-primary-custom me-2">
+                        <i class="fas fa-download"></i>
+                        Export CSV
+                    </button>
                     <a href="{{ route('admin.students.create') }}" class="btn-primary-custom">
                         <i class="fas fa-plus"></i>
                         Tambah Siswa
@@ -709,8 +713,8 @@
                         <select name="class" class="form-select">
                             <option value="">Semua Kelas</option>
                             @foreach($allClasses as $classOption)
-                                <option value="{{ $classOption }}" {{ request('class') == $classOption ? 'selected' : '' }}>
-                                    {{ $classOption }}
+                                <option value="{{ $classOption->id }}" {{ request('class') == $classOption->id ? 'selected' : '' }}>
+                                    {{ $classOption->name }}
                                 </option>
                             @endforeach
                         </select>
@@ -779,9 +783,16 @@
             @if($students->count() > 0)
                 <div class="table-card fade-in">
                     <div class="table-header">
-                        <h5 class="table-title">Daftar Siswa</h5>
-                        <div class="table-info">
-                            {{ $students->total() }} siswa ditemukan
+                        <div>
+                            <h5 class="table-title">Daftar Siswa</h5>
+                            <div class="table-info">
+                                {{ $students->total() }} siswa ditemukan
+                            </div>
+                        </div>
+                        <div>
+                            <button type="button" onclick="exportStudents()" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-download me-1"></i>Export CSV
+                            </button>
                         </div>
                     </div>
 
@@ -850,7 +861,11 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <span class="class-badge">{{ $student->class }}</span>
+                                        @if($student->class)
+                                            <span class="class-badge">{{ $student->class->name }}</span>
+                                        @else
+                                            <span class="text-muted">Belum ada kelas</span>
+                                        @endif
                                     </td>
                                     <td>
                                         <span class="status-badge status-{{ $student->status }}">
@@ -931,6 +946,138 @@
 
 @push('scripts')
 <script>
+function exportStudents() {
+    // Get current filters from URL
+    const params = new URLSearchParams(window.location.search);
+    
+    // Show loading notification
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            title: 'Exporting...',
+            text: 'Sedang menyiapkan file CSV data siswa',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+    }
+    
+    // Test route accessibility first
+    const testUrl = '{{ route("admin.students.test-export") }}';
+    
+    fetch(testUrl, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Route test failed: ' + response.status);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Route test successful:', data);
+        
+        // Proceed with actual export
+        const downloadUrl = '{{ route("admin.students.export") }}?' + params.toString();
+        
+        // Use fetch to handle errors better
+        fetch(downloadUrl, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Export failed: ' + response.status + ' ' + response.statusText);
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            // Create download link
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            
+            // Generate filename based on current filters
+            let filename = 'data-siswa';
+            
+            const grade = params.get('grade');
+            if (grade) {
+                filename += '-kelas-' + grade;
+            }
+            
+            const major = params.get('major');
+            if (major) {
+                filename += '-' + major.toLowerCase();
+            }
+            
+            const status = params.get('status');
+            if (status) {
+                filename += '-' + status;
+            }
+            
+            filename += '-' + new Date().toISOString().split('T')[0] + '.csv';
+            link.download = filename;
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Clean up
+            window.URL.revokeObjectURL(url);
+            
+            // Show success message
+            if (typeof Swal !== 'undefined') {
+                Swal.close();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Export Berhasil!',
+                    text: 'File CSV data siswa telah didownload',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            } else {
+                alert('File CSV data siswa berhasil didownload!');
+            }
+        })
+        .catch(error => {
+            console.error('Export error:', error);
+            
+            if (typeof Swal !== 'undefined') {
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Export Gagal!',
+                    text: 'Terjadi kesalahan: ' + error.message,
+                    confirmButtonText: 'OK'
+                });
+            } else {
+                alert('Export gagal: ' + error.message);
+            }
+        });
+    })
+    .catch(error => {
+        console.error('Route test error:', error);
+        
+        if (typeof Swal !== 'undefined') {
+            Swal.close();
+            Swal.fire({
+                icon: 'error',
+                title: 'Route Error!',
+                text: 'Route export tidak dapat diakses: ' + error.message,
+                confirmButtonText: 'OK'
+            });
+        } else {
+            alert('Route error: ' + error.message);
+        }
+    });
+}
+
 function deleteStudent(studentId) {
     if (confirm('Apakah Anda yakin ingin menghapus siswa ini? Data yang dihapus tidak dapat dikembalikan.')) {
         const form = document.getElementById('deleteForm');

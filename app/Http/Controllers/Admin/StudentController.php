@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{DB, Storage, Log, Cache, Hash};
 use App\Models\{Extracurricular, Achievement, Teacher, Student, User, ExtracurricularRegistration};
-use App\Services\{NotificationService, QrCodeService};
+use App\Services\{NotificationService, QrCodeService, CsvExportService};
 use App\Helpers\ClassHelper;
 use Spatie\Permission\Models\Role;
 
@@ -28,20 +28,24 @@ class StudentController extends Controller
         $status = request('status');
         $search = request('search');
         
-        // Build query
-        $query = Student::query();
+        // Build query with class relationship
+        $query = Student::with('class');
         
         // Apply filters
         if ($grade) {
-            $query->where('class', 'like', $grade . '%');
+            $query->whereHas('class', function($q) use ($grade) {
+                $q->where('level', $grade);
+            });
         }
         
         if ($major) {
-            $query->where('class', 'like', '%' . $major . '%');
+            $query->whereHas('class', function($q) use ($major) {
+                $q->where('program', $major);
+            });
         }
         
         if ($class) {
-            $query->where('class', $class);
+            $query->where('class_id', $class);
         }
         
         if ($status) {
@@ -53,32 +57,45 @@ class StudentController extends Controller
                 $q->where('name', 'like', '%' . $search . '%')
                   ->orWhere('nis', 'like', '%' . $search . '%')
                   ->orWhere('nisn', 'like', '%' . $search . '%')
-                  ->orWhere('class', 'like', '%' . $search . '%')
                   ->orWhere('email', 'like', '%' . $search . '%')
                   ->orWhere('phone', 'like', '%' . $search . '%')
-                  ->orWhere('parent_name', 'like', '%' . $search . '%');
+                  ->orWhere('parent_name', 'like', '%' . $search . '%')
+                  ->orWhereHas('class', function($q) use ($search) {
+                      $q->where('name', 'like', '%' . $search . '%');
+                  });
             });
         }
         
         // Get paginated results
         $students = $query->latest()->paginate(10);
         
-        // Get all unique classes for filter dropdown
-        $allClasses = Student::select('class')
-            ->distinct()
-            ->orderBy('class')
-            ->pluck('class')
-            ->toArray();
+        // Get all classes for filter dropdown
+        $allClasses = \App\Models\Classes::where('is_active', true)
+            ->orderBy('level')
+            ->orderBy('name')
+            ->get();
         
-        // Calculate statistics
+        // Calculate statistics using class relationships
         $stats = [
             'total' => Student::count(),
-            'grade_10' => Student::where('class', 'like', '10%')->count(),
-            'grade_11' => Student::where('class', 'like', '11%')->count(),
-            'grade_12' => Student::where('class', 'like', '12%')->count(),
-            'tkj' => Student::where('class', 'like', '%TKJ%')->count(),
-            'rpl' => Student::where('class', 'like', '%RPL%')->count(),
-            'dkv' => Student::where('class', 'like', '%DKV%')->count(),
+            'grade_10' => Student::whereHas('class', function($q) {
+                $q->where('level', '10');
+            })->count(),
+            'grade_11' => Student::whereHas('class', function($q) {
+                $q->where('level', '11');
+            })->count(),
+            'grade_12' => Student::whereHas('class', function($q) {
+                $q->where('level', '12');
+            })->count(),
+            'tkj' => Student::whereHas('class', function($q) {
+                $q->where('program', 'TKJ');
+            })->count(),
+            'rpl' => Student::whereHas('class', function($q) {
+                $q->where('program', 'RPL');
+            })->count(),
+            'dkv' => Student::whereHas('class', function($q) {
+                $q->where('program', 'DKV');
+            })->count(),
             'active' => Student::where('status', 'active')->count(),
             'inactive' => Student::where('status', 'inactive')->count(),
             'graduated' => Student::where('status', 'graduated')->count(),
@@ -89,19 +106,19 @@ class StudentController extends Controller
 
     public function create()
     {
-        // Get class options using ClassHelper
-        $allClasses = ClassHelper::getAllClasses();
-        $classOptions = [];
+        // Get active classes from database
+        $allClasses = \App\Models\Classes::where('is_active', true)
+            ->orderBy('level')
+            ->orderBy('name')
+            ->get();
         
-        // Group classes by grade
+        // Group classes by grade level
+        $classOptions = [];
         foreach ($allClasses as $class) {
-            $parsed = ClassHelper::parseClass($class);
-            $grade = $parsed['grade'];
-            
+            $grade = $class->level;
             if (!isset($classOptions[$grade])) {
                 $classOptions[$grade] = [];
             }
-            
             $classOptions[$grade][] = $class;
         }
         
@@ -113,7 +130,8 @@ class StudentController extends Controller
 
     public function store(Request $request)
     {
-        $validClasses = ClassHelper::getAllClasses();
+        // Get valid class IDs from database
+        $validClassIds = \App\Models\Classes::where('is_active', true)->pluck('id')->toArray();
         
         // Validation rules
         $rules = [
@@ -123,7 +141,7 @@ class StudentController extends Controller
             'email' => 'nullable|email|unique:students,email|unique:users,email',
             'phone' => 'nullable|max:20',
             'address' => 'nullable',
-            'class' => 'required|in:' . implode(',', $validClasses),
+            'class_id' => 'required|exists:classes,id',
             'birth_date' => 'required|date',
             'birth_place' => 'required|max:255',
             'gender' => 'required|in:male,female',
@@ -141,7 +159,8 @@ class StudentController extends Controller
         }
         
         $request->validate($rules, [
-            'class.in' => 'Kelas yang dipilih tidak valid.',
+            'class_id.required' => 'Kelas wajib dipilih.',
+            'class_id.exists' => 'Kelas yang dipilih tidak valid.',
             'nis.required' => 'NIS wajib diisi.',
             'nis.unique' => 'NIS sudah digunakan oleh siswa lain.',
             'nis.regex' => 'NIS hanya boleh berisi angka.',
@@ -263,19 +282,19 @@ class StudentController extends Controller
 
     public function edit(Student $student)
     {
-        // Get class options using ClassHelper
-        $allClasses = ClassHelper::getAllClasses();
-        $classOptions = [];
+        // Get active classes from database
+        $allClasses = \App\Models\Classes::where('is_active', true)
+            ->orderBy('level')
+            ->orderBy('name')
+            ->get();
         
-        // Group classes by grade
+        // Group classes by grade level
+        $classOptions = [];
         foreach ($allClasses as $class) {
-            $parsed = ClassHelper::parseClass($class);
-            $grade = $parsed['grade'];
-            
+            $grade = $class->level;
             if (!isset($classOptions[$grade])) {
                 $classOptions[$grade] = [];
             }
-            
             $classOptions[$grade][] = $class;
         }
         
@@ -287,8 +306,6 @@ class StudentController extends Controller
 
     public function update(Request $request, Student $student)
     {
-        $validClasses = ClassHelper::getAllClasses();
-        
         // Validation rules
         $rules = [
             'name' => 'required|max:255',
@@ -297,7 +314,7 @@ class StudentController extends Controller
             'email' => 'nullable|email|unique:students,email,' . $student->id . '|unique:users,email',
             'phone' => 'nullable|max:20',
             'address' => 'nullable',
-            'class' => 'required|in:' . implode(',', $validClasses),
+            'class_id' => 'required|exists:classes,id',
             'birth_date' => 'required|date',
             'birth_place' => 'required|max:255',
             'gender' => 'required|in:male,female',
@@ -319,7 +336,8 @@ class StudentController extends Controller
         }
         
         $request->validate($rules, [
-            'class.in' => 'Kelas yang dipilih tidak valid.',
+            'class_id.required' => 'Kelas wajib dipilih.',
+            'class_id.exists' => 'Kelas yang dipilih tidak valid.',
             'nis.required' => 'NIS wajib diisi.',
             'nis.unique' => 'NIS sudah digunakan oleh siswa lain.',
             'nis.regex' => 'NIS hanya boleh berisi angka.',
@@ -838,13 +856,13 @@ class StudentController extends Controller
      */
     public function generateNis(Request $request)
     {
-        $class = $request->get('class');
+        $classId = $request->get('class_id');
         $currentYear = date('Y');
         
-        // Parse class to get grade
-        if ($class) {
-            $parsed = ClassHelper::parseClass($class);
-            $grade = $parsed['grade'];
+        // Get grade from class
+        if ($classId) {
+            $class = \App\Models\Classes::find($classId);
+            $grade = $class ? $class->level : 10;
         } else {
             $grade = 10; // Default to grade 10
         }
@@ -877,5 +895,230 @@ class StudentController extends Controller
             'pattern' => 'Format: Tahun(4) + Kelas(2) + Urutan(3)',
             'example' => $currentYear . '10001 untuk siswa kelas 10 pertama'
         ]);
+    }
+    
+    /**
+     * Export students data to CSV
+     */
+    public function export(Request $request)
+    {
+        try {
+            Log::info('Student export request started', [
+                'request_data' => $request->all(),
+                'user_agent' => $request->userAgent(),
+                'ip' => $request->ip(),
+                'url' => $request->fullUrl()
+            ]);
+            
+            // Validate user has permission
+            if (!auth()->user() || !auth()->user()->hasRole('admin')) {
+                Log::warning('Unauthorized export attempt', [
+                    'user_id' => auth()->id(),
+                    'ip' => $request->ip()
+                ]);
+                abort(403, 'Unauthorized access');
+            }
+            
+            // Get filters from request
+            $filters = [
+                'grade' => $request->get('grade'),
+                'major' => $request->get('major'),
+                'class' => $request->get('class'),
+                'status' => $request->get('status'),
+                'search' => $request->get('search')
+            ];
+            
+            // Build query with same filters as index method
+            $query = Student::with(['class']);
+            
+            // Apply filters
+            if ($filters['grade']) {
+                $query->whereHas('class', function($q) use ($filters) {
+                    $q->where('level', $filters['grade']);
+                });
+            }
+            
+            if ($filters['major']) {
+                $query->whereHas('class', function($q) use ($filters) {
+                    $q->where('program', $filters['major']);
+                });
+            }
+            
+            if ($filters['class']) {
+                $query->where('class_id', $filters['class']);
+            }
+            
+            if ($filters['status']) {
+                $query->where('status', $filters['status']);
+            }
+            
+            if ($filters['search']) {
+                $search = $filters['search'];
+                $query->where(function($q) use ($search) {
+                    $q->where('name', 'like', '%' . $search . '%')
+                      ->orWhere('nis', 'like', '%' . $search . '%')
+                      ->orWhere('nisn', 'like', '%' . $search . '%')
+                      ->orWhere('email', 'like', '%' . $search . '%')
+                      ->orWhere('phone', 'like', '%' . $search . '%')
+                      ->orWhere('parent_name', 'like', '%' . $search . '%')
+                      ->orWhereHas('class', function($q) use ($search) {
+                          $q->where('name', 'like', '%' . $search . '%');
+                      });
+                });
+            }
+            
+            // Get all students (no pagination for export)
+            $students = $query->orderBy('name')->get();
+            
+            Log::info('Student export query executed', ['count' => $students->count()]);
+            
+            // Generate filename
+            $filename = 'data-siswa';
+            if ($filters['grade']) {
+                $filename .= '-kelas-' . $filters['grade'];
+            }
+            if ($filters['major']) {
+                $filename .= '-' . strtolower($filters['major']);
+            }
+            if ($filters['status']) {
+                $filename .= '-' . $filters['status'];
+            }
+            $filename .= '-' . date('Y-m-d') . '.csv';
+            
+            Log::info('Starting student CSV download', ['filename' => $filename]);
+            
+            // Use CSV service for export
+            $headers = $this->getStudentCsvHeaders();
+            $data = $this->formatStudentsForCsv($students);
+            
+            return CsvExportService::generateCsvResponse($data, $headers, $filename);
+            
+        } catch (\Exception $e) {
+            Log::error('Student export failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return redirect()->back()->with('error', 'Gagal mengexport data siswa: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Get CSV headers for student export
+     */
+    private function getStudentCsvHeaders()
+    {
+        return [
+            'No',
+            'NIS',
+            'NISN',
+            'Nama Lengkap',
+            'Email',
+            'No. Telepon',
+            'Kelas',
+            'Tingkat',
+            'Program Keahlian',
+            'Jenis Kelamin',
+            'Tempat Lahir',
+            'Tanggal Lahir',
+            'Agama',
+            'Alamat',
+            'Nama Orang Tua',
+            'No. Telepon Orang Tua',
+            'Status',
+            'Tanggal Daftar',
+            'Terakhir Diupdate'
+        ];
+    }
+    
+    /**
+     * Format students data for CSV export
+     */
+    private function formatStudentsForCsv($students)
+    {
+        $data = [];
+        $no = 1;
+        
+        foreach ($students as $student) {
+            try {
+                // Format gender
+                $gender = match($student->gender) {
+                    'male' => 'Laki-laki',
+                    'female' => 'Perempuan',
+                    default => ucfirst($student->gender ?? '-')
+                };
+                
+                // Format status
+                $status = match($student->status) {
+                    'active' => 'Aktif',
+                    'inactive' => 'Tidak Aktif',
+                    'graduated' => 'Lulus',
+                    default => ucfirst($student->status ?? '-')
+                };
+                
+                // Format religion
+                $religions = [
+                    'Islam' => 'Islam',
+                    'Kristen' => 'Kristen',
+                    'Katolik' => 'Katolik',
+                    'Hindu' => 'Hindu',
+                    'Buddha' => 'Buddha',
+                    'Konghucu' => 'Konghucu'
+                ];
+                $religion = $religions[$student->religion] ?? ucfirst($student->religion ?? '-');
+                
+                $data[] = [
+                    $no++,
+                    $student->nis ?? '-',
+                    $student->nisn ?? '-',
+                    $student->name ?? '-',
+                    $student->email ?? '-',
+                    $student->phone ?? '-',
+                    ($student->class) ? $student->class->name : '-',
+                    ($student->class) ? $student->class->level : '-',
+                    ($student->class) ? $student->class->program : '-',
+                    $gender,
+                    $student->birth_place ?? '-',
+                    $student->birth_date ? $student->birth_date->format('d/m/Y') : '-',
+                    $religion,
+                    $student->address ?? '-',
+                    $student->parent_name ?? '-',
+                    $student->parent_phone ?? '-',
+                    $status,
+                    $student->created_at ? $student->created_at->format('d/m/Y H:i') : '-',
+                    $student->updated_at ? $student->updated_at->format('d/m/Y H:i') : '-'
+                ];
+                
+            } catch (\Exception $e) {
+                Log::warning('Error processing student record for CSV', [
+                    'student_id' => $student->id ?? 'unknown',
+                    'error' => $e->getMessage()
+                ]);
+                
+                // Add error row
+                $data[] = [
+                    $no++,
+                    '-',
+                    '-',
+                    'Error processing record',
+                    '-',
+                    '-',
+                    '-',
+                    '-',
+                    '-',
+                    '-',
+                    '-',
+                    '-',
+                    '-',
+                    '-',
+                    '-',
+                    '-',
+                    'Error',
+                    '-',
+                    'Error: ' . $e->getMessage()
+                ];
+            }
+        }
+        
+        return $data;
     }
 }

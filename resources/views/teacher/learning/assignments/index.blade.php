@@ -1,7 +1,7 @@
 @extends('layouts.teacher')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+<div class="min-h-screen" style="background: var(--bg-primary, #ffffff);">
     <div class="container mx-auto px-4 py-8">
         
         <!-- Header Section -->
@@ -30,69 +30,69 @@
 
         <!-- Quick Stats -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div class="rounded-xl p-6 shadow-sm border" style="background: var(--bg-secondary, #ffffff); border-color: var(--border-color, #e5e7eb);">
                 <div class="flex items-center">
-                    <div class="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
-                        <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="p-2 rounded-lg" style="background: rgba(59, 130, 246, 0.1);">
+                        <svg class="w-6 h-6" style="color: var(--text-blue, #2563eb);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Tugas</p>
-                        <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ $stats['total_assignments'] }}</p>
+                        <p class="text-sm font-medium" style="color: var(--text-secondary, #6b7280);">Total Tugas</p>
+                        <p class="text-2xl font-semibold" style="color: var(--text-primary, #111827);">{{ $stats['total_assignments'] }}</p>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div class="rounded-xl p-6 shadow-sm border" style="background: var(--bg-secondary, #ffffff); border-color: var(--border-color, #e5e7eb);">
                 <div class="flex items-center">
-                    <div class="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
-                        <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="p-2 rounded-lg" style="background: rgba(16, 185, 129, 0.1);">
+                        <svg class="w-6 h-6" style="color: var(--text-green, #059669);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Tugas Aktif</p>
-                        <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ $stats['active'] }}</p>
+                        <p class="text-sm font-medium" style="color: var(--text-secondary, #6b7280);">Tugas Aktif</p>
+                        <p class="text-2xl font-semibold" style="color: var(--text-primary, #111827);">{{ $stats['active'] }}</p>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div class="rounded-xl p-6 shadow-sm border" style="background: var(--bg-secondary, #ffffff); border-color: var(--border-color, #e5e7eb);">
                 <div class="flex items-center">
-                    <div class="p-2 bg-yellow-100 dark:bg-yellow-900 rounded-lg">
-                        <svg class="w-6 h-6 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="p-2 rounded-lg" style="background: rgba(245, 158, 11, 0.1);">
+                        <svg class="w-6 h-6" style="color: var(--text-yellow, #d97706);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Draft</p>
-                        <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ $stats['draft'] }}</p>
+                        <p class="text-sm font-medium" style="color: var(--text-secondary, #6b7280);">Draft</p>
+                        <p class="text-2xl font-semibold" style="color: var(--text-primary, #111827);">{{ $stats['draft'] }}</p>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div class="rounded-xl p-6 shadow-sm border" style="background: var(--bg-secondary, #ffffff); border-color: var(--border-color, #e5e7eb);">
                 <div class="flex items-center">
-                    <div class="p-2 bg-purple-100 dark:bg-purple-900 rounded-lg">
-                        <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="p-2 rounded-lg" style="background: rgba(139, 92, 246, 0.1);">
+                        <svg class="w-6 h-6" style="color: var(--text-purple, #7c3aed);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                         </svg>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Pengumpulan</p>
-                        <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ $stats['total_submissions'] }}</p>
+                        <p class="text-sm font-medium" style="color: var(--text-secondary, #6b7280);">Total Pengumpulan</p>
+                        <p class="text-2xl font-semibold" style="color: var(--text-primary, #111827);">{{ $stats['total_submissions'] }}</p>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Filters -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
+        <div class="rounded-xl shadow-sm border p-6 mb-8" style="background: var(--bg-secondary, #ffffff); border-color: var(--border-color, #e5e7eb);">
             <form method="GET" class="flex flex-col lg:flex-row gap-4">
                 <div class="flex-1">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Mata Pelajaran</label>
-                    <select name="subject" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                    <label class="block text-sm font-medium mb-2" style="color: var(--text-primary, #374151);">Mata Pelajaran</label>
+                    <select name="subject" class="w-full rounded-lg border" style="border-color: var(--border-color, #d1d5db); background: var(--bg-primary, #ffffff); color: var(--text-primary, #111827);">
                         <option value="">Semua Mata Pelajaran</option>
                         @foreach($subjects as $subject)
                             <option value="{{ $subject }}" {{ $currentFilters['subject'] == $subject ? 'selected' : '' }}>
@@ -103,8 +103,8 @@
                 </div>
                 
                 <div class="flex-1">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
-                    <select name="status" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                    <label class="block text-sm font-medium mb-2" style="color: var(--text-primary, #374151);">Status</label>
+                    <select name="status" class="w-full rounded-lg border" style="border-color: var(--border-color, #d1d5db); background: var(--bg-primary, #ffffff); color: var(--text-primary, #111827);">
                         <option value="">Semua Status</option>
                         <option value="draft" {{ $currentFilters['status'] == 'draft' ? 'selected' : '' }}>Draft</option>
                         <option value="published" {{ $currentFilters['status'] == 'published' ? 'selected' : '' }}>Published</option>
@@ -125,45 +125,57 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @forelse($assignments as $assignment)
                 @php
-                    $totalStudents = \App\Models\User::role('student')->count();
+                    // Get students from the specific class assigned to this assignment
+                    $totalStudents = 0;
+                    if ($assignment->class_id) {
+                        $totalStudents = \App\Models\Student::where('class_id', $assignment->class_id)
+                            ->where('status', 'active')
+                            ->count();
+                    } else {
+                        // Fallback for assignments without class_id
+                        $submittedStudentIds = $assignment->submissions->pluck('student_id')->unique();
+                        $totalStudents = $submittedStudentIds->count();
+                        if ($totalStudents === 0) {
+                            $totalStudents = 0;
+                        }
+                    }
+                    
                     $totalSubmissions = $assignment->submissions->count();
                     $gradedSubmissions = $assignment->submissions->where('graded_at', '!=', null)->count();
                     $submissionPercentage = $totalStudents > 0 ? round(($totalSubmissions / $totalStudents) * 100, 1) : 0;
                     $gradingPercentage = $totalSubmissions > 0 ? round(($gradedSubmissions / $totalSubmissions) * 100, 1) : 0;
                 @endphp
                 
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-shadow">
+                <div class="rounded-xl shadow-sm border overflow-hidden hover:shadow-lg transition-shadow" style="background: var(--bg-secondary, #ffffff); border-color: var(--border-color, #e5e7eb);">
                     <!-- Header -->
-                    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <div class="p-6 border-b" style="border-color: var(--border-color, #e5e7eb);">
                         <div class="flex items-start justify-between mb-3">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white line-clamp-2">
+                            <h3 class="text-lg font-semibold line-clamp-2" style="color: var(--text-primary, #111827);">
                                 {{ $assignment->title }}
                             </h3>
-                            <span class="bg-{{ $assignment->status === 'published' || $assignment->status === 'active' ? 'green' : ($assignment->status === 'draft' ? 'yellow' : 'red') }}-100 text-{{ $assignment->status === 'published' || $assignment->status === 'active' ? 'green' : ($assignment->status === 'draft' ? 'yellow' : 'red') }}-800 dark:bg-{{ $assignment->status === 'published' || $assignment->status === 'active' ? 'green' : ($assignment->status === 'draft' ? 'yellow' : 'red') }}-900 dark:text-{{ $assignment->status === 'published' || $assignment->status === 'active' ? 'green' : ($assignment->status === 'draft' ? 'yellow' : 'red') }}-200 text-xs px-2 py-1 rounded-full">
+                            @php
+                                $statusColor = $assignment->status === 'published' || $assignment->status === 'active' ? 'green' : ($assignment->status === 'draft' ? 'yellow' : 'red');
+                                $statusBg = $statusColor === 'green' ? 'rgba(16, 185, 129, 0.1)' : ($statusColor === 'yellow' ? 'rgba(245, 158, 11, 0.1)' : 'rgba(239, 68, 68, 0.1)');
+                                $statusText = $statusColor === 'green' ? '#059669' : ($statusColor === 'yellow' ? '#d97706' : '#dc2626');
+                            @endphp
+                            <span class="text-xs px-2 py-1 rounded-full" style="background: {{ $statusBg }}; color: {{ $statusText }};">
                                 {{ ucfirst($assignment->status) }}
                             </span>
                         </div>
                         
-                        <p class="text-gray-600 dark:text-gray-400 text-sm line-clamp-3 mb-4">
+                        <p class="text-sm line-clamp-3 mb-4" style="color: var(--text-secondary, #6b7280);">
                             {{ Str::limit($assignment->description, 120) }}
                         </p>
                         
                         <div class="space-y-2">
-                            <div class="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                            <div class="flex items-center text-sm" style="color: var(--text-secondary, #6b7280);">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                                 </svg>
                                 {{ $assignment->subject }}
                             </div>
                             
-                            <div class="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                                </svg>
-                                {{ $assignment->class ?? 'Semua Kelas' }}
-                            </div>
-                            
-                            <div class="flex items-center text-sm {{ $assignment->due_date < now() ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400' }}">
+                            <div class="flex items-center text-sm" style="color: {{ $assignment->due_date < now() ? '#dc2626' : 'var(--text-secondary, #6b7280)' }};">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
@@ -173,46 +185,46 @@
                     </div>
                     
                     <!-- Progress Section -->
-                    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <div class="p-6 border-b" style="border-color: var(--border-color, #e5e7eb);">
                         <!-- Submission Progress -->
                         <div class="mb-4">
                             <div class="flex items-center justify-between mb-2">
-                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Pengumpulan</span>
-                                <span class="text-sm text-gray-600 dark:text-gray-400">{{ $totalSubmissions }}/{{ $totalStudents }}</span>
+                                <span class="text-sm font-medium" style="color: var(--text-primary, #374151);">Pengumpulan</span>
+                                <span class="text-sm" style="color: var(--text-secondary, #6b7280);">{{ $totalSubmissions }}/{{ $totalStudents }}</span>
                             </div>
-                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                            <div class="w-full rounded-full h-2" style="background: var(--bg-tertiary, #e5e7eb);">
                                 <div class="bg-blue-500 h-2 rounded-full transition-all duration-300" style="width: {{ $submissionPercentage }}%"></div>
                             </div>
-                            <div class="text-xs text-gray-600 dark:text-gray-400 mt-1">{{ $submissionPercentage }}% siswa mengumpulkan</div>
+                            <div class="text-xs mt-1" style="color: var(--text-secondary, #6b7280);">{{ $submissionPercentage }}% siswa mengumpulkan</div>
                         </div>
 
                         <!-- Grading Progress -->
                         @if($totalSubmissions > 0)
                             <div class="mb-4">
                                 <div class="flex items-center justify-between mb-2">
-                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Penilaian</span>
-                                    <span class="text-sm text-gray-600 dark:text-gray-400">{{ $gradedSubmissions }}/{{ $totalSubmissions }}</span>
+                                    <span class="text-sm font-medium" style="color: var(--text-primary, #374151);">Penilaian</span>
+                                    <span class="text-sm" style="color: var(--text-secondary, #6b7280);">{{ $gradedSubmissions }}/{{ $totalSubmissions }}</span>
                                 </div>
-                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                <div class="w-full rounded-full h-2" style="background: var(--bg-tertiary, #e5e7eb);">
                                     <div class="bg-green-500 h-2 rounded-full transition-all duration-300" style="width: {{ $gradingPercentage }}%"></div>
                                 </div>
-                                <div class="text-xs text-gray-600 dark:text-gray-400 mt-1">{{ $gradingPercentage }}% sudah dinilai</div>
+                                <div class="text-xs mt-1" style="color: var(--text-secondary, #6b7280);">{{ $gradingPercentage }}% sudah dinilai</div>
                             </div>
                         @endif
 
                         <!-- Quick Stats -->
                         <div class="grid grid-cols-3 gap-2 text-center">
-                            <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-2">
-                                <div class="text-lg font-bold text-blue-600 dark:text-blue-400">{{ $totalSubmissions }}</div>
-                                <div class="text-xs text-gray-600 dark:text-gray-400">Terkumpul</div>
+                            <div class="rounded-lg p-2" style="background: rgba(59, 130, 246, 0.1);">
+                                <div class="text-lg font-bold" style="color: #2563eb;">{{ $totalSubmissions }}</div>
+                                <div class="text-xs" style="color: var(--text-secondary, #6b7280);">Terkumpul</div>
                             </div>
-                            <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-2">
-                                <div class="text-lg font-bold text-green-600 dark:text-green-400">{{ $gradedSubmissions }}</div>
-                                <div class="text-xs text-gray-600 dark:text-gray-400">Dinilai</div>
+                            <div class="rounded-lg p-2" style="background: rgba(16, 185, 129, 0.1);">
+                                <div class="text-lg font-bold" style="color: #059669;">{{ $gradedSubmissions }}</div>
+                                <div class="text-xs" style="color: var(--text-secondary, #6b7280);">Dinilai</div>
                             </div>
-                            <div class="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-2">
-                                <div class="text-lg font-bold text-yellow-600 dark:text-yellow-400">{{ $totalSubmissions - $gradedSubmissions }}</div>
-                                <div class="text-xs text-gray-600 dark:text-gray-400">Pending</div>
+                            <div class="rounded-lg p-2" style="background: rgba(245, 158, 11, 0.1);">
+                                <div class="text-lg font-bold" style="color: #d97706;">{{ $totalSubmissions - $gradedSubmissions }}</div>
+                                <div class="text-xs" style="color: var(--text-secondary, #6b7280);">Pending</div>
                             </div>
                         </div>
                     </div>
@@ -240,11 +252,11 @@
             @empty
                 <div class="col-span-full">
                     <div class="text-center py-12">
-                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg class="mx-auto h-12 w-12" style="color: var(--text-tertiary, #9ca3af);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
-                        <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">Belum ada tugas</h3>
-                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Mulai dengan membuat tugas pertama Anda.</p>
+                        <h3 class="mt-2 text-sm font-medium" style="color: var(--text-primary, #111827);">Belum ada tugas</h3>
+                        <p class="mt-1 text-sm" style="color: var(--text-secondary, #6b7280);">Mulai dengan membuat tugas pertama Anda.</p>
                         <div class="mt-6">
                             <a href="{{ route('teacher.assignments.create') }}" 
                                class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">

@@ -14,14 +14,16 @@ class Assignment extends Model
         'title',
         'description',
         'subject',
-        'class',
+        'class_id',
         'teacher_id',
         'due_date',
         'max_score',
         'status',
         'instructions',
         'attachment_path',
-        'attachment_name'
+        'attachment_name',
+        'created_by',
+        'updated_by'
     ];
 
     protected $casts = [
@@ -34,6 +36,14 @@ class Assignment extends Model
     public function teacher()
     {
         return $this->belongsTo(User::class, 'teacher_id');
+    }
+
+    /**
+     * Get the class that this assignment belongs to
+     */
+    public function class()
+    {
+        return $this->belongsTo(Classes::class, 'class_id');
     }
 
     /**
@@ -87,5 +97,21 @@ class Assignment extends Model
     public function scopeBySubject($query, $subject)
     {
         return $query->where('subject', $subject);
+    }
+
+    /**
+     * Scope for assignments by class
+     */
+    public function scopeByClass($query, $classId)
+    {
+        return $query->where('class_id', $classId);
+    }
+
+    /**
+     * Scope for assignments visible to student
+     */
+    public function scopeVisibleToStudent($query, $studentClassId)
+    {
+        return $query->where('class_id', $studentClassId)->published();
     }
 }

@@ -200,11 +200,18 @@
 
     /* Form Styles */
     .form-container {
-        background: white;
+        background: var(--bg-primary, white);
         border-radius: var(--border-radius);
         box-shadow: var(--shadow);
         overflow: hidden;
         margin-bottom: 30px;
+        transition: var(--transition);
+    }
+
+    /* Dark mode form container */
+    .dark .form-container {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
     }
 
     .form-header {
@@ -262,9 +269,16 @@
     .form-section {
         margin-bottom: 40px;
         padding: 25px;
-        background: #f8f9fa;
+        background: var(--bg-secondary, #f8f9fa);
         border-radius: var(--border-radius);
         border-left: 4px solid var(--primary);
+        transition: var(--transition);
+    }
+
+    /* Dark mode form section */
+    .dark .form-section {
+        background: var(--bg-secondary);
+        border-color: var(--border-color);
     }
 
     .section-header {
@@ -275,14 +289,25 @@
         font-size: 1.3rem;
         font-weight: 600;
         margin-bottom: 8px;
-        color: var(--dark);
+        color: var(--text-primary, var(--dark));
         display: flex;
         align-items: center;
         gap: 10px;
+        transition: var(--transition);
     }
 
     .section-subtitle {
-        color: var(--gray);
+        color: var(--text-secondary, var(--gray));
+        transition: var(--transition);
+    }
+
+    /* Dark mode section text */
+    .dark .section-title {
+        color: var(--text-primary);
+    }
+
+    .dark .section-subtitle {
+        color: var(--text-secondary);
     }
 
     .form-group {
@@ -293,10 +318,16 @@
         display: block;
         font-weight: 600;
         margin-bottom: 10px;
-        color: var(--dark);
+        color: var(--text-primary, var(--dark));
         display: flex;
         align-items: center;
         gap: 8px;
+        transition: var(--transition);
+    }
+
+    /* Dark mode form label */
+    .dark .form-label {
+        color: var(--text-primary);
     }
 
     .required {
@@ -306,10 +337,12 @@
     .form-control {
         width: 100%;
         padding: 14px 16px;
-        border: 2px solid var(--light-gray);
+        border: 2px solid var(--border-color, var(--light-gray));
         border-radius: 10px;
         font-size: 1rem;
         transition: var(--transition);
+        background: var(--bg-primary, white);
+        color: var(--text-primary, var(--dark));
     }
 
     .form-control:focus {
@@ -318,10 +351,28 @@
         box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
     }
 
+    /* Dark mode form controls */
+    .dark .form-control {
+        background: var(--bg-secondary);
+        border-color: var(--border-color);
+        color: var(--text-primary);
+    }
+
+    .dark .form-control:focus {
+        border-color: #10b981;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+
     .form-help {
         font-size: 0.85rem;
-        color: var(--gray);
+        color: var(--text-secondary, var(--gray));
         margin-top: 8px;
+        transition: var(--transition);
+    }
+
+    /* Dark mode form help */
+    .dark .form-help {
+        color: var(--text-secondary);
     }
 
     .form-row {
@@ -331,10 +382,11 @@
     }
 
     .editor-container {
-        border: 2px solid var(--light-gray);
+        border: 2px solid var(--border-color, var(--light-gray));
         border-radius: 10px;
         overflow: hidden;
         transition: var(--transition);
+        background: var(--bg-primary, white);
     }
 
     .editor-container:focus-within {
@@ -342,13 +394,24 @@
         box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
     }
 
+    /* Dark mode editor container */
+    .dark .editor-container {
+        background: var(--bg-secondary);
+        border-color: var(--border-color);
+    }
+
+    .dark .editor-container:focus-within {
+        border-color: #10b981;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+
     /* Upload Area */
     .upload-area {
-        border: 2px dashed var(--light-gray);
+        border: 2px dashed var(--border-color, var(--light-gray));
         border-radius: 10px;
         padding: 40px 20px;
         text-align: center;
-        background: #fafbfc;
+        background: var(--bg-secondary, #fafbfc);
         transition: var(--transition);
         cursor: pointer;
         position: relative;
@@ -356,7 +419,18 @@
 
     .upload-area:hover {
         border-color: var(--primary);
-        background: #f0fdf4;
+        background: var(--bg-tertiary, #f0fdf4);
+    }
+
+    /* Dark mode upload area */
+    .dark .upload-area {
+        background: var(--bg-tertiary);
+        border-color: var(--border-color);
+    }
+
+    .dark .upload-area:hover {
+        border-color: #10b981;
+        background: rgba(16, 185, 129, 0.1);
     }
 
     .upload-icon {
@@ -368,12 +442,23 @@
     .upload-title {
         font-weight: 600;
         margin-bottom: 5px;
-        color: var(--dark);
+        color: var(--text-primary, var(--dark));
+        transition: var(--transition);
     }
 
     .upload-subtitle {
-        color: var(--gray);
+        color: var(--text-secondary, var(--gray));
         margin-bottom: 15px;
+        transition: var(--transition);
+    }
+
+    /* Dark mode upload text */
+    .dark .upload-title {
+        color: var(--text-primary);
+    }
+
+    .dark .upload-subtitle {
+        color: var(--text-secondary);
     }
 
     .upload-input {
@@ -426,8 +511,15 @@
         justify-content: space-between;
         align-items: center;
         padding: 25px 30px;
-        background: #f8f9fa;
-        border-top: 1px solid var(--light-gray);
+        background: var(--bg-secondary, #f8f9fa);
+        border-top: 1px solid var(--border-color, var(--light-gray));
+        transition: var(--transition);
+    }
+
+    /* Dark mode form actions */
+    .dark .form-actions {
+        background: var(--bg-secondary);
+        border-color: var(--border-color);
     }
 
     .btn-back {
@@ -493,6 +585,12 @@
         color: var(--danger);
         font-size: 0.85rem;
         margin-top: 5px;
+        transition: var(--transition);
+    }
+
+    /* Dark mode text danger */
+    .dark .text-danger {
+        color: #f87171;
     }
 </style>
 
