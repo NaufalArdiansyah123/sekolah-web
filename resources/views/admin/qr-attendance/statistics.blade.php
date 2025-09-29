@@ -676,16 +676,20 @@ function updateChartsForTheme() {
     Chart.defaults.borderColor = isDark ? '#374151' : '#e5e7eb';
     
     // Update daily chart
-    dailyChart.options.scales.x.grid.color = isDark ? '#374151' : '#e5e7eb';
-    dailyChart.options.scales.y.grid.color = isDark ? '#374151' : '#e5e7eb';
-    dailyChart.data.datasets.forEach(dataset => {
-        dataset.pointBorderColor = '#ffffff';
-    });
-    dailyChart.update();
+    if (typeof dailyChart !== 'undefined') {
+        dailyChart.options.scales.x.grid.color = isDark ? '#374151' : '#e5e7eb';
+        dailyChart.options.scales.y.grid.color = isDark ? '#374151' : '#e5e7eb';
+        dailyChart.data.datasets.forEach(dataset => {
+            dataset.pointBorderColor = '#ffffff';
+        });
+        dailyChart.update();
+    }
     
     // Update status chart
-    statusChart.data.datasets[0].borderColor = isDark ? '#1f2937' : '#ffffff';
-    statusChart.update();
+    if (typeof statusChart !== 'undefined') {
+        statusChart.data.datasets[0].borderColor = isDark ? '#1f2937' : '#ffffff';
+        statusChart.update();
+    }
 }
 
 // Listen for theme changes
@@ -693,7 +697,23 @@ window.addEventListener('theme-changed', updateChartsForTheme);
 
 // Initialize charts with correct theme
 document.addEventListener('DOMContentLoaded', function() {
-    updateChartsForTheme();
+    // Wait for charts to be initialized
+    setTimeout(() => {
+        updateChartsForTheme();
+    }, 100);
 });
+
+// Also listen for Alpine.js theme changes
+if (typeof Alpine !== 'undefined') {
+    Alpine.store('theme', {
+        dark: localStorage.getItem('darkMode') === 'true',
+        toggle() {
+            this.dark = !this.dark;
+            localStorage.setItem('darkMode', this.dark);
+            document.documentElement.classList.toggle('dark', this.dark);
+            updateChartsForTheme();
+        }
+    });
+}
 </script>
 @endpush

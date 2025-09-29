@@ -113,8 +113,9 @@
                     <button @click="userOpen = !userOpen" 
                             class="max-w-xs bg-white dark:bg-gray-800 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                         <img class="h-8 w-8 rounded-full" 
-                             src="{{ auth()->user()->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&color=7F9CF5&background=EBF4FF' }}" 
-                             alt="{{ auth()->user()->name }}">
+                             src="{{ auth()->user()->avatar_url }}" 
+                             alt="{{ auth()->user()->name }}"
+                             onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&color=7F9CF5&background=EBF4FF&size=32'">
                         <span class="hidden md:block ml-3 text-gray-700 dark:text-gray-300 text-sm font-medium">{{ auth()->user()->name }}</span>
                         <svg class="hidden md:block ml-2 h-4 w-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>

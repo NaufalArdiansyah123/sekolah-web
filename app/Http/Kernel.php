@@ -38,6 +38,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\CheckUserStatus::class, // Add user status check to web middleware
             \App\Http\Middleware\CheckMaintenanceMode::class, // Add maintenance mode check
+            \App\Http\Middleware\TrackLastLogin::class, // Track user login activity
         ],
 
         'api' => [
@@ -71,5 +72,6 @@ class Kernel extends HttpKernel
         'check.user.status' => \App\Http\Middleware\CheckUserStatus::class,
         'maintenance' => \App\Http\Middleware\CheckMaintenanceMode::class,
         'registration.enabled' => \App\Http\Middleware\CheckRegistrationEnabled::class,
+        'track.login' => \App\Http\Middleware\TrackLastLogin::class,
     ];
 }

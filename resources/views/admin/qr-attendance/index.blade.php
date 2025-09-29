@@ -3,7 +3,33 @@
 @section('title', 'Manajemen Absensi QR Code')
 
 @section('content')
-<div class="container mx-auto px-6 py-8">
+
+<style>
+/* Force proper background colors for QR attendance page */
+body {
+    background-color: #f8fafc !important;
+}
+
+body.dark {
+    background-color: #111827 !important;
+}
+
+.main-content {
+    background-color: #f8fafc !important;
+}
+
+.dark .main-content {
+    background-color: #111827 !important;
+}
+
+.content-card {
+    background-color: #ffffff !important;
+}
+
+.dark .content-card {
+    background-color: #1f2937 !important;
+}
+</style>
     <!-- Page Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
         <div class="mb-4 sm:mb-0">
@@ -230,7 +256,7 @@
                                                 <span class="text-emerald-600 dark:text-emerald-400 text-sm font-medium">Ada</span>
                                             </div>
                                             <button type="button" onclick="viewQrCode({{ $student->id }})" 
-                                                    class="ml-3 bg-blue-100 hover:bg-blue-200 text-blue-600 p-2 rounded-lg transition-colors duration-200">
+                                                    class="ml-3 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900 dark:hover:bg-blue-800 text-blue-600 dark:text-blue-400 p-2 rounded-lg transition-colors duration-200">
                                                 <i class="fas fa-eye text-sm"></i>
                                             </button>
                                         </div>
@@ -265,18 +291,18 @@
                                     <div class="flex space-x-2">
                                         @if($student->qrAttendance)
                                             <button type="button" onclick="regenerateQr({{ $student->id }})" 
-                                                    class="bg-yellow-100 hover:bg-yellow-200 text-yellow-600 p-2 rounded-lg transition-colors duration-200" 
+                                                    class="bg-yellow-100 hover:bg-yellow-200 dark:bg-yellow-900 dark:hover:bg-yellow-800 text-yellow-600 dark:text-yellow-400 p-2 rounded-lg transition-colors duration-200" 
                                                     title="Generate Ulang QR">
                                                 <i class="fas fa-redo text-sm"></i>
                                             </button>
                                             <a href="{{ route('admin.qr-attendance.download', $student) }}" 
-                                               class="bg-emerald-100 hover:bg-emerald-200 text-emerald-600 p-2 rounded-lg transition-colors duration-200" 
+                                               class="bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-900 dark:hover:bg-emerald-800 text-emerald-600 dark:text-emerald-400 p-2 rounded-lg transition-colors duration-200" 
                                                title="Download QR">
                                                 <i class="fas fa-download text-sm"></i>
                                             </a>
                                         @else
                                             <button type="button" onclick="generateQr({{ $student->id }})" 
-                                                    class="bg-blue-100 hover:bg-blue-200 text-blue-600 p-2 rounded-lg transition-colors duration-200" 
+                                                    class="bg-blue-100 hover:bg-blue-200 dark:bg-blue-900 dark:hover:bg-blue-800 text-blue-600 dark:text-blue-400 p-2 rounded-lg transition-colors duration-200" 
                                                     title="Generate QR">
                                                 <i class="fas fa-qrcode text-sm"></i>
                                             </button>
@@ -307,30 +333,29 @@
             @endif
         </div>
     </div>
-</div>
 
 <!-- QR Code Modal -->
-<div id="qrCodeModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" onclick="closeModal('qrCodeModal')">
-    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full mx-4" onclick="event.stopPropagation()">
+<div id="qrCodeModal" class="fixed inset-0 bg-black bg-opacity-50 dark:bg-black dark:bg-opacity-70 hidden items-center justify-center z-50" onclick="closeModal('qrCodeModal')">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full mx-4 border border-gray-200 dark:border-gray-700" onclick="event.stopPropagation()">
         <div class="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-4 rounded-t-2xl">
             <div class="flex justify-between items-center">
                 <h3 class="text-xl font-semibold text-white">QR Code Siswa</h3>
-                <button onclick="closeModal('qrCodeModal')" class="text-white hover:text-gray-200 transition-colors">
+                <button onclick="closeModal('qrCodeModal')" class="text-white hover:text-gray-200 transition-colors p-1 rounded-lg hover:bg-white/10">
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
         </div>
         <div class="p-6">
             <div id="qrCodeContent" class="text-center">
-                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-blue-400 mx-auto"></div>
                 <p class="text-gray-600 dark:text-gray-400 mt-3">Loading...</p>
             </div>
         </div>
         <div class="px-6 pb-6 flex gap-3">
-            <button onclick="closeModal('qrCodeModal')" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors">
+            <button onclick="closeModal('qrCodeModal')" class="flex-1 bg-gray-600 hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">
                 Tutup
             </button>
-            <button type="button" id="downloadQrBtn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+            <button type="button" id="downloadQrBtn" class="flex-1 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
                 <i class="fas fa-download mr-2"></i>Download
             </button>
         </div>

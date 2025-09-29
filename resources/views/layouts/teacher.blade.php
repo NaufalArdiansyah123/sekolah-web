@@ -29,6 +29,9 @@
     <!-- Teacher Layout CSS -->
     <link rel="stylesheet" href="{{ asset('css/teacher-layout.css') }}">
     
+    <!-- Avatar Helper Script -->
+    <script src="{{ asset('js/avatar-helper.js') }}"></script>
+    
     @stack('styles')
 </head>
 <body class="teacher-body">

@@ -666,21 +666,21 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
-            <h1>Hubungi Kami</h1>
-            <p>Kami siap membantu Anda untuk informasi seputar SMK PGRI 2 PONOROGO.<br> Jangan ragu untuk menghubungi kami melalui berbagai cara di bawah ini.</p>
+            <h1 class="fade-in-up">Hubungi Kami</h1>
+            <p class="fade-in-up">Kami siap membantu Anda untuk informasi seputar SMK PGRI 2 PONOROGO.<br> Jangan ragu untuk menghubungi kami melalui berbagai cara di bawah ini.</p>
         </div>
     </section>
 
     <!-- Contact Section -->
     <section class="contact-section">
-        <div class="section-title animate-on-scroll">
+        <div class="section-title fade-in-up">
             <h2>Informasi Kontak</h2>
             <p>Berbagai cara untuk menghubungi SMK PGRI 2 PONOROGO</p>
         </div>
 
         <div class="contact-grid">
             <!-- Contact Information -->
-            <div class="contact-info animate-on-scroll">
+            <div class="contact-info fade-in-left">
                 <h3>Detail Kontak</h3>
                 
                 <div class="contact-item">
@@ -725,7 +725,7 @@
             </div>
 
             <!-- WhatsApp & Additional Info -->
-            <div class="animate-on-scroll">
+            <div class="fade-in-right">
                 <!-- WhatsApp Contact -->
                 <div class="whatsapp-section">
                     <h3>Kontak WhatsApp</h3>
@@ -787,7 +787,7 @@
 
         <!-- Quick Contact Cards -->
         <div class="quick-contact">
-            <div class="quick-card animate-on-scroll">
+            <div class="quick-card fade-in-up">
                 <div class="quick-icon">
                     <i class="fas fa-user-graduate"></i>
                 </div>
@@ -795,7 +795,7 @@
                 <p>Informasi lengkap tentang penerimaan siswa baru, syarat pendaftaran, dan jadwal seleksi.</p>
             </div>
 
-            <div class="quick-card animate-on-scroll">
+            <div class="quick-card fade-in-up">
                 <div class="quick-icon">
                     <i class="fas fa-book"></i>
                 </div>
@@ -803,7 +803,7 @@
                 <p>Kurikulum, ekstrakurikuler, dan berbagai program unggulan yang tersedia di sekolah kami.</p>
             </div>
 
-            <div class="quick-card animate-on-scroll">
+            <div class="quick-card fade-in-up">
                 <div class="quick-icon">
                     <i class="fas fa-users"></i>
                 </div>

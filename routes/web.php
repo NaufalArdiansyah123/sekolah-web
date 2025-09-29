@@ -170,7 +170,18 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     
     // Dashboard
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-    Route::get('/profile', [AdminDashboardController::class, 'profile'])->name('profile');
+    
+    // Profile Management Routes
+    Route::get('/profile', [App\Http\Controllers\Admin\ProfileController::class, 'index'])->name('profile');
+    Route::put('/profile/update', [App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update')->middleware('throttle:5,1');
+    Route::put('/profile/password', [App\Http\Controllers\Admin\ProfileController::class, 'updatePassword'])->name('profile.password')->middleware('throttle:3,1');
+    Route::post('/profile/avatar', [App\Http\Controllers\Admin\ProfileController::class, 'updateAvatar'])->name('profile.avatar')->middleware('throttle:5,1');
+    Route::post('/profile/logout-devices', [App\Http\Controllers\Admin\ProfileController::class, 'logoutOtherDevices'])->name('profile.logout-devices')->middleware('throttle:2,1');
+    Route::get('/profile/activity', [App\Http\Controllers\Admin\ProfileController::class, 'getActivity'])->name('profile.activity');
+    Route::get('/profile/security', [App\Http\Controllers\Admin\ProfileController::class, 'getSecuritySettings'])->name('profile.security');
+    Route::post('/profile/two-factor', [App\Http\Controllers\Admin\ProfileController::class, 'toggleTwoFactor'])->name('profile.two-factor')->middleware('throttle:3,1');
+    Route::get('/profile/download-data', [App\Http\Controllers\Admin\ProfileController::class, 'downloadData'])->name('profile.download-data')->middleware('throttle:2,1');
+    
     Route::get('/settings', [AdminDashboardController::class, 'settings'])->name('settings');
     
     // Posts Management Routes
@@ -378,6 +389,16 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')->group(function () {
     Route::get('/dashboard', [TeacherDashboardController::class, 'index'])->name('dashboard');
     
+    // Teacher Profile Management Routes
+    Route::get('/profile', [App\Http\Controllers\Teacher\ProfileController::class, 'index'])->name('profile');
+    Route::put('/profile/update', [App\Http\Controllers\Teacher\ProfileController::class, 'update'])->name('profile.update')->middleware('throttle:5,1');
+    Route::put('/profile/password', [App\Http\Controllers\Teacher\ProfileController::class, 'updatePassword'])->name('profile.password')->middleware('throttle:3,1');
+    Route::post('/profile/avatar', [App\Http\Controllers\Teacher\ProfileController::class, 'updateAvatar'])->name('profile.avatar')->middleware('throttle:5,1');
+    Route::post('/profile/logout-devices', [App\Http\Controllers\Teacher\ProfileController::class, 'logoutOtherDevices'])->name('profile.logout-devices')->middleware('throttle:2,1');
+    Route::get('/profile/activity', [App\Http\Controllers\Teacher\ProfileController::class, 'getActivity'])->name('profile.activity');
+    Route::get('/profile/security', [App\Http\Controllers\Teacher\ProfileController::class, 'getSecuritySettings'])->name('profile.security');
+    Route::get('/profile/download-data', [App\Http\Controllers\Teacher\ProfileController::class, 'downloadData'])->name('profile.download-data')->middleware('throttle:2,1');
+    
     // Teacher Assignment Management Routes
     Route::prefix('assignments')->name('assignments.')->group(function () {
         Route::get('/', [App\Http\Controllers\Teacher\AssignmentController::class, 'index'])->name('index');
@@ -533,6 +554,16 @@ Route::group([
     // Student Dashboard
     Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
     
+    // Student Profile Management Routes
+    Route::get('/profile', [App\Http\Controllers\Student\ProfileController::class, 'index'])->name('profile');
+    Route::put('/profile/update', [App\Http\Controllers\Student\ProfileController::class, 'update'])->name('profile.update')->middleware('throttle:5,1');
+    Route::put('/profile/password', [App\Http\Controllers\Student\ProfileController::class, 'updatePassword'])->name('profile.password')->middleware('throttle:3,1');
+    Route::post('/profile/avatar', [App\Http\Controllers\Student\ProfileController::class, 'updateAvatar'])->name('profile.avatar')->middleware('throttle:5,1');
+    Route::post('/profile/logout-devices', [App\Http\Controllers\Student\ProfileController::class, 'logoutOtherDevices'])->name('profile.logout-devices')->middleware('throttle:2,1');
+    Route::get('/profile/activity', [App\Http\Controllers\Student\ProfileController::class, 'getActivity'])->name('profile.activity');
+    Route::get('/profile/security', [App\Http\Controllers\Student\ProfileController::class, 'getSecuritySettings'])->name('profile.security');
+    Route::get('/profile/download-data', [App\Http\Controllers\Student\ProfileController::class, 'downloadData'])->name('profile.download-data')->middleware('throttle:2,1');
+    
     // Student Materials Routes - EXPLICIT DEFINITION
     Route::get('/materials', [MaterialController::class, 'index'])->name('materials.index');
     Route::get('/materials/{id}', [MaterialController::class, 'show'])->name('materials.show');
@@ -566,7 +597,6 @@ Route::group([
     // Student Grades Routes
     Route::get('/grades', [GradeController::class, 'index'])->name('grades.index');
     Route::get('/grades/subject/{subject}', [GradeController::class, 'subject'])->name('grades.subject');
-    Route::get('/grades/report', [GradeController::class, 'report'])->name('grades.report');
     Route::get('/grades/{id}', [GradeController::class, 'show'])->name('grades.show');
     
     // Student QR Attendance Routes

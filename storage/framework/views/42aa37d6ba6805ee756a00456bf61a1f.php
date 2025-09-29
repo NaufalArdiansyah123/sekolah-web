@@ -271,6 +271,8 @@
         cursor: pointer;
         position: relative;
         overflow: hidden;
+        text-decoration: none !important;
+        color: inherit;
     }
     
     .student-user-card::before {
@@ -293,6 +295,8 @@
         transform: translateY(-2px);
         box-shadow: 0 8px 25px rgba(16, 185, 129, 0.15);
         background: rgba(16, 185, 129, 0.1);
+        text-decoration: none !important;
+        color: inherit;
     }
     
     .student-user-avatar {
@@ -600,30 +604,21 @@
             <span>Nilai Akademik</span>
         </a>
 
-        <!-- Rapor -->
-        <a href="<?php echo e(route('student.grades.report')); ?>" 
-           class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg <?php echo e(request()->routeIs('student.grades.report') ? 'active' : ''); ?>"
-           @click="isMobile && (sidebarOpen = false)">
-            <svg class="student-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <span>Rapor</span>
-        </a>
-
 
     </div>
 
     <!-- Enhanced User Section -->
     <div class="student-user-section">
-        <div class="student-user-card">
+        <a href="<?php echo e(route('student.profile')); ?>" class="student-user-card block text-decoration-none">
             <img class="student-user-avatar" 
-                 src="<?php echo e(auth()->user()->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&color=10B981&background=D1FAE5'); ?>" 
-                 alt="<?php echo e(auth()->user()->name); ?>">
+                 src="<?php echo e(auth()->user()->avatar_url); ?>" 
+                 alt="<?php echo e(auth()->user()->name); ?>"
+                 onerror="this.src='https://ui-avatars.com/api/?name=<?php echo e(urlencode(auth()->user()->name)); ?>&color=10B981&background=D1FAE5&size=44'">
             <div class="student-user-info">
                 <div class="student-user-name"><?php echo e(auth()->user()->name); ?></div>
                 <div class="student-user-role">Student</div>
             </div>
             <div class="student-user-status"></div>
-        </div>
+        </a>
     </div>
 </div><?php /**PATH C:\xampp\htdocs\sekolah-web\resources\views/layouts/student/sidebar.blade.php ENDPATH**/ ?>

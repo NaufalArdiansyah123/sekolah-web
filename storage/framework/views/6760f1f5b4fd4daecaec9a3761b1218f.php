@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="loading">
 
 <head>
     <meta charset="UTF-8">
@@ -33,6 +33,385 @@
             padding-top: var(--nav-height);
             min-height: 100vh;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        
+        /* Enhanced Loading Animation Styles */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 25%, #3182ce 50%, #4299e1 75%, #63b3ed 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 4s ease infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        
+        .page-loader::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: pulseOverlay 3s ease-in-out infinite;
+        }
+        
+        .page-loader.fade-out {
+            opacity: 0;
+            transform: scale(1.1);
+            pointer-events: none;
+        }
+        
+        .loader-content {
+            text-align: center;
+            color: white;
+            position: relative;
+            z-index: 2;
+            animation: contentFadeIn 1s ease-out;
+        }
+        
+        .loader-logo {
+            font-size: 4rem !important;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+            animation: logoFloat 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.5));
+        }
+        
+        .loader-logo i {
+            font-size: 4rem !important;
+            width: auto !important;
+            height: auto !important;
+        }
+        
+        .loader-logo::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120%;
+            height: 120%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: ringPulse 2s ease-in-out infinite;
+        }
+        
+        .loader-logo::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 150%;
+            height: 150%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: ringPulse 2s ease-in-out infinite 0.5s;
+        }
+        
+        .loader-text {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            letter-spacing: 2px;
+            animation: textGlow 2s ease-in-out infinite;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        
+        .loader-progress {
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            margin: 0 auto 1.5rem;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .loader-progress-bar {
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, #63b3ed, #4299e1, #3182ce);
+            border-radius: 2px;
+            animation: progressLoad 2.5s ease-out forwards;
+            position: relative;
+        }
+        
+        .loader-progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: progressShine 1.5s ease-in-out infinite;
+        }
+        
+        .loader-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 1rem;
+        }
+        
+        .loader-dot {
+            width: 12px;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            animation: dotBounce 1.4s ease-in-out infinite;
+        }
+        
+        .loader-dot:nth-child(1) { animation-delay: 0s; }
+        .loader-dot:nth-child(2) { animation-delay: 0.2s; }
+        .loader-dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        /* Floating particles */
+        .loader-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: particleFloat 6s linear infinite;
+        }
+        
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 20%; animation-delay: 1s; }
+        .particle:nth-child(3) { left: 30%; animation-delay: 2s; }
+        .particle:nth-child(4) { left: 40%; animation-delay: 3s; }
+        .particle:nth-child(5) { left: 50%; animation-delay: 4s; }
+        .particle:nth-child(6) { left: 60%; animation-delay: 5s; }
+        .particle:nth-child(7) { left: 70%; animation-delay: 0.5s; }
+        .particle:nth-child(8) { left: 80%; animation-delay: 1.5s; }
+        .particle:nth-child(9) { left: 90%; animation-delay: 2.5s; }
+        
+        /* Enhanced Keyframes */
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes pulseOverlay {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.1; transform: scale(1.05); }
+        }
+        
+        @keyframes contentFadeIn {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-10px) rotate(5deg); }
+            50% { transform: translateY(0) rotate(0deg); }
+            75% { transform: translateY(-5px) rotate(-5deg); }
+        }
+        
+        @keyframes ringPulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.5; }
+        }
+        
+        @keyframes textGlow {
+            0%, 100% { text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
+            50% { text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 30px rgba(99, 179, 237, 0.5); }
+        }
+        
+        @keyframes progressLoad {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+        
+        @keyframes progressShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(200%); }
+        }
+        
+        @keyframes dotBounce {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1.2); opacity: 1; }
+        }
+        
+        @keyframes particleFloat {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+        
+        /* Prevent scrolling during loading */
+        html.loading,
+        body.loading {
+            overflow: hidden !important;
+            height: 100% !important;
+        }
+        
+        html.loading body {
+            position: fixed !important;
+            width: 100% !important;
+        }
+        
+        /* Scroll Animation Styles */
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .scroll-animate.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .scroll-animate-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .scroll-animate-left.animate {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .scroll-animate-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .scroll-animate-right.animate {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .scroll-animate-scale {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .scroll-animate-scale.animate {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .scroll-animate-fade {
+            opacity: 0;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .scroll-animate-fade.animate {
+            opacity: 1;
+        }
+        
+        /* Staggered animations */
+        .scroll-animate-stagger {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .scroll-animate-stagger.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .scroll-animate-stagger:nth-child(1) { transition-delay: 0.1s; }
+        .scroll-animate-stagger:nth-child(2) { transition-delay: 0.2s; }
+        .scroll-animate-stagger:nth-child(3) { transition-delay: 0.3s; }
+        .scroll-animate-stagger:nth-child(4) { transition-delay: 0.4s; }
+        .scroll-animate-stagger:nth-child(5) { transition-delay: 0.5s; }
+        .scroll-animate-stagger:nth-child(6) { transition-delay: 0.6s; }
+        
+        /* Card hover enhancements for scroll animations */
+        .card.scroll-animate {
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s ease;
+        }
+        
+        .card.scroll-animate:hover {
+            transform: translateY(-8px) scale(1.02);
+        }
+        
+        /* Section animations */
+        section {
+            position: relative;
+        }
+        
+        .section-animate {
+            opacity: 0;
+            transform: translateY(60px);
+            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .section-animate.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Mobile optimizations for scroll animations */
+        @media (max-width: 768px) {
+            .scroll-animate,
+            .scroll-animate-left,
+            .scroll-animate-right,
+            .scroll-animate-scale,
+            .section-animate {
+                transition-duration: 0.6s;
+            }
+            
+            .scroll-animate {
+                transform: translateY(30px);
+            }
+            
+            .scroll-animate-left {
+                transform: translateX(-30px);
+            }
+            
+            .scroll-animate-right {
+                transform: translateX(30px);
+            }
+            
+            .section-animate {
+                transform: translateY(40px);
+            }
+        }
+        
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            .scroll-animate,
+            .scroll-animate-left,
+            .scroll-animate-right,
+            .scroll-animate-scale,
+            .scroll-animate-fade,
+            .scroll-animate-stagger,
+            .section-animate {
+                transition: none !important;
+                opacity: 1 !important;
+                transform: none !important;
+            }
         }
 
         /* Enhanced Modern Navbar with Glassmorphism */
@@ -703,7 +1082,39 @@
     </style>
 </head>
 
-<body>
+<body class="loading">
+    <!-- Enhanced Page Loader -->
+    <div class="page-loader" id="pageLoader">
+        <!-- Floating Particles -->
+        <div class="loader-particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="loader-content">
+            <div class="loader-logo">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <div class="loader-text">SMK PGRI 2 PONOROGO</div>
+            <div class="loader-progress">
+                <div class="loader-progress-bar"></div>
+            </div>
+            <div class="loader-dots">
+                <div class="loader-dot"></div>
+                <div class="loader-dot"></div>
+                <div class="loader-dot"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Enhanced Modern Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid px-4">
@@ -1004,6 +1415,236 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
+
+    <!-- Enhanced Loading Animation Script -->
+    <script>
+        // Enhanced loading animation control
+        window.addEventListener('load', function() {
+            // Wait for progress bar animation to complete
+            setTimeout(function() {
+                // Remove loading classes
+                document.documentElement.classList.remove('loading');
+                document.body.classList.remove('loading');
+                
+                // Hide loader with enhanced fade
+                const pageLoader = document.getElementById('pageLoader');
+                if (pageLoader) {
+                    pageLoader.classList.add('fade-out');
+                    
+                    // Remove from DOM after fade animation
+                    setTimeout(function() {
+                        if (pageLoader.parentNode) {
+                            pageLoader.parentNode.removeChild(pageLoader);
+                        }
+                    }, 800);
+                }
+            }, 2500); // Show loading for 2.5 seconds to see full animation
+        });
+        
+        // Scroll Animation System
+        function initScrollAnimations() {
+            // Create intersection observer for scroll animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const scrollObserver = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate');
+                        // Don't unobserve to allow re-animation if needed
+                    }
+                });
+            }, observerOptions);
+            
+            // Auto-apply scroll animations to common elements
+            autoApplyScrollAnimations(scrollObserver);
+            
+            // Observe existing elements with scroll animation classes
+            const existingAnimatedElements = document.querySelectorAll([
+                '.scroll-animate',
+                '.scroll-animate-left', 
+                '.scroll-animate-right',
+                '.scroll-animate-scale',
+                '.scroll-animate-fade',
+                '.scroll-animate-stagger',
+                '.section-animate'
+            ].join(', '));
+            
+            existingAnimatedElements.forEach(el => {
+                scrollObserver.observe(el);
+            });
+        }
+        
+        function autoApplyScrollAnimations(observer) {
+            // Apply animations to sections
+            const sections = document.querySelectorAll('section');
+            sections.forEach((section, index) => {
+                if (!section.classList.contains('scroll-animate') && 
+                    !section.classList.contains('section-animate')) {
+                    section.classList.add('section-animate');
+                    observer.observe(section);
+                }
+            });
+            
+            // Apply animations to cards with stagger effect
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                if (!card.classList.contains('scroll-animate')) {
+                    if (index % 3 === 0) {
+                        card.classList.add('scroll-animate-left');
+                    } else if (index % 3 === 1) {
+                        card.classList.add('scroll-animate');
+                    } else {
+                        card.classList.add('scroll-animate-right');
+                    }
+                    observer.observe(card);
+                }
+            });
+            
+            // Apply animations to headings
+            const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+            headings.forEach((heading, index) => {
+                if (!heading.classList.contains('scroll-animate')) {
+                    heading.classList.add('scroll-animate-fade');
+                    observer.observe(heading);
+                }
+            });
+            
+            // Apply animations to paragraphs
+            const paragraphs = document.querySelectorAll('p');
+            paragraphs.forEach((p, index) => {
+                if (!p.classList.contains('scroll-animate') && 
+                    p.textContent.trim().length > 50) { // Only animate longer paragraphs
+                    p.classList.add('scroll-animate');
+                    observer.observe(p);
+                }
+            });
+            
+            // Apply animations to images
+            const images = document.querySelectorAll('img');
+            images.forEach((img, index) => {
+                if (!img.classList.contains('scroll-animate')) {
+                    img.classList.add('scroll-animate-scale');
+                    observer.observe(img);
+                }
+            });
+            
+            // Apply animations to buttons
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach((btn, index) => {
+                if (!btn.classList.contains('scroll-animate')) {
+                    btn.classList.add('scroll-animate');
+                    observer.observe(btn);
+                }
+            });
+            
+            // Apply staggered animations to list items
+            const listContainers = document.querySelectorAll('ul, ol');
+            listContainers.forEach(container => {
+                const listItems = container.querySelectorAll('li');
+                if (listItems.length > 1) {
+                    listItems.forEach((item, index) => {
+                        if (!item.classList.contains('scroll-animate')) {
+                            item.classList.add('scroll-animate-stagger');
+                            observer.observe(item);
+                        }
+                    });
+                }
+            });
+            
+            // Apply animations to form elements
+            const formGroups = document.querySelectorAll('.form-group, .mb-3, .form-floating');
+            formGroups.forEach((group, index) => {
+                if (!group.classList.contains('scroll-animate')) {
+                    group.classList.add('scroll-animate');
+                    observer.observe(group);
+                }
+            });
+            
+            // Apply animations to alert/notification elements
+            const alerts = document.querySelectorAll('.alert, .notification, .toast');
+            alerts.forEach((alert, index) => {
+                if (!alert.classList.contains('scroll-animate')) {
+                    alert.classList.add('scroll-animate-fade');
+                    observer.observe(alert);
+                }
+            });
+            
+            // Apply animations to table rows
+            const tableRows = document.querySelectorAll('tbody tr');
+            tableRows.forEach((row, index) => {
+                if (!row.classList.contains('scroll-animate')) {
+                    row.classList.add('scroll-animate-stagger');
+                    observer.observe(row);
+                }
+            });
+        }
+        
+        // Function to manually add scroll animation to elements
+        function addScrollAnimation(element, animationType = 'scroll-animate') {
+            if (element && !element.classList.contains(animationType)) {
+                element.classList.add(animationType);
+                
+                // Create observer for this element
+                const observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('animate');
+                        }
+                    });
+                }, {
+                    threshold: 0.1,
+                    rootMargin: '0px 0px -50px 0px'
+                });
+                
+                observer.observe(element);
+            }
+        }
+        
+        // Function to trigger animations on dynamically loaded content
+        function refreshScrollAnimations() {
+            initScrollAnimations();
+        }
+        
+        // Expose functions globally for use in other scripts
+        window.addScrollAnimation = addScrollAnimation;
+        window.refreshScrollAnimations = refreshScrollAnimations;
+        
+        // Initialize scroll animations after loading
+        initScrollAnimations();
+        
+        // Emergency fallback - ensure page loads
+        setTimeout(function() {
+            document.documentElement.classList.remove('loading');
+            document.body.classList.remove('loading');
+            
+            const pageLoader = document.getElementById('pageLoader');
+            if (pageLoader && pageLoader.parentNode) {
+                pageLoader.parentNode.removeChild(pageLoader);
+            }
+        }, 4000); // Maximum 4 seconds
+        
+        // Add some interactive feedback
+        document.addEventListener('DOMContentLoaded', function() {
+            const pageLoader = document.getElementById('pageLoader');
+            if (pageLoader) {
+                // Add click to skip (optional)
+                pageLoader.addEventListener('click', function() {
+                    document.documentElement.classList.remove('loading');
+                    document.body.classList.remove('loading');
+                    pageLoader.classList.add('fade-out');
+                    
+                    setTimeout(function() {
+                        if (pageLoader.parentNode) {
+                            pageLoader.parentNode.removeChild(pageLoader);
+                        }
+                    }, 800);
+                });
+            }
+        });
+    </script>
 
     <!-- SAFE and WORKING Navbar Script -->
     <script>

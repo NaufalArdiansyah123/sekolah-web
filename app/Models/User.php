@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
@@ -23,6 +24,8 @@ class User extends Authenticatable
         'bio',
         'avatar',
         'status',
+        'last_login_at',
+        'password_changed_at',
         'nis',
         'birth_date',
         'birth_place',
@@ -52,6 +55,8 @@ class User extends Authenticatable
         'enrollment_date' => 'date',
         'approved_at' => 'datetime',
         'rejected_at' => 'datetime',
+        'last_login_at' => 'datetime',
+        'password_changed_at' => 'datetime',
     ];
 
     public function posts()
@@ -95,6 +100,11 @@ class User extends Authenticatable
     public function extracurriculars()
     {
         return $this->hasMany(Extracurricular::class);
+    }
+
+    public function activities()
+    {
+        return $this->hasMany(UserActivity::class);
     }
 
     public function scopeActive($query)
@@ -165,5 +175,29 @@ class User extends Authenticatable
     public function isRejected()
     {
         return $this->status === 'rejected';
+    }
+
+    /**
+     * Get the user's avatar URL
+     */
+    public function getAvatarUrlAttribute()
+    {
+        if ($this->avatar) {
+            return Storage::url($this->avatar);
+        }
+        
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&color=7F9CF5&background=EBF4FF&size=120';
+    }
+
+    /**
+     * Get the user's small avatar URL
+     */
+    public function getSmallAvatarUrlAttribute()
+    {
+        if ($this->avatar) {
+            return Storage::url($this->avatar);
+        }
+        
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&color=7F9CF5&background=EBF4FF&size=40';
     }
 }

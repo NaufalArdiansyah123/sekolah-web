@@ -15,6 +15,14 @@
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {}
+            }
+        }
+    </script>
     
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -30,6 +38,9 @@
 
     <!-- Scripts -->
     <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
+    
+    <!-- Avatar Helper Script -->
+    <script src="<?php echo e(asset('js/avatar-helper.js')); ?>"></script>
     
     <!-- Enhanced Styles for Dark Mode & Mobile -->
     <style>
@@ -91,13 +102,6 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
         
-        /* Main content area */
-        .main-content {
-            background-color: var(--bg-secondary);
-            color: var(--text-primary);
-            transition: all 0.3s ease;
-        }
-        
         /* Navigation bar */
         .top-nav {
             background-color: var(--bg-primary);
@@ -106,13 +110,7 @@
             transition: all 0.3s ease;
         }
         
-        /* Cards and containers */
-        .content-card {
-            background-color: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            box-shadow: 0 1px 3px var(--shadow-color);
-            transition: all 0.3s ease;
-        }
+        /* Cards and containers - removed .content-card to prevent conflicts */
         
         /* Sidebar */
         .sidebar {
@@ -231,7 +229,7 @@
             <?php echo $__env->make('layouts.student.navbar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
             <!-- Page Content -->
-            <main class="flex-1 overflow-x-hidden overflow-y-auto main-content">
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 dark:bg-gray-900">
                 <div class="container mx-auto px-6 py-8">
                     <!-- Alerts -->
                     <?php echo $__env->make('components.alerts', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
@@ -250,9 +248,7 @@
                     <?php endif; ?>
 
                     <!-- Main Content -->
-                    <div class="content-card rounded-lg p-6">
-                        <?php echo $__env->yieldContent('content'); ?>
-                    </div>
+                    <?php echo $__env->yieldContent('content'); ?>
                 </div>
             </main>
         </div>
@@ -271,8 +267,7 @@
                  x-transition:leave="transition ease-in duration-200"
                  x-transition:leave-start="opacity-100 transform translate-x-0"
                  x-transition:leave-end="opacity-0 transform translate-x-full"
-                 class="max-w-sm w-full shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5"
-                 :class="darkMode ? 'bg-gray-800' : 'bg-white'">
+                 class="max-w-sm w-full bg-white dark:bg-gray-800 shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 dark:ring-white dark:ring-opacity-10">
                 <div class="p-4">
                     <div class="flex items-start">
                         <div class="flex-shrink-0">
@@ -284,13 +279,12 @@
                             </svg>
                         </div>
                         <div class="ml-3 w-0 flex-1 pt-0.5">
-                            <p class="text-sm font-medium" :class="darkMode ? 'text-gray-100' : 'text-gray-900'" x-text="toast.title"></p>
-                            <p class="mt-1 text-sm" :class="darkMode ? 'text-gray-300' : 'text-gray-500'" x-text="toast.message"></p>
+                            <p class="text-sm font-medium text-gray-900 dark:text-gray-100" x-text="toast.title"></p>
+                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" x-text="toast.message"></p>
                         </div>
                         <div class="ml-4 flex-shrink-0 flex">
                             <button @click="toasts.splice(toasts.indexOf(toast), 1)"
-                                    class="rounded-md inline-flex transition-colors duration-200"
-                                    :class="darkMode ? 'text-gray-400 hover:text-gray-300' : 'text-gray-400 hover:text-gray-500'">
+                                    class="rounded-md inline-flex text-gray-400 hover:text-gray-500 dark:text-gray-400 dark:hover:text-gray-300 transition-colors duration-200">
                                 <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
                                 </svg>
@@ -323,10 +317,20 @@
                 toggleDarkMode() {
                     this.darkMode = !this.darkMode;
                     
+                    // Force immediate theme application
+                    this.applyTheme();
+                    
                     // Dispatch event for other components
                     window.dispatchEvent(new CustomEvent('theme-changed', { 
                         detail: { darkMode: this.darkMode } 
                     }));
+                    
+                    // Force a repaint to ensure styles are applied correctly
+                    setTimeout(() => {
+                        document.body.style.display = 'none';
+                        document.body.offsetHeight; // Trigger reflow
+                        document.body.style.display = '';
+                    }, 10);
                 },
                 
                 applyTheme() {
@@ -374,9 +378,29 @@
             const savedTheme = localStorage.getItem('darkMode');
             const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             
-            if (savedTheme === 'true' || (savedTheme === null && systemPrefersDark)) {
+            // Determine if dark mode should be enabled
+            const shouldUseDarkMode = savedTheme === 'true' || (savedTheme === null && systemPrefersDark);
+            
+            // Apply theme immediately
+            if (shouldUseDarkMode) {
                 document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
             }
+            
+            // Ensure localStorage is set correctly
+            localStorage.setItem('darkMode', shouldUseDarkMode.toString());
+            
+            // Listen for system theme changes
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+                if (localStorage.getItem('darkMode') === null) {
+                    if (e.matches) {
+                        document.documentElement.classList.add('dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                    }
+                }
+            });
         })();
     </script>
 </body>

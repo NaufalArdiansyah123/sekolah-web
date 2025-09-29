@@ -233,9 +233,8 @@ class PublicController extends Controller
 
     public function news(Request $request)
     {
-        $query = BlogPost::with('user')
-                         ->published()
-                         ->latest('published_at');
+        $query = Announcement::published()
+                            ->latest('created_at');
 
         // Search filter
         if ($request->filled('search')) {
@@ -244,64 +243,83 @@ class PublicController extends Controller
 
         // Category filter
         if ($request->filled('category')) {
-            $query->byCategory($request->category);
+            $query->where('kategori', $request->category);
         }
 
-        $blogs = $query->paginate(12);
+        // Priority filter
+        if ($request->filled('priority')) {
+            $query->where('prioritas', $request->priority);
+        }
+
+        $announcements = $query->paginate(12);
         
         // Get categories for filter
-        $categories = BlogPost::published()
-                             ->distinct()
-                             ->pluck('category')
-                             ->filter()
-                             ->sort();
+        $categories = Announcement::published()
+                                 ->distinct()
+                                 ->pluck('kategori')
+                                 ->filter()
+                                 ->sort();
 
-        // Get latest blogs for sidebar
-        $latestBlogs = BlogPost::published()
-                              ->latest('published_at')
-                              ->take(5)
-                              ->get();
+        // Get priorities for filter
+        $priorities = Announcement::published()
+                                 ->distinct()
+                                 ->pluck('prioritas')
+                                 ->filter()
+                                 ->sort();
+
+        // Get latest announcements for sidebar
+        $latestAnnouncements = Announcement::published()
+                                          ->latest('created_at')
+                                          ->take(5)
+                                          ->get();
 
         return view('public.news.index', [
             'title' => 'Berita Terkini',
-            'blogs' => $blogs,
+            'announcements' => $announcements,
             'categories' => $categories,
-            'latestBlogs' => $latestBlogs
+            'priorities' => $priorities,
+            'latestAnnouncements' => $latestAnnouncements
         ]);
     }
 
-    public function newsDetail($id)
+    public function newsDetail($identifier)
     {
-        $blog = BlogPost::with('user')
-                       ->published()
-                       ->findOrFail($id);
+        // Try to find by slug first, then by ID
+        $announcement = Announcement::published()
+                                   ->where('slug', $identifier)
+                                   ->first();
         
-        // Load the user relationship
-        $blog->load('user');
+        if (!$announcement) {
+            $announcement = Announcement::published()
+                                       ->findOrFail($identifier);
+        }
         
-        // Get related blogs
-        $relatedBlogs = BlogPost::published()
-                               ->where('id', '!=', $blog->id)
-                               ->where('category', $blog->category)
-                               ->latest('published_at')
-                               ->take(4)
-                               ->get();
+        // Increment view count
+        $announcement->incrementViews();
         
-        // If not enough related blogs, get more from other categories
-        if ($relatedBlogs->count() < 4) {
-            $additionalBlogs = BlogPost::published()
-                                      ->where('id', '!=', $blog->id)
-                                      ->whereNotIn('id', $relatedBlogs->pluck('id'))
-                                      ->latest('published_at')
-                                      ->take(4 - $relatedBlogs->count())
-                                      ->get();
-            $relatedBlogs = $relatedBlogs->merge($additionalBlogs);
+        // Get related announcements
+        $relatedAnnouncements = Announcement::published()
+                                           ->where('id', '!=', $announcement->id)
+                                           ->where('kategori', $announcement->kategori)
+                                           ->latest('created_at')
+                                           ->take(4)
+                                           ->get();
+        
+        // If not enough related announcements, get more from other categories
+        if ($relatedAnnouncements->count() < 4) {
+            $additionalAnnouncements = Announcement::published()
+                                                  ->where('id', '!=', $announcement->id)
+                                                  ->whereNotIn('id', $relatedAnnouncements->pluck('id'))
+                                                  ->latest('created_at')
+                                                  ->take(4 - $relatedAnnouncements->count())
+                                                  ->get();
+            $relatedAnnouncements = $relatedAnnouncements->merge($additionalAnnouncements);
         }
 
         return view('public.news.show', [
-            'title' => $blog->title,
-            'blog' => $blog,
-            'relatedBlogs' => $relatedBlogs
+            'title' => $announcement->judul,
+            'announcement' => $announcement,
+            'relatedAnnouncements' => $relatedAnnouncements
         ]);
     }
 

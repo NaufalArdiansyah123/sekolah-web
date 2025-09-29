@@ -932,10 +932,10 @@
                     <i class="fas fa-trophy fa-3x"></i>
                 </div>
                 <div class="slide-content">
-                    <div class="slide-subtitle">{{ $slide->subtitle ?? 'DISIPLIN ADALAH KUNCI SUKSES' }}</div>
-                    <h1>{{ $slide->title ?? 'DISIPLIN' }}</h1>
-                    <p>{{ $slide->description ?? 'Membangun karakter siswa yang bertanggung jawab dan berdisiplin tinggi untuk meraih prestasi terbaik dalam kehidupan' }}</p>
-                    <div class="slide-buttons">
+                    <div class="slide-subtitle fade-in-up">{{ $slide->subtitle ?? 'DISIPLIN ADALAH KUNCI SUKSES' }}</div>
+                    <h1 class="fade-in-up">{{ $slide->title ?? 'DISIPLIN' }}</h1>
+                    <p class="fade-in-up">{{ $slide->description ?? 'Membangun karakter siswa yang bertanggung jawab dan berdisiplin tinggi untuk meraih prestasi terbaik dalam kehidupan' }}</p>
+                    <div class="slide-buttons fade-in-up">
                         <a href="{{ route('about.profile') }}" class="btn-slide btn-primary-slide">
                             <i class="fas fa-info-circle"></i>
                             Tentang Kami
@@ -963,10 +963,10 @@
                 <i class="fas fa-trophy fa-3x"></i>
             </div>
             <div class="slide-content">
-                <div class="slide-subtitle">DISIPLIN ADALAH KUNCI SUKSES</div>
-                <h1>DISIPLIN</h1>
-                <p>Membangun karakter siswa yang bertanggung jawab dan berdisiplin tinggi untuk meraih prestasi terbaik dalam kehidupan</p>
-                <div class="slide-buttons">
+                <div class="slide-subtitle fade-in-up">DISIPLIN ADALAH KUNCI SUKSES</div>
+                <h1 class="fade-in-up">DISIPLIN</h1>
+                <p class="fade-in-up">Membangun karakter siswa yang bertanggung jawab dan berdisiplin tinggi untuk meraih prestasi terbaik dalam kehidupan</p>
+                <div class="slide-buttons fade-in-up">
                     <a href="#" class="btn-slide btn-primary-slide">
                         <i class="fas fa-info-circle"></i>
                         Tentang Kami
@@ -1018,8 +1018,8 @@
 <section class="stats-section">
     <div class="container">
         <div class="section-title">
-            <h2>SMK PGRI 2 PONOROGO</h2>
-            <p>Pencapaian dan prestasi yang membanggakan</p>
+            <h2 class="fade-in-up">SMK PGRI 2 PONOROGO</h2>
+            <p class="fade-in-up">Pencapaian dan prestasi yang membanggakan</p>
         </div>
         <div class="row text-center g-4">
             <!-- Card 1 -->
@@ -1085,13 +1085,13 @@
             <!-- Berita Terbaru -->
             <div class="col-md-8 mb-4">
                 <div class="section-title text-start">
-                    <h2><i class="fas fa-newspaper me-3" style="color: var(--gold-color);"></i>Berita Terbaru</h2>
-                    <p>Informasi terkini seputar kegiatan dan prestasi sekolah</p>
+                    <h2 class="fade-in-left"><i class="fas fa-newspaper me-3" style="color: var(--gold-color);"></i>Berita Terbaru</h2>
+                    <p class="fade-in-left">Informasi terkini seputar kegiatan dan prestasi sekolah</p>
                 </div>
 
                 @if($latestNews->count() > 0)
                     @foreach($latestNews as $news)
-                        <div class="news-card">
+                        <div class="news-card fade-in-left">
                             <div class="row g-0">
                                 <div class="col-md-4">
                                     @if($news->featured_image)
@@ -1150,7 +1150,7 @@
 
             <!-- Sidebar -->
             <div class="col-md-4">
-                <div class="sidebar-card">
+                <div class="sidebar-card fade-in-right">
                     <div class="card-header">
                         <h5 class="mb-0"><i class="fas fa-bullhorn me-2"></i>Pengumuman Penting</h5>
                     </div>
@@ -1195,7 +1195,7 @@
                     </div>
                 </div>
                 
-                <div class="sidebar-card">
+                <div class="sidebar-card fade-in-right">
                     <div class="card-header bg-info text-white">
                         <h5 class="mb-0"><i class="fas fa-calendar me-2"></i>Agenda Kegiatan</h5>
                     </div>
@@ -1239,7 +1239,7 @@
                 </div>
 
                 <!-- Quick Links -->
-                <div class="sidebar-card">
+                <div class="sidebar-card fade-in-right">
                     <div class="card-header bg-secondary text-white">
                         <h5 class="mb-0"><i class="fas fa-link me-2"></i>Quick Links</h5>
                     </div>
@@ -1273,8 +1273,8 @@
 <section class="features-section">
     <div class="container">
         <div class="section-title">
-            <h2>Fitur Website Sekolah</h2>
-            <p>Berbagai fitur canggih yang telah tersedia di website sekolah untuk mendukung aktivitas akademik dan administrasi</p>
+            <h2 class="fade-in-up">Fitur Website Sekolah</h2>
+            <p class="fade-in-up">Berbagai fitur canggih yang telah tersedia di website sekolah untuk mendukung aktivitas akademik dan administrasi</p>
         </div>
         <div class="row">
             <div class="col-md-4 mb-4">

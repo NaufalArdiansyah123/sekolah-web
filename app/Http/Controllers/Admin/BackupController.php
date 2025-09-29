@@ -16,12 +16,61 @@ class BackupController extends Controller
 
     public function __construct()
     {
-        // Use storage path for better compatibility
-        $this->backupPath = storage_path('app/backups');
+        try {
+            // Use Documents/backup-code-sekolah for backup storage
+            $documentsPath = $this->getDocumentsPath();
+            $this->backupPath = $documentsPath . DIRECTORY_SEPARATOR . 'backup-code-sekolah';
+            
+            // Create backup directory if it doesn't exist
+            if (!File::exists($this->backupPath)) {
+                if (!File::makeDirectory($this->backupPath, 0755, true)) {
+                    throw new \Exception('Cannot create backup directory: ' . $this->backupPath);
+                }
+            }
+            
+            // Verify directory is writable
+            if (!is_writable($this->backupPath)) {
+                Log::warning('Backup directory is not writable: ' . $this->backupPath);
+            }
+            
+        } catch (\Exception $e) {
+            Log::error('Backup directory initialization failed: ' . $e->getMessage());
+            
+            // Fallback to storage path if Documents path fails
+            $this->backupPath = storage_path('app/backups');
+            
+            if (!File::exists($this->backupPath)) {
+                File::makeDirectory($this->backupPath, 0755, true);
+            }
+            
+            Log::info('Using fallback backup path: ' . $this->backupPath);
+        }
+    }
+    
+    /**
+     * Get the Documents folder path based on operating system
+     */
+    private function getDocumentsPath()
+    {
+        // Detect operating system
+        $os = strtoupper(substr(PHP_OS, 0, 3));
         
-        // Create backup directory if it doesn't exist
-        if (!File::exists($this->backupPath)) {
-            File::makeDirectory($this->backupPath, 0755, true);
+        if ($os === 'WIN') {
+            // Windows: Use USERPROFILE environment variable
+            $userProfile = getenv('USERPROFILE');
+            if ($userProfile) {
+                return $userProfile . DIRECTORY_SEPARATOR . 'Documents';
+            }
+            // Fallback for Windows
+            return 'C:' . DIRECTORY_SEPARATOR . 'Users' . DIRECTORY_SEPARATOR . get_current_user() . DIRECTORY_SEPARATOR . 'Documents';
+        } else {
+            // Linux/Mac: Use HOME environment variable
+            $home = getenv('HOME');
+            if ($home) {
+                return $home . DIRECTORY_SEPARATOR . 'Documents';
+            }
+            // Fallback for Unix-like systems
+            return '/home/' . get_current_user() . '/Documents';
         }
     }
 
@@ -32,11 +81,59 @@ class BackupController extends Controller
     {
         $backups = $this->getBackupList();
         
+        // Check if backup directory is writable
+        $isWritable = is_writable($this->backupPath);
+        $pathInfo = $this->getBackupPathInfo();
+        
         return view('admin.settings.backup', [
             'title' => 'Backup Management',
             'backups' => $backups,
-            'backupPath' => $this->backupPath
+            'backupPath' => $this->backupPath,
+            'backupPathDisplay' => $pathInfo['display'],
+            'isWritable' => $isWritable,
+            'pathExists' => File::exists($this->backupPath),
+            'diskSpace' => $this->getDiskSpace()
         ]);
+    }
+    
+    /**
+     * Get backup path information for display
+     */
+    private function getBackupPathInfo()
+    {
+        $os = strtoupper(substr(PHP_OS, 0, 3));
+        
+        if ($os === 'WIN') {
+            // Windows path display
+            $displayPath = str_replace('/', '\\', $this->backupPath);
+            return [
+                'display' => $displayPath,
+                'type' => 'Windows'
+            ];
+        } else {
+            // Unix-like path display
+            return [
+                'display' => $this->backupPath,
+                'type' => 'Unix'
+            ];
+        }
+    }
+    
+    /**
+     * Get available disk space
+     */
+    private function getDiskSpace()
+    {
+        try {
+            $bytes = disk_free_space($this->backupPath);
+            if ($bytes !== false) {
+                return $this->formatBytes($bytes);
+            }
+        } catch (\Exception $e) {
+            Log::warning('Could not get disk space: ' . $e->getMessage());
+        }
+        
+        return 'Unknown';
     }
 
     /**

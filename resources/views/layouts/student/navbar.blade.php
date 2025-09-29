@@ -1,6 +1,62 @@
 <?php
 // resources/views/layouts/student/navbar.blade.php - Student Navigation Bar
 ?>
+<style>
+/* Ensure dark mode toggle is always visible */
+#dark-mode-toggle {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    min-height: 40px;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+#dark-mode-toggle svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+/* Dark mode toggle icon transitions */
+#dark-mode-toggle {
+    transition: all 0.3s ease;
+}
+
+#dark-mode-toggle:hover {
+    transform: scale(1.05);
+}
+
+#sun-icon, #moon-icon {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#sun-icon {
+    color: #f59e0b; /* amber-500 */
+}
+
+#moon-icon {
+    color: #6366f1; /* indigo-500 */
+}
+
+/* Icon animation on toggle */
+.icon-fade-in {
+    animation: fadeInRotate 0.3s ease-in-out;
+}
+
+@keyframes fadeInRotate {
+    0% {
+        opacity: 0;
+        transform: rotate(-90deg) scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: rotate(0deg) scale(1);
+    }
+}
+</style>
+
 <header class="w-full">
     <div class="relative z-10 flex-shrink-0 h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm flex">
         <div class="flex-1 flex justify-between px-4 sm:px-6">
@@ -23,15 +79,21 @@
             <!-- Right Side -->
             <div class="flex items-center space-x-4">
                 <!-- Dark Mode Toggle -->
-                <button @click="toggleDarkMode()" 
-                        class="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all duration-200"
-                        title="Toggle Dark Mode">
-                    <svg x-show="!darkMode" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                <button onclick="toggleDarkModeGlobal()" 
+                        class="relative bg-gray-100 dark:bg-gray-700 p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 hover:text-gray-700 dark:hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-all duration-200 flex items-center justify-center group"
+                        title="Toggle Dark Mode"
+                        id="dark-mode-toggle"
+                        style="min-width: 40px; min-height: 40px; display: flex !important;">
+                    <!-- Sun Icon (Light Mode) -->
+                    <svg id="sun-icon" class="h-5 w-5 text-amber-500 group-hover:text-amber-600 transition-colors duration-200" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
                     </svg>
-                    <svg x-show="darkMode" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                    <!-- Moon Icon (Dark Mode) -->
+                    <svg id="moon-icon" class="h-5 w-5 text-indigo-500 group-hover:text-indigo-400 transition-colors duration-200" fill="currentColor" viewBox="0 0 20 20" style="display: none;">
+                        <path d="M17.293 13.293A8 8 0 116.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
                     </svg>
+                    <!-- Subtle glow effect -->
+                    <div class="absolute inset-0 rounded-lg bg-gradient-to-r from-amber-500/20 to-orange-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"></div>
                 </button>
 
                 <!-- Notifications -->
@@ -163,8 +225,9 @@
                     <button @click="userOpen = !userOpen" 
                             class="max-w-xs bg-white dark:bg-gray-800 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
                         <img class="h-8 w-8 rounded-full" 
-                             src="{{ auth()->user()->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&color=10B981&background=D1FAE5' }}" 
-                             alt="{{ auth()->user()->name }}">
+                             src="{{ auth()->user()->avatar_url }}" 
+                             alt="{{ auth()->user()->name }}"
+                             onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&color=10B981&background=D1FAE5&size=32'">
                         <span class="hidden md:block ml-3 text-gray-700 dark:text-gray-300 text-sm font-medium">{{ auth()->user()->name }}</span>
                         <svg class="hidden md:block ml-2 h-4 w-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
@@ -189,12 +252,19 @@
                             </svg>
                             Dashboard
                         </a>
-                        <a href="#" 
+                        <a href="{{ route('student.profile') }}" 
                            class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                             <svg class="w-4 h-4 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                             </svg>
                             Profile Saya
+                        </a>
+                        <a href="{{ route('home') }}" 
+                           class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <svg class="w-4 h-4 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                            Home
                         </a>
                         <div class="border-t border-gray-100 dark:border-gray-700"></div>
                         <form method="POST" action="{{ route('logout') }}">
@@ -215,6 +285,183 @@
 </header>
 
 <script>
+// Notification dropdown function
+function notificationDropdown() {
+    return {
+        notificationsOpen: false,
+        notificationCount: 0,
+        notifications: [],
+        
+        init() {
+            // Initialize notifications
+            this.loadNotifications();
+        },
+        
+        toggleNotifications() {
+            this.notificationsOpen = !this.notificationsOpen;
+        },
+        
+        loadNotifications() {
+            // Mock notifications - replace with actual API call
+            this.notifications = [];
+            this.notificationCount = this.notifications.length;
+        },
+        
+        getColorClass(color) {
+            const colorMap = {
+                'blue': 'bg-blue-100 text-blue-600',
+                'green': 'bg-green-100 text-green-600',
+                'yellow': 'bg-yellow-100 text-yellow-600',
+                'red': 'bg-red-100 text-red-600',
+                'purple': 'bg-purple-100 text-purple-600'
+            };
+            return colorMap[color] || 'bg-gray-100 text-gray-600';
+        }
+    }
+}
+
+// Global dark mode toggle function with smooth transitions
+function toggleDarkModeGlobal() {
+    const html = document.documentElement;
+    const isDark = html.classList.contains('dark');
+    const sunIcon = document.getElementById('sun-icon');
+    const moonIcon = document.getElementById('moon-icon');
+    const toggleButton = document.getElementById('dark-mode-toggle');
+    
+    // Add button press animation
+    if (toggleButton) {
+        toggleButton.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            toggleButton.style.transform = '';
+        }, 150);
+    }
+    
+    // Update tooltip text
+    function updateTooltip() {
+        if (toggleButton) {
+            toggleButton.title = isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode';
+        }
+    }
+    
+    if (isDark) {
+        // Switch to light mode
+        html.classList.remove('dark');
+        localStorage.setItem('darkMode', 'false');
+        
+        // Animate icon transition
+        if (moonIcon) {
+            moonIcon.style.opacity = '0';
+            moonIcon.style.transform = 'rotate(90deg) scale(0.8)';
+            setTimeout(() => {
+                moonIcon.style.display = 'none';
+                if (sunIcon) {
+                    sunIcon.style.display = 'block';
+                    sunIcon.style.opacity = '0';
+                    sunIcon.style.transform = 'rotate(-90deg) scale(0.8)';
+                    sunIcon.classList.add('icon-fade-in');
+                    
+                    // Trigger reflow and animate
+                    sunIcon.offsetHeight;
+                    sunIcon.style.opacity = '1';
+                    sunIcon.style.transform = 'rotate(0deg) scale(1)';
+                    
+                    setTimeout(() => {
+                        sunIcon.classList.remove('icon-fade-in');
+                    }, 300);
+                }
+            }, 150);
+        }
+        
+        // Update tooltip for light mode
+        setTimeout(() => {
+            if (toggleButton) {
+                toggleButton.title = 'Switch to Dark Mode';
+            }
+        }, 200);
+    } else {
+        // Switch to dark mode
+        html.classList.add('dark');
+        localStorage.setItem('darkMode', 'true');
+        
+        // Animate icon transition
+        if (sunIcon) {
+            sunIcon.style.opacity = '0';
+            sunIcon.style.transform = 'rotate(-90deg) scale(0.8)';
+            setTimeout(() => {
+                sunIcon.style.display = 'none';
+                if (moonIcon) {
+                    moonIcon.style.display = 'block';
+                    moonIcon.style.opacity = '0';
+                    moonIcon.style.transform = 'rotate(90deg) scale(0.8)';
+                    moonIcon.classList.add('icon-fade-in');
+                    
+                    // Trigger reflow and animate
+                    moonIcon.offsetHeight;
+                    moonIcon.style.opacity = '1';
+                    moonIcon.style.transform = 'rotate(0deg) scale(1)';
+                    
+                    setTimeout(() => {
+                        moonIcon.classList.remove('icon-fade-in');
+                    }, 300);
+                }
+            }, 150);
+        }
+        
+        // Update tooltip for dark mode
+        setTimeout(() => {
+            if (toggleButton) {
+                toggleButton.title = 'Switch to Light Mode';
+            }
+        }, 200);
+    }
+    
+    // Dispatch event for other components
+    window.dispatchEvent(new CustomEvent('theme-changed', { 
+        detail: { darkMode: !isDark } 
+    }));
+}
+
+// Initialize dark mode icons on page load
+function initializeDarkModeIcons() {
+    const isDark = document.documentElement.classList.contains('dark');
+    const sunIcon = document.getElementById('sun-icon');
+    const moonIcon = document.getElementById('moon-icon');
+    const toggleButton = document.getElementById('dark-mode-toggle');
+    
+    if (isDark) {
+        // Dark mode - show moon icon
+        if (sunIcon) {
+            sunIcon.style.display = 'none';
+            sunIcon.style.opacity = '0';
+        }
+        if (moonIcon) {
+            moonIcon.style.display = 'block';
+            moonIcon.style.opacity = '1';
+            moonIcon.style.transform = 'rotate(0deg) scale(1)';
+        }
+        if (toggleButton) {
+            toggleButton.title = 'Switch to Light Mode';
+        }
+    } else {
+        // Light mode - show sun icon
+        if (sunIcon) {
+            sunIcon.style.display = 'block';
+            sunIcon.style.opacity = '1';
+            sunIcon.style.transform = 'rotate(0deg) scale(1)';
+        }
+        if (moonIcon) {
+            moonIcon.style.display = 'none';
+            moonIcon.style.opacity = '0';
+        }
+        if (toggleButton) {
+            toggleButton.title = 'Switch to Dark Mode';
+        }
+    }
+}
+
+// Initialize icons when DOM is loaded
+document.addEventListener('DOMContentLoaded', initializeDarkModeIcons);
+
 document.addEventListener('alpine:init', () => {
     // Simple dropdown handling for student navbar
     document.addEventListener('click', function(e) {

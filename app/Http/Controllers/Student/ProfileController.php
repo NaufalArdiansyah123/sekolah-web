@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\{User, Role, Permission, Setting, UserActivity};
+use App\Models\{User, UserActivity};
 use App\Http\Requests\{UpdateProfileRequest, UpdatePasswordRequest};
 use App\Traits\LogsActivity;
 use Illuminate\Support\Facades\{Hash, Storage, Auth, Session, DB};
@@ -15,17 +15,18 @@ use Carbon\Carbon;
 class ProfileController extends Controller
 {
     use LogsActivity;
+
     /**
-     * Display the user's profile page.
+     * Display the student's profile page.
      */
     public function index()
     {
         $user = auth()->user();
-        return view('admin.profile.index', compact('user'));
+        return view('student.profile.index', compact('user'));
     }
 
     /**
-     * Update the user's profile information.
+     * Update the student's profile information.
      */
     public function update(UpdateProfileRequest $request): JsonResponse
     {
@@ -55,7 +56,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * Update the user's password.
+     * Update the student's password.
      */
     public function updatePassword(UpdatePasswordRequest $request): JsonResponse
     {
@@ -91,7 +92,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * Upload and update the user's avatar.
+     * Upload and update the student's avatar.
      */
     public function updateAvatar(Request $request): JsonResponse
     {
@@ -161,7 +162,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * Get user's recent activity.
+     * Get student's recent activity.
      */
     public function getActivity(): JsonResponse
     {
@@ -177,13 +178,17 @@ class ProfileController extends Controller
                     'password_change' => 'fas fa-key',
                     'avatar_update' => 'fas fa-camera',
                     'security' => 'fas fa-shield-alt',
+                    'assignment' => 'fas fa-tasks',
+                    'quiz' => 'fas fa-question-circle',
+                    'attendance' => 'fas fa-calendar-check',
+                    'material' => 'fas fa-book',
                     default => 'fas fa-info-circle'
                 };
                 
                 return [
                     'type' => $activity->type,
                     'description' => $activity->description,
-                    'timestamp' => $activity->created_at->format('M d, Y \a\t H:i'),
+                    'timestamp' => $activity->created_at->format('M d, Y \\a\\t H:i'),
                     'icon' => $icon,
                     'ip_address' => $activity->ip_address,
                     'properties' => $activity->properties
@@ -203,7 +208,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * Get user's security settings.
+     * Get student's security settings.
      */
     public function getSecuritySettings(): JsonResponse
     {
@@ -214,7 +219,7 @@ class ProfileController extends Controller
                 'two_factor_enabled' => false, // Placeholder
                 'login_notifications' => true, // Placeholder
                 'password_last_changed' => $user->password_changed_at ? 
-                    \Carbon\Carbon::parse($user->password_changed_at)->diffForHumans() : 'Never',
+                    Carbon::parse($user->password_changed_at)->diffForHumans() : 'Never',
                 'active_sessions' => 1, // Placeholder
             ];
 
@@ -231,34 +236,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * Enable/disable two-factor authentication.
-     */
-    public function toggleTwoFactor(Request $request): JsonResponse
-    {
-        try {
-            // This is a placeholder for 2FA implementation
-            $enabled = $request->boolean('enabled');
-            
-            // Here you would implement actual 2FA logic
-            // For now, just return success
-            
-            return response()->json([
-                'success' => true,
-                'message' => $enabled ? 
-                    'Two-factor authentication enabled successfully!' : 
-                    'Two-factor authentication disabled successfully!',
-                'enabled' => $enabled
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to toggle two-factor authentication: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Download user data (GDPR compliance).
+     * Download student data (GDPR compliance).
      */
     public function downloadData(): JsonResponse
     {
@@ -278,6 +256,12 @@ class ProfileController extends Controller
                     'last_login' => $user->last_login_at,
                     'email_verified' => $user->email_verified_at ? true : false,
                     'status' => $user->status ?? 'active',
+                    'role' => 'student',
+                ],
+                'academic_data' => [
+                    'student_id' => $user->nis ?? null,
+                    'class' => $user->class ?? null,
+                    'enrollment_date' => $user->enrollment_date ?? null,
                 ],
                 'export_date' => now()->toISOString(),
             ];

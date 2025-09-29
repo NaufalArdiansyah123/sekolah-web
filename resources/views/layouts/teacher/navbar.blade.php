@@ -753,8 +753,9 @@
             <div class="user-dropdown">
                 <button onclick="toggleUserMenu()" class="user-btn" id="user-menu-btn">
                     <img class="user-avatar" 
-                         src="{{ auth()->user()->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&color=059669&background=D1FAE5' }}" 
-                         alt="{{ auth()->user()->name }}">
+                         src="{{ auth()->user()->avatar_url }}" 
+                         alt="{{ auth()->user()->name }}"
+                         onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&color=059669&background=D1FAE5&size=36'">
                     
                     <div class="user-info">
                         <div class="user-name">{{ auth()->user()->name }}</div>
@@ -773,7 +774,7 @@
                         <div class="user-menu-email">{{ auth()->user()->email }}</div>
                     </div>
                     
-                    <a href="{{ route('profile.edit') }}" class="user-menu-item">
+                    <a href="{{ route('teacher.profile') }}" class="user-menu-item">
                         <svg class="user-menu-icon icon" width="20" height="20" viewBox="0 0 24 24">
                             <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
                             <circle cx="12" cy="7" r="4"/>

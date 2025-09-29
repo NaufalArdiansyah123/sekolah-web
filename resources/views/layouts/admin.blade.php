@@ -31,6 +31,9 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
+    <!-- Avatar Helper Script -->
+    <script src="{{ asset('js/avatar-helper.js') }}"></script>
+    
     <!-- Enhanced Styles for Dark Mode & Mobile -->
     <style>
         [x-cloak] { display: none !important; }

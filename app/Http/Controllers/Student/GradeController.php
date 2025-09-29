@@ -118,57 +118,7 @@ class GradeController extends Controller
         ]);
     }
 
-    /**
-     * Generate and download report card
-     */
-    public function report(Request $request)
-    {
-        $studentId = Auth::id();
-        $semester = $request->get('semester', $this->getCurrentSemester());
-        $year = $request->get('year', now()->year);
 
-        // Get all grades for the semester
-        $grades = Grade::with(['assignment', 'quiz', 'teacher'])
-            ->where('student_id', $studentId)
-            ->where('semester', $semester)
-            ->where('year', $year)
-            ->get();
-
-        // Group by subject and calculate averages
-        $subjectGrades = [];
-        $gradesBySubject = $grades->groupBy('subject');
-        
-        foreach ($gradesBySubject as $subject => $subjectGradeList) {
-            $subjectGrades[$subject] = [
-                'grades' => $subjectGradeList,
-                'average' => round($subjectGradeList->avg('score'), 2),
-                'count' => $subjectGradeList->count(),
-                'assignments' => $subjectGradeList->where('type', 'assignment'),
-                'quizzes' => $subjectGradeList->where('type', 'quiz'),
-                'exams' => $subjectGradeList->where('type', 'exam'),
-            ];
-        }
-
-        // Calculate overall statistics
-        $overallStats = [
-            'total_subjects' => count($subjectGrades),
-            'overall_average' => round($grades->avg('score'), 2),
-            'total_assessments' => $grades->count(),
-            'semester' => $semester,
-            'year' => $year
-        ];
-
-        return view('student.grades.report', [
-            'pageTitle' => 'Rapor Semester ' . $semester . ' - ' . $year,
-            'breadcrumb' => [
-                ['title' => 'Nilai Akademik', 'url' => route('student.grades.index')],
-                ['title' => 'Rapor']
-            ],
-            'subjectGrades' => $subjectGrades,
-            'overallStats' => $overallStats,
-            'student' => Auth::user()
-        ]);
-    }
 
     /**
      * Get current semester based on date

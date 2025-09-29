@@ -31,6 +31,9 @@
     <!-- Scripts -->
     <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
     
+    <!-- Avatar Helper Script -->
+    <script src="<?php echo e(asset('js/avatar-helper.js')); ?>"></script>
+    
     <!-- Enhanced Styles for Dark Mode & Mobile -->
     <style>
         [x-cloak] { display: none !important; }
