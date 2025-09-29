@@ -523,7 +523,7 @@ class DashboardController extends Controller
         try {
             if ($this->hasColumn('assignment_submissions', 'assignment_id') && $this->hasColumn('assignments', 'teacher_id')) {
                 $teacherId = $teacherRecord ? $teacherRecord->id : $teacher->id;
-                return DB::table('assignment_submissions')
+                $assignments = DB::table('assignment_submissions')
                     ->join('assignments', 'assignment_submissions.assignment_id', '=', 'assignments.id')
                     ->join('users', 'assignment_submissions.student_id', '=', 'users.id')
                     ->where('assignments.teacher_id', $teacherId)
@@ -554,11 +554,20 @@ class DashboardController extends Controller
                             'color' => $this->getRandomColor(),
                         ];
                     });
+                
+                // Return the actual data from database (could be empty)
+                return $assignments;
             }
         } catch (\Exception $e) {
-            // Ignore error
+            // Ignore error and return empty collection
         }
         
+        // Return empty collection to show "Tidak ada tugas untuk di nilai" message
+        // Comment out the sample data below to show the empty state
+        return collect([]);
+        
+        /*
+        // Sample data for demonstration (uncomment to show sample assignments)
         return collect([
             [
                 'id' => 1,
@@ -605,6 +614,7 @@ class DashboardController extends Controller
                 'color' => '#06b6d4',
             ]
         ]);
+        */
     }
     
     /**

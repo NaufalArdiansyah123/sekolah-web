@@ -881,8 +881,11 @@
     <div class="user-section">
         <div class="user-card">
             <img class="user-avatar" 
-                 src="{{ auth()->user()->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&color=059669&background=D1FAE5' }}" 
-                 alt="{{ auth()->user()->name }}">
+                 src="{{ auth()->user()->avatar_url }}" 
+                 alt="{{ auth()->user()->name }}"
+                 data-sidebar-avatar
+                 data-user-avatar
+                 onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&color=7F9CF5&background=EBF4FF&size=44'">
             <div class="user-info">
                 <div class="user-name">{{ auth()->user()->name }}</div>
                 <div class="user-role">Teacher</div>

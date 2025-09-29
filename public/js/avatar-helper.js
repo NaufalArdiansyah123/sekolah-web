@@ -8,29 +8,67 @@
  * @param {string} newAvatarUrl - The new avatar URL
  */
 function updateAllAvatars(newAvatarUrl) {
+    console.log('Updating all avatars with URL:', newAvatarUrl);
+    
     // Update profile page avatar
     const profileAvatar = document.querySelector('.profile-avatar');
     if (profileAvatar) {
         profileAvatar.src = newAvatarUrl;
+        console.log('Updated profile avatar');
     }
     
-    // Update navbar avatar
-    const navbarAvatar = document.querySelector('header img.rounded-full');
-    if (navbarAvatar) {
-        navbarAvatar.src = newAvatarUrl;
-    }
+    // Update navbar avatar - try multiple selectors
+    const navbarSelectors = [
+        'header img.rounded-full',
+        '.navbar img.rounded-full',
+        'nav img.rounded-full',
+        '.top-nav img.rounded-full',
+        '[data-navbar-avatar]'
+    ];
     
-    // Update sidebar avatar
-    const sidebarAvatar = document.querySelector('.user-avatar');
-    if (sidebarAvatar) {
-        sidebarAvatar.src = newAvatarUrl;
-    }
+    navbarSelectors.forEach(selector => {
+        const navbarAvatar = document.querySelector(selector);
+        if (navbarAvatar) {
+            navbarAvatar.src = newAvatarUrl;
+            console.log('Updated navbar avatar with selector:', selector);
+        }
+    });
+    
+    // Update sidebar avatar - try multiple selectors
+    const sidebarSelectors = [
+        '.user-avatar',
+        '.sidebar .user-avatar',
+        '.sidebar-nav .user-avatar',
+        '[data-sidebar-avatar]',
+        '.user-card img',
+        '.user-section img'
+    ];
+    
+    sidebarSelectors.forEach(selector => {
+        const sidebarAvatar = document.querySelector(selector);
+        if (sidebarAvatar) {
+            sidebarAvatar.src = newAvatarUrl;
+            console.log('Updated sidebar avatar with selector:', selector);
+        }
+    });
     
     // Update any other avatar instances
     const allAvatars = document.querySelectorAll('[data-user-avatar]');
     allAvatars.forEach(avatar => {
         avatar.src = newAvatarUrl;
+        console.log('Updated data-user-avatar element');
     });
+    
+    // Force refresh of all img elements that might be user avatars
+    const allImages = document.querySelectorAll('img');
+    allImages.forEach(img => {
+        if (img.alt && (img.alt.toLowerCase().includes('avatar') || img.alt.toLowerCase().includes(auth?.user?.name?.toLowerCase() || ''))) {
+            img.src = newAvatarUrl;
+            console.log('Updated avatar by alt text:', img.alt);
+        }
+    });
+    
+    console.log('Avatar update completed');
 }
 
 /**
@@ -90,7 +128,10 @@ function initializeAvatarErrorHandling() {
 }
 
 // Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', initializeAvatarErrorHandling);
+document.addEventListener('DOMContentLoaded', function() {
+    initializeAvatarErrorHandling();
+    console.log('Avatar helper initialized');
+});
 
 // Re-initialize when new content is added dynamically
 const observer = new MutationObserver(() => {
@@ -102,8 +143,45 @@ observer.observe(document.body, {
     subtree: true
 });
 
+// Add a delayed update function for cases where elements load later
+function delayedAvatarUpdate(newAvatarUrl, maxAttempts = 5, delay = 500) {
+    let attempts = 0;
+    
+    function attemptUpdate() {
+        attempts++;
+        console.log(`Delayed avatar update attempt ${attempts}`);
+        
+        updateAllAvatars(newAvatarUrl);
+        
+        // Check if sidebar avatar was updated
+        const sidebarAvatar = document.querySelector('.user-avatar');
+        if (!sidebarAvatar && attempts < maxAttempts) {
+            console.log('Sidebar avatar not found, retrying in', delay, 'ms');
+            setTimeout(attemptUpdate, delay);
+        } else if (sidebarAvatar) {
+            console.log('Sidebar avatar found and updated successfully');
+        } else {
+            console.warn('Failed to find sidebar avatar after', maxAttempts, 'attempts');
+        }
+    }
+    
+    attemptUpdate();
+}
+
 // Export functions for global use
 window.updateAllAvatars = updateAllAvatars;
 window.generateFallbackAvatar = generateFallbackAvatar;
 window.handleAvatarError = handleAvatarError;
 window.preloadAvatar = preloadAvatar;
+window.delayedAvatarUpdate = delayedAvatarUpdate;
+
+// Debug function to check current avatar elements
+window.debugAvatars = function() {
+    console.log('=== Avatar Debug Info ===');
+    console.log('Profile avatar:', document.querySelector('.profile-avatar'));
+    console.log('Navbar avatar:', document.querySelector('header img.rounded-full'));
+    console.log('Sidebar avatar:', document.querySelector('.user-avatar'));
+    console.log('All user-avatar elements:', document.querySelectorAll('.user-avatar'));
+    console.log('All data-user-avatar elements:', document.querySelectorAll('[data-user-avatar]'));
+    console.log('========================');
+};

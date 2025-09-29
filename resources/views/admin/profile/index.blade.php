@@ -733,6 +733,10 @@ function uploadAvatar(file) {
                 // Update all avatar instances using helper function
                 if (typeof updateAllAvatars === 'function') {
                     updateAllAvatars(data.avatar_url);
+                    // Also use delayed update to catch any elements that load later
+                    if (typeof delayedAvatarUpdate === 'function') {
+                        delayedAvatarUpdate(data.avatar_url);
+                    }
                 } else {
                     // Fallback if helper not loaded
                     document.querySelector('.profile-avatar').src = data.avatar_url;
@@ -772,6 +776,10 @@ function generateAvatar() {
     // Update all avatar instances using helper function
     if (typeof updateAllAvatars === 'function') {
         updateAllAvatars(avatarUrl);
+        // Also use delayed update to catch any elements that load later
+        if (typeof delayedAvatarUpdate === 'function') {
+            delayedAvatarUpdate(avatarUrl);
+        }
     } else {
         // Fallback if helper not loaded
         document.querySelector('.profile-avatar').src = avatarUrl;
@@ -962,5 +970,29 @@ document.getElementById('passwordForm').addEventListener('submit', function(e) {
         });
     });
 });
+
+// Debug function - remove this in production
+window.testAvatarUpdate = function() {
+    console.log('Testing avatar update...');
+    if (typeof debugAvatars === 'function') {
+        debugAvatars();
+    }
+    
+    const testUrl = 'https://ui-avatars.com/api/?name=Test&color=FF0000&background=FFFF00&size=120';
+    if (typeof updateAllAvatars === 'function') {
+        updateAllAvatars(testUrl);
+    }
+};
+
+// Add a button to test avatar update (for debugging)
+if (window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1')) {
+    setTimeout(() => {
+        const debugBtn = document.createElement('button');
+        debugBtn.innerHTML = '🔧 Test Avatar Update';
+        debugBtn.style.cssText = 'position:fixed;top:10px;right:10px;z-index:9999;padding:10px;background:#ff6b6b;color:white;border:none;border-radius:5px;cursor:pointer;';
+        debugBtn.onclick = testAvatarUpdate;
+        document.body.appendChild(debugBtn);
+    }, 1000);
+}
 </script>
 @endpush

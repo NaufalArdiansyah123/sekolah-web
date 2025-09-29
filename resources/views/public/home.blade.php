@@ -1029,7 +1029,7 @@
                         <div class="stats-icon-wrapper mb-3">
                             <i class="fas fa-users fa-3x text-primary stats-icon"></i>
                         </div>
-                        <h2 class="stats-number display-4 fw-bold text-primary mb-2" data-target="2400">0</h2>
+                        <h2 class="stats-number display-4 fw-bold text-primary mb-2" data-target="2400">2400</h2>
                         <p class="stats-label text-muted mb-0 fw-medium">JUMLAH SISWA</p>
                         <div class="stats-bar bg-primary"></div>
                     </div>
@@ -1042,7 +1042,7 @@
                         <div class="stats-icon-wrapper mb-3">
                             <i class="fas fa-chalkboard-teacher fa-3x text-success stats-icon"></i>
                         </div>
-                        <h2 class="stats-number display-4 fw-bold text-success mb-2" data-target="120">0</h2>
+                        <h2 class="stats-number display-4 fw-bold text-success mb-2" data-target="120">120</h2>
                         <p class="stats-label text-muted mb-0 fw-medium">JUMLAH GURU</p>
                         <div class="stats-bar bg-success"></div>
                     </div>
@@ -1055,7 +1055,7 @@
                         <div class="stats-icon-wrapper mb-3">
                             <i class="fas fa-trophy fa-3x" style="color: var(--gold-color);"></i>
                         </div>
-                        <h2 class="stats-number display-4 fw-bold mb-2" style="color: var(--gold-color);" data-target="85">0</h2>
+                        <h2 class="stats-number display-4 fw-bold mb-2" style="color: var(--gold-color);" data-target="85">85</h2>
                         <p class="stats-label text-muted mb-0 fw-medium">PRESTASI SEKOLAH</p>
                         <div class="stats-bar" style="background-color: var(--gold-color);"></div>
                     </div>
@@ -1068,7 +1068,7 @@
                         <div class="stats-icon-wrapper mb-3">
                             <i class="fas fa-graduation-cap fa-3x text-info stats-icon"></i>
                         </div>
-                        <h2 class="stats-number display-4 fw-bold text-info mb-2" data-target="98">0</h2>
+                        <h2 class="stats-number display-4 fw-bold text-info mb-2" data-target="98">98</h2>
                         <p class="stats-label text-muted mb-0 fw-medium">TINGKAT KELULUSAN (%)</p>
                         <div class="stats-bar bg-info"></div>
                     </div>
