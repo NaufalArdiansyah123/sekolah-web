@@ -980,10 +980,10 @@
                             </label>
                             <select name="prioritas" id="prioritas" class="form-select @error('prioritas') is-invalid @enderror" required>
                                 <option value="">Select Priority</option>
-                                <option value="low" {{ old('prioritas', $announcement->priority) === 'low' ? 'selected' : '' }}>Low</option>
-                                <option value="normal" {{ old('prioritas', $announcement->priority) === 'normal' ? 'selected' : '' }}>Normal</option>
-                                <option value="high" {{ old('prioritas', $announcement->priority) === 'high' ? 'selected' : '' }}>High</option>
-                                <option value="urgent" {{ old('prioritas', $announcement->priority) === 'urgent' ? 'selected' : '' }}>Urgent</option>
+                                <option value="low" {{ old('prioritas', $announcement->english_priority) === 'low' ? 'selected' : '' }}>Low</option>
+                                <option value="normal" {{ old('prioritas', $announcement->english_priority) === 'normal' ? 'selected' : '' }}>Normal</option>
+                                <option value="high" {{ old('prioritas', $announcement->english_priority) === 'high' ? 'selected' : '' }}>High</option>
+                                <option value="urgent" {{ old('prioritas', $announcement->english_priority) === 'urgent' ? 'selected' : '' }}>Urgent</option>
                             </select>
                             <div class="priority-preview" id="priorityPreview" style="display: none;"></div>
                             @error('prioritas')

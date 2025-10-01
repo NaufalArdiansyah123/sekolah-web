@@ -184,56 +184,11 @@ class AnnouncementController extends Controller
             'kategori' => 'required|in:akademik,kegiatan,administrasi,umum',
             'prioritas' => 'required|in:low,normal,high,urgent',
             'penulis' => 'required|string|max:100',
-            'status' => 'required|in:draft,published,archived',
-            'tanggal_publikasi' => 'nullable|date',
-            'gambar' => 'nullable|string',
-            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120' // 5MB max
+            'status' => 'required|in:draft,published,archived'
         ]);
 
-        $imagePath = null;
-        
-        // Handle file upload
-        if ($request->hasFile('featured_image')) {
-            $file = $request->file('featured_image');
-            $filename = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
-            $imagePath = $file->storeAs('announcements', $filename, 'public');
-            $imagePath = 'storage/' . $imagePath;
-        }
-        // Handle URL input
-        elseif ($request->filled('gambar')) {
-            // Validate URL length
-            if (strlen($request->gambar) > 255) {
-                return back()->withErrors(['gambar' => 'Image URL must not exceed 255 characters.'])->withInput();
-            }
-            
-            // Validate if it's a proper URL
-            if (!filter_var($request->gambar, FILTER_VALIDATE_URL)) {
-                return back()->withErrors(['gambar' => 'Please enter a valid image URL.'])->withInput();
-            }
-            
-            $imagePath = $request->gambar;
-        }
-        // Handle base64 data (from drag & drop)
-        elseif ($request->filled('gambar') && str_starts_with($request->gambar, 'data:image/')) {
-            try {
-                // Extract base64 data
-                $imageData = $request->gambar;
-                $image = str_replace('data:image/', '', $imageData);
-                $image = explode(';base64,', $image);
-                $imageType = $image[0];
-                $imageData = base64_decode($image[1]);
-                
-                // Generate filename
-                $filename = time() . '_' . Str::random(10) . '.' . $imageType;
-                $path = 'announcements/' . $filename;
-                
-                // Store file
-                Storage::disk('public')->put($path, $imageData);
-                $imagePath = 'storage/' . $path;
-            } catch (\Exception $e) {
-                return back()->withErrors(['gambar' => 'Failed to process uploaded image.'])->withInput();
-            }
-        }
+        // Map English priority values to Indonesian values for database
+        $mappedPriority = Announcement::mapPriorityToIndonesian($request->prioritas);
 
         // Create announcement using Announcement model
         Announcement::create([
@@ -241,12 +196,12 @@ class AnnouncementController extends Controller
             'slug' => Str::slug($request->judul . '-' . time()),
             'isi' => $request->isi,
             'kategori' => $request->kategori,
-            'prioritas' => $request->prioritas,
+            'prioritas' => $mappedPriority, // Use mapped Indonesian value
             'penulis' => $request->penulis,
             'status' => $request->status,
             'views' => 0,
-            'tanggal_publikasi' => $request->status === 'published' ? ($request->tanggal_publikasi ?: now()) : null,
-            'gambar' => $imagePath,
+            'tanggal_publikasi' => $request->status === 'published' ? now() : null,
+            'gambar' => null,
         ]);
 
         return redirect()->route('admin.announcements.index')
@@ -292,6 +247,9 @@ class AnnouncementController extends Controller
             'gambar' => 'nullable|string',
             'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120' // 5MB max
         ]);
+
+        // Map English priority values to Indonesian values for database
+        $mappedPriority = Announcement::mapPriorityToIndonesian($request->prioritas);
 
         $announcement = Announcement::findOrFail($id);
         $imagePath = $announcement->gambar; // Keep existing image by default
@@ -362,7 +320,7 @@ class AnnouncementController extends Controller
             'slug' => Str::slug($request->judul . '-' . time()),
             'isi' => $request->isi,
             'kategori' => $request->kategori,
-            'prioritas' => $request->prioritas,
+            'prioritas' => $mappedPriority, // Use mapped Indonesian value
             'penulis' => $request->penulis,
             'status' => $request->status,
             'tanggal_publikasi' => $request->status === 'published' ? ($request->tanggal_publikasi ?: now()) : null,

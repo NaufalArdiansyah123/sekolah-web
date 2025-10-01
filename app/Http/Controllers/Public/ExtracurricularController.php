@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Extracurricular;
 use App\Models\ExtracurricularRegistration;
+use App\Models\Classes;
 
 class ExtracurricularController extends Controller
 {
@@ -54,7 +55,28 @@ class ExtracurricularController extends Controller
                 ->with('error', 'Ekstrakurikuler ini sedang tidak menerima pendaftaran.');
         }
 
-        return view('public.extracurriculars.register', compact('extracurricular'));
+        // Get active classes grouped by level
+        $activeClasses = Classes::active()
+            ->orderBy('level')
+            ->orderBy('name')
+            ->get()
+            ->groupBy('level');
+
+        // Get unique programs/majors from active classes
+        $activePrograms = Classes::active()
+            ->select('name')
+            ->get()
+            ->map(function($class) {
+                // Extract program from class name (e.g., "10 TKJ 1" -> "TKJ")
+                $parts = explode(' ', $class->name);
+                return isset($parts[1]) ? $parts[1] : null;
+            })
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values();
+
+        return view('public.extracurriculars.register', compact('extracurricular', 'activeClasses', 'activePrograms'));
     }
 
     public function storeRegistration(Request $request, Extracurricular $extracurricular)

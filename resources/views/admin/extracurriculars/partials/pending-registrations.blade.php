@@ -128,18 +128,25 @@
                             </div>
                         </td>
                         <td>
-                            <div class="btn-group" role="group">
-                                <button class="btn btn-sm btn-outline-info dark:btn-outline-blue-400" 
-                                        onclick="showRegistrationDetail({{ $registration->id }})" title="Detail">
-                                    <i class="fas fa-eye"></i>
+                            <div class="registration-action-group">
+                                <button class="reg-action-btn reg-btn-view" 
+                                        onclick="showRegistrationDetail({{ $registration->id }})" title="View Detail">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                    </svg>
                                 </button>
-                                <button class="btn btn-sm btn-outline-success dark:btn-outline-green-400 approve-btn" 
-                                        onclick="approveRegistration({{ $registration->id }})" title="Setujui">
-                                    <i class="fas fa-check"></i>
+                                <button class="reg-action-btn reg-btn-approve approve-btn" 
+                                        onclick="approveRegistration({{ $registration->id }})" title="Approve Registration">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
                                 </button>
-                                <button class="btn btn-sm btn-outline-danger dark:btn-outline-red-400 reject-btn" 
-                                        onclick="rejectRegistration({{ $registration->id }})" title="Tolak">
-                                    <i class="fas fa-times"></i>
+                                <button class="reg-action-btn reg-btn-reject reject-btn" 
+                                        onclick="rejectRegistration({{ $registration->id }})" title="Reject Registration">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
                                 </button>
                             </div>
                         </td>
@@ -531,6 +538,114 @@
 .dark .btn-outline-danger {
     color: #F87171;
     border-color: #EF4444;
+}
+
+/* Registration Action Button Group */
+.registration-action-group {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    justify-content: center;
+}
+
+.reg-action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.reg-action-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.reg-action-btn:hover {
+    transform: translateY(-1px) scale(1.05);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+}
+
+.reg-action-btn:hover::before {
+    opacity: 0.1;
+}
+
+.reg-action-btn:active {
+    transform: translateY(0) scale(1.02);
+}
+
+/* Specific Registration Button Colors */
+.reg-btn-view {
+    color: #06b6d4;
+    border-color: rgba(6, 182, 212, 0.2);
+}
+
+.reg-btn-view:hover {
+    background: #06b6d4;
+    color: white;
+    border-color: #06b6d4;
+    box-shadow: 0 3px 12px rgba(6, 182, 212, 0.3);
+}
+
+.reg-btn-approve {
+    color: #10b981;
+    border-color: rgba(16, 185, 129, 0.2);
+}
+
+.reg-btn-approve:hover {
+    background: #10b981;
+    color: white;
+    border-color: #10b981;
+    box-shadow: 0 3px 12px rgba(16, 185, 129, 0.3);
+}
+
+.reg-btn-reject {
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.2);
+}
+
+.reg-btn-reject:hover {
+    background: #ef4444;
+    color: white;
+    border-color: #ef4444;
+    box-shadow: 0 3px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* Dark mode for registration buttons */
+.dark .reg-action-btn {
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+}
+
+.dark .reg-action-btn:hover {
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .registration-action-group {
+        gap: 0.125rem;
+    }
+    
+    .reg-action-btn {
+        width: 28px;
+        height: 28px;
+    }
 }
 
 /* Responsive Design */

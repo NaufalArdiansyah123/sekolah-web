@@ -105,4 +105,29 @@ class Announcement extends Model
     {
         return 'slug';
     }
+
+    // Helper method to get English priority value for forms
+    public function getEnglishPriorityAttribute()
+    {
+        $mapping = [
+            'rendah' => 'low',
+            'sedang' => 'normal',
+            'tinggi' => 'high'
+        ];
+        
+        return $mapping[$this->prioritas] ?? 'normal';
+    }
+
+    // Helper method to get Indonesian priority value from English
+    public static function mapPriorityToIndonesian($englishPriority)
+    {
+        $mapping = [
+            'low' => 'rendah',
+            'normal' => 'sedang',
+            'high' => 'tinggi',
+            'urgent' => 'tinggi' // Map urgent to tinggi since database only has 3 levels
+        ];
+        
+        return $mapping[$englishPriority] ?? 'sedang';
+    }
 }

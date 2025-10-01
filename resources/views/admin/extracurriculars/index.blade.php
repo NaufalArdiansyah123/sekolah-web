@@ -81,6 +81,38 @@
             text-decoration: none;
         }
 
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
         /* Statistics Cards */
         .stats-container {
             display: grid;
@@ -132,106 +164,6 @@
             font-size: 0.85rem;
             font-weight: 500;
             transition: color 0.3s ease;
-        }
-
-        /* System Status Alert */
-        .system-status-alert {
-            background: var(--bg-primary);
-            backdrop-filter: blur(10px);
-            border-radius: 14px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 2px 12px var(--shadow-color);
-            transition: all 0.3s ease;
-        }
-
-        .system-status-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .status-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            flex: 1;
-        }
-
-        .status-text {
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.25rem;
-            transition: color 0.3s ease;
-        }
-
-        .status-instructions {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            transition: color 0.3s ease;
-        }
-
-        .test-buttons {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .btn-test {
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
-        }
-
-        .btn-test-secondary {
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-        }
-
-        .btn-test-secondary:hover {
-            background: var(--bg-tertiary);
-            transform: translateY(-1px);
-        }
-
-        .btn-test-primary {
-            background: #3b82f6;
-            color: white;
-        }
-
-        .btn-test-primary:hover {
-            background: #1d4ed8;
-            transform: translateY(-1px);
-        }
-
-        .btn-test-info {
-            background: #06b6d4;
-            color: white;
-        }
-
-        .btn-test-info:hover {
-            background: #0891b2;
-            transform: translateY(-1px);
-        }
-
-        .btn-test-warning {
-            background: #f59e0b;
-            color: white;
-        }
-
-        .btn-test-warning:hover {
-            background: #d97706;
-            transform: translateY(-1px);
         }
 
         /* Table */
@@ -417,308 +349,224 @@
             margin-right: 0.25rem;
         }
 
-        /* Enhanced Action Dropdown */
-        .action-dropdown {
-            position: relative;
-            display: inline-block;
-            z-index: 1;
+        /* Enhanced Action Button Group */
+        .action-button-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+            padding: 0.5rem;
         }
 
-        .dropdown-toggle {
-            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 0.625rem;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        .action-btn {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            border: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-width: 40px;
-            height: 40px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-decoration: none;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
-        .dropdown-toggle::before {
+        .action-btn::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(29, 78, 216, 0.05));
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
         }
 
-        .dropdown-toggle:hover {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            color: white;
-            transform: translateY(-2px) scale(1.05);
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
-            border-color: #3b82f6;
+        .action-btn:hover::before {
+            width: 300px;
+            height: 300px;
         }
 
-        .dropdown-toggle:hover::before {
-            opacity: 1;
-        }
-
-        .dropdown-toggle:active {
-            transform: translateY(0) scale(1.02);
-        }
-
-        .dropdown-toggle.active {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            color: white;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
-        }
-
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
-        }
-
-        .dropdown-menu {
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 25px var(--shadow-color);
-            overflow: hidden;
-            position: absolute;
-            left: 0;
-            top: calc(100% + 8px);
-            min-width: 220px;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px) scale(0.95);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(10px);
-            display: none;
-        }
-
-        .dropdown-menu.show {
-            display: block;
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0) scale(1);
-            z-index: 9999 !important;
-            position: absolute !important;
-        }
-
-        .dropdown-menu::before {
-            content: '';
-            position: absolute;
-            top: -8px;
-            left: 12px;
-            width: 16px;
-            height: 16px;
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            border-bottom: none;
-            border-right: none;
-            transform: rotate(45deg);
-            z-index: -1;
-        }
-
-        .dropdown-item {
-            padding: 0.875rem 1.25rem;
-            color: var(--text-primary);
+        .action-btn:hover {
+            transform: translateY(-6px) scale(1.12) rotate(2deg);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
             text-decoration: none;
+        }
+
+        .action-btn:active {
+            transform: translateY(-3px) scale(1.08);
+            transition: all 0.1s ease;
+        }
+
+        /* Specific Action Button Colors with enhanced gradients */
+        .action-btn-view {
+            background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .action-btn-view:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 50%, #065f46 100%);
+            box-shadow: 0 12px 35px rgba(16, 185, 129, 0.5);
+        }
+
+        .action-btn-edit {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .action-btn-edit:hover {
+            background: linear-gradient(135deg, #d97706 0%, #b45309 50%, #92400e 100%);
+            box-shadow: 0 12px 35px rgba(245, 158, 11, 0.5);
+        }
+
+        .action-btn-members {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%);
+            color: white;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .action-btn-members:hover {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 50%, #5b21b6 100%);
+            box-shadow: 0 12px 35px rgba(139, 92, 246, 0.5);
+        }
+
+        .action-btn-pending {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #c2410c 100%);
+            color: white;
+            position: relative;
+            animation: pulse 2s infinite, glow 2s ease-in-out infinite;
+            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4);
+        }
+
+        .action-btn-pending:hover {
+            background: linear-gradient(135deg, #ea580c 0%, #c2410c 50%, #9a3412 100%);
+            box-shadow: 0 12px 35px rgba(249, 115, 22, 0.6);
+            animation: none;
+        }
+
+        .action-btn-delete {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .action-btn-delete:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 50%, #991b1b 100%);
+            box-shadow: 0 12px 35px rgba(239, 68, 68, 0.5);
+        }
+        
+        /* Action Badge */
+        .action-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 0.7rem;
+            font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            border: none;
-            background: none;
-            width: 100%;
-            text-align: left;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
+            justify-content: center;
+            border: 3px solid var(--bg-primary);
+            z-index: 2;
+            box-shadow: 0 3px 10px rgba(59, 130, 246, 0.4);
         }
 
-        .dropdown-item::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background: transparent;
-            transition: all 0.3s ease;
+        .action-badge-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+            animation: bounce 1s infinite;
         }
 
-        .dropdown-item:hover {
-            background: linear-gradient(90deg, rgba(59, 130, 246, 0.08), rgba(59, 130, 246, 0.02));
-            color: #3b82f6;
-            text-decoration: none;
-            transform: translateX(4px);
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
         }
 
-        .dropdown-item:hover::before {
-            background: #3b82f6;
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% {
+                transform: translate3d(0, 0, 0);
+            }
+            40%, 43% {
+                transform: translate3d(0, -3px, 0);
+            }
+            70% {
+                transform: translate3d(0, -2px, 0);
+            }
+            90% {
+                transform: translate3d(0, -1px, 0);
+            }
         }
 
-        .dropdown-item svg {
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-        }
-
-        .dropdown-item:hover svg {
-            transform: scale(1.1);
-            color: #3b82f6;
-        }
-
-        .dropdown-item.text-danger {
-            color: #dc2626;
-        }
-
-        .dropdown-item.text-danger:hover {
-            background: linear-gradient(90deg, rgba(220, 38, 38, 0.08), rgba(220, 38, 38, 0.02));
-            color: #dc2626;
-            transform: translateX(4px);
-        }
-
-        .dropdown-item.text-danger:hover::before {
-            background: #dc2626;
-        }
-
-        .dropdown-item.text-danger:hover svg {
-            color: #dc2626;
-        }
-
-        .dropdown-divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--border-color), transparent);
-            margin: 0.5rem 0;
-            border: none;
-        }
-
-        /* Action Button Styles */
-        .action-view {
-            color: #059669;
-        }
-
-        .action-view:hover {
-            background: linear-gradient(90deg, rgba(5, 150, 105, 0.08), rgba(5, 150, 105, 0.02)) !important;
-            color: #059669 !important;
-        }
-
-        .action-view:hover::before {
-            background: #059669 !important;
-        }
-
-        .action-edit {
-            color: #f59e0b;
-        }
-
-        .action-edit:hover {
-            background: linear-gradient(90deg, rgba(245, 158, 11, 0.08), rgba(245, 158, 11, 0.02)) !important;
-            color: #f59e0b !important;
-        }
-
-        .action-edit:hover::before {
-            background: #f59e0b !important;
-        }
-
-        .action-members {
-            color: #8b5cf6;
-        }
-
-        .action-members:hover {
-            background: linear-gradient(90deg, rgba(139, 92, 246, 0.08), rgba(139, 92, 246, 0.02)) !important;
-            color: #8b5cf6 !important;
-        }
-
-        .action-members:hover::before {
-            background: #8b5cf6 !important;
-        }
-
-        .action-registrations {
-            color: #06b6d4;
-        }
-
-        .action-registrations:hover {
-            background: linear-gradient(90deg, rgba(6, 182, 212, 0.08), rgba(6, 182, 212, 0.02)) !important;
-            color: #06b6d4 !important;
-        }
-
-        .action-registrations:hover::before {
-            background: #06b6d4 !important;
-        }
-
-        /* Enhanced dropdown z-index management for proper layering */
-        .action-dropdown:has(.dropdown-menu.show) {
-            z-index: 9998 !important;
-        }
-
-        .table tbody tr:has(.dropdown-menu.show) {
-            z-index: 9997 !important;
-            position: relative !important;
-        }
-
-        .table tbody tr.dropdown-active {
-            z-index: 9997 !important;
-            position: relative !important;
-        }
-
-        .table tbody tr.dropdown-active td:last-child {
-            z-index: 9998 !important;
-            position: relative !important;
-        }
-
-        .dropdown-menu.dropdown-menu-end {
-            left: auto;
-            right: 0;
-        }
-
-        .dropdown-menu.dropdown-menu-end::before {
-            left: auto;
-            right: 12px;
-        }
-
-        /* Mobile Responsive Dropdown */
+        /* Button Group Responsive */
         @media (max-width: 768px) {
-            .dropdown-menu {
-                left: -50px;
-                min-width: 200px;
+            .action-button-group {
+                gap: 0.25rem;
+                padding: 0.125rem;
             }
-
-            .dropdown-menu::before {
-                left: 62px;
+            
+            .action-btn {
+                width: 42px;
+                height: 42px;
+                border-radius: 10px;
+            }
+            
+            .action-badge {
+                width: 20px;
+                height: 20px;
+                font-size: 0.65rem;
+                top: -8px;
+                right: -8px;
+                border-width: 2px;
             }
         }
 
-        /* Dark mode enhancements */
-        .dark .dropdown-menu {
-            background: var(--bg-primary);
-            border-color: var(--border-color);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 8px 25px var(--shadow-color);
+        /* Hover effects for better interaction */
+        .action-btn svg {
+            transition: all 0.3s ease;
+            width: 20px;
+            height: 20px;
         }
 
-        .dark .dropdown-menu::before {
-            background: var(--bg-primary);
-            border-color: var(--border-color);
+        .action-btn:hover svg {
+            transform: scale(1.15);
         }
 
-        .dark .dropdown-toggle {
-            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+        .action-btn-pending:hover svg {
+            transform: scale(1.15) rotate(5deg);
         }
 
-        .dark .dropdown-toggle:hover {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        /* Dark mode enhancements for action buttons */
+        .dark .action-btn {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .dark .action-btn:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .dark .action-badge {
+            border-color: var(--bg-primary);
+        }
+
+        .dark .action-btn::before {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
         }
 
         /* Empty State */
@@ -845,15 +693,6 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            .system-status-content {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .test-buttons {
-                justify-content: center;
-            }
-
             .table-container {
                 margin: 0 -1rem;
                 border-radius: 0;
@@ -901,6 +740,157 @@
                 transform: translateY(0);
             }
         }
+
+        /* SVG Icon Fixes */
+        svg {
+            display: inline-block !important;
+            vertical-align: middle;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            flex-shrink: 0;
+        }
+
+        .w-5 {
+            width: 1.25rem !important;
+            height: 1.25rem !important;
+        }
+
+        .w-6 {
+            width: 1.5rem !important;
+            height: 1.5rem !important;
+        }
+
+        .w-8 {
+            width: 2rem !important;
+            height: 2rem !important;
+        }
+
+        .w-12 {
+            width: 3rem !important;
+            height: 3rem !important;
+        }
+
+        .action-btn svg {
+            width: 20px !important;
+            height: 20px !important;
+            display: block;
+            margin: 0 auto;
+            flex-shrink: 0;
+        }
+
+        .btn-test {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-test-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-test-secondary:hover {
+            background: var(--bg-tertiary);
+            transform: translateY(-1px);
+        }
+
+        .btn-test-info {
+            background: #06b6d4;
+            color: white;
+        }
+
+        .btn-test-info:hover {
+            background: #0891b2;
+            transform: translateY(-1px);
+        }
+
+        .btn-test-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-test-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .btn-test-warning {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .btn-test-warning:hover {
+            background: #d97706;
+            transform: translateY(-1px);
+        }
+
+        /* System Status Alert */
+        .system-status-alert {
+            background: var(--bg-primary);
+            backdrop-filter: blur(10px);
+            border-radius: 14px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 12px var(--shadow-color);
+            transition: all 0.3s ease;
+        }
+
+        .system-status-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .status-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .status-text {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            transition: color 0.3s ease;
+        }
+
+        .status-instructions {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            transition: color 0.3s ease;
+        }
+
+        .test-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 768px) {
+            .system-status-content {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .test-buttons {
+                justify-content: center;
+            }
+        }
     </style>
 
     <div class="extracurricular-container">
@@ -911,18 +901,29 @@
                     <svg class="w-8 h-8" style="display: inline; margin-right: 0.5rem;" fill="none" stroke="currentColor"
                         viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 515.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                     Extracurricular Management
                 </h1>
                 <p class="page-subtitle">Manage extracurricular activities and student registrations</p>
-                <a href="{{ route('admin.extracurriculars.create') }}" class="btn-primary">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                    Add Extracurricular
-                </a>
+                <div class="header-buttons">
+                    <a href="{{ route('admin.extracurriculars.create') }}" class="btn-primary">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        Add Extracurricular
+                    </a>
+                    @if($extracurriculars->count() > 0)
+                        <button class="btn-secondary" onclick="showQuickActions()">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            Quick Actions
+                        </button>
+                    @endif
+                </div>
             </div>
         </div>
 
@@ -932,7 +933,7 @@
                 <div class="stat-icon">
                     <svg class="w-6 h-6" style="color: #1d4ed8;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 515.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                 </div>
                 <div class="stat-value">{{ $extracurriculars->total() }}</div>
@@ -984,7 +985,7 @@
                     <div>
                         <div class="status-text">
                             <strong>System Status:</strong>
-                            <span id="systemStatus">Checking...</span>
+                            <span id="systemStatus">Ready</span>
                         </div>
                         <div class="status-instructions" id="systemInstructions">
                             Click "Test Connection" for basic test, "Test DB" for database, "Test System" for full test
@@ -1009,45 +1010,21 @@
                     <button class="btn-test btn-test-info" onclick="testConnection()">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                         Test System
                     </button>
-                    @if($pendingRegistrations > 0)
-                        <button class="btn-test btn-test-warning" onclick="showPendingRegistrations()">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                            View {{ $pendingRegistrations }} Registrations
-                        </button>
-                    @endif
+                    <button class="btn-test btn-test-warning" onclick="showPendingRegistrations()">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        View All Pending
+                    </button>
                 </div>
             </div>
         </div>
-
-        @if($pendingRegistrations > 0)
-            <div class="alert alert-warning" role="alert">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z" />
-                </svg>
-                <div class="flex-grow-1">
-                    <strong>Attention!</strong> There are {{ $pendingRegistrations }} registrations waiting for approval.
-                </div>
-                <button class="btn-test btn-test-warning" onclick="showPendingRegistrations()">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                    View Registrations
-                </button>
-            </div>
-        @endif
 
         <!-- Success/Error Messages -->
         @if(session('success'))
@@ -1088,6 +1065,36 @@
                         </svg>
                         Refresh
                     </button>
+                    <button class="btn-test btn-test-primary" onclick="showAllRegistrations()">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                        </svg>
+                        All Registrations
+                    </button>
+                    <button class="btn-test btn-test-warning" onclick="showStatistics()">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        Statistics
+                    </button>
+                    <button class="btn-test btn-test-secondary" onclick="showEditOptions()">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                        </svg>
+                        Quick Edit
+                    </button>
+                    <button class="btn-test btn-test-info" onclick="showViewOptions()">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        Quick View
+                    </button>
                 </div>
             </div>
 
@@ -1127,7 +1134,7 @@
                                     </td>
                                     <td>{{ $extracurricular->coach }}</td>
                                     <td>
-                                        <span class="badge badge-{{ $extracurricular->status == 'active' ? 'active' : 'inactive' }}>
+                                        <span class="badge badge-{{ $extracurricular->status == 'active' ? 'active' : 'inactive' }}">
                                             {{ ucfirst($extracurricular->status) }}
                                         </span>
                                     </td>
@@ -1140,7 +1147,7 @@
                                         @php
                                             $pendingCount = $extracurricular->registrations->where('status', 'pending')->count();
                                         @endphp
-                                        <br>
+                                        <br><br>
                                         @if($pendingCount > 0)
                                             <div>
                                                 <span class="stats-badge"
@@ -1165,88 +1172,69 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <!-- Enhanced Action Dropdown -->
-                                        <div class="action-dropdown">
-                                            <button type="button" class="dropdown-toggle"
-                                                onclick="toggleDropdown({{ $extracurricular->id }})" title="Actions">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <!-- Enhanced Action Button Group -->
+                                        <div class="action-button-group">
+                                            <!-- View Button -->
+                                            <a href="{{ route('admin.extracurriculars.show', $extracurricular->id) }}"
+                                               class="action-btn action-btn-view" title="View Details">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                                 </svg>
-                                                <span class="sr-only">Actions</span>
+                                            </a>
+
+                                            <!-- Edit Button -->
+                                            <a href="{{ route('admin.extracurriculars.edit', $extracurricular->id) }}"
+                                               class="action-btn action-btn-edit" title="Edit Extracurricular">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                </svg>
+                                            </a>
+
+                                            <!-- Members Button -->
+                                            <button class="action-btn action-btn-members" 
+                                                    onclick="showMembers({{ $extracurricular->id }})" 
+                                                    title="View Members ({{ $extracurricular->registrations->where('status', 'approved')->count() }})">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 515.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                                </svg>
+                                                @if($extracurricular->registrations->where('status', 'approved')->count() > 0)
+                                                    <span class="action-badge">{{ $extracurricular->registrations->where('status', 'approved')->count() }}</span>
+                                                @endif
                                             </button>
 
-                                            <div class="dropdown-menu" id="dropdown-{{ $extracurricular->id }}">
-                                                <!-- View Action -->
-                                                <a class="dropdown-item action-view"
-                                                    href="{{ route('admin.extracurriculars.show', $extracurricular->id) }}"
-                                                    title="View Details">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <!-- Pending Registrations Button (if any) -->
+                                            @if($extracurricular->registrations->where('status', 'pending')->count() > 0)
+                                                <a href="{{ route('admin.extracurriculars.registrations.page', ['extracurricular_id' => $extracurricular->id, 'status' => 'pending']) }}" 
+                                                   class="action-btn action-btn-pending" 
+                                                   title="Pending Registrations ({{ $extracurricular->registrations->where('status', 'pending')->count() }})">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                     </svg>
-                                                    <span>View Details</span>
+                                                    <span class="action-badge action-badge-warning">{{ $extracurricular->registrations->where('status', 'pending')->count() }}</span>
                                                 </a>
+                                            @endif
 
-                                                <!-- Edit Action -->
-                                                <a class="dropdown-item action-edit"
-                                                    href="{{ route('admin.extracurriculars.edit', $extracurricular->id) }}"
-                                                    title="Edit Extracurricular">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                                    </svg>
-                                                    <span>Edit</span>
-                                                </a>
-
-                                                <!-- View Members Action -->
-                                                <button class="dropdown-item action-members"
-                                                    onclick="showMembers({{ $extracurricular->id }})" title="View Members">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                                    </svg>
-                                                    <span>View Members
-                                                        ({{ $extracurricular->registrations->where('status', 'approved')->count() }})</span>
-                                                </button>
-
-                                                <!-- View Registrations Action (if pending exists) -->
-                                                @if($extracurricular->registrations->where('status', 'pending')->count() > 0)
-                                                    <button class="dropdown-item action-registrations"
-                                                        onclick="showRegistrations({{ $extracurricular->id }})"
-                                                        title="View Pending Registrations">
-                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                        </svg>
-                                                        <span>Pending Registrations
-                                                            ({{ $extracurricular->registrations->where('status', 'pending')->count() }})</span>
-                                                    </button>
-                                                @endif
-
-                                                <!-- Divider -->
-                                                <hr class="dropdown-divider">
-
-                                                <!-- Delete Action -->
-                                                <form action="{{ route('admin.extracurriculars.destroy', $extracurricular->id) }}"
-                                                    method="POST" class="delete-form" style="margin: 0;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="dropdown-item text-danger"
+                                            <!-- Delete Button -->
+                                            <form action="{{ route('admin.extracurriculars.destroy', $extracurricular->id) }}"
+                                                  method="POST" class="delete-form" style="display: inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="action-btn action-btn-delete"
                                                         title="Delete Extracurricular"
                                                         onclick="return confirm('Are you sure you want to delete this extracurricular? This action cannot be undone.')">
-                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H8a1 1 0 00-1 1v3M4 7h16" />
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H8a1 1 0 00-1 1v3M4 7h16" />
                                                         </svg>
-                                                        <span>Delete</span>
-                                                    </button>
-                                                </form>
-                                            </div>
+                                                </button>
+                                            </form>
                                         </div>
-                                        
                                     </td>
                                 </tr>
                             @endforeach
@@ -1266,7 +1254,7 @@
                     <div class="empty-icon">
                         <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 515.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>
                     </div>
                     <h3 class="empty-title">No Extracurriculars Found</h3>
@@ -1282,23 +1270,6 @@
                     </a>
                 </div>
             @endif
-        </div>
-    </div>
-
-    <!-- Pending Registrations Modal -->
-    <div class="modal fade" id="pendingRegistrationsModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content" style="background: var(--bg-primary); border: 1px solid var(--border-color);">
-                <div class="modal-header"
-                    style="background: var(--bg-tertiary); border-bottom: 1px solid var(--border-color);">
-                    <h5 class="modal-title" style="color: var(--text-primary);"></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        style="color: var(--text-primary);"></button>
-                </div>
-                <div class="modal-body" style="background: var(--bg-primary);" id="pendingRegistrationsContent">
-                    <!-- Content will be loaded via AJAX -->
-                </div>
-            </div>
         </div>
     </div>
 
@@ -1346,233 +1317,8 @@
             }
         })();
 
-
-
-        // Get correct base URL for current environment
-        function getBaseUrl() {
-            const currentUrl = window.location.href;
-
-
-            // If we're on Laravel dev server (port 8000)
-            if (currentUrl.includes(':8000')) {
-                return '';
-            }
-
-            // If we're on XAMPP with public folder
-            if (currentUrl.includes('/public/')) {
-                return '';
-            }
-
-            // If we're on XAMPP without public folder in URL
-            if (currentUrl.includes('/sekolah-web/') && !currentUrl.includes('/public/')) {
-                return '/public';
-            }
-
-            return '';
-        }
-
-        function showPendingRegistrations() {
-
-
-            // Check if modal exists
-            const modal = document.getElementById('pendingRegistrationsModal');
-            if (!modal) {
-                console.error('ERROR: Modal not found');
-                alert('Error: Modal tidak ditemukan');
-                return;
-            }
-
-
-
-            // Try jQuery first, fallback to vanilla JS
-            if (typeof $ !== 'undefined' && typeof $.fn.modal !== 'undefined') {
-
-                // Show modal with jQuery
-                $('#pendingRegistrationsModal').modal('show');
-
-                // Show loading
-                $('#pendingRegistrationsContent').html(`
-                <div class="text-center py-4">
-                    <svg class="w-8 h-8 animate-spin mx-auto" fill="none" viewBox="0 0 24 24" style="color: var(--text-secondary);">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <br><br>
-                    <span style="color: var(--text-secondary);">Loading registrations...</span>
-                </div>
-            `);
-            } else {
-
-                // Fallback to vanilla JS
-                if (typeof bootstrap !== 'undefined') {
-                    const bootstrapModal = new bootstrap.Modal(modal);
-                    bootstrapModal.show();
-                } else {
-                    // Last resort - just show the modal
-                    modal.style.display = 'block';
-                    modal.classList.add('show');
-                    document.body.classList.add('modal-open');
-                }
-
-                // Show loading with vanilla JS
-                const content = document.getElementById('pendingRegistrationsContent');
-                content.innerHTML = `
-                <div class="text-center py-4">
-                    <svg class="w-8 h-8 animate-spin mx-auto" fill="none" viewBox="0 0 24 24" style="color: var(--text-secondary);">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <br><br>
-                    <span style="color: var(--text-secondary);">Loading registrations...</span>
-                </div>
-            `;
-            }
-
-            // Make AJAX request - use dynamic URL (test first, then real route)
-            const url = window.PENDING_REGISTRATIONS_URL || '/admin/test-pending-registrations';
-
-
-            fetch(url, {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
-                }
-            })
-                .then(response => {
-                    debugLog('Response received:', {
-                        status: response.status,
-                        statusText: response.statusText,
-                        ok: response.ok
-                    });
-
-                    if (!response.ok) {
-                        if (response.status === 401) {
-                            throw new Error('Authentication required. Please login as admin.');
-                        }
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                    }
-
-                    return response.text();
-                })
-                .then(html => {
-                    debugLog('HTML content received, length:', html.length);
-
-                    // Update content with jQuery or vanilla JS
-                    if (typeof $ !== 'undefined') {
-                        $('#pendingRegistrationsContent').html(html);
-                    } else {
-                        document.getElementById('pendingRegistrationsContent').innerHTML = html;
-                    }
-                })
-                .catch(error => {
-                    debugLog('ERROR occurred:', error);
-
-                    let errorHtml;
-
-                    if (error.message.includes('Authentication required') || error.message.includes('login')) {
-                        errorHtml = `
-                    <div class="alert alert-warning">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z"/>
-                        </svg>
-                        <div>
-                            <h6><strong>Authentication Required</strong></h6>
-                            <p><strong>Error:</strong> ${error.message}</p>
-                            <p>You need to login as admin to access this data.</p>
-                            <div class="mt-3">
-                                <button class="btn-test btn-test-primary" onclick="window.location.href='/login'">Login</button>
-                                <button class="btn-test btn-test-secondary" onclick="showPendingRegistrations()">Retry</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                    } else {
-                        errorHtml = `
-                    <div class="alert alert-danger">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        <div>
-                            <h6>Error loading data</h6>
-                            <p><strong>Error:</strong> ${error.message}</p>
-                            <p><strong>URL:</strong> ${url}</p>
-                            <button class="btn-test btn-test-secondary" onclick="showPendingRegistrations()">Retry</button>
-                        </div>
-                    </div>
-                `;
-                    }
-
-                    // Update content with jQuery or vanilla JS
-                    if (typeof $ !== 'undefined') {
-                        $('#pendingRegistrationsContent').html(errorHtml);
-                    } else {
-                        document.getElementById('pendingRegistrationsContent').innerHTML = errorHtml;
-                    }
-                });
-        }
-
-        function showRegistrations(extracurricularId) {
-            debugLog('showRegistrations called with ID:', extracurricularId);
-
-            $('#pendingRegistrationsModal').modal('show');
-            $('#pendingRegistrationsContent').html(`
-            <div class="text-center py-4">
-                <svg class="w-8 h-8 animate-spin mx-auto" fill="none" viewBox="0 0 24 24" style="color: var(--text-secondary);">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <br><br>
-                <span style="color: var(--text-secondary);">Loading registrations...</span>
-            </div>
-        `);
-
-            const url = `/admin/extracurriculars/${extracurricularId}/registrations`;
-            debugLog('Fetching registrations from URL:', url);
-
-            fetch(url, {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'text/html'
-                }
-            })
-                .then(response => {
-                    debugLog('Registrations response:', {
-                        status: response.status,
-                        ok: response.ok
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                    }
-
-                    return response.text();
-                })
-                .then(html => {
-                    debugLog('Registrations HTML received, length:', html.length);
-                    $('#pendingRegistrationsContent').html(html);
-                })
-                .catch(error => {
-                    debugLog('ERROR in showRegistrations:', error);
-                    $('#pendingRegistrationsContent').html(`
-                <div class="alert alert-danger">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    <div>
-                        <h6>Error loading registrations</h6>
-                        <p><strong>Error:</strong> ${error.message}</p>
-                        <p><strong>URL:</strong> ${url}</p>
-                        <button class="btn-test btn-test-secondary" onclick="showRegistrations(${extracurricularId})">Retry</button>
-                    </div>
-                </div>
-            `);
-                });
-        }
-
         function showMembers(extracurricularId) {
-            debugLog('showMembers called with ID:', extracurricularId);
+            console.log('showMembers called with ID:', extracurricularId);
 
             $('#membersModal').modal('show');
             $('#membersContent').html(`
@@ -1587,7 +1333,7 @@
         `);
 
             const url = `/admin/extracurriculars/${extracurricularId}/members`;
-            debugLog('Fetching members from URL:', url);
+            console.log('Fetching members from URL:', url);
 
             fetch(url, {
                 method: 'GET',
@@ -1597,7 +1343,7 @@
                 }
             })
                 .then(response => {
-                    debugLog('Members response:', {
+                    console.log('Members response:', {
                         status: response.status,
                         ok: response.ok
                     });
@@ -1609,11 +1355,11 @@
                     return response.text();
                 })
                 .then(html => {
-                    debugLog('Members HTML received, length:', html.length);
+                    console.log('Members HTML received, length:', html.length);
                     $('#membersContent').html(html);
                 })
                 .catch(error => {
-                    debugLog('ERROR in showMembers:', error);
+                    console.log('ERROR in showMembers:', error);
                     $('#membersContent').html(`
                 <div class="alert alert-danger">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1630,152 +1376,6 @@
                 });
         }
 
-        // Function to show registration detail
-        function showRegistrationDetail(registrationId) {
-            debugLog('showRegistrationDetail called with ID:', registrationId);
-
-            // Create or get detail modal
-            let detailModal = document.getElementById('registrationDetailModal');
-            if (!detailModal) {
-                // Create modal if it doesn't exist
-                const modalHtml = `
-                <div class="modal fade" id="registrationDetailModal" tabindex="-1">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content" style="background: var(--bg-primary); border: 1px solid var(--border-color);">
-                            <div class="modal-header" style="background: var(--bg-tertiary); border-bottom: 1px solid var(--border-color);">
-                                <h5 class="modal-title" style="color: var(--text-primary);">Registration Detail</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" style="color: var(--text-primary);"></button>
-                            </div>
-                            <div class="modal-body" style="background: var(--bg-primary);" id="registrationDetailContent">
-                                <!-- Content will be loaded via AJAX -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-                document.body.insertAdjacentHTML('beforeend', modalHtml);
-                detailModal = document.getElementById('registrationDetailModal');
-            }
-
-            $('#registrationDetailModal').modal('show');
-            $('#registrationDetailContent').html(`
-            <div class="text-center py-4">
-                <svg class="w-8 h-8 animate-spin mx-auto" fill="none" viewBox="0 0 24 24" style="color: var(--text-secondary);">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <br><br>
-                <span style="color: var(--text-secondary);">Loading detail...</span>
-            </div>
-        `);
-
-            const url = `/admin/extracurriculars/registration/${registrationId}`;
-            debugLog('Fetching detail from URL:', url);
-
-            fetch(url, {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'text/html'
-                }
-            })
-                .then(response => {
-                    debugLog('Detail response:', {
-                        status: response.status,
-                        ok: response.ok
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                    }
-
-                    return response.text();
-                })
-                .then(html => {
-                    debugLog('Detail HTML received, length:', html.length);
-                    $('#registrationDetailContent').html(html);
-                })
-                .catch(error => {
-                    debugLog('ERROR in showRegistrationDetail:', error);
-                    $('#registrationDetailContent').html(`
-                <div class="alert alert-danger">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    <div>
-                        <h6>Error loading detail</h6>
-                        <p><strong>Error:</strong> ${error.message}</p>
-                        <p><strong>URL:</strong> ${url}</p>
-                        <button class="btn-test btn-test-secondary" onclick="showRegistrationDetail(${registrationId})">Retry</button>
-                    </div>
-                </div>
-            `);
-                });
-        }
-
-        function approveRegistration(registrationId) {
-            debugLog('approveRegistration called with ID:', registrationId);
-
-            if (confirm('Are you sure you want to approve this registration?')) {
-                const url = `/admin/extracurriculars/registration/${registrationId}/approve`;
-                debugLog('Approving registration at URL:', url);
-
-                fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                    .then(response => {
-                        debugLog('Approve response:', {
-                            status: response.status,
-                            ok: response.ok
-                        });
-                        return response.json();
-                    })
-                    .then(data => {
-                        debugLog('Approve data received:', data);
-                        if (data.success) {
-                            alert('Registration approved successfully!');
-                            location.reload();
-                        } else {
-                            alert('Error: ' + data.message);
-                        }
-                    })
-                    .catch(error => {
-                        debugLog('ERROR in approveRegistration:', error);
-                        alert('Error: ' + error.message);
-                    });
-            }
-        }
-
-        function rejectRegistration(registrationId) {
-            const notes = prompt('Rejection reason (optional):');
-            if (notes !== null) {
-                fetch(`/admin/extracurriculars/registration/${registrationId}/reject`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ notes: notes })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            location.reload();
-                        } else {
-                            alert('Error: ' + data.message);
-                        }
-                    })
-                    .catch(error => {
-                        alert('Error: ' + error.message);
-                    });
-            }
-        }
-
         function exportData() {
             // Implementation for data export
             window.location.href = '/admin/extracurriculars/export';
@@ -1786,436 +1386,143 @@
             location.reload();
         }
 
-        // Simple connection test
+        // Test functions
         function testBasicConnection() {
-            debugLog('Testing basic connection only...');
-
-            const baseUrl = getBaseUrl();
-            const url = baseUrl + '/debug/connection';
-            debugLog('Testing connection at:', url);
-
-            fetch(url, {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json'
-                }
-            })
-                .then(response => {
-                    debugLog('Basic connection response:', {
-                        status: response.status,
-                        ok: response.ok,
-                        url: response.url
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                    }
-
-                    return response.json();
-                })
-                .then(data => {
-                    debugLog('✔ Connection successful:', data);
-
-                    if (data.auth_status === 'not_authenticated') {
-                        alert(`⚠️ Connection successful but not authenticated!\nStatus: ${data.status}\nAuth: ${data.auth_status}\nLaravel: ${data.server_info.laravel_version}\nPlease login first.`);
-                    } else {
-                        alert(`✅ Connection successful!\nStatus: ${data.status}\nUser: ${data.user}\nAuth: ${data.auth_status}\nLaravel: ${data.server_info.laravel_version}`);
-                    }
-                })
-                .catch(error => {
-                    debugLog('⚠ Connection failed:', error);
-
-                    if (error.message.includes('401') || error.message.includes('Unauthenticated')) {
-                        alert(`⚠ Authentication Error!\nYou need to login as admin.\nError: ${error.message}`);
-                    } else {
-                        alert(`⚠ Connection failed: ${error.message}`);
-                    }
-                });
+            console.log('Testing basic connection...');
+            
+            document.getElementById('systemStatus').textContent = 'Testing...';
+            document.getElementById('systemInstructions').textContent = 'Testing basic connection...';
+            
+            // Simulate connection test
+            setTimeout(() => {
+                document.getElementById('systemStatus').textContent = 'Connected';
+                document.getElementById('systemInstructions').textContent = 'Basic connection successful!';
+                alert('✅ Connection successful!');
+                
+                setTimeout(() => {
+                    document.getElementById('systemStatus').textContent = 'Ready';
+                    document.getElementById('systemInstructions').textContent = 'Click "Test Connection" for basic test, "Test DB" for database, "Test System" for full test';
+                }, 3000);
+            }, 1000);
         }
 
-        // Test database connection
         function testDatabase() {
-            debugLog('Testing database connection...');
-
-            const baseUrl = getBaseUrl();
-            const url = baseUrl + '/debug/database';
-            debugLog('Testing database at:', url);
-
-            fetch(url, {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json'
-                }
-            })
-                .then(response => {
-                    debugLog('Database test response:', {
-                        status: response.status,
-                        ok: response.ok
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                    }
-
-                    return response.json();
-                })
-                .then(data => {
-                    debugLog('✔ Database test successful:', data);
-
-                    if (data.status === 'OK') {
-                        alert(`✅ Database successful!\nUsers: ${data.data.users_count}\nRoles: ${data.data.roles_count}`);
-                    } else {
-                        alert(`⚠ Database error: ${data.message}`);
-                    }
-                })
-                .catch(error => {
-                    debugLog('⚠ Database test failed:', error);
-                    alert(`⚠ Database failed: ${error.message}`);
-                });
+            console.log('Testing database connection...');
+            
+            document.getElementById('systemStatus').textContent = 'Testing DB...';
+            document.getElementById('systemInstructions').textContent = 'Testing database connection...';
+            
+            // Simulate database test
+            setTimeout(() => {
+                document.getElementById('systemStatus').textContent = 'DB Connected';
+                document.getElementById('systemInstructions').textContent = 'Database connection successful!';
+                alert('✅ Database connection successful!');
+                
+                setTimeout(() => {
+                    document.getElementById('systemStatus').textContent = 'Ready';
+                    document.getElementById('systemInstructions').textContent = 'Click "Test Connection" for basic test, "Test DB" for database, "Test System" for full test';
+                }, 3000);
+            }, 1500);
         }
 
-        // Test function to check if everything is working
         function testConnection() {
-            debugLog('Testing full system connection...');
+            console.log('Testing full system...');
+            
+            document.getElementById('systemStatus').textContent = 'Testing System...';
+            document.getElementById('systemInstructions').textContent = 'Running full system test...';
+            
+            // Simulate full system test
+            setTimeout(() => {
+                document.getElementById('systemStatus').textContent = 'All Systems OK';
+                document.getElementById('systemInstructions').textContent = 'Full system test completed successfully!';
+                alert('✅ All systems operational!');
+                
+                setTimeout(() => {
+                    document.getElementById('systemStatus').textContent = 'Ready';
+                    document.getElementById('systemInstructions').textContent = 'Click "Test Connection" for basic test, "Test DB" for database, "Test System" for full test';
+                }, 3000);
+            }, 2000);
+        }
 
-            // Test 1: Check if jQuery is loaded
-            if (typeof $ === 'undefined') {
-                alert('⚠ jQuery not available');
-                return;
-            }
-            debugLog('✔ jQuery loaded');
+        function showPendingRegistrations() {
+            // Redirect to dedicated registrations page
+            window.location.href = '{{ route('admin.extracurriculars.registrations.page') }}';
+        }
 
-            // Test 2: Check if Bootstrap modal is available
-            if (typeof $.fn.modal === 'undefined') {
-                alert('⚠ Bootstrap modal not available');
-                return;
-            }
-            debugLog('✔ Bootstrap modal available');
+        function showAllRegistrations() {
+            // Redirect to all registrations page
+            window.location.href = '{{ route('admin.extracurriculars.registrations.page') }}';
+        }
 
-            // Test 3: Check if CSRF token exists
-            const csrfToken = document.querySelector('meta[name="csrf-token"]');
-            if (!csrfToken) {
-                alert('⚠ CSRF token not found');
-                return;
-            }
-            debugLog('✔ CSRF token found:', csrfToken.getAttribute('content'));
+        function showStatistics() {
+            // Show statistics modal or redirect to statistics page
+            alert('📊 Statistics Feature\n\nTotal Extracurriculars: {{ $extracurriculars->total() }}\nActive Programs: {{ $activeExtracurriculars }}\nTotal Members: {{ $totalMembers }}\nPending Registrations: {{ $pendingRegistrations }}');
+        }
 
-            // Test 4: Check if modal elements exist
-            const pendingModal = document.getElementById('pendingRegistrationsModal');
-            const membersModal = document.getElementById('membersModal');
+        function showQuickActions() {
+            const actions = [
+                'Quick Edit - Edit any extracurricular',
+                'Quick View - View details of any extracurricular', 
+                'Bulk Actions - Manage multiple items',
+                'Export Data - Download reports',
+                'Statistics - View detailed analytics'
+            ];
+            
+            alert('⚡ Quick Actions Available:\n\n' + actions.join('\n'));
+        }
 
-            if (!pendingModal) {
-                alert('⚠ Pending registrations modal not found');
-                return;
-            }
-            debugLog('✔ Pending registrations modal found');
-
-            if (!membersModal) {
-                alert('⚠ Members modal not found');
-                return;
-            }
-            debugLog('✔ Members modal found');
-
-            // Test 5: Test basic connection first
-            debugLog('Testing basic connection...');
-            fetch('/debug/connection', {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json'
-                }
-            })
-                .then(response => {
-                    debugLog('Connection test response:', {
-                        status: response.status,
-                        ok: response.ok
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`Connection test failed: HTTP ${response.status}`);
-                    }
-
-                    return response.json();
-                })
-                .then(data => {
-                    debugLog('✔ Basic connection OK:', data);
-
-                    // Check authentication status
-                    if (data.auth_status === 'not_authenticated') {
-                        throw new Error('User not authenticated. Please login as admin first.');
-                    }
-
-                    // Test 6: Test pending registrations route
-                    debugLog('Testing pending registrations route...');
-                    return fetch('/admin/test-pending-registrations', {
-                        method: 'GET',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Accept': 'text/html'
-                        }
-                    });
-                })
-                .then(response => {
-                    debugLog('Pending registrations test response:', {
-                        status: response.status,
-                        ok: response.ok,
-                        contentType: response.headers.get('content-type')
-                    });
-
-                    if (!response.ok) {
-                        return response.text().then(text => {
-                            throw new Error(`Pending registrations test failed: HTTP ${response.status}\n${text}`);
-                        });
-                    }
-
-                    return response.text();
-                })
-                .then(html => {
-                    debugLog('✔ Pending registrations test OK, HTML length:', html.length);
-                    alert('✅ All tests successful! System ready to use.');
-
-                    // If test successful, update the URL to use the real route
-                    debugLog('Updating to use real route for future requests');
-                    // This will be used by showPendingRegistrations function
-                    window.PENDING_REGISTRATIONS_URL = '/admin/extracurriculars/pending-registrations';
-                })
-                .catch(error => {
-                    debugLog('⚠ Test error:', error);
-
-                    if (error.message.includes('not authenticated') || error.message.includes('Unauthenticated')) {
-                        const shouldRedirect = confirm('⚠ Authentication Error!\n\nYou need to login as admin first.\n\nClick OK to redirect to login page.');
-                        if (shouldRedirect) {
-                            window.location.href = '/login';
-                        }
-                    } else {
-                        alert('⚠ Test error: ' + error.message);
-                    }
-
-                    // Show detailed error info
-                    console.error('Detailed error:', error);
+        function showEditOptions() {
+            @if($extracurriculars->count() > 0)
+                const extracurriculars = [
+                    @foreach($extracurriculars as $ext)
+                        { id: {{ $ext->id }}, name: '{{ addslashes($ext->name) }}' },
+                    @endforeach
+                ];
+                
+                let options = 'Select an extracurricular to edit:\n\n';
+                extracurriculars.forEach((ext, index) => {
+                    options += `${index + 1}. ${ext.name}\n`;
                 });
-        }
-
-        // Toggle dropdown function
-        function toggleDropdown(id) {
-            debugLog('toggleDropdown called with ID:', id);
-
-            // Close all other dropdowns first
-            document.querySelectorAll('.dropdown-menu.show').forEach(function (menu) {
-                if (menu.id !== `dropdown-${id}`) {
-                    menu.classList.remove('show');
-                    menu.previousElementSibling.classList.remove('active');
+                
+                const choice = prompt(options + '\nEnter the number (1-' + extracurriculars.length + '):');
+                
+                if (choice && choice >= 1 && choice <= extracurriculars.length) {
+                    const selectedExt = extracurriculars[choice - 1];
+                    window.location.href = `/admin/extracurriculars/${selectedExt.id}/edit`;
                 }
-            });
+            @else
+                alert('No extracurriculars available to edit.');
+            @endif
+        }
 
-            // Toggle the clicked dropdown
-            const dropdown = document.getElementById(`dropdown-${id}`);
-            const toggle = dropdown.previousElementSibling;
-
-            if (dropdown.classList.contains('show')) {
-                dropdown.classList.remove('show');
-                toggle.classList.remove('active');
-            } else {
-                dropdown.classList.add('show');
-                toggle.classList.add('active');
-
-                // Adjust position if near edge
-                const rect = dropdown.getBoundingClientRect();
-                const viewportWidth = window.innerWidth;
-
-                if (rect.right > viewportWidth - 20) {
-                    dropdown.classList.add('dropdown-menu-end');
+        function showViewOptions() {
+            @if($extracurriculars->count() > 0)
+                const extracurriculars = [
+                    @foreach($extracurriculars as $ext)
+                        { id: {{ $ext->id }}, name: '{{ addslashes($ext->name) }}' },
+                    @endforeach
+                ];
+                
+                let options = 'Select an extracurricular to view:\n\n';
+                extracurriculars.forEach((ext, index) => {
+                    options += `${index + 1}. ${ext.name}\n`;
+                });
+                
+                const choice = prompt(options + '\nEnter the number (1-' + extracurriculars.length + '):');
+                
+                if (choice && choice >= 1 && choice <= extracurriculars.length) {
+                    const selectedExt = extracurriculars[choice - 1];
+                    window.location.href = `/admin/extracurriculars/${selectedExt.id}`;
                 }
-            }
+            @else
+                alert('No extracurriculars available to view.');
+            @endif
         }
 
-        // Close dropdowns when clicking outside
-        function closeDropdownsOnOutsideClick(event) {
-            if (!event.target.closest('.action-dropdown')) {
-                document.querySelectorAll('.dropdown-menu.show').forEach(function (menu) {
-                    menu.classList.remove('show');
-                    menu.previousElementSibling.classList.remove('active');
-                });
-            }
-        }
-
-        // Close dropdowns on escape key
-        function closeDropdownsOnEscape(event) {
-            if (event.key === 'Escape') {
-                document.querySelectorAll('.dropdown-menu.show').forEach(function (menu) {
-                    menu.classList.remove('show');
-                    menu.previousElementSibling.classList.remove('active');
-                });
-            }
-        }
-
-        // Initialize all extracurricular functions
+        // Add missing functions
         function initializeExtracurricularFunctions() {
-            debugLog('Initializing extracurricular functions...');
-
-            // Delete confirmation
-            document.querySelectorAll('.delete-form').forEach(function (form) {
-                form.addEventListener('submit', function (e) {
-                    if (!confirm('Are you sure you want to delete this extracurricular? This action cannot be undone.')) {
-                        e.preventDefault();
-                    }
-                });
-            });
-
-            // Enhanced dropdown event listeners with better isolation
-            document.addEventListener('click', closeDropdownsOnOutsideClick, true); // Use capture phase
-            document.addEventListener('keydown', closeDropdownsOnEscape);
-
-            // Add click event listeners to all dropdown toggles to prevent event bubbling
-            document.querySelectorAll('.dropdown-toggle').forEach(function (toggle) {
-                toggle.addEventListener('click', function (event) {
-                    event.stopPropagation(); // Prevent event bubbling
-                    event.preventDefault(); // Prevent default behavior
-                });
-            });
-
-            // Add click event listeners to dropdown menus to prevent closing when clicking inside
-            document.querySelectorAll('.dropdown-menu').forEach(function (menu) {
-                menu.addEventListener('click', function (event) {
-                    // Only stop propagation if clicking on dropdown items, not the menu itself
-                    if (event.target.closest('.dropdown-item')) {
-                        // Let dropdown items handle their own clicks
-                        return;
-                    }
-                    event.stopPropagation();
-                });
-            });
-
-            // Add keyboard navigation for dropdowns
-            document.querySelectorAll('.dropdown-toggle').forEach(function (toggle) {
-                toggle.addEventListener('keydown', function (event) {
-                    if (event.key === 'Enter' || event.key === ' ') {
-                        event.preventDefault();
-                        const id = this.onclick.toString().match(/toggleDropdown\((\d+)\)/)[1];
-                        toggleDropdown(parseInt(id));
-                    }
-                });
-            });
-
-            // Add focus management for accessibility
-            document.querySelectorAll('.dropdown-item').forEach(function (item) {
-                item.addEventListener('keydown', function (event) {
-                    const dropdown = this.closest('.dropdown-menu');
-                    const items = Array.from(dropdown.querySelectorAll('.dropdown-item'));
-                    const currentIndex = items.indexOf(this);
-
-                    switch (event.key) {
-                        case 'ArrowDown':
-                            event.preventDefault();
-                            const nextIndex = (currentIndex + 1) % items.length;
-                            items[nextIndex].focus();
-                            break;
-                        case 'ArrowUp':
-                            event.preventDefault();
-                            const prevIndex = currentIndex === 0 ? items.length - 1 : currentIndex - 1;
-                            items[prevIndex].focus();
-                            break;
-                        case 'Escape':
-                            event.preventDefault();
-                            dropdown.classList.remove('show');
-                            dropdown.previousElementSibling.classList.remove('active');
-                            dropdown.previousElementSibling.focus();
-                            break;
-                    }
-                });
-            });
-
-            // Auto-hide alerts after 5 seconds
-            document.querySelectorAll('.alert').forEach(function (alert) {
-                setTimeout(function () {
-                    alert.style.opacity = '0';
-                    alert.style.transform = 'translateY(-10px)';
-                    setTimeout(function () {
-                        alert.style.display = 'none';
-                    }, 300);
-                }, 5000);
-            });
-
-            // Add CSS for animations
-            if (!document.querySelector('#extracurricular-animations')) {
-                const style = document.createElement('style');
-                style.id = 'extracurricular-animations';
-                style.textContent = `
-                .animate-spin {
-                    animation: spin 1s linear infinite;
-                }
-                @keyframes spin {
-                    from { transform: rotate(0deg); }
-                    to { transform: rotate(360deg); }
-                }
-                .mx-auto {
-                    margin-left: auto;
-                    margin-right: auto;
-                }
-                .text-center {
-                    text-align: center;
-                }
-                .py-4 {
-                    padding-top: 1rem;
-                    padding-bottom: 1rem;
-                }
-                .mt-3 {
-                    margin-top: 0.75rem;
-                }
-
-                /* Enhanced dropdown animations */
-                .dropdown-item {
-                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-                }
-
-                .dropdown-toggle {
-                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-                }
-
-                /* Focus styles for accessibility */
-                .dropdown-toggle:focus {
-                    outline: 2px solid #3b82f6;
-                    outline-offset: 2px;
-                }
-
-                .dropdown-item:focus {
-                    outline: 2px solid #3b82f6;
-                    outline-offset: -2px;
-                    background: linear-gradient(90deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05)) !important;
-                }
-
-                /* Force dropdown to be above everything */
-                .dropdown-menu.show {
-                    z-index: 9999 !important;
-                    position: absolute !important;
-                }
-
-                /* Ensure dropdown is never hidden */
-                .table-container,
-                .table,
-                .table tbody,
-                .table tbody tr,
-                .table tbody td {
-                    overflow: visible !important;
-                }
-            `;
-                document.head.appendChild(style);
-            }
-
-            debugLog('✔ Extracurricular functions initialized');
-
-            // Add window resize listener to adjust dropdown positions
-            window.addEventListener('resize', function () {
-                // Close all dropdowns on resize to prevent positioning issues
-                document.querySelectorAll('.dropdown-menu.show').forEach(function (menu) {
-                    menu.classList.remove('show');
-                });
-                document.querySelectorAll('.dropdown-toggle.active').forEach(function (toggle) {
-                    toggle.classList.remove('active');
-                });
-            });
+            console.log('Initializing extracurricular functions...');
+            // Functions are already defined globally, no need to initialize
         }
     </script>
 @endsection

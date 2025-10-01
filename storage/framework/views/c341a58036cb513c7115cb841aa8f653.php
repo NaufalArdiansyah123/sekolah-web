@@ -674,9 +674,23 @@
                  x-transition:leave-end="opacity-0 transform scale-95"
                  class="nav-dropdown-content">
                 <a href="<?php echo e(route('admin.extracurriculars.index')); ?>" 
-                   class="nav-dropdown-item <?php echo e(request()->routeIs('admin.extracurriculars.*') ? 'active' : ''); ?>"
+                   class="nav-dropdown-item <?php echo e(request()->routeIs('admin.extracurriculars.index') ? 'active' : ''); ?>"
                    @click="sidebarOpen = false">
                     🎯 Ekstrakurikuler
+                </a>
+                <a href="<?php echo e(route('admin.extracurriculars.registrations.page')); ?>" 
+                   class="nav-dropdown-item <?php echo e(request()->routeIs('admin.extracurriculars.registrations.page') ? 'active' : ''); ?>"
+                   @click="sidebarOpen = false">
+                    <span class="nav-text">📝 Pendaftaran Ekstrakurikuler</span>
+                    <?php
+                        $pendingExtracurricularRegistrations = \App\Models\ExtracurricularRegistration::where('status', 'pending')->count();
+                    ?>
+                    <?php if($pendingExtracurricularRegistrations > 0): ?>
+                        <span class="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200">
+                            <?php echo e($pendingExtracurricularRegistrations); ?>
+
+                        </span>
+                    <?php endif; ?>
                 </a>
                 <a href="<?php echo e(route('admin.teachers.index')); ?>" 
                    class="nav-dropdown-item <?php echo e(request()->routeIs('admin.teachers.*') ? 'active' : ''); ?>"
@@ -824,6 +838,8 @@
             <img class="user-avatar" 
                  src="<?php echo e(auth()->user()->avatar_url); ?>" 
                  alt="<?php echo e(auth()->user()->name); ?>"
+                 data-sidebar-avatar
+                 data-user-avatar
                  onerror="this.src='https://ui-avatars.com/api/?name=<?php echo e(urlencode(auth()->user()->name)); ?>&color=7F9CF5&background=EBF4FF&size=44'">
             <div class="user-info">
                 <div class="user-name"><?php echo e(auth()->user()->name); ?></div>

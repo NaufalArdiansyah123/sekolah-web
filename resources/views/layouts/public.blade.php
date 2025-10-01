@@ -1190,7 +1190,7 @@
                             <i class="fas fa-newspaper me-2 d-lg-none"></i>Informasi
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{{ route('news.index') }}">
+                            <li><a class="dropdown-item" href="{{ route('blog.index') }}">
                                     <i class="fas fa-newspaper me-3"></i>Berita
                                 </a></li>
                             <li><a class="dropdown-item" href="{{ route('announcements.index') }}">
@@ -1250,7 +1250,7 @@
                         </a>
                     </li>
                     <li class="nav-item d-none d-xl-block">
-                        <a class="nav-link {{ request()->routeIs('news.*') ? 'active' : '' }}" href="{{ route('news.index') }}">
+                        <a class="nav-link {{ request()->routeIs('news.*') ? 'active' : '' }}" href="{{ route('blog.index') }}">
                             <i class="fas fa-newspaper me-2"></i>Berita
                         </a>
                     </li>

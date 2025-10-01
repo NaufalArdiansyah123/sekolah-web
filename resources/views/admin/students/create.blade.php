@@ -879,33 +879,7 @@
                 </div>
 
                 <!-- Photo Upload Section -->
-                <div class="form-section fade-in">
-                    <h3 class="section-title">
-                        <div class="section-icon">
-                            <i class="fas fa-camera"></i>
-                        </div>
-                        Foto Siswa
-                    </h3>
-                    
-                    <div class="photo-upload-area" onclick="document.getElementById('photo').click()">
-                        <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
-                        <h5>Klik untuk upload foto atau drag & drop</h5>
-                        <p>Format: JPG, PNG, GIF. Maksimal 2MB</p>
-                        <input type="file" class="d-none @error('photo') is-invalid @enderror" 
-                               id="photo" name="photo" accept="image/*">
-                    </div>
-                    
-                    <div id="photoPreview" class="text-center" style="display: none;">
-                        <img id="previewImage" src="" alt="Preview" class="photo-preview">
-                        <button type="button" class="btn btn-sm btn-outline-danger mt-2" onclick="removePhoto()">
-                            <i class="fas fa-trash"></i> Hapus Foto
-                        </button>
-                    </div>
-                    
-                    @error('photo')
-                        <div class="invalid-feedback d-block">{{ $message }}</div>
-                    @enderror
-                </div>
+                
 
                 <!-- QR Code & User Account Section -->
                 <div class="form-section fade-in">

@@ -474,7 +474,7 @@
         <nav class="breadcrumb-nav fade-in-up">
             <a href="{{ route('home') }}">Beranda</a>
             <span class="mx-2">/</span>
-            <a href="{{ route('public.blog.index') }}">Blog</a>
+            <a href="{{ route('blog.index') }}">Blog</a>
             <span class="mx-2">/</span>
             <span>{{ Str::limit($blog->title, 30) }}</span>
         </nav>
@@ -627,7 +627,7 @@
                     <div class="sidebar-card-body text-center">
                         <h5 class="mb-3">Lihat Artikel Lainnya</h5>
                         <p class="text-muted mb-4">Jelajahi lebih banyak artikel menarik dari kami</p>
-                        <a href="{{ route('public.blog.index') }}" class="btn btn-primary">
+                        <a href="{{ route('blog.index') }}" class="btn btn-primary">
                             <i class="fas fa-arrow-left me-2"></i>Kembali ke Blog
                         </a>
                     </div>

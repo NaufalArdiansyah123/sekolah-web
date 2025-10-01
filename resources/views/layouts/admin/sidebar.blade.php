@@ -674,9 +674,22 @@
                  x-transition:leave-end="opacity-0 transform scale-95"
                  class="nav-dropdown-content">
                 <a href="{{ route('admin.extracurriculars.index') }}" 
-                   class="nav-dropdown-item {{ request()->routeIs('admin.extracurriculars.*') ? 'active' : '' }}"
+                   class="nav-dropdown-item {{ request()->routeIs('admin.extracurriculars.index') ? 'active' : '' }}"
                    @click="sidebarOpen = false">
                     🎯 Ekstrakurikuler
+                </a>
+                <a href="{{ route('admin.extracurriculars.registrations.page') }}" 
+                   class="nav-dropdown-item {{ request()->routeIs('admin.extracurriculars.registrations.page') ? 'active' : '' }}"
+                   @click="sidebarOpen = false">
+                    <span class="nav-text">📝 Pendaftaran Ekstrakurikuler</span>
+                    @php
+                        $pendingExtracurricularRegistrations = \App\Models\ExtracurricularRegistration::where('status', 'pending')->count();
+                    @endphp
+                    @if($pendingExtracurricularRegistrations > 0)
+                        <span class="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200">
+                            {{ $pendingExtracurricularRegistrations }}
+                        </span>
+                    @endif
                 </a>
                 <a href="{{ route('admin.teachers.index') }}" 
                    class="nav-dropdown-item {{ request()->routeIs('admin.teachers.*') ? 'active' : '' }}"

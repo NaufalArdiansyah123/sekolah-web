@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', 'Daftar ' . $extracurricular->name . ' - Ekstrakurikuler - SMA Negeri 99')
+@section('title', 'Daftar ' . $extracurricular->name . ' - Ekstrakurikuler - SMK Negeri 1 Balong')
 
 @section('content')
 <style>
@@ -617,9 +617,24 @@
                                         class="form-input @error('student_class') is-invalid @enderror" 
                                         required>
                                     <option value="">Pilih Kelas</option>
-                                    <option value="X" {{ old('student_class') == 'X' ? 'selected' : '' }}>X</option>
-                                    <option value="XI" {{ old('student_class') == 'XI' ? 'selected' : '' }}>XI</option>
-                                    <option value="XII" {{ old('student_class') == 'XII' ? 'selected' : '' }}>XII</option>
+                                    @if(isset($activeClasses))
+                                        @foreach($activeClasses as $level => $classes)
+                                            <optgroup label="Kelas {{ $level }}">
+                                                @foreach($classes as $class)
+                                                    <option value="{{ $class->name }}" {{ old('student_class') == $class->name ? 'selected' : '' }}>
+                                                        {{ $class->name }}
+                                                    </option>
+                                                @endforeach
+                                            </optgroup>
+                                        @endforeach
+                                    @else
+                                        <!-- Fallback options if no active classes found -->
+                                        <option value="10 TKJ 1" {{ old('student_class') == '10 TKJ 1' ? 'selected' : '' }}>10 TKJ 1</option>
+                                        <option value="10 TKJ 2" {{ old('student_class') == '10 TKJ 2' ? 'selected' : '' }}>10 TKJ 2</option>
+                                        <option value="10 RPL 1" {{ old('student_class') == '10 RPL 1' ? 'selected' : '' }}>10 RPL 1</option>
+                                        <option value="10 RPL 2" {{ old('student_class') == '10 RPL 2' ? 'selected' : '' }}>10 RPL 2</option>
+                                        <option value="10 DKV 1" {{ old('student_class') == '10 DKV 1' ? 'selected' : '' }}>10 DKV 1</option>
+                                    @endif
                                 </select>
                                 @error('student_class')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -627,14 +642,35 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label required">Jurusan</label>
+                                <label class="form-label required">Jurusan/Program Keahlian</label>
                                 <select name="student_major" 
                                         class="form-input @error('student_major') is-invalid @enderror" 
                                         required>
-                                    <option value="">Pilih Jurusan</option>
-                                    <option value="IPA" {{ old('student_major') == 'IPA' ? 'selected' : '' }}>IPA</option>
-                                    <option value="IPS" {{ old('student_major') == 'IPS' ? 'selected' : '' }}>IPS</option>
-                                    <option value="Bahasa" {{ old('student_major') == 'Bahasa' ? 'selected' : '' }}>Bahasa</option>
+                                    <option value="">Pilih Jurusan/Program Keahlian</option>
+                                    @if(isset($activePrograms))
+                                        @foreach($activePrograms as $program)
+                                            <option value="{{ $program }}" {{ old('student_major') == $program ? 'selected' : '' }}>
+                                                @switch($program)
+                                                    @case('TKJ')
+                                                        TKJ (Teknik Komputer dan Jaringan)
+                                                        @break
+                                                    @case('RPL')
+                                                        RPL (Rekayasa Perangkat Lunak)
+                                                        @break
+                                                    @case('DKV')
+                                                        DKV (Desain Komunikasi Visual)
+                                                        @break
+                                                    @default
+                                                        {{ $program }}
+                                                @endswitch
+                                            </option>
+                                        @endforeach
+                                    @else
+                                        <!-- Fallback options if no active programs found -->
+                                        <option value="TKJ" {{ old('student_major') == 'TKJ' ? 'selected' : '' }}>TKJ (Teknik Komputer dan Jaringan)</option>
+                                        <option value="RPL" {{ old('student_major') == 'RPL' ? 'selected' : '' }}>RPL (Rekayasa Perangkat Lunak)</option>
+                                        <option value="DKV" {{ old('student_major') == 'DKV' ? 'selected' : '' }}>DKV (Desain Komunikasi Visual)</option>
+                                    @endif
                                 </select>
                                 @error('student_major')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -820,11 +856,13 @@
                         Persyaratan
                     </h3>
                     <ul class="requirements-list">
-                        <li>Siswa aktif SMA Negeri 99</li>
+                        <li>Siswa aktif SMK Negeri 1 Balong</li>
                         <li>Mengisi formulir pendaftaran dengan lengkap</li>
                         <li>Mendapat persetujuan orang tua/wali</li>
                         <li>Berkomitmen mengikuti kegiatan secara rutin</li>
                         <li>Tidak sedang dalam masa sanksi sekolah</li>
+                        <li>Memiliki nilai akademik yang memadai</li>
+                        <li>Tidak bertentangan dengan jadwal praktik kerja industri (PKL)</li>
                     </ul>
                 </div>
 
@@ -904,6 +942,46 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Dynamic major selection based on SMK class
+    const classSelect = document.querySelector('select[name="student_class"]');
+    const majorSelect = document.querySelector('select[name="student_major"]');
+    
+    if (classSelect && majorSelect) {
+        classSelect.addEventListener('change', function() {
+            const selectedClass = this.value;
+            
+            if (!selectedClass) {
+                majorSelect.value = '';
+                return;
+            }
+            
+            // Extract program from class name (e.g., "10 TKJ 1" -> "TKJ")
+            const classParts = selectedClass.split(' ');
+            const classProgram = classParts.length > 1 ? classParts[1] : '';
+            
+            // Auto-select the corresponding major if it exists
+            const majorOptions = majorSelect.querySelectorAll('option');
+            let programFound = false;
+            
+            majorOptions.forEach(option => {
+                if (option.value === classProgram) {
+                    option.selected = true;
+                    programFound = true;
+                }
+            });
+            
+            // If no matching program found, reset selection
+            if (!programFound) {
+                majorSelect.value = '';
+            }
+        });
+        
+        // Trigger change event on page load if class is already selected
+        if (classSelect.value) {
+            classSelect.dispatchEvent(new Event('change'));
+        }
+    }
 
     // Phone number formatting
     const phoneInputs = document.querySelectorAll('input[type="tel"]');

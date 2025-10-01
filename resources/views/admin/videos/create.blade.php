@@ -396,19 +396,7 @@
                 </div>
             </div>
 
-            <!-- Thumbnail Upload -->
-            <div class="form-group">
-                <label for="thumbnail" class="form-label">Thumbnail (Opsional)</label>
-                <input type="file" 
-                       name="thumbnail" 
-                       id="thumbnail"
-                       class="form-input"
-                       accept="image/*">
-                <p class="text-sm text-gray-500 mt-1">Upload gambar thumbnail untuk video (JPEG, PNG, JPG, GIF - Max: 2MB)</p>
-                @error('thumbnail')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
-            </div>
+
 
             <!-- Featured Checkbox -->
             <div class="form-group">

@@ -455,7 +455,7 @@
         <div class="filter-section p-4 fade-in-up">
             <div class="row">
                 <div class="col-md-8">
-                    <form method="GET" action="{{ route('public.blog.index') }}" class="d-flex gap-3">
+                    <form method="GET" action="{{ route('blog.index') }}" class="d-flex gap-3">
                         <div class="flex-grow-1">
                             <input type="text" 
                                    name="search" 
@@ -476,12 +476,12 @@
 
         <!-- Category Filter -->
         <div class="category-filter fade-in-up" style="animation-delay: 0.2s;">
-            <a href="{{ route('public.blog.index') }}" 
+            <a href="{{ route('blog.index') }}" 
                class="category-btn {{ !request('category') ? 'active' : '' }}">
                 Semua
             </a>
             @foreach($categories as $category)
-            <a href="{{ route('public.blog.index', ['category' => $category]) }}" 
+            <a href="{{ route('blog.index', ['category' => $category]) }}" 
                class="category-btn {{ request('category') == $category ? 'active' : '' }}">
                 @switch($category)
                     @case('berita')
@@ -599,7 +599,7 @@
                         <p class="text-muted mb-4">
                             Maaf, tidak ada artikel yang sesuai dengan kriteria pencarian Anda.
                         </p>
-                        <a href="{{ route('public.blog.index') }}" class="btn btn-primary">
+                        <a href="{{ route('blog.index') }}" class="btn btn-primary">
                             <i class="fas fa-refresh me-2"></i>Lihat Semua Artikel
                         </a>
                     </div>

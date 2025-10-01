@@ -53,9 +53,7 @@ Route::get('/news/{blog}', [PublicController::class, 'newsDetail'])->name('news.
 Route::get('/agenda', [PublicController::class, 'agenda'])->name('agenda.index');
 Route::get('/agenda/{id}', [PublicController::class, 'agendaDetail'])->name('agenda.show');
 Route::get('/gallery', [PublicController::class, 'gallery'])->name('gallery');
-Route::get('/extracurriculars', [PublicController::class, 'extracurriculars'])->name('extracurriculars.index');
-Route::get('/extracurriculars/{slug}', [PublicController::class, 'extracurricularDetail'])->name('extracurriculars.detail');
-Route::post('/extracurriculars/{extracurricular}/register', [PublicController::class, 'registerExtracurricular'])->name('extracurriculars.register');
+// Extracurricular routes moved to Public\ExtracurricularController group below
 Route::get('/announcements', [PublicController::class, 'announcements'])->name('announcements.index');
 Route::get('/announcements/{id}', [PublicController::class, 'announcementDetail'])->name('announcements.show');
 
@@ -67,7 +65,10 @@ Route::get('/videos', [PublicController::class, 'videos'])->name('public.videos.
 Route::get('/videos/{id}', [PublicController::class, 'videoDetail'])->name('public.videos.show');
 Route::post('/videos/{id}/increment-view', [PublicController::class, 'incrementVideoView'])->name('public.videos.increment-view');
 Route::get('/videos/{id}/download', [PublicController::class, 'videoDownload'])->name('public.videos.download');
-Route::get('/blog', [PublicBlogController::class, 'index'])->name('public.blog.index');
+// Blog routes
+Route::get('/blog', [PublicBlogController::class, 'index'])->name('blog.index');
+Route::get('/blog/{id}', [PublicBlogController::class, 'show'])->name('public.blog.show');
+
 Route::get('/contact', [PublicController::class, 'contact'])->name('contact');
 Route::post('/contact', [PublicController::class, 'submitContact'])->name('contact.submit');
 
@@ -241,12 +242,18 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('extracurriculars/registration/{registration}', [ExtracurricularController::class, 'showRegistrationDetail'])->name('extracurriculars.registration.detail');
     Route::get('pending-registrations', [ExtracurricularController::class, 'pendingRegistrations'])->name('extracurriculars.pending-registrations');
     
+    // Dedicated pending registrations page
+    Route::get('extracurriculars-registrations', [ExtracurricularController::class, 'pendingRegistrationsPage'])->name('extracurriculars.registrations.page');
+    Route::post('extracurriculars-registrations/bulk-approve', [ExtracurricularController::class, 'bulkApproveRegistrations'])->name('extracurriculars.registrations.bulk-approve');
+    Route::post('extracurriculars-registrations/bulk-reject', [ExtracurricularController::class, 'bulkRejectRegistrations'])->name('extracurriculars.registrations.bulk-reject');
+    
     // API endpoints for AJAX calls
     Route::get('extracurriculars/{extracurricular}/members-json', [ExtracurricularController::class, 'getMembersJson'])->name('extracurriculars.members.json');
     Route::get('extracurriculars/{extracurricular}/registrations-json', [ExtracurricularController::class, 'getRegistrationsJson'])->name('extracurriculars.registrations.json');
     Route::get('extracurriculars/all-pending-registrations', [ExtracurricularController::class, 'getAllPendingRegistrations'])->name('extracurriculars.all-pending-registrations');
     Route::post('extracurriculars/member/{registration}/status', [ExtracurricularController::class, 'updateMemberStatus'])->name('extracurriculars.member.status');
     Route::post('extracurriculars/registration/{registration}/status', [ExtracurricularController::class, 'updateRegistrationStatus'])->name('extracurriculars.registration.status');
+    Route::get('extracurriculars/registration/{registration}/detail', [ExtracurricularController::class, 'getRegistrationDetail'])->name('extracurriculars.registration.get-detail');
     
     // Achievements management
     Route::resource('achievements', AchievementController::class);

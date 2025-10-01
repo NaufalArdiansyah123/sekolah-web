@@ -405,19 +405,36 @@
         text-decoration: none;
     }
 
-    /* Members Section */
+    /* Enhanced Members Section */
     .members-list {
-        max-height: 300px;
+        max-height: 500px;
         overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border-color) transparent;
+    }
+
+    .members-list::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .members-list::-webkit-scrollbar-track {
+        background: var(--bg-secondary);
+        border-radius: 3px;
+    }
+
+    .members-list::-webkit-scrollbar-thumb {
+        background: var(--border-color);
+        border-radius: 3px;
     }
 
     .member-item {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         gap: 1rem;
-        padding: 1rem;
+        padding: 1.25rem;
         border-bottom: 1px solid var(--border-color);
         transition: all 0.3s ease;
+        position: relative;
     }
 
     .member-item:last-child {
@@ -426,36 +443,162 @@
 
     .member-item:hover {
         background: var(--bg-secondary);
+        transform: translateX(5px);
+        box-shadow: 0 2px 8px var(--shadow-color);
+    }
+
+    .member-number {
+        width: 24px;
+        height: 24px;
+        background: linear-gradient(135deg, #6b7280, #4b5563);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        font-weight: 600;
+        flex-shrink: 0;
     }
 
     .member-avatar {
-        width: 40px;
-        height: 40px;
+        width: 48px;
+        height: 48px;
         background: linear-gradient(135deg, #3b82f6, #1d4ed8);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
-        font-weight: 600;
-        font-size: 0.875rem;
+        font-weight: 700;
+        font-size: 1rem;
+        flex-shrink: 0;
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
     }
 
     .member-info {
         flex: 1;
+        min-width: 0;
     }
 
     .member-name {
-        font-weight: 600;
+        font-weight: 700;
         color: var(--text-primary);
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
         transition: color 0.3s ease;
     }
 
-    .member-status {
-        font-size: 0.75rem;
+    .member-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .member-class,
+    .member-join-date {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
         color: var(--text-secondary);
         transition: color 0.3s ease;
+    }
+
+    .member-reason {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        font-size: 0.8rem;
+        color: var(--text-tertiary);
+        font-style: italic;
+        margin-top: 0.5rem;
+        padding: 0.5rem;
+        background: var(--bg-secondary);
+        border-radius: 8px;
+        border-left: 3px solid #3b82f6;
+    }
+
+    .member-status-badge {
+        flex-shrink: 0;
+    }
+
+    .status-active {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        background: rgba(16, 185, 129, 0.1);
+        color: #059669;
+        padding: 0.375rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    /* Members Summary */
+    .members-summary {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 2px solid var(--border-color);
+    }
+
+    .summary-stats {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem;
+        background: var(--bg-secondary);
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+    }
+
+    .summary-label {
+        font-weight: 600;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+    }
+
+    .summary-value {
+        font-weight: 700;
+        color: var(--text-primary);
+        font-size: 0.875rem;
+    }
+
+    .class-badge {
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-right: 0.25rem;
+    }
+
+    /* Responsive Members */
+    @media (max-width: 768px) {
+        .member-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .member-details {
+            flex-direction: column;
+        }
+
+        .summary-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
     }
 
     /* Alerts */
@@ -568,29 +711,35 @@
         pointer-events: none;
     }
 
-    /* Empty State */
+    /* Enhanced Empty State */
     .empty-state {
         text-align: center;
-        padding: 3rem 2rem;
+        padding: 4rem 2rem;
         color: var(--text-secondary);
+        background: var(--bg-secondary);
+        border-radius: 12px;
+        border: 2px dashed var(--border-color);
     }
 
     .empty-icon {
-        width: 64px;
-        height: 64px;
-        margin: 0 auto 1rem;
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1.5rem;
         color: var(--text-tertiary);
+        opacity: 0.6;
     }
 
     .empty-title {
-        font-size: 1.125rem;
-        font-weight: 600;
+        font-size: 1.25rem;
+        font-weight: 700;
         color: var(--text-primary);
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.75rem;
     }
 
     .empty-message {
         color: var(--text-secondary);
+        line-height: 1.6;
+        font-size: 0.95rem;
     }
 </style>
 
@@ -743,37 +892,128 @@
                 </div>
             </div>
 
-            <!-- Members -->
-            @if($extracurricular->registrations->where('status', 'approved')->count() > 0)
+            <!-- Members Section -->
             <div class="content-card">
                 <div class="card-header">
                     <h2 class="card-title">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 515.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
                         </svg>
-                        Anggota Aktif ({{ $extracurricular->registrations->where('status', 'approved')->count() }})
+                        Anggota Aktif 
+                        <span style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; margin-left: 0.5rem;">
+                            {{ $extracurricular->registrations->where('status', 'approved')->count() }} Orang
+                        </span>
                     </h2>
                 </div>
                 <div class="card-body">
-                    <div class="members-list">
-                        @foreach($extracurricular->registrations->where('status', 'approved') as $registration)
-                        <div class="member-item">
-                            <div class="member-avatar">
-                                {{ strtoupper(substr($registration->nama, 0, 2)) }}
-                            </div>
-                            <div class="member-info">
-                                <div class="member-name">{{ $registration->nama }}</div>
-                                <div class="member-status">
-                                    Kelas {{ $registration->kelas }} • 
-                                    Bergabung {{ $registration->created_at->locale('id')->diffForHumans() }}
+                    {{-- Debug: Check if registrations are loaded --}}
+                    @if(config('app.debug'))
+                        <div class="alert alert-info" style="margin-bottom: 1rem; font-size: 0.8rem;">
+                            <strong>Debug Info:</strong><br>
+                            Total registrations: {{ $extracurricular->registrations->count() }}<br>
+                            Approved registrations: {{ $extracurricular->registrations->where('status', 'approved')->count() }}<br>
+                            Pending registrations: {{ $extracurricular->registrations->where('status', 'pending')->count() }}<br>
+                            @if($extracurricular->registrations->count() > 0)
+                                First registration: {{ $extracurricular->registrations->first()->student_name ?? 'No name' }}<br>
+                                All registrations: 
+                                @foreach($extracurricular->registrations as $reg)
+                                    {{ $reg->student_name }} ({{ $reg->status }}), 
+                                @endforeach
+                            @else
+                                <strong style="color: red;">No registrations found!</strong>
+                            @endif
+                        </div>
+                    @endif
+                    
+                    @if($extracurricular->registrations->where('status', 'approved')->count() > 0)
+                        <div class="members-list">
+                            @foreach($extracurricular->registrations->where('status', 'approved')->sortBy('student_name') as $index => $registration)
+                            <div class="member-item enhanced-member">
+                                <div class="member-number">
+                                    {{ $index + 1 }}
+                                </div>
+                                <div class="member-avatar">
+                                    {{ strtoupper(substr($registration->student_name, 0, 2)) }}
+                                </div>
+                                <div class="member-info">
+                                    <div class="member-name">{{ $registration->student_name }}</div>
+                                    <div class="member-details">
+                                        <span class="member-class">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                            </svg>
+                                            Kelas {{ $registration->student_class }} {{ $registration->student_major }}
+                                        </span>
+                                        <span class="member-join-date">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                            Bergabung {{ $registration->created_at->locale('id')->isoFormat('D MMM Y') }}
+                                        </span>
+                                    </div>
+                                    @if($registration->reason)
+                                        <div class="member-reason">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                            </svg>
+                                            "{{ Str::limit($registration->reason, 100) }}"
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="member-status-badge">
+                                    <span class="status-active">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        Aktif
+                                    </span>
                                 </div>
                             </div>
+                            @endforeach
                         </div>
-                        @endforeach
-                    </div>
+                        
+                        <!-- Summary Section -->
+                        <div class="members-summary">
+                            <div class="summary-stats">
+                                <div class="summary-item">
+                                    <span class="summary-label">Total Anggota Aktif:</span>
+                                    <span class="summary-value">{{ $extracurricular->registrations->where('status', 'approved')->count() }} orang</span>
+                                </div>
+                                @php
+                                    $classCounts = $extracurricular->registrations->where('status', 'approved')->groupBy(function($item) {
+                                        return $item->student_class . ' ' . $item->student_major;
+                                    })->map->count();
+                                @endphp
+                                @if($classCounts->count() > 0)
+                                    <div class="summary-item">
+                                        <span class="summary-label">Distribusi Kelas:</span>
+                                        <span class="summary-value">
+                                            @foreach($classCounts as $kelas => $count)
+                                                <span class="class-badge">{{ $kelas }}: {{ $count }}</span>{{ !$loop->last ? ', ' : '' }}
+                                            @endforeach
+                                        </span>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    @else
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 515.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                </svg>
+                            </div>
+                            <div class="empty-title">Belum Ada Anggota Aktif</div>
+                            <div class="empty-message">
+                                Ekstrakurikuler ini belum memiliki anggota yang terdaftar dan disetujui.
+                                @if($extracurricular->registrations->where('status', 'pending')->count() > 0)
+                                    <br>Ada {{ $extracurricular->registrations->where('status', 'pending')->count() }} pendaftar yang menunggu persetujuan.
+                                @endif
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
-            @endif
         </div>
 
         <!-- Sidebar -->
@@ -856,14 +1096,6 @@
                             Edit
                         </a>
                         
-                        @if($extracurricular->registrations->where('status', 'pending')->count() > 0)
-                        <button class="btn btn-outline" onclick="showRegistrations({{ $extracurricular->id }})">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            Lihat Pendaftar
-                        </button>
-                        @endif
                         
                         <form action="{{ route('admin.extracurriculars.destroy', $extracurricular->id) }}" 
                               method="POST" 
@@ -885,20 +1117,7 @@
     </div>
 </div>
 
-<!-- Image Modal -->
-<div class="modal fade" id="imageModal" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content" style="background: var(--bg-primary); border: 1px solid var(--border-color);">
-            <div class="modal-header" style="background: var(--bg-tertiary); border-bottom: 1px solid var(--border-color);">
-                <h5 class="modal-title" style="color: var(--text-primary);">{{ $extracurricular->name }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" style="color: var(--text-primary);"></button>
-            </div>
-            <div class="modal-body text-center" style="background: var(--bg-primary);">
-                <img id="modalImage" src="" alt="{{ $extracurricular->name }}" style="max-width: 100%; height: auto; border-radius: 8px;">
-            </div>
-        </div>
-    </div>
-</div>
+
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {

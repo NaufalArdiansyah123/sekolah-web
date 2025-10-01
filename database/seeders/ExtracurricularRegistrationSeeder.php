@@ -5,85 +5,143 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Extracurricular;
 use App\Models\ExtracurricularRegistration;
-use Faker\Factory as Faker;
 
 class ExtracurricularRegistrationSeeder extends Seeder
 {
     /**
-     * Run the database seeder.
+     * Run the database seeds.
      */
     public function run(): void
     {
-        $faker = Faker::create('id_ID');
-        
-        // Clear existing registrations first
-        $existingCount = ExtracurricularRegistration::count();
-        if ($existingCount > 0) {
-            $this->command->info("Found {$existingCount} existing registrations. Clearing existing data to create fresh seed data.");
-            ExtracurricularRegistration::truncate();
-            $this->command->info('Existing registrations cleared.');
-        }
-        
         // Get all extracurriculars
         $extracurriculars = Extracurricular::all();
-        
+
         if ($extracurriculars->isEmpty()) {
-            $this->command->info('No extracurriculars found. Please seed extracurriculars first.');
+            $this->command->info('No extracurriculars found. Please create some extracurriculars first.');
             return;
         }
-        
-        $classes = ['X', 'XI', 'XII'];
-        $majors = ['IPA', 'IPS', 'Bahasa'];
-        $statuses = ['pending', 'approved', 'rejected'];
-        
-        // Create 50 sample registrations
-        for ($i = 1; $i <= 50; $i++) {
-            $extracurricular = $extracurriculars->random();
-            $class = $faker->randomElement($classes);
-            $major = $faker->randomElement($majors);
-            $status = $faker->randomElement($statuses);
+
+        // Sample student data
+        $students = [
+            [
+                'student_name' => 'Ahmad Rizki Pratama',
+                'student_class' => 'XII',
+                'student_major' => 'TKJ 1',
+                'student_nis' => '2021001',
+                'email' => 'ahmad.rizki@student.smk.sch.id',
+                'phone' => '081234567890',
+                'parent_name' => 'Budi Pratama',
+                'parent_phone' => '081234567891',
+                'address' => 'Jl. Merdeka No. 123, Jakarta',
+                'reason' => 'Saya ingin mengembangkan kemampuan di bidang teknologi dan jaringan komputer.',
+                'experience' => 'Pernah mengikuti kursus komputer dasar dan memiliki sertifikat Microsoft Office.',
+                'status' => 'approved'
+            ],
+            [
+                'student_name' => 'Siti Nurhaliza',
+                'student_class' => 'XI',
+                'student_major' => 'RPL 2',
+                'student_nis' => '2022002',
+                'email' => 'siti.nurhaliza@student.smk.sch.id',
+                'phone' => '081234567892',
+                'parent_name' => 'Hasan Nurdin',
+                'parent_phone' => '081234567893',
+                'address' => 'Jl. Sudirman No. 456, Jakarta',
+                'reason' => 'Ingin belajar programming dan mengembangkan aplikasi mobile.',
+                'experience' => 'Sudah belajar HTML dan CSS secara otodidak.',
+                'status' => 'approved'
+            ],
+            [
+                'student_name' => 'Budi Santoso',
+                'student_class' => 'X',
+                'student_major' => 'DKV 1',
+                'student_nis' => '2023003',
+                'email' => 'budi.santoso@student.smk.sch.id',
+                'phone' => '081234567894',
+                'parent_name' => 'Santoso Wijaya',
+                'parent_phone' => '081234567895',
+                'address' => 'Jl. Gatot Subroto No. 789, Jakarta',
+                'reason' => 'Saya tertarik dengan desain grafis dan ingin mengasah kreativitas.',
+                'experience' => 'Pernah membuat poster untuk acara sekolah.',
+                'status' => 'approved'
+            ],
+            [
+                'student_name' => 'Dewi Lestari',
+                'student_class' => 'XII',
+                'student_major' => 'TKJ 2',
+                'student_nis' => '2021004',
+                'email' => 'dewi.lestari@student.smk.sch.id',
+                'phone' => '081234567896',
+                'parent_name' => 'Lestari Indah',
+                'parent_phone' => '081234567897',
+                'address' => 'Jl. Thamrin No. 321, Jakarta',
+                'reason' => 'Ingin memperdalam ilmu jaringan komputer dan keamanan siber.',
+                'experience' => 'Mengikuti workshop cybersecurity di sekolah.',
+                'status' => 'pending'
+            ],
+            [
+                'student_name' => 'Andi Wijaya',
+                'student_class' => 'XI',
+                'student_major' => 'RPL 1',
+                'student_nis' => '2022005',
+                'email' => 'andi.wijaya@student.smk.sch.id',
+                'phone' => '081234567898',
+                'parent_name' => 'Wijaya Kusuma',
+                'parent_phone' => '081234567899',
+                'address' => 'Jl. Kuningan No. 654, Jakarta',
+                'reason' => 'Passion saya di bidang software development dan ingin berkarir sebagai programmer.',
+                'experience' => 'Sudah membuat beberapa project kecil dengan PHP dan JavaScript.',
+                'status' => 'approved'
+            ],
+            [
+                'student_name' => 'Maya Sari',
+                'student_class' => 'X',
+                'student_major' => 'DKV 2',
+                'student_nis' => '2023006',
+                'email' => 'maya.sari@student.smk.sch.id',
+                'phone' => '081234567800',
+                'parent_name' => 'Sari Dewi',
+                'parent_phone' => '081234567801',
+                'address' => 'Jl. Kemang No. 987, Jakarta',
+                'reason' => 'Suka menggambar dan ingin belajar desain digital.',
+                'experience' => 'Juara 2 lomba poster tingkat sekolah.',
+                'status' => 'pending'
+            ]
+        ];
+
+        foreach ($extracurriculars as $extracurricular) {
+            // Add 2-4 random students to each extracurricular
+            $selectedStudents = collect($students)->random(rand(2, 4));
             
-            $registeredAt = $faker->dateTimeBetween('-3 months', 'now');
-            $approvedAt = null;
-            $approvedBy = null;
-            
-            // If status is approved or rejected, set approval data
-            if (in_array($status, ['approved', 'rejected'])) {
-                $approvedAt = $faker->dateTimeBetween($registeredAt, 'now');
-                $approvedBy = 1; // Assuming admin user ID is 1
+            foreach ($selectedStudents as $student) {
+                // Check if this student is already registered for this extracurricular
+                $exists = ExtracurricularRegistration::where('extracurricular_id', $extracurricular->id)
+                    ->where('student_nis', $student['student_nis'])
+                    ->exists();
+                
+                if (!$exists) {
+                    ExtracurricularRegistration::create([
+                        'extracurricular_id' => $extracurricular->id,
+                        'student_name' => $student['student_name'],
+                        'student_class' => $student['student_class'],
+                        'student_major' => $student['student_major'],
+                        'student_nis' => $student['student_nis'],
+                        'email' => $student['email'],
+                        'phone' => $student['phone'],
+                        'parent_name' => $student['parent_name'],
+                        'parent_phone' => $student['parent_phone'],
+                        'address' => $student['address'],
+                        'reason' => $student['reason'],
+                        'experience' => $student['experience'],
+                        'status' => $student['status'],
+                        'registered_at' => now(),
+                        'approved_at' => $student['status'] === 'approved' ? now() : null,
+                        'approved_by' => $student['status'] === 'approved' ? 1 : null, // Assuming admin user ID is 1
+                    ]);
+                }
             }
-            
-            ExtracurricularRegistration::create([
-                'extracurricular_id' => $extracurricular->id,
-                'student_name' => $faker->name,
-                'student_class' => $class,
-                'student_major' => $major,
-                'student_nis' => $faker->unique()->numerify('##########'),
-                'email' => $faker->unique()->safeEmail,
-                'phone' => $faker->phoneNumber,
-                'parent_name' => $faker->name,
-                'parent_phone' => $faker->phoneNumber,
-                'address' => $faker->address,
-                'reason' => $faker->paragraph(2),
-                'experience' => $faker->optional(0.7)->paragraph(1),
-                'status' => $status,
-                'registered_at' => $registeredAt,
-                'approved_at' => $approvedAt,
-                'approved_by' => $approvedBy,
-                'notes' => $status === 'rejected' ? $faker->optional(0.8)->sentence : null,
-            ]);
         }
-        
-        $this->command->info('Created 50 sample extracurricular registrations.');
-        
-        // Show statistics
-        $pending = ExtracurricularRegistration::where('status', 'pending')->count();
-        $approved = ExtracurricularRegistration::where('status', 'approved')->count();
-        $rejected = ExtracurricularRegistration::where('status', 'rejected')->count();
-        
-        $this->command->info("Statistics:");
-        $this->command->info("- Pending: {$pending}");
-        $this->command->info("- Approved: {$approved}");
-        $this->command->info("- Rejected: {$rejected}");
+
+        $this->command->info('Extracurricular registrations seeded successfully!');
     }
 }

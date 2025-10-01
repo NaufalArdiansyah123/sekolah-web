@@ -90,12 +90,7 @@ class PublicController extends Controller
         ]);
     }
 
-    public function extracurriculars()
-    {
-        return view('public.extracurriculars.index', [
-            'title' => 'Ekstrakurikuler'
-        ]);
-    }
+    // extracurriculars method moved to Public\ExtracurricularController
 
     public function academicPrograms()
     {
