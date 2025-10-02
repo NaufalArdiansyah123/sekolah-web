@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', $announcement->title)
+@section('title', $announcement->judul)
 
 @section('content')
     <style>
@@ -237,6 +237,37 @@
             font-weight: 600;
         }
 
+        .content-text {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .content-text h1, .content-text h2, .content-text h3, .content-text h4, .content-text h5, .content-text h6 {
+            color: var(--primary-color);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .content-text ul, .content-text ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        .content-text li {
+            margin-bottom: 0.5rem;
+        }
+
+        .content-text blockquote {
+            border-left: 4px solid var(--secondary-color);
+            padding-left: 1rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+            background: var(--light-gray);
+            padding: 1rem;
+            border-radius: 0 8px 8px 0;
+        }
+
         /* Share Section */
         .share-section {
             background: var(--light-gray);
@@ -315,6 +346,13 @@
             padding: 1.5rem;
             font-size: 1.1rem;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sidebar-header .badge {
+            font-size: 0.75rem;
         }
 
         .sidebar-content {
@@ -322,9 +360,11 @@
         }
 
         .related-item {
-            padding: 1rem 0;
+            padding: 1.25rem 0;
             border-bottom: 1px solid #e2e8f0;
             transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
         }
 
         .related-item:last-child {
@@ -337,6 +377,26 @@
             padding-left: 1.5rem;
             padding-right: 1.5rem;
             border-radius: 10px;
+            transform: translateX(5px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+        }
+
+        .related-item:active {
+            transform: translateX(3px);
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .related-item:hover::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 60%;
+            background: var(--secondary-color);
+            border-radius: 2px;
         }
 
         .related-title {
@@ -344,8 +404,9 @@
             color: var(--primary-color);
             text-decoration: none;
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
             line-height: 1.4;
+            font-size: 0.95rem;
         }
 
         .related-title:hover {
@@ -354,8 +415,37 @@
         }
 
         .related-meta {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--dark-gray);
+            line-height: 1.5;
+        }
+
+        .related-meta .text-primary {
+            font-weight: 500;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .related-item .priority-indicator {
+            position: absolute;
+            top: 1rem;
+            right: 0;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .priority-tinggi {
+            background: #ef4444;
+        }
+
+        .priority-sedang {
+            background: #10b981;
+        }
+
+        .priority-rendah {
+            background: #6b7280;
         }
 
         .back-btn {
@@ -423,7 +513,7 @@
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('home') }}">Beranda</a></li>
                     <li class="breadcrumb-item"><a href="{{ route('announcements.index') }}">Pengumuman</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">{{ Str::limit($announcement->title, 50) }}</li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ Str::limit($announcement->judul, 50) }}</li>
                 </ol>
             </nav>
         </div>
@@ -439,30 +529,29 @@
                         <!-- Header -->
                         <div class="announcement-header">
                             <!-- Priority Badge -->
-                            <div class="priority-badge priority-{{ $announcement->priority ?? 'normal' }}">
-                                @if($announcement->priority === 'urgent') 🚨 Urgent
-                                @elseif($announcement->priority === 'high') ⚠️ Prioritas Tinggi
-                                @elseif($announcement->priority === 'normal') ✅ Normal
+                            <div class="priority-badge priority-{{ $announcement->english_priority ?? 'normal' }}">
+                                @if($announcement->prioritas === 'tinggi') ⚠️ Prioritas Tinggi
+                                @elseif($announcement->prioritas === 'sedang') ✅ Normal
                                 @else 📝 Prioritas Rendah
                                 @endif
                             </div>
 
                             <!-- Category Badge -->
                             <span class="category-badge">
-                                📂 {{ ucfirst($announcement->category) }}
+                                📂 {{ ucfirst($announcement->kategori) }}
                             </span>
 
                             <!-- Title -->
-                            <h1 class="announcement-title">{{ $announcement->title }}</h1>
+                            <h1 class="announcement-title">{{ $announcement->judul }}</h1>
 
                             <!-- Meta Information -->
                             <div class="announcement-meta">
                                 <div class="meta-item">
                                     <div class="meta-icon author-avatar">
-                                        {{ substr($announcement->author, 0, 1) }}
+                                        {{ substr($announcement->penulis ?? 'Admin', 0, 1) }}
                                     </div>
                                     <div>
-                                        <div class="fw-semibold">{{ $announcement->author }}</div>
+                                        <div class="fw-semibold">{{ $announcement->penulis ?? 'Administrator' }}</div>
                                         <div class="text-muted">
                                             @if($announcement->user)
                                                 {{ $announcement->user->hasRole('admin') ? 'Administrator' : 'Guru' }}
@@ -480,7 +569,7 @@
                                     <div>
                                         <div class="fw-semibold">Dipublikasikan</div>
                                         <div>
-                                            {{ $announcement->published_at ? $announcement->published_at->format('d F Y, H:i') : $announcement->created_at->format('d F Y, H:i') }}
+                                            {{ $announcement->tanggal_publikasi ? $announcement->tanggal_publikasi->format('d F Y, H:i') : $announcement->created_at->format('d F Y, H:i') }}
                                         </div>
                                     </div>
                                 </div>
@@ -512,16 +601,14 @@
                         <!-- Content -->
                         <div class="announcement-content">
                             <!-- Featured Image -->
-                            @if($announcement->featured_image)
-                                <img src="{{ asset('storage/' . $announcement->featured_image) }}"
-                                    alt="{{ $announcement->title }}" class="featured-image">
-                            @elseif($announcement->image)
-                                <img src="{{ $announcement->image }}" alt="{{ $announcement->title }}" class="featured-image">
+                            @if($announcement->gambar)
+                                <img src="{{ asset('storage/' . $announcement->gambar) }}"
+                                    alt="{{ $announcement->judul }}" class="featured-image">
                             @endif
 
                             <!-- Content -->
                             <div class="content-text">
-                                {!! nl2br(e($announcement->content)) !!}
+                                {!! nl2br($announcement->isi) !!}
                             </div>
                         </div>
 
@@ -534,12 +621,12 @@
                                     <i class="fab fa-facebook-f"></i>
                                     Facebook
                                 </a>
-                                <a href="https://twitter.com/intent/tweet?url={{ urlencode(request()->fullUrl()) }}&text={{ urlencode($announcement->title) }}"
+                                <a href="https://twitter.com/intent/tweet?url={{ urlencode(request()->fullUrl()) }}&text={{ urlencode($announcement->judul) }}"
                                     target="_blank" class="share-btn share-twitter">
                                     <i class="fab fa-twitter"></i>
                                     Twitter
                                 </a>
-                                <a href="https://wa.me/?text={{ urlencode($announcement->title . ' - ' . request()->fullUrl()) }}"
+                                <a href="https://wa.me/?text={{ urlencode($announcement->judul . ' - ' . request()->fullUrl()) }}"
                                     target="_blank" class="share-btn share-whatsapp">
                                     <i class="fab fa-whatsapp"></i>
                                     WhatsApp
@@ -556,29 +643,63 @@
                 <!-- Sidebar -->
                 <div class="col-lg-4">
                     <!-- Related Announcements -->
-                    @if($relatedAnnouncements->count() > 0)
-                        <div class="sidebar-card fade-in-right">
-                            <div class="sidebar-header">
-                                <i class="fas fa-bullhorn me-2"></i>
-                                Pengumuman Terkait
-                            </div>
-                            <div class="sidebar-content">
+                    <div class="sidebar-card fade-in-right">
+                        <div class="sidebar-header">
+                            <i class="fas fa-bullhorn me-2"></i>
+                            Pengumuman Terkait
+                            @if($relatedAnnouncements->count() > 0)
+                                <span class="badge bg-light text-dark ms-2">{{ $relatedAnnouncements->count() }}</span>
+                            @endif
+                        </div>
+                        <div class="sidebar-content">
+                            @if($relatedAnnouncements->count() > 0)
                                 @foreach($relatedAnnouncements as $related)
-                                    <div class="related-item">
+                                    <div class="related-item" onclick="window.location.href='{{ route('announcements.show', $related->id) }}'">
+                                        <div class="priority-indicator priority-{{ $related->prioritas }}"></div>
                                         <a href="{{ route('announcements.show', $related->id) }}" class="related-title">
-                                            {{ $related->title }}
+                                            {{ Str::limit($related->judul, 80) }}
                                         </a>
                                         <div class="related-meta">
-                                            <i class="fas fa-user me-1"></i>
-                                            {{ $related->author }} •
-                                            <i class="fas fa-calendar me-1"></i>
-                                            {{ $related->published_at ? $related->published_at->format('d M Y') : $related->created_at->format('d M Y') }}
+                                            <div class="mb-1">
+                                                <i class="fas fa-user me-1"></i>
+                                                {{ $related->penulis ?? 'Admin' }} •
+                                                <i class="fas fa-calendar me-1"></i>
+                                                {{ $related->tanggal_publikasi ? $related->tanggal_publikasi->format('d M Y') : $related->created_at->format('d M Y') }}
+                                            </div>
+                                            <div>
+                                                <i class="fas fa-tag me-1"></i>
+                                                <span class="text-primary">{{ ucfirst($related->kategori) }}</span> •
+                                                <i class="fas fa-eye me-1"></i>
+                                                {{ $related->views ?? 0 }} views •
+                                                <i class="fas fa-flag me-1"></i>
+                                                <span class="text-{{ $related->prioritas === 'tinggi' ? 'danger' : ($related->prioritas === 'sedang' ? 'success' : 'secondary') }}">
+                                                    {{ ucfirst($related->prioritas) }}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 @endforeach
-                            </div>
+                                
+                                <!-- View All Related Button -->
+                                <div class="mt-3 pt-3 border-top">
+                                    <a href="{{ route('announcements.index', ['category' => $announcement->kategori]) }}" 
+                                       class="btn btn-outline-primary btn-sm w-100">
+                                        <i class="fas fa-list me-1"></i>
+                                        Lihat Semua Pengumuman {{ ucfirst($announcement->kategori) }}
+                                    </a>
+                                </div>
+                            @else
+                                <div class="text-center py-4">
+                                    <i class="fas fa-info-circle text-muted mb-2" style="font-size: 2rem;"></i>
+                                    <p class="text-muted mb-3">Belum ada pengumuman terkait lainnya.</p>
+                                    <a href="{{ route('announcements.index') }}" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-list me-1"></i>
+                                        Lihat Semua Pengumuman
+                                    </a>
+                                </div>
+                            @endif
                         </div>
-                    @endif
+                    </div>
 
                     <!-- Back to Announcements -->
                     <div class="sidebar-card fade-in-right" style="animation-delay: 0.2s;">
@@ -628,6 +749,26 @@
                             block: 'start'
                         });
                     }
+                });
+            });
+
+            // Enhanced related announcements clickability
+            document.querySelectorAll('.related-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    // Prevent double navigation if clicking on the link directly
+                    if (e.target.tagName === 'A') {
+                        return;
+                    }
+                    
+                    const link = this.querySelector('.related-title');
+                    if (link) {
+                        window.location.href = link.href;
+                    }
+                });
+                
+                // Add visual feedback
+                item.addEventListener('mouseenter', function() {
+                    this.style.cursor = 'pointer';
                 });
             });
 
