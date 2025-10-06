@@ -1228,7 +1228,7 @@
                             <li><a class="dropdown-item" href="<?php echo e(route('facilities.index')); ?>">
                                     <i class="fas fa-building me-3"></i>Fasilitas
                                 </a></li>
-                            <li><a class="dropdown-item" href="<?php echo e(route('achievements.index')); ?>">
+                            <li><a class="dropdown-item" href="<?php echo e(route('public.achievements')); ?>">
                                     <i class="fas fa-trophy me-3"></i>Prestasi
                                 </a></li>
                             <li><a class="dropdown-item" href="<?php echo e(route('public.teachers.index')); ?>">

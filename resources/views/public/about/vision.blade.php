@@ -557,12 +557,33 @@
 </style>
 
 <!-- Enhanced Hero Section -->
-<section class="hero-section">
+@php
+    $heroImageUrl = '';
+    if ($vision->hero_image) {
+        // Handle different path formats
+        if (str_starts_with($vision->hero_image, 'storage/')) {
+            $heroImageUrl = asset($vision->hero_image);
+        } elseif (str_starts_with($vision->hero_image, 'http')) {
+            $heroImageUrl = $vision->hero_image;
+        } else {
+            $heroImageUrl = asset('storage/' . $vision->hero_image);
+        }
+    }
+@endphp
+
+<section class="hero-section {{ $vision->hero_image ? 'with-image' : '' }}" 
+         @if($vision->hero_image) 
+         style="--hero-image: url('{{ $heroImageUrl }}'); 
+                background-image: linear-gradient(135deg, rgba(26, 32, 44, 0.85) 0%, rgba(49, 130, 206, 0.7) 50%, rgba(26, 32, 44, 0.85) 100%), url('{{ $heroImageUrl }}') !important;
+                background-size: cover !important;
+                background-position: center !important;
+                background-repeat: no-repeat !important;" 
+         @endif>
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6">
-                <h1 class="fade-in-up">Visi & Misi</h1>
-                <p class="lead fade-in-up">Komitmen kami untuk menciptakan pendidikan berkualitas dan membentuk generasi yang berkarakter, berprestasi, dan siap menghadapi tantangan masa depan.</p>
+                <h1 class="fade-in-up">{{ $vision->hero_title ?? 'Visi & Misi' }}</h1>
+                <p class="lead fade-in-up">{{ $vision->hero_subtitle ?? 'Komitmen kami untuk menciptakan pendidikan berkualitas dan membentuk generasi yang berkarakter, berprestasi, dan siap menghadapi tantangan masa depan.' }}</p>
                 <div class="fade-in-up">
                     <a href="{{ route('about.profile') }}" class="btn btn-hero btn-hero-primary me-3">
                         <i class="fas fa-info-circle me-2"></i>Profil Sekolah
@@ -593,7 +614,7 @@
                     </div>
                     <div class="card-body-enhanced">
                         <div class="vision-quote">
-                            Terwujudnya sekolah yang unggul, berkarakter, dan berwawasan lingkungan dalam menghasilkan lulusan yang cerdas, kreatif, mandiri, dan berakhlak mulia
+                            {{ $vision->vision_text }}
                         </div>
                         <p class="text-center mt-3 opacity-75">
                             Visi ini mencerminkan komitmen kami untuk menjadi institusi pendidikan yang tidak hanya fokus pada pencapaian akademik, 
@@ -613,26 +634,12 @@
                     </div>
                     <div class="card-body-enhanced">
                         <ul class="mission-list">
-                            <li class="mission-item">
-                                <div class="mission-number">1</div>
-                                <strong>Menyelenggarakan pendidikan berkualitas</strong> dengan mengintegrasikan kurikulum nasional dan teknologi pembelajaran modern
-                            </li>
-                            <li class="mission-item">
-                                <div class="mission-number">2</div>
-                                <strong>Mengembangkan karakter siswa</strong> melalui program pendidikan nilai-nilai keagamaan, nasionalisme, dan kepemimpinan
-                            </li>
-                            <li class="mission-item">
-                                <div class="mission-number">3</div>
-                                <strong>Memfasilitasi pengembangan bakat dan minat</strong> siswa melalui kegiatan ekstrakurikuler dan program unggulan
-                            </li>
-                            <li class="mission-item">
-                                <div class="mission-number">4</div>
-                                <strong>Membangun budaya sekolah</strong> yang kondusif, aman, nyaman, dan berwawasan lingkungan
-                            </li>
-                            <li class="mission-item">
-                                <div class="mission-number">5</div>
-                                <strong>Menjalin kemitraan strategis</strong> dengan stakeholder untuk mendukung program pendidikan dan pengembangan sekolah
-                            </li>
+                            @foreach($vision->mission_items_formatted as $mission)
+                                <li class="mission-item">
+                                    <div class="mission-number">{{ $mission['number'] }}</div>
+                                    <strong>{{ $mission['title'] }}</strong> {{ $mission['description'] }}
+                                </li>
+                            @endforeach
                         </ul>
                     </div>
                 </div>
@@ -648,45 +655,17 @@
                     </div>
                     <div class="card-body-enhanced">
                         <div class="goals-grid">
-                            <div class="goal-item">
-                                <div class="goal-icon">
-                                    <i class="fas fa-graduation-cap"></i>
+                            @foreach($vision->goals_with_icons as $goal)
+                                <div class="goal-item">
+                                    <div class="goal-icon">
+                                        <i class="{{ $goal['icon'] }}"></i>
+                                    </div>
+                                    <div class="goal-title">{{ $goal['title'] }}</div>
+                                    <div class="goal-description">
+                                        {{ $goal['description'] }}
+                                    </div>
                                 </div>
-                                <div class="goal-title">Kualitas Akademik</div>
-                                <div class="goal-description">
-                                    Meningkatkan prestasi akademik dan daya saing lulusan di tingkat nasional
-                                </div>
-                            </div>
-                            
-                            <div class="goal-item">
-                                <div class="goal-icon">
-                                    <i class="fas fa-users"></i>
-                                </div>
-                                <div class="goal-title">Pembentukan Karakter</div>
-                                <div class="goal-description">
-                                    Menghasilkan lulusan yang berakhlak mulia dan berkarakter kuat
-                                </div>
-                            </div>
-                            
-                            <div class="goal-item">
-                                <div class="goal-icon">
-                                    <i class="fas fa-leaf"></i>
-                                </div>
-                                <div class="goal-title">Peduli Lingkungan</div>
-                                <div class="goal-description">
-                                    Mewujudkan sekolah hijau dan berkelanjutan untuk masa depan
-                                </div>
-                            </div>
-                            
-                            <div class="goal-item">
-                                <div class="goal-icon">
-                                    <i class="fas fa-globe"></i>
-                                </div>
-                                <div class="goal-title">Wawasan Global</div>
-                                <div class="goal-description">
-                                    Mempersiapkan siswa dengan kompetensi global dan daya saing internasional
-                                </div>
-                            </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -708,43 +687,17 @@
         </div>
         
         <div class="row g-4">
-            <div class="col-md-4">
-                <div class="value-card fade-in-up" style="animation-delay: 0.1s;">
-                    <div class="value-icon bg-primary text-white">
-                        <i class="fas fa-heart"></i>
+            @foreach($vision->values_with_colors as $index => $value)
+                <div class="col-md-4">
+                    <div class="value-card fade-in-up" style="animation-delay: {{ ($index + 1) * 0.2 }}s;">
+                        <div class="value-icon bg-{{ $value['color'] }} text-white">
+                            <i class="{{ $value['icon'] }}"></i>
+                        </div>
+                        <h5 class="fw-bold mb-3">{{ $value['title'] }}</h5>
+                        <p class="text-muted">{{ $value['description'] }}</p>
                     </div>
-                    <h5 class="fw-bold mb-3">KEADILAN</h5>
-                    <p class="text-muted">Perlakuan yang adil dan merata untuk seluruh warga sekolah tanpa diskriminasi</p>
                 </div>
-            </div>
-            
-            <div class="col-md-4">
-                <div class="value-card fade-in-up" style="animation-delay: 0.6s;">
-                    <div class="value-icon bg-danger text-white">
-                        <i class="fas fa-leaf"></i>
-                    </div>
-                    <h5 class="fw-bold mb-3">PEDULI LINGKUNGAN</h5>
-                    <p class="text-muted">Kepedulian terhadap kelestarian lingkungan dan pembangunan berkelanjutan</p>
-                </div>
-            </div>
-            <!-- <div class="col-md-4">
-                <div class="value-card fade-in-up" style="animation-delay: 0.6s;">
-                    <div class="value-icon bg-danger text-white">
-                        <i class="fas fa-leaf"></i>
-                    </div>
-                    <h5 class="fw-bold mb-3">INOVASI</h5>
-                    <p class="text-muted"></p>
-                </div>
-            </div> -->
-            <div class="col-md-4">
-                <div class="value-card fade-in-up" style="animation-delay: 0.4s;">
-                    <div class="value-icon bg-info text-white">
-                        <i class="fas fa-lightbulb"></i>
-                    </div>
-                    <h5 class="fw-bold mb-3">INOVASI</h5>
-                    <p class="text-muted">Kreativitas dan pembaruan berkelanjutan dalam metode dan pendekatan pendidikan</p>
-                </div>
-            </div>
+            @endforeach
         </div>
     </div>
 </section>
@@ -762,81 +715,28 @@
         </div>
 
         <div class="row g-4">
-            <div class="col-md-6">
-                <div class="card shadow h-100 fade-in-left">
-                    <div class="card-body p-4">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="value-icon bg-primary text-white me-3" style="width: 60px; height: 60px; font-size: 1.5rem;">
-                                <i class="fas fa-brain"></i>
+            @foreach($vision->focus_areas_with_icons as $index => $area)
+                <div class="col-md-6">
+                    <div class="card shadow h-100 {{ $index % 2 == 0 ? 'fade-in-left' : 'fade-in-right' }}" style="animation-delay: {{ ($index % 2) * 0.2 }}s;">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="value-icon bg-{{ $area['color'] }} text-white me-3" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                                    <i class="{{ $area['icon'] }}"></i>
+                                </div>
+                                <h5 class="mb-0 fw-bold">{{ $area['title'] }}</h5>
                             </div>
-                            <h5 class="mb-0 fw-bold">Peningkatan Kualitas Pembelajaran</h5>
+                            @if(!empty($area['description']))
+                                <p class="text-muted mb-3">{{ $area['description'] }}</p>
+                            @endif
+                            <ul class="list-unstyled">
+                                @foreach($area['items'] as $item)
+                                    <li class="mb-2"><i class="fas fa-check text-{{ $area['color'] }} me-2"></i> {{ $item }}</li>
+                                @endforeach
+                            </ul>
                         </div>
-                        <ul class="list-unstyled">
-                            <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Implementasi kurikulum merdeka</li>
-                            <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Pembelajaran berbasis teknologi</li>
-                            <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Pengembangan critical thinking</li>
-                            <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Program literasi digital</li>
-                        </ul>
                     </div>
                 </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="card shadow h-100 fade-in-right">
-                    <div class="card-body p-4">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="value-icon bg-success text-white me-3" style="width: 60px; height: 60px; font-size: 1.5rem;">
-                                <i class="fas fa-seedling"></i>
-                            </div>
-                            <h5 class="mb-0 fw-bold">Pengembangan Karakter</h5>
-                        </div>
-                        <ul class="list-unstyled">
-                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Program pendidikan karakter terintegrasi</li>
-                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Kegiatan keagamaan dan spiritual</li>
-                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Pengembangan kepemimpinan siswa</li>
-                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Program service learning</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="card shadow h-100 fade-in-left" style="animation-delay: 0.2s;">
-                    <div class="card-body p-4">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="value-icon bg-warning text-white me-3" style="width: 60px; height: 60px; font-size: 1.5rem;">
-                                <i class="fas fa-medal"></i>
-                            </div>
-                            <h5 class="mb-0 fw-bold">Prestasi & Kompetisi</h5>
-                        </div>
-                        <ul class="list-unstyled">
-                            <li class="mb-2"><i class="fas fa-check text-warning me-2"></i> Program olimpiade sains</li>
-                            <li class="mb-2"><i class="fas fa-check text-warning me-2"></i> Kompetisi debat dan public speaking</li>
-                            <li class="mb-2"><i class="fas fa-check text-warning me-2"></i> Festival seni dan budaya</li>
-                            <li class="mb-2"><i class="fas fa-check text-warning me-2"></i> Turnamen olahraga</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="card shadow h-100 fade-in-right" style="animation-delay: 0.2s;">
-                    <div class="card-body p-4">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="value-icon bg-info text-white me-3" style="width: 60px; height: 60px; font-size: 1.5rem;">
-                                <i class="fas fa-globe"></i>
-                            </div>
-                            <h5 class="mb-0 fw-bold">Kemitraan Global</h5>
-                        </div>
-                        <ul class="list-unstyled">
-                            <li class="mb-2"><i class="fas fa-check text-info me-2"></i> Sister school program</li>
-                            <li class="mb-2"><i class="fas fa-check text-info me-2"></i> Student exchange program</li>
-                            <li class="mb-2"><i class="fas fa-check text-info me-2"></i> International certification</li>
-                            <li class="mb-2"><i class="fas fa-check text-info me-2"></i> Global competency development</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            @endforeach
         </div>
     </div>
 </section>
@@ -858,49 +758,31 @@
                 <div class="timeline" style="position: relative; padding-left: 30px;">
                     <div class="timeline-line" style="position: absolute; left: 15px; top: 0; bottom: 0; width: 3px; background: linear-gradient(to bottom, var(--secondary-color), var(--accent-color)); border-radius: 2px;"></div>
                     
-                    <div class="timeline-item fade-in-up" style="position: relative; margin-bottom: 40px; padding-left: 40px; animation-delay: 0.1s;">
-                        <div class="timeline-marker" style="position: absolute; left: -32px; width: 20px; height: 20px; background: #0d6efd; border-radius: 50%; border: 3px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
-                        <div class="card shadow-sm">
-                            <div class="card-body">
-                                <h6 class="text-primary fw-bold">2025 - Fase Konsolidasi</h6>
-                                <p class="mb-2">Penguatan sistem manajemen sekolah dan standardisasi proses pembelajaran digital</p>
-                                <small class="text-muted">Target: Akreditasi A+ dan sertifikasi ISO 9001</small>
+                    @foreach($vision->roadmap_phases_formatted as $index => $phase)
+                        <div class="timeline-item fade-in-up" style="position: relative; margin-bottom: 40px; padding-left: 40px; animation-delay: {{ ($index + 1) * 0.1 }}s;">
+                            @php
+                                $colorMap = [
+                                    'primary' => '#0d6efd',
+                                    'success' => '#198754',
+                                    'warning' => '#ffc107',
+                                    'info' => '#0dcaf0',
+                                    'danger' => '#dc3545',
+                                    'secondary' => '#6c757d'
+                                ];
+                                $bgColor = $colorMap[$phase['color']] ?? '#0d6efd';
+                            @endphp
+                            <div class="timeline-marker" style="position: absolute; left: -32px; width: 20px; height: 20px; background: {{ $bgColor }}; border-radius: 50%; border: 3px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h6 class="text-{{ $phase['color'] }} fw-bold">{{ $phase['year'] }} - {{ $phase['title'] }}</h6>
+                                    <p class="mb-2">{{ $phase['description'] }}</p>
+                                    @if(!empty($phase['target']))
+                                        <small class="text-muted">Target: {{ $phase['target'] }}</small>
+                                    @endif
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="timeline-item fade-in-up" style="position: relative; margin-bottom: 40px; padding-left: 40px; animation-delay: 0.2s;">
-                        <div class="timeline-marker" style="position: absolute; left: -32px; width: 20px; height: 20px; background: #198754; border-radius: 50%; border: 3px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
-                        <div class="card shadow-sm">
-                            <div class="card-body">
-                                <h6 class="text-success fw-bold">2026-2027 - Fase Ekspansi</h6>
-                                <p class="mb-2">Pengembangan program unggulan dan kemitraan internasional</p>
-                                <small class="text-muted">Target: 3 program sister school dan 5 sertifikasi internasional</small>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="timeline-item fade-in-up" style="position: relative; margin-bottom: 40px; padding-left: 40px; animation-delay: 0.3s;">
-                        <div class="timeline-marker" style="position: absolute; left: -32px; width: 20px; height: 20px; background: #ffc107; border-radius: 50%; border: 3px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
-                        <div class="card shadow-sm">
-                            <div class="card-body">
-                                <h6 class="text-warning fw-bold">2028-2029 - Fase Optimalisasi</h6>
-                                <p class="mb-2">Implementasi full smart school dan pengembangan pusat keunggulan</p>
-                                <small class="text-muted">Target: Center of Excellence dan Smart School Certification</small>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="timeline-item fade-in-up" style="position: relative; margin-bottom: 40px; padding-left: 40px; animation-delay: 0.4s;">
-                        <div class="timeline-marker" style="position: absolute; left: -32px; width: 20px; height: 20px; background: #0dcaf0; border-radius: 50%; border: 3px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
-                        <div class="card shadow-sm">
-                            <div class="card-body">
-                                <h6 class="text-info fw-bold">2030 - Pencapaian Visi</h6>
-                                <p class="mb-2">Menjadi sekolah unggulan rujukan nasional dengan lulusan berkarakter global</p>
-                                <small class="text-muted">Target: Top 10 sekolah terbaik nasional</small>
-                            </div>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
             </div>
         </div>
@@ -908,7 +790,7 @@
 </section>
 
 <!-- Call to Action -->
-<section class="cta-section">
+<!-- <section class="cta-section">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8 text-center text-lg-start">
@@ -930,7 +812,7 @@
             </div>
         </div>
     </div>
-</section>
+</section> -->
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="{{ asset('js/public-template.js') }}"></script>

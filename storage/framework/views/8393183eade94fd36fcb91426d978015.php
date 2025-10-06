@@ -275,10 +275,37 @@
                             <svg x-show="toast.type === 'error'" class="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
+                            <svg x-show="toast.type === 'warning'" class="h-6 w-6 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                            </svg>
+                            <svg x-show="toast.type === 'info'" class="h-6 w-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
                         </div>
                         <div class="ml-3 w-0 flex-1 pt-0.5">
                             <p class="text-sm font-medium" :class="darkMode ? 'text-gray-100' : 'text-gray-900'" x-text="toast.title"></p>
                             <p class="mt-1 text-sm" :class="darkMode ? 'text-gray-300' : 'text-gray-500'" x-text="toast.message"></p>
+                            <!-- Enhanced details for notifications -->
+                            <div x-show="toast.enhanced && toast.details" class="mt-2 text-xs" :class="darkMode ? 'text-gray-400' : 'text-gray-400'">
+                                <div x-show="toast.details.time" class="flex items-center gap-1">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span x-text="toast.details.time"></span>
+                                </div>
+                                <div x-show="toast.details.status" class="flex items-center gap-1 mt-1">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span>Status: </span><span x-text="toast.details.status"></span>
+                                </div>
+                                <div x-show="toast.details.facilities_count !== undefined" class="flex items-center gap-1 mt-1">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h2M7 7h3m3 0h3M7 11h3m3 0h3m-6 4h3"/>
+                                    </svg>
+                                    <span x-text="toast.details.facilities_count + ' fasilitas'"></span>
+                                </div>
+                            </div>
                         </div>
                         <div class="ml-4 flex-shrink-0 flex">
                             <button @click="toasts.splice(toasts.indexOf(toast), 1)"
@@ -365,6 +392,37 @@
             }));
         };
 
+        // Enhanced toast notification with details
+        window.showEnhancedToast = function(type, title, message, details = {}) {
+            const toast = {
+                id: Date.now(),
+                type: type,
+                title: title,
+                message: message,
+                details: details,
+                enhanced: true
+            };
+            
+            window.dispatchEvent(new CustomEvent('show-toast', {
+                detail: toast
+            }));
+        };
+
+        // Show notification from AJAX response
+        window.showNotificationFromResponse = function(response) {
+            if (response.notification) {
+                const notif = response.notification;
+                showEnhancedToast(
+                    notif.type,
+                    notif.title,
+                    notif.message || '',
+                    notif.details || {}
+                );
+            } else if (response.message) {
+                showToast('success', 'Berhasil!', response.message);
+            }
+        };
+
         // Show Laravel flash messages as toasts
         <?php if(session('success')): ?>
             showToast('success', 'Berhasil!', '<?php echo e(session('success')); ?>');
@@ -372,6 +430,25 @@
 
         <?php if(session('error')): ?>
             showToast('error', 'Error!', '<?php echo e(session('error')); ?>');
+        <?php endif; ?>
+
+        <?php if(session('warning')): ?>
+            showToast('warning', 'Peringatan!', '<?php echo e(session('warning')); ?>');
+        <?php endif; ?>
+
+        <?php if(session('info')): ?>
+            showToast('info', 'Informasi!', '<?php echo e(session('info')); ?>');
+        <?php endif; ?>
+
+        // Enhanced notification system
+        <?php if(session('notification')): ?>
+            <?php $notification = session('notification'); ?>
+            showEnhancedToast(
+                '<?php echo e($notification['type']); ?>',
+                '<?php echo e($notification['title']); ?>',
+                '<?php echo e($notification['message'] ?? ''); ?>',
+                <?php echo json_encode($notification['details'] ?? [], 15, 512) ?>
+            );
         <?php endif; ?>
 
         // Confirmation dialogs

@@ -940,7 +940,7 @@
                             <i class="fas fa-info-circle"></i>
                             Tentang Kami
                         </a>
-                        <a href="{{ route('news.index') }}" class="btn-slide btn-secondary-slide">
+                        <a href="{{ route('blog.index') }}" class="btn-slide btn-secondary-slide">
                             <i class="fas fa-newspaper"></i>
                             Lihat Berita
                         </a>
@@ -971,7 +971,7 @@
                         <i class="fas fa-info-circle"></i>
                         Tentang Kami
                     </a>
-                    <a href="{{ route('news.index') }}" class="btn-slide btn-secondary-slide">
+                    <a href="{{ route('blog.index') }}" class="btn-slide btn-secondary-slide">
                         <i class="fas fa-newspaper"></i>
                         Lihat Berita
                     </a>
@@ -1007,7 +1007,7 @@
             <i class="fas fa-info-circle"></i>
             Tentang Kami
         </a>
-        <a href="{{ route('news.index') }}" class="btn-slideshow-bottom btn-secondary-slideshow">
+        <a href="{{ route('blog.index') }}" class="btn-slideshow-bottom btn-secondary-slideshow">
             <i class="fas fa-newspaper"></i>
             Berita
         </a>
@@ -1106,7 +1106,7 @@
                                 <div class="col-md-8">
                                     <div class="card-body p-4">
                                         <h5 class="card-title fw-bold">
-                                            <a href="{{ route('news.detail', $news->slug) }}" class="text-decoration-none text-dark">
+                                            <a href="{{ route('public.blog.show', $news->id) }}" class="text-decoration-none text-dark">
                                                 {{ Str::limit($news->title, 60) }}
                                             </a>
                                         </h5>
@@ -1119,7 +1119,7 @@
                                                 @endif
                                             </small>
                                         </p>
-                                        <a href="{{ route('news.detail', $news->slug) }}" class="btn btn-sm btn-outline-primary">
+                                        <a href="{{ route('public.blog.show', $news->id) }}" class="btn btn-sm btn-outline-primary">
                                             <i class="fas fa-arrow-right me-1"></i>Baca Selengkapnya
                                         </a>
                                     </div>
@@ -1135,14 +1135,14 @@
                         </div>
                         <h5 class="text-muted mb-3">Belum Ada Berita Terbaru</h5>
                         <p class="text-muted mb-4">Saat ini belum ada berita terbaru yang dipublikasikan. Silakan kembali lagi nanti untuk mendapatkan informasi terkini seputar kegiatan sekolah.</p>
-                        <a href="{{ route('news.index') }}" class="btn btn-outline-primary">
+                        <a href="{{ route('blog.index') }}" class="btn btn-outline-primary">
                             <i class="fas fa-newspaper me-2"></i>Lihat Arsip Berita
                         </a>
                     </div>
                 @endif
 
                 @if($latestNews->count() > 0)
-                    <a href="{{ route('news.index') }}" class="btn btn-primary-enhanced btn-enhanced mt-3">
+                    <a href="{{ route('blog.index') }}" class="btn btn-primary-enhanced btn-enhanced mt-3">
                         <i class="fas fa-arrow-right me-2"></i>Lihat Semua Berita
                     </a>
                 @endif
@@ -1159,7 +1159,7 @@
                             @foreach($latestAnnouncements as $index => $announcement)
                                 <div class="announcement-item {{ $index < $latestAnnouncements->count() - 1 ? 'mb-3 pb-3 border-bottom' : '' }}">
                                     <h6 class="fw-bold text-primary">
-                                        <a href="{{ route('announcements.show', $announcement->slug ?? $announcement->id) }}" class="text-decoration-none">
+                                        <a href="{{ route('announcements.show', $announcement->id) }}" class="text-decoration-none">
                                             {{ Str::limit($announcement->judul, 40) }}
                                         </a>
                                     </h6>

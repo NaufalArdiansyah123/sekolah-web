@@ -72,11 +72,39 @@ class TeacherController extends Controller
                 'phone' => 'nullable|string|max:20',
                 'address' => 'nullable|string',
                 'subject' => 'required|string|max:255',
-                'position' => 'required|string|max:255',
+                'position' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    'in:Kepala Sekolah,Wakil Kepala Sekolah,Guru Mata Pelajaran,Guru Bengkel,Guru BK'
+                ],
                 'education' => 'nullable|string|max:255',
                 'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:1024',
                 'status' => 'required|in:active,inactive'
             ]);
+            
+            // Additional validation for unique positions
+            if ($request->position === 'Kepala Sekolah') {
+                $existingKepalaSekolah = Teacher::where('position', 'Kepala Sekolah')
+                                               ->where('status', 'active')
+                                               ->exists();
+                if ($existingKepalaSekolah) {
+                    return redirect()->back()
+                        ->withInput()
+                        ->withErrors(['position' => 'Kepala Sekolah sudah ada. Hanya boleh ada 1 Kepala Sekolah aktif.']);
+                }
+            }
+            
+            if ($request->position === 'Wakil Kepala Sekolah') {
+                $existingWakilKepalaSekolah = Teacher::where('position', 'Wakil Kepala Sekolah')
+                                                    ->where('status', 'active')
+                                                    ->exists();
+                if ($existingWakilKepalaSekolah) {
+                    return redirect()->back()
+                        ->withInput()
+                        ->withErrors(['position' => 'Wakil Kepala Sekolah sudah ada. Hanya boleh ada 1 Wakil Kepala Sekolah aktif.']);
+                }
+            }
 
             // Log untuk debugging
             \Log::info('Teacher creation attempt', [
@@ -119,7 +147,11 @@ class TeacherController extends Controller
             \Log::info('Teacher created successfully', ['teacher_id' => $teacher->id]);
 
             // Send notification
-            NotificationService::teacherAction('create', $teacher);
+            NotificationService::created('Guru', $teacher->name, [
+                'position' => $teacher->position,
+                'nip' => $teacher->nip,
+                'email' => $teacher->email
+            ]);
 
             return redirect()->route('admin.teachers.index')
                             ->with('success', 'Data guru berhasil ditambahkan!');
@@ -177,11 +209,41 @@ class TeacherController extends Controller
             'phone' => 'nullable|max:20',
             'address' => 'nullable',
             'subject' => 'required|max:255',
-            'position' => 'required|max:255',
+            'position' => [
+                'required',
+                'string',
+                'max:255',
+                'in:Kepala Sekolah,Wakil Kepala Sekolah,Guru Mata Pelajaran,Guru Bengkel,Guru BK'
+            ],
             'education' => 'nullable|max:255',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:1024',
             'status' => 'required|in:active,inactive'
         ]);
+        
+        // Additional validation for unique positions (excluding current teacher)
+        if ($request->position === 'Kepala Sekolah' && $teacher->position !== 'Kepala Sekolah') {
+            $existingKepalaSekolah = Teacher::where('position', 'Kepala Sekolah')
+                                           ->where('status', 'active')
+                                           ->where('id', '!=', $teacher->id)
+                                           ->exists();
+            if ($existingKepalaSekolah) {
+                return redirect()->back()
+                    ->withInput()
+                    ->withErrors(['position' => 'Kepala Sekolah sudah ada. Hanya boleh ada 1 Kepala Sekolah aktif.']);
+            }
+        }
+        
+        if ($request->position === 'Wakil Kepala Sekolah' && $teacher->position !== 'Wakil Kepala Sekolah') {
+            $existingWakilKepalaSekolah = Teacher::where('position', 'Wakil Kepala Sekolah')
+                                                ->where('status', 'active')
+                                                ->where('id', '!=', $teacher->id)
+                                                ->exists();
+            if ($existingWakilKepalaSekolah) {
+                return redirect()->back()
+                    ->withInput()
+                    ->withErrors(['position' => 'Wakil Kepala Sekolah sudah ada. Hanya boleh ada 1 Wakil Kepala Sekolah aktif.']);
+            }
+        }
 
         $data = $request->except('photo');
 
@@ -192,7 +254,11 @@ class TeacherController extends Controller
         $teacher->update($data);
 
         // Send notification
-        NotificationService::teacherAction('update', $teacher);
+        NotificationService::updated('Guru', $teacher->name, [
+            'position' => $teacher->position,
+            'nip' => $teacher->nip,
+            'email' => $teacher->email
+        ]);
 
         return redirect()->route('admin.teachers.index')
                         ->with('success', 'Data guru berhasil diperbarui!');
@@ -201,7 +267,11 @@ class TeacherController extends Controller
     public function destroy(Teacher $teacher)
     {
         // Send notification before deletion
-        NotificationService::teacherAction('delete', $teacher);
+        NotificationService::deleted('Guru', $teacher->name, [
+            'position' => $teacher->position,
+            'nip' => $teacher->nip,
+            'email' => $teacher->email
+        ]);
 
         if ($teacher->photo && \Storage::disk('public')->exists($teacher->photo)) {
             \Storage::disk('public')->delete($teacher->photo);

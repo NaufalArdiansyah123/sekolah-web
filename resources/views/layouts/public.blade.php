@@ -1228,7 +1228,7 @@
                             <li><a class="dropdown-item" href="{{ route('facilities.index') }}">
                                     <i class="fas fa-building me-3"></i>Fasilitas
                                 </a></li>
-                            <li><a class="dropdown-item" href="{{ route('achievements.index') }}">
+                            <li><a class="dropdown-item" href="{{ route('public.achievements') }}">
                                     <i class="fas fa-trophy me-3"></i>Prestasi
                                 </a></li>
                             <li><a class="dropdown-item" href="{{ route('public.teachers.index') }}">

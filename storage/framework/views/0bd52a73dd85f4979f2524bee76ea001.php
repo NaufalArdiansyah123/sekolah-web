@@ -72,6 +72,9 @@
                 </button>
             </div>
         </div>
+        <script>
+            console.log('Success message displayed:', '<?php echo e(session('success')); ?>');
+        </script>
     <?php endif; ?>
 
     <?php if(session('error')): ?>
@@ -89,7 +92,20 @@
                 </button>
             </div>
         </div>
+        <script>
+            console.log('Error message displayed:', '<?php echo e(session('error')); ?>');
+        </script>
     <?php endif; ?>
+
+    <!-- Debug Session Data -->
+    <script>
+        console.log('Page loaded - Session data check:', {
+            'has_success': <?php echo e(session()->has('success') ? 'true' : 'false'); ?>,
+            'has_error': <?php echo e(session()->has('error') ? 'true' : 'false'); ?>,
+            'success_message': '<?php echo e(session('success')); ?>',
+            'error_message': '<?php echo e(session('error')); ?>'
+        });
+    </script>
 
     <!-- Main Settings Container -->
     <form action="<?php echo e(route('admin.settings.update')); ?>" method="POST" enctype="multipart/form-data" id="settingsForm">
@@ -102,7 +118,19 @@
                 <div class="nav-background"></div>
                 <div class="nav-content">
                     <div class="nav-tabs">
-                        <button type="button" class="nav-tab active" data-tab="academic">
+                        <button type="button" class="nav-tab active" data-tab="school">
+                            <div class="tab-icon-wrapper">
+                                <div class="tab-icon">
+                                    <i class="fas fa-school"></i>
+                                </div>
+                            </div>
+                            <div class="tab-text">
+                                <span class="tab-title">School</span>
+                                <span class="tab-description">Logo & Identity</span>
+                            </div>
+                        </button>
+
+                        <button type="button" class="nav-tab" data-tab="academic">
                             <div class="tab-icon-wrapper">
                                 <div class="tab-icon">
                                     <i class="fas fa-graduation-cap"></i>
@@ -126,6 +154,18 @@
                             </div>
                         </button>
 
+                        <button type="button" class="nav-tab" data-tab="appearance">
+                            <div class="tab-icon-wrapper">
+                                <div class="tab-icon">
+                                    <i class="fas fa-palette"></i>
+                                </div>
+                            </div>
+                            <div class="tab-text">
+                                <span class="tab-title">Appearance</span>
+                                <span class="tab-description">Navbar & Theme Colors</span>
+                            </div>
+                        </button>
+
                         <button type="button" class="nav-tab" data-tab="backup">
                             <div class="tab-icon-wrapper">
                                 <div class="tab-icon">
@@ -144,8 +184,267 @@
 
             <!-- Tab Content Panels -->
             <div class="tab-content">
+                <!-- School Settings Panel -->
+                <div class="tab-panel active" id="school-panel">
+                    <div class="panel-header">
+                        <div class="header-icon">
+                            <i class="fas fa-school"></i>
+                        </div>
+                        <div class="header-content">
+                            <h2 class="panel-title">School Settings</h2>
+                            <p class="panel-subtitle">Configure school identity, logo, and basic information</p>
+                        </div>
+                    </div>
+
+                    <div class="panel-content">
+                        <div class="settings-grid">
+                            <!-- School Identity Card -->
+                            <div class="setting-card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-id-card"></i>
+                                    </div>
+                                    <div class="card-title">
+                                        <h3>School Identity</h3>
+                                        <p>Configure school name and subtitle</p>
+                                    </div>
+                                </div>
+                                <div class="card-content">
+                                    <div class="form-group">
+                                        <div class="input-container">
+                                            <input type="text" class="form-control <?php $__errorArgs = ['school_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> error <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" 
+                                                   id="school_name" name="school_name" 
+                                                   value="<?php echo e(old('school_name', $settings['school_name']->value ?? 'SMA Negeri 1')); ?>"
+                                                   placeholder=" ">
+                                            <label for="school_name" class="form-label">School Name</label>
+                                            <div class="input-border"></div>
+                                            <div class="input-focus"></div>
+                                        </div>
+                                        <?php $__errorArgs = ['school_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                            <div class="error-message">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                <?php echo e($message); ?>
+
+                                            </div>
+                                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="input-container">
+                                            <input type="text" class="form-control <?php $__errorArgs = ['school_subtitle'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> error <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" 
+                                                   id="school_subtitle" name="school_subtitle" 
+                                                   value="<?php echo e(old('school_subtitle', $settings['school_subtitle']->value ?? 'Admin Panel')); ?>"
+                                                   placeholder=" ">
+                                            <label for="school_subtitle" class="form-label">School Subtitle</label>
+                                            <div class="input-border"></div>
+                                            <div class="input-focus"></div>
+                                        </div>
+                                        <?php $__errorArgs = ['school_subtitle'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                            <div class="error-message">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                <?php echo e($message); ?>
+
+                                            </div>
+                                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <!-- School Logo Card -->
+                            <div class="setting-card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-image"></i>
+                                    </div>
+                                    <div class="card-title">
+                                        <h3>School Logo</h3>
+                                        <p>Upload and manage school logo</p>
+                                    </div>
+                                </div>
+                                <div class="card-content">
+                                    <div class="form-group">
+                                        <!-- Debug Info -->
+                                        <!-- Logo setting exists: <?php echo e(isset($settings['school_logo']) ? 'YES' : 'NO'); ?> -->
+                                        <!-- Logo value: <?php echo e(isset($settings['school_logo']) ? ($settings['school_logo']->value ?? 'NULL') : 'NOT_SET'); ?> -->
+                                        <!-- Asset URL: <?php echo e(isset($settings['school_logo']) && $settings['school_logo']->value ? asset('storage/' . $settings['school_logo']->value) : 'NO_URL'); ?> -->
+                                        
+                                        <div class="file-upload-container">
+                                            <div class="file-upload-preview">
+                                                <?php if(isset($settings['school_logo']) && $settings['school_logo']->value && !str_contains($settings['school_logo']->value, 'tmp')): ?>
+                                                    <?php
+                                                        $logoPath = $settings['school_logo']->value;
+                                                        $assetUrl = asset('storage/' . $logoPath);
+                                                        $fileExists = file_exists(public_path('storage/' . $logoPath));
+                                                    ?>
+                                                    <!-- Debug: File exists = <?php echo e($fileExists ? 'YES' : 'NO'); ?> -->
+                                                    <!-- Debug: Full URL = <?php echo e($assetUrl); ?> -->
+                                                    <!-- Debug: Path valid = <?php echo e(!str_contains($logoPath, 'tmp') ? 'YES' : 'NO'); ?> -->
+                                                    
+                                                    <?php if($fileExists): ?>
+                                                        <img src="<?php echo e($assetUrl); ?>" 
+                                                             alt="Current Logo" 
+                                                             class="current-logo"
+                                                             id="currentLogo"
+                                                             onerror="console.error('Logo failed to load:', this.src); this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                        <div class="no-logo-placeholder" id="noLogoPlaceholder" style="display: none;">
+                                                            <i class="fas fa-school fa-3x"></i>
+                                                            <p>Logo failed to load<br><small>Path: <?php echo e($logoPath); ?></small></p>
+                                                        </div>
+                                                    <?php else: ?>
+                                                        <div class="no-logo-placeholder" id="noLogoPlaceholder">
+                                                            <i class="fas fa-school fa-3x"></i>
+                                                            <p>Logo file not found<br><small>Path: <?php echo e($logoPath); ?></small></p>
+                                                        </div>
+                                                    <?php endif; ?>
+                                                <?php else: ?>
+                                                    <div class="no-logo-placeholder" id="noLogoPlaceholder">
+                                                        <i class="fas fa-school fa-3x"></i>
+                                                        <p>No logo uploaded</p>
+                                                        <?php if(isset($settings['school_logo']) && str_contains($settings['school_logo']->value, 'tmp')): ?>
+                                                            <small style="color: #e74c3c;">Invalid logo path detected</small>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="file-upload-input">
+                                                <input type="file" 
+                                                       class="form-control-file <?php $__errorArgs = ['school_logo'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> error <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" 
+                                                       id="school_logo" 
+                                                       name="school_logo" 
+                                                       accept="image/*"
+                                                       onchange="previewLogo(this)">
+                                                <label for="school_logo" class="file-upload-label">
+                                                    <div class="file-upload-icon">
+                                                        <i class="fas fa-cloud-upload-alt"></i>
+                                                    </div>
+                                                    <div class="file-upload-text">
+                                                        <span class="file-upload-title">Choose Logo File</span>
+                                                        <span class="file-upload-subtitle">PNG, JPG up to 2MB</span>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <?php $__errorArgs = ['school_logo'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                            <div class="error-message">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                <?php echo e($message); ?>
+
+                                            </div>
+                                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="file-upload-container">
+                                            <div class="file-upload-preview favicon-preview">
+                                                <?php if(isset($settings['school_favicon']) && $settings['school_favicon']->value): ?>
+                                                    <img src="<?php echo e(asset('storage/' . $settings['school_favicon']->value)); ?>" 
+                                                         alt="Current Favicon" 
+                                                         class="current-favicon"
+                                                         id="currentFavicon"
+                                                         onerror="console.log('Favicon failed to load:', this.src); this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                    <div class="no-favicon-placeholder" id="noFaviconPlaceholder" style="display: none;">
+                                                        <i class="fas fa-star"></i>
+                                                        <p>Favicon failed to load</p>
+                                                    </div>
+                                                <?php else: ?>
+                                                    <div class="no-favicon-placeholder" id="noFaviconPlaceholder">
+                                                        <i class="fas fa-star"></i>
+                                                        <p>No favicon</p>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="file-upload-input">
+                                                <input type="file" 
+                                                       class="form-control-file <?php $__errorArgs = ['school_favicon'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> error <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" 
+                                                       id="school_favicon" 
+                                                       name="school_favicon" 
+                                                       accept="image/*"
+                                                       onchange="previewFavicon(this)">
+                                                <label for="school_favicon" class="file-upload-label">
+                                                    <div class="file-upload-icon">
+                                                        <i class="fas fa-star"></i>
+                                                    </div>
+                                                    <div class="file-upload-text">
+                                                        <span class="file-upload-title">Choose Favicon</span>
+                                                        <span class="file-upload-subtitle">ICO, PNG 32x32px</span>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <?php $__errorArgs = ['school_favicon'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                            <div class="error-message">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                <?php echo e($message); ?>
+
+                                            </div>
+                                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Academic Settings Panel -->
-                <div class="tab-panel active" id="academic-panel">
+                <div class="tab-panel" id="academic-panel">
                     <div class="panel-header">
                         <div class="header-icon">
                             <i class="fas fa-graduation-cap"></i>
@@ -534,6 +833,162 @@ $message = $__bag->first($__errorArgs[0]); ?>
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Appearance Settings Panel -->
+                <div class="tab-panel" id="appearance-panel">
+                    <div class="panel-header">
+                        <div class="header-icon">
+                            <i class="fas fa-palette"></i>
+                        </div>
+                        <div class="header-content">
+                            <h2 class="panel-title">Appearance Settings</h2>
+                            <p class="panel-subtitle">Customize navbar colors and theme appearance for your website</p>
+                        </div>
+                    </div>
+
+                    <div class="panel-content">
+                        <div class="settings-grid">
+                            <!-- Navbar Colors Card -->
+                            <div class="setting-card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-paint-brush"></i>
+                                    </div>
+                                    <div class="card-title">
+                                        <h3>Navbar Colors</h3>
+                                        <p>Customize navigation bar appearance</p>
+                                    </div>
+                                </div>
+                                <div class="card-content">
+                                    <div class="color-picker-container">
+                                        <label class="color-label">Background Color</label>
+                                        <div class="color-input-wrapper">
+                                            <input type="color" 
+                                                   class="color-picker" 
+                                                   id="navbar_bg_color" 
+                                                   name="navbar_bg_color" 
+                                                   value="<?php echo e(old('navbar_bg_color', $settings['navbar_bg_color']->value ?? '#1a202c')); ?>"
+                                                   onchange="updateColorPreview('navbar_bg_color', this.value)">
+                                            <input type="text" 
+                                                   class="color-text-input" 
+                                                   id="navbar_bg_color_text" 
+                                                   value="<?php echo e(old('navbar_bg_color', $settings['navbar_bg_color']->value ?? '#1a202c')); ?>"
+                                                   onchange="updateColorPicker('navbar_bg_color', this.value)"
+                                                   placeholder="#1a202c">
+                                            <div class="color-preview" id="navbar_bg_color_preview"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="color-picker-container">
+                                        <label class="color-label">Text Color</label>
+                                        <div class="color-input-wrapper">
+                                            <input type="color" 
+                                                   class="color-picker" 
+                                                   id="navbar_text_color" 
+                                                   name="navbar_text_color" 
+                                                   value="<?php echo e(old('navbar_text_color', $settings['navbar_text_color']->value ?? '#ffffff')); ?>"
+                                                   onchange="updateColorPreview('navbar_text_color', this.value)">
+                                            <input type="text" 
+                                                   class="color-text-input" 
+                                                   id="navbar_text_color_text" 
+                                                   value="<?php echo e(old('navbar_text_color', $settings['navbar_text_color']->value ?? '#ffffff')); ?>"
+                                                   onchange="updateColorPicker('navbar_text_color', this.value)"
+                                                   placeholder="#ffffff">
+                                            <div class="color-preview" id="navbar_text_color_preview"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="color-picker-container">
+                                        <label class="color-label">Hover Color</label>
+                                        <div class="color-input-wrapper">
+                                            <input type="color" 
+                                                   class="color-picker" 
+                                                   id="navbar_hover_color" 
+                                                   name="navbar_hover_color" 
+                                                   value="<?php echo e(old('navbar_hover_color', $settings['navbar_hover_color']->value ?? '#3182ce')); ?>"
+                                                   onchange="updateColorPreview('navbar_hover_color', this.value)">
+                                            <input type="text" 
+                                                   class="color-text-input" 
+                                                   id="navbar_hover_color_text" 
+                                                   value="<?php echo e(old('navbar_hover_color', $settings['navbar_hover_color']->value ?? '#3182ce')); ?>"
+                                                   onchange="updateColorPicker('navbar_hover_color', this.value)"
+                                                   placeholder="#3182ce">
+                                            <div class="color-preview" id="navbar_hover_color_preview"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="color-picker-container">
+                                        <label class="color-label">Active Link Color</label>
+                                        <div class="color-input-wrapper">
+                                            <input type="color" 
+                                                   class="color-picker" 
+                                                   id="navbar_active_color" 
+                                                   name="navbar_active_color" 
+                                                   value="<?php echo e(old('navbar_active_color', $settings['navbar_active_color']->value ?? '#4299e1')); ?>"
+                                                   onchange="updateColorPreview('navbar_active_color', this.value)">
+                                            <input type="text" 
+                                                   class="color-text-input" 
+                                                   id="navbar_active_color_text" 
+                                                   value="<?php echo e(old('navbar_active_color', $settings['navbar_active_color']->value ?? '#4299e1')); ?>"
+                                                   onchange="updateColorPicker('navbar_active_color', this.value)"
+                                                   placeholder="#4299e1">
+                                            <div class="color-preview" id="navbar_active_color_preview"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Navbar Preview Card -->
+                            <div class="setting-card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-eye"></i>
+                                    </div>
+                                    <div class="card-title">
+                                        <h3>Live Preview</h3>
+                                        <p>See how your navbar will look</p>
+                                    </div>
+                                </div>
+                                <div class="card-content">
+                                    <div class="navbar-preview" id="navbarPreview">
+                                        <div class="preview-navbar">
+                                            <div class="preview-brand">
+                                                <i class="fas fa-graduation-cap"></i>
+                                                <span>SMK PGRI 2 PONOROGO</span>
+                                            </div>
+                                            <div class="preview-nav">
+                                                <a href="#" class="preview-link active">Beranda</a>
+                                                <a href="#" class="preview-link">Profil</a>
+                                                <a href="#" class="preview-link">Akademik</a>
+                                                <a href="#" class="preview-link">Informasi</a>
+                                                <a href="#" class="preview-link">Kontak</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="preview-actions">
+                                        <button type="button" class="btn btn-outline" onclick="resetNavbarColors()">
+                                            <i class="fas fa-undo"></i>
+                                            <span>Reset to Default</span>
+                                        </button>
+                                        <button type="button" class="btn btn-outline" onclick="applyPresetColors('dark')">
+                                            <i class="fas fa-moon"></i>
+                                            <span>Dark Theme</span>
+                                        </button>
+                                        <button type="button" class="btn btn-outline" onclick="applyPresetColors('blue')">
+                                            <i class="fas fa-water"></i>
+                                            <span>Blue Theme</span>
+                                        </button>
+                                        <button type="button" class="btn btn-outline" onclick="applyPresetColors('green')">
+                                            <i class="fas fa-leaf"></i>
+                                            <span>Green Theme</span>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -1131,7 +1586,7 @@ unset($__errorArgs, $__bag); ?>
     height: 3px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     transition: all 0.3s ease;
-    width: 33.333%;
+    width: 25%;
     transform: translateX(0);
 }
 
@@ -1276,6 +1731,130 @@ unset($__errorArgs, $__bag); ?>
 
 .card-content {
     padding: 2rem;
+}
+
+/* File Upload Styles */
+.file-upload-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.file-upload-preview {
+    width: 100%;
+    min-height: 120px;
+    border: 2px dashed var(--border-color);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-tertiary);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.file-upload-preview:hover {
+    border-color: #667eea;
+    background-color: var(--bg-secondary);
+}
+
+.current-logo,
+.current-favicon {
+    max-width: 100%;
+    max-height: 100px;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px var(--shadow-color);
+}
+
+.no-logo-placeholder,
+.no-favicon-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    padding: 2rem;
+    text-align: center;
+}
+
+.no-logo-placeholder i,
+.no-favicon-placeholder i {
+    font-size: 2rem;
+    opacity: 0.5;
+}
+
+.no-logo-placeholder p,
+.no-favicon-placeholder p {
+    margin: 0;
+    font-size: 0.875rem;
+    opacity: 0.7;
+}
+
+.file-upload-input {
+    position: relative;
+}
+
+.form-control-file {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.file-upload-label {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border: 2px dashed var(--border-color);
+    border-radius: 16px;
+    background-color: var(--bg-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.file-upload-label:hover {
+    border-color: #667eea;
+    background-color: var(--bg-secondary);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px var(--shadow-color);
+}
+
+.file-upload-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.file-upload-text {
+    flex: 1;
+}
+
+.file-upload-title {
+    display: block;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.file-upload-subtitle {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
 }
 
 /* Form Controls */
@@ -1710,6 +2289,165 @@ input:checked + .switch .switch-text.off {
     border-color: #667eea;
 }
 
+/* Color Picker Styles */
+.color-picker-container {
+    margin-bottom: 1.5rem;
+}
+
+.color-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.color-picker {
+    width: 60px;
+    height: 40px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    background: none;
+    transition: all 0.3s ease;
+}
+
+.color-picker:hover {
+    border-color: #667eea;
+    transform: scale(1.05);
+}
+
+.color-text-input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Courier New', monospace;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+}
+
+.color-text-input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    outline: none;
+}
+
+.color-preview {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.color-preview::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, #ccc 25%, transparent 25%), 
+                linear-gradient(-45deg, #ccc 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #ccc 75%), 
+                linear-gradient(-45deg, transparent 75%, #ccc 75%);
+    background-size: 8px 8px;
+    background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
+}
+
+.color-preview::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--preview-color, #ffffff);
+}
+
+.color-help {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    line-height: 1.4;
+}
+
+/* Navbar Preview Styles */
+.navbar-preview-container {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.navbar-preview {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background-color: var(--navbar-bg, #ffffff);
+    color: var(--navbar-text, #333333);
+    border-radius: 12px;
+    border: 2px solid var(--border-color);
+    margin-top: 0.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 600;
+    font-size: 1.125rem;
+    color: inherit;
+}
+
+.navbar-brand i {
+    font-size: 1.5rem;
+    color: var(--navbar-text, #333333);
+}
+
+.navbar-menu {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.nav-link {
+    color: var(--navbar-text, #333333);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-link:hover {
+    color: var(--navbar-hover, #007bff);
+    background-color: rgba(0, 123, 255, 0.1);
+    text-decoration: none;
+}
+
+/* Responsive navbar preview */
+@media (max-width: 768px) {
+    .navbar-preview {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .navbar-menu {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+    }
+}
+
 /* Enhanced Modal */
 .modal-overlay {
     position: fixed;
@@ -1923,6 +2661,40 @@ document.addEventListener('DOMContentLoaded', function() {
     const panels = document.querySelectorAll('.tab-panel');
     const slider = document.querySelector('.nav-slider');
     
+    // Check if logo was just updated and refresh if needed
+    <?php if(session('logo_updated')): ?>
+        console.log('Logo was updated, refreshing logo display...');
+        setTimeout(function() {
+            // Force page reload to ensure fresh data
+            console.log('Reloading page to show updated logo...');
+            window.location.reload();
+        }, 1000);
+    <?php endif; ?>
+    
+    // Handle form submission with loading state
+    const settingsForm = document.getElementById('settingsForm');
+    const saveButton = document.getElementById('saveButton');
+    
+    if (settingsForm && saveButton) {
+        settingsForm.addEventListener('submit', function(e) {
+            // Don't prevent submission - let it go through normally
+            console.log('Form submitted, saving settings...', {
+                'form_action': settingsForm.action,
+                'form_method': settingsForm.method,
+                'timestamp': new Date().toISOString()
+            });
+            
+            // Show loading state but don't disable
+            const originalText = saveButton.querySelector('span').textContent;
+            const originalIcon = saveButton.querySelector('i').className;
+            saveButton.querySelector('span').textContent = 'Saving...';
+            saveButton.querySelector('i').className = 'fas fa-spinner fa-spin';
+            
+            // Don't prevent form submission - let it proceed normally
+            // The server will handle the redirect and show success message
+        });
+    }
+    
     function switchTab(targetTab) {
         // Remove active class from all tabs and panels
         tabs.forEach(tab => tab.classList.remove('active'));
@@ -2002,6 +2774,161 @@ window.resetForm = function() {
 
 window.previewChanges = function() {
     alert('Preview functionality would show changes before saving.');
+};
+
+// Enhanced File preview functions
+window.previewLogo = function(input) {
+    console.log('previewLogo called', input);
+    
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        console.log('File selected:', {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            lastModified: file.lastModified
+        });
+        
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            alert('Please select an image file');
+            input.value = ''; // Clear the input
+            return;
+        }
+        
+        // Validate file size (2MB)
+        if (file.size > 2 * 1024 * 1024) {
+            alert('File size must be less than 2MB');
+            input.value = ''; // Clear the input
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            console.log('File loaded successfully for preview');
+            
+            const preview = document.querySelector('.file-upload-preview');
+            const placeholder = document.getElementById('noLogoPlaceholder');
+            let currentLogo = document.getElementById('currentLogo');
+            
+            console.log('Preview elements:', { preview, placeholder, currentLogo });
+            
+            // Hide placeholder
+            if (placeholder) {
+                placeholder.style.display = 'none';
+            }
+            
+            // Update or create image
+            if (currentLogo) {
+                currentLogo.src = e.target.result;
+                currentLogo.style.display = 'block';
+                currentLogo.onerror = null; // Remove error handler for preview
+                console.log('Updated existing logo with preview');
+            } else {
+                // Create new image element
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'current-logo';
+                img.id = 'currentLogo';
+                img.alt = 'Logo Preview';
+                img.style.display = 'block';
+                
+                // Clear preview and add new image
+                if (preview) {
+                    preview.innerHTML = '';
+                    preview.appendChild(img);
+                    console.log('Created new logo element for preview');
+                }
+            }
+        };
+        
+        reader.onerror = function(e) {
+            console.error('Error reading file:', e);
+            alert('Error reading file. Please try again.');
+            input.value = ''; // Clear the input
+        };
+        
+        reader.readAsDataURL(file);
+    } else {
+        console.log('No file selected');
+    }
+};
+
+window.previewFavicon = function(input) {
+    console.log('previewFavicon called', input);
+    
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        console.log('Favicon file selected:', {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            lastModified: file.lastModified
+        });
+        
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            alert('Please select an image file');
+            input.value = ''; // Clear the input
+            return;
+        }
+        
+        // Validate file size (1MB)
+        if (file.size > 1024 * 1024) {
+            alert('Favicon file size must be less than 1MB');
+            input.value = ''; // Clear the input
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            console.log('Favicon file loaded successfully for preview');
+            
+            const preview = document.querySelector('.favicon-preview');
+            const placeholder = document.getElementById('noFaviconPlaceholder');
+            let currentFavicon = document.getElementById('currentFavicon');
+            
+            console.log('Favicon preview elements:', { preview, placeholder, currentFavicon });
+            
+            // Hide placeholder
+            if (placeholder) {
+                placeholder.style.display = 'none';
+            }
+            
+            // Update or create image
+            if (currentFavicon) {
+                currentFavicon.src = e.target.result;
+                currentFavicon.style.display = 'block';
+                currentFavicon.onerror = null; // Remove error handler for preview
+                console.log('Updated existing favicon with preview');
+            } else {
+                // Create new image element
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'current-favicon';
+                img.id = 'currentFavicon';
+                img.alt = 'Favicon Preview';
+                img.style.display = 'block';
+                
+                // Clear preview and add new image
+                if (preview) {
+                    preview.innerHTML = '';
+                    preview.appendChild(img);
+                    console.log('Created new favicon element for preview');
+                }
+            }
+        };
+        
+        reader.onerror = function(e) {
+            console.error('Error reading favicon file:', e);
+            alert('Error reading favicon file. Please try again.');
+            input.value = ''; // Clear the input
+        };
+        
+        reader.readAsDataURL(file);
+    } else {
+        console.log('No favicon file selected');
+    }
 };
 </script>
 <?php $__env->stopPush(); ?>

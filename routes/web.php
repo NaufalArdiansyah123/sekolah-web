@@ -29,6 +29,9 @@ use App\Http\Controllers\Admin\{
     CalendarController,
 };
 
+// Import Public Controllers
+use App\Http\Controllers\Public\AchievementController as PublicAchievementController;
+
 // Import Student Controllers
 use App\Http\Controllers\Student\MaterialController;
 use App\Http\Controllers\Student\AssignmentController;
@@ -58,7 +61,20 @@ Route::get('/announcements', [PublicController::class, 'announcements'])->name('
 Route::get('/announcements/{id}', [PublicController::class, 'announcementDetail'])->name('announcements.show');
 
 Route::get('/facilities', [PublicController::class, 'facilities'])->name('facilities.index');
-Route::get('/achievements', [PublicController::class, 'achievements'])->name('achievements.index');
+
+// Public Achievement Routes
+Route::prefix('achievements')->name('public.achievements.')->group(function () {
+    Route::get('/', [PublicAchievementController::class, 'index'])->name('index');
+    Route::get('/{achievement}', [PublicAchievementController::class, 'show'])->name('show');
+});
+
+// Alternative naming for backward compatibility
+Route::get('/achievements', [PublicAchievementController::class, 'index'])->name('achievements.index');
+Route::get('/achievements/{achievement}', [PublicAchievementController::class, 'show'])->name('achievements.show');
+
+// Simple route name for easy access
+Route::get('/prestasi', [PublicAchievementController::class, 'index'])->name('public.achievements');
+Route::get('/prestasi/{achievement}', [PublicAchievementController::class, 'show'])->name('public.achievements.show');
 Route::get('/academic/programs', [PublicController::class, 'academicPrograms'])->name('public.academic.programs');
 Route::get('/academic/calendar', [PublicController::class, 'academicCalendar'])->name('academic.calendar');
 Route::get('/videos', [PublicController::class, 'videos'])->name('public.videos.index');
@@ -95,6 +111,8 @@ Route::prefix('extracurriculars')->name('public.extracurriculars.')->group(funct
     Route::get('/{extracurricular}/register', [App\Http\Controllers\Public\ExtracurricularController::class, 'register'])->name('register');
     Route::post('/{extracurricular}/register', [App\Http\Controllers\Public\ExtracurricularController::class, 'storeRegistration'])->name('store-registration');
 });
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -255,10 +273,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('extracurriculars/registration/{registration}/status', [ExtracurricularController::class, 'updateRegistrationStatus'])->name('extracurriculars.registration.status');
     Route::get('extracurriculars/registration/{registration}/detail', [ExtracurricularController::class, 'getRegistrationDetail'])->name('extracurriculars.registration.get-detail');
     
-    // Achievements management
-    Route::resource('achievements', AchievementController::class);
-    Route::post('achievements/bulk-action', [AchievementController::class, 'bulkAction'])->name('achievements.bulk-action');
-    Route::post('achievements/{achievement}/toggle-featured', [AchievementController::class, 'toggleFeatured'])->name('achievements.toggle-featured');
+
     
     // Teachers management with additional routes
     Route::resource('teachers', TeacherController::class);
@@ -321,6 +336,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/settings/clear-logs', [App\Http\Controllers\Admin\SettingController::class, 'clearLogs'])->name('settings.clear-logs');
     Route::get('/settings/system-monitoring', [App\Http\Controllers\Admin\SettingController::class, 'systemMonitoring'])->name('settings.system-monitoring');
     
+
+    // Vision & Mission Management
+    Route::resource('vision', App\Http\Controllers\Admin\VisionController::class);
+    Route::post('vision/{vision}/activate', [App\Http\Controllers\Admin\VisionController::class, 'activate'])->name('vision.activate');
+    Route::post('vision/{vision}/deactivate', [App\Http\Controllers\Admin\VisionController::class, 'deactivate'])->name('vision.deactivate');
+
     // Backup Management Routes
     Route::prefix('backup')->name('backup.')->group(function () {
         Route::get('/', [App\Http\Controllers\Admin\BackupController::class, 'index'])->name('index');
@@ -384,6 +405,59 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::put('/{id}', [App\Http\Controllers\Admin\AgendaController::class, 'update'])->name('update');
         Route::delete('/{id}', [App\Http\Controllers\Admin\AgendaController::class, 'destroy'])->name('destroy');
         Route::post('/sync-all', [App\Http\Controllers\Admin\AgendaController::class, 'syncAllToCalendar'])->name('sync-all');
+    });
+    
+    // School Profile Management Routes
+    Route::prefix('school-profile')->name('school-profile.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\SchoolProfileController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\Admin\SchoolProfileController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\Admin\SchoolProfileController::class, 'store'])->name('store');
+        Route::get('/{schoolProfile}', [App\Http\Controllers\Admin\SchoolProfileController::class, 'show'])->name('show');
+        Route::get('/{schoolProfile}/edit', [App\Http\Controllers\Admin\SchoolProfileController::class, 'edit'])->name('edit');
+        Route::put('/{schoolProfile}', [App\Http\Controllers\Admin\SchoolProfileController::class, 'update'])->name('update');
+        Route::delete('/{schoolProfile}', [App\Http\Controllers\Admin\SchoolProfileController::class, 'destroy'])->name('destroy');
+        Route::post('/{schoolProfile}/activate', [App\Http\Controllers\Admin\SchoolProfileController::class, 'activate'])->name('activate');
+        Route::post('/{schoolProfile}/deactivate', [App\Http\Controllers\Admin\SchoolProfileController::class, 'deactivate'])->name('deactivate');
+    });
+    
+    // History Management Routes
+    Route::prefix('history')->name('history.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\HistoryController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\Admin\HistoryController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\Admin\HistoryController::class, 'store'])->name('store');
+        Route::get('/{history}', [App\Http\Controllers\Admin\HistoryController::class, 'show'])->name('show');
+        Route::get('/{history}/edit', [App\Http\Controllers\Admin\HistoryController::class, 'edit'])->name('edit');
+        Route::put('/{history}', [App\Http\Controllers\Admin\HistoryController::class, 'update'])->name('update');
+        Route::delete('/{history}', [App\Http\Controllers\Admin\HistoryController::class, 'destroy'])->name('destroy');
+        Route::post('/{history}/activate', [App\Http\Controllers\Admin\HistoryController::class, 'activate'])->name('activate');
+        Route::post('/{history}/deactivate', [App\Http\Controllers\Admin\HistoryController::class, 'deactivate'])->name('deactivate');
+    });
+    
+    // Contact Management Routes
+    Route::prefix('contacts')->name('contacts.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\ContactController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\Admin\ContactController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\Admin\ContactController::class, 'store'])->name('store');
+        Route::get('/{contact}', [App\Http\Controllers\Admin\ContactController::class, 'show'])->name('show');
+        Route::get('/{contact}/edit', [App\Http\Controllers\Admin\ContactController::class, 'edit'])->name('edit');
+        Route::put('/{contact}', [App\Http\Controllers\Admin\ContactController::class, 'update'])->name('update');
+        Route::delete('/{contact}', [App\Http\Controllers\Admin\ContactController::class, 'destroy'])->name('destroy');
+        Route::post('/{contact}/activate', [App\Http\Controllers\Admin\ContactController::class, 'activate'])->name('activate');
+        Route::post('/{contact}/deactivate', [App\Http\Controllers\Admin\ContactController::class, 'deactivate'])->name('deactivate');
+    });
+    
+    // Achievements Management Routes
+    Route::prefix('achievements')->name('achievements.')->group(function () {
+        Route::get('/', [AchievementController::class, 'index'])->name('index');
+        Route::get('/create', [AchievementController::class, 'create'])->name('create');
+        Route::post('/', [AchievementController::class, 'store'])->name('store');
+        Route::get('/{achievement}', [AchievementController::class, 'show'])->name('show');
+        Route::get('/{achievement}/edit', [AchievementController::class, 'edit'])->name('edit');
+        Route::put('/{achievement}', [AchievementController::class, 'update'])->name('update');
+        Route::delete('/{achievement}', [AchievementController::class, 'destroy'])->name('destroy');
+        Route::post('/{achievement}/toggle-status', [AchievementController::class, 'toggleStatus'])->name('toggle-status');
+        Route::post('/{achievement}/toggle-featured', [AchievementController::class, 'toggleFeatured'])->name('toggle-featured');
+        Route::post('/bulk-action', [AchievementController::class, 'bulkAction'])->name('bulk-action');
     });
 });
 

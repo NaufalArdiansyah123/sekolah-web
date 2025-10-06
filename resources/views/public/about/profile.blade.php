@@ -28,8 +28,7 @@
             rgba(26, 32, 44, 0.8) 0%, 
             rgba(49, 130, 206, 0.7) 50%, 
             rgba(26, 32, 44, 0.8) 100%
-        ),
-        url('https://images.unsplash.com/photo-1580582932707-520aed937b7b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2032&q=80') center/cover no-repeat;
+        );
         color: white;
         padding: 100px 0;
         min-height: 70vh;
@@ -37,6 +36,31 @@
         align-items: center;
         position: relative;
         overflow: hidden;
+    }
+    
+    .hero-section.with-image {
+        background-image: linear-gradient(
+            135deg, 
+            rgba(26, 32, 44, 0.8) 0%, 
+            rgba(49, 130, 206, 0.7) 50%, 
+            rgba(26, 32, 44, 0.8) 100%
+        ),
+        var(--hero-image);
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+    
+    /* Fallback for browsers that don't support CSS custom properties */
+    .hero-section.with-image[style*="--hero-image"] {
+        background-image: linear-gradient(
+            135deg, 
+            rgba(26, 32, 44, 0.8) 0%, 
+            rgba(49, 130, 206, 0.7) 50%, 
+            rgba(26, 32, 44, 0.8) 100%
+        ),
+        var(--hero-image);
     }
     
     .hero-section::before {
@@ -533,13 +557,35 @@
 </style>
 
 <!-- Enhanced Hero Section -->
-<section class="hero-section">
+@php
+    $heroImageUrl = '';
+    if ($profile->hero_image) {
+        // Handle different path formats
+        if (str_starts_with($profile->hero_image, 'storage/')) {
+            $heroImageUrl = asset($profile->hero_image);
+        } elseif (str_starts_with($profile->hero_image, 'http')) {
+            $heroImageUrl = $profile->hero_image;
+        } else {
+            $heroImageUrl = asset('storage/' . $profile->hero_image);
+        }
+    }
+@endphp
+
+<!-- Debug: Hero Image Path: {{ $profile->hero_image ?? 'No hero image' }} -->
+<!-- Debug: Generated URL: {{ $heroImageUrl }} -->
+<section class="hero-section {{ $profile->hero_image ? 'with-image' : '' }}" 
+         @if($profile->hero_image) 
+         style="--hero-image: url('{{ $heroImageUrl }}'); 
+                background-image: linear-gradient(135deg, rgba(26, 32, 44, 0.8) 0%, rgba(49, 130, 206, 0.7) 50%, rgba(26, 32, 44, 0.8) 100%), url('{{ $heroImageUrl }}') !important;
+                background-size: cover !important;
+                background-position: center !important;
+                background-repeat: no-repeat !important;" 
+         @endif>
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8">
-                <h1 class="fade-in-left">Profil SMK PGRI 2 PONOROGO</h1>
-                <p class="lead fade-in-left" style="animation-delay: 0.2s;">Excellence in Education - Membentuk generasi yang berkarakter, berprestasi, dan
-                    siap menghadapi masa depan dengan dedikasi lebih dari 30 tahun.</p>
+                <h1 class="fade-in-left">Profil {{ $profile->school_name }}</h1>
+                <p class="lead fade-in-left" style="animation-delay: 0.2s;">{{ $profile->school_motto ?? 'Excellence in Education' }} - {{ $profile->about_description ?? 'Membentuk generasi yang berkarakter, berprestasi, dan siap menghadapi masa depan.' }}</p>
             </div>
             <div class="col-lg-4 text-center">
                 <i class="fas fa-school hero-icon scale-in" style="animation-delay: 0.4s;"></i>
@@ -552,7 +598,7 @@
 <section class="stats-section">
     <div class="container">
         <div class="section-title">
-            <h2 class="section-heading fade-in-up">SMK PGRI 2 PONOROGO</h2>
+            <h2 class="section-heading fade-in-up">{{ $profile->school_name }}</h2>
             <p class="text-muted fade-in-up" style="animation-delay: 0.2s;">Pencapaian dan prestasi yang membanggakan</p>
         </div>
         <div class="row text-center g-4">
@@ -562,8 +608,8 @@
                         <div class="stats-icon-wrapper mb-3">
                             <i class="fas fa-users fa-3x text-primary stats-icon"></i>
                         </div>
-                        <h2 class="stats-number display-4 fw-bold text-primary mb-2" data-target="2400">0</h2>
-                        <p class="stats-label text-muted mb-0 fw-medium">JUMLAH SISWA 2019</p>
+                        <h2 class="stats-number display-4 fw-bold text-primary mb-2" data-target="{{ $profile->student_count ?? 2400 }}">0</h2>
+                        <p class="stats-label text-muted mb-0 fw-medium">JUMLAH SISWA</p>
                         <div class="stats-bar bg-primary"></div>
                     </div>
                 </div>
@@ -574,7 +620,7 @@
                         <div class="stats-icon-wrapper mb-3">
                             <i class="fas fa-chalkboard-teacher fa-3x text-success stats-icon"></i>
                         </div>
-                        <h2 class="stats-number display-4 fw-bold text-success mb-2" data-target="120">0</h2>
+                        <h2 class="stats-number display-4 fw-bold text-success mb-2" data-target="{{ $profile->teacher_count ?? 120 }}">0</h2>
                         <p class="stats-label text-muted mb-0 fw-medium">JUMLAH GURU</p>
                         <div class="stats-bar bg-success"></div>
                     </div>
@@ -586,8 +632,8 @@
                         <div class="stats-icon-wrapper mb-3">
                             <i class="fas fa-user-tie fa-3x text-warning stats-icon"></i>
                         </div>
-                        <h2 class="stats-number display-4 fw-bold text-warning mb-2" data-target="40">0</h2>
-                        <p class="stats-label text-muted mb-0 fw-medium">JUMLAH KARYAWAN</p>
+                        <h2 class="stats-number display-4 fw-bold text-warning mb-2" data-target="{{ $profile->staff_count ?? 40 }}">0</h2>
+                        <p class="stats-label text-muted mb-0 fw-medium">JUMLAH STAFF</p>
                         <div class="stats-bar bg-warning"></div>
                     </div>
                 </div>
@@ -598,7 +644,7 @@
                         <div class="stats-icon-wrapper mb-3">
                             <i class="fas fa-handshake fa-3x text-info stats-icon"></i>
                         </div>
-                        <h2 class="stats-number display-4 fw-bold text-info mb-2" data-target="110">0</h2>
+                        <h2 class="stats-number display-4 fw-bold text-info mb-2" data-target="{{ $profile->industry_partnerships ?? 110 }}">0</h2>
                         <p class="stats-label text-muted mb-0 fw-medium">KERJA SAMA INDUSTRI</p>
                         <div class="stats-bar bg-info"></div>
                     </div>
@@ -618,11 +664,13 @@
                         <h4 class="mb-0"><i class="fas fa-info-circle me-2"></i>Tentang Kami</h4>
                     </div>
                     <div class="card-body p-4">
-                        <p class="lead mb-4">SMK PGRI 2 PONOROGO adalah institusi pendidikan menengah atas yang telah
-                            berkiprah dalam dunia pendidikan selama lebih dari 30 tahun.</p>
-                        <p>Kami berkomitmen untuk memberikan pendidikan terbaik guna membentuk generasi penerus bangsa
-                            yang unggul dan berkarakter. Dengan motto "Excellence in Education", kami terus berinovasi
-                            dalam memberikan layanan pendidikan yang berkualitas.</p>
+                        <p class="lead mb-4">{{ $profile->about_description ?? 'SMK PGRI 2 PONOROGO adalah institusi pendidikan menengah atas yang telah berkiprah dalam dunia pendidikan selama lebih dari 30 tahun.' }}</p>
+                        @if($profile->vision)
+                            <p><strong>Visi:</strong> {{ $profile->vision }}</p>
+                        @endif
+                        @if($profile->mission)
+                            <p><strong>Misi:</strong> {{ $profile->mission }}</p>
+                        @endif
                         <div class="mt-4">
                             <h6 class="text-primary">Nilai-Nilai Inti:</h6>
                             <div class="row mt-3">
@@ -651,32 +699,43 @@
                     </div>
                     <div class="card-body p-4">
                         <div class="timeline">
-                            <div class="timeline-item mb-4 fade-in-up" style="animation-delay: 0.1s;">
-                                <div class="timeline-marker bg-primary"></div>
-                                <div class="timeline-content">
-                                    <h6 class="fw-bold text-primary">1990</h6>
-                                    <p class="mb-2">Pendirian sekolah dengan 5 ruang kelas dan 150 siswa pertama</p>
-                                </div>
-                            </div>
-                            <div class="timeline-item mb-4 fade-in-up" style="animation-delay: 0.3s;">
-                                <div class="timeline-marker bg-success"></div>
-                                <div class="timeline-content">
-                                    <h6 class="fw-bold text-success">2000</h6>
-                                    <p class="mb-2">Pembangunan laboratorium IPA dan perpustakaan modern</p>
-                                </div>
-                            </div>
-                            <div class="timeline-item mb-4 fade-in-up" style="animation-delay: 0.5s;">
-                                <div class="timeline-marker bg-warning"></div>
-                                <div class="timeline-content">
-                                    <h6 class="fw-bold text-warning">2010</h6>
-                                    <p class="mb-2">Terakreditasi A dan mulai program digitalisasi</p>
-                                </div>
-                            </div>
+                            @if(count($profile->history_timeline) > 0)
+                                @foreach($profile->history_timeline as $index => $historyItem)
+                                    <div class="timeline-item mb-4 fade-in-up" style="animation-delay: {{ ($index + 1) * 0.2 }}s;">
+                                        <div class="timeline-marker bg-{{ $historyItem['type'] === 'milestone' ? 'primary' : ($historyItem['type'] === 'achievement' ? 'success' : ($historyItem['type'] === 'expansion' ? 'warning' : ($historyItem['type'] === 'recognition' ? 'info' : 'secondary'))) }}"></div>
+                                        <div class="timeline-content">
+                                            <h6 class="fw-bold text-{{ $historyItem['type'] === 'milestone' ? 'primary' : ($historyItem['type'] === 'achievement' ? 'success' : ($historyItem['type'] === 'expansion' ? 'warning' : ($historyItem['type'] === 'recognition' ? 'info' : 'secondary'))) }}">
+                                                {{ $historyItem['year'] ?? '' }} - {{ $historyItem['title'] ?? 'Historical Event' }}
+                                            </h6>
+                                            <p class="mb-2">{{ $historyItem['description'] ?? '' }}</p>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @else
+                                @if($profile->established_year)
+                                    <div class="timeline-item mb-4 fade-in-up" style="animation-delay: 0.1s;">
+                                        <div class="timeline-marker bg-primary"></div>
+                                        <div class="timeline-content">
+                                            <h6 class="fw-bold text-primary">{{ $profile->established_year }}</h6>
+                                            <p class="mb-2">Tahun pendirian sekolah ({{ date('Y') - $profile->established_year }} tahun yang lalu)</p>
+                                        </div>
+                                    </div>
+                                @endif
+                                @if($profile->accreditation)
+                                    <div class="timeline-item mb-4 fade-in-up" style="animation-delay: 0.3s;">
+                                        <div class="timeline-marker bg-warning"></div>
+                                        <div class="timeline-content">
+                                            <h6 class="fw-bold text-warning">Akreditasi {{ $profile->accreditation }}</h6>
+                                            <p class="mb-2">Terakreditasi {{ $profile->accreditation }} dan terus berkembang</p>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endif
                             <div class="timeline-item fade-in-up" style="animation-delay: 0.7s;">
                                 <div class="timeline-marker bg-info"></div>
                                 <div class="timeline-content">
-                                    <h6 class="fw-bold text-info">2020-Sekarang</h6>
-                                    <p class="mb-0">Era pembelajaran hybrid dan inovasi teknologi pendidikan</p>
+                                    <h6 class="fw-bold text-info">{{ date('Y') }} - Sekarang</h6>
+                                    <p class="mb-0">Era pembelajaran modern dan inovasi teknologi pendidikan</p>
                                 </div>
                             </div>
                         </div>
@@ -698,50 +757,72 @@
         </div>
 
         <div class="row g-4">
-            <div class="col-md-4">
-                <div class="card shadow h-100 facility-card fade-in-up" style="animation-delay: 0.2s;">
-                    <div class="card-body text-center p-4">
-                        <i class="fas fa-music fa-3x text-purple mb-3" style="color: #6f42c1 !important;"></i>
-                        <h5>Studio Seni</h5>
-                        <p class="text-muted">Ruang musik, tari, dan seni rupa untuk pengembangan bakat</p>
-                        <ul class="list-unstyled text-start">
-                            <li><i class="fas fa-check text-success me-2"></i> Piano & keyboard</li>
-                            <li><i class="fas fa-check text-success me-2"></i> Sound system</li>
-                            <li><i class="fas fa-check text-success me-2"></i> Panggung mini</li>
-                        </ul>
+            @if($profile->facilities && count($profile->facilities) > 0)
+                @foreach($profile->facilities_with_icons as $index => $facility)
+                    <div class="col-md-4">
+                        <div class="card shadow h-100 facility-card fade-in-up" style="animation-delay: {{ ($index + 1) * 0.2 }}s;">
+                            <div class="card-body text-center p-4">
+                                <i class="{{ $facility['icon'] }} fa-3x text-{{ $facility['color'] }} mb-3"></i>
+                                <h5>{{ $facility['name'] }}</h5>
+                                <p class="text-muted">{{ $facility['description'] }}</p>
+                                @if(count($facility['features']) > 0)
+                                    <ul class="list-unstyled text-start">
+                                        @foreach($facility['features'] as $feature)
+                                            <li><i class="fas fa-check text-success me-2"></i> {{ $feature }}</li>
+                                        @endforeach
+                                    </ul>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            @else
+                <!-- Default facilities if none are set -->
+                <div class="col-md-4">
+                    <div class="card shadow h-100 facility-card fade-in-up" style="animation-delay: 0.2s;">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-music fa-3x text-purple mb-3" style="color: #6f42c1 !important;"></i>
+                            <h5>Studio Seni</h5>
+                            <p class="text-muted">Ruang musik, tari, dan seni rupa untuk pengembangan bakat</p>
+                            <ul class="list-unstyled text-start">
+                                <li><i class="fas fa-check text-success me-2"></i> Piano & keyboard</li>
+                                <li><i class="fas fa-check text-success me-2"></i> Sound system</li>
+                                <li><i class="fas fa-check text-success me-2"></i> Panggung mini</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="col-md-4">
-                <div class="card shadow h-100 facility-card fade-in-up" style="animation-delay: 0.4s;">
-                    <div class="card-body text-center p-4">
-                        <i class="fas fa-microscope fa-3x text-primary mb-3"></i>
-                        <h5>Laboratorium IPA</h5>
-                        <p class="text-muted">Laboratorium lengkap untuk praktikum fisika, kimia, dan biologi</p>
-                        <ul class="list-unstyled text-start">
-                            <li><i class="fas fa-check text-success me-2"></i> Mikroskop digital</li>
-                            <li><i class="fas fa-check text-success me-2"></i> Alat praktikum lengkap</li>
-                            <li><i class="fas fa-check text-success me-2"></i> Ruang ber-AC</li>
-                        </ul>
+                
+                <div class="col-md-4">
+                    <div class="card shadow h-100 facility-card fade-in-up" style="animation-delay: 0.4s;">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-microscope fa-3x text-primary mb-3"></i>
+                            <h5>Laboratorium IPA</h5>
+                            <p class="text-muted">Laboratorium lengkap untuk praktikum fisika, kimia, dan biologi</p>
+                            <ul class="list-unstyled text-start">
+                                <li><i class="fas fa-check text-success me-2"></i> Mikroskop digital</li>
+                                <li><i class="fas fa-check text-success me-2"></i> Alat praktikum lengkap</li>
+                                <li><i class="fas fa-check text-success me-2"></i> Ruang ber-AC</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="col-md-4">
-                <div class="card shadow h-100 facility-card fade-in-up" style="animation-delay: 0.6s;">
-                    <div class="card-body text-center p-4">
-                        <i class="fas fa-book fa-3x text-success mb-3"></i>
-                        <h5>Perpustakaan Digital</h5>
-                        <p class="text-muted">Perpustakaan modern dengan koleksi buku dan e-book</p>
-                        <ul class="list-unstyled text-start">
-                            <li><i class="fas fa-check text-success me-2"></i> 10,000+ buku fisik</li>
-                            <li><i class="fas fa-check text-success me-2"></i> E-library access</li>
-                            <li><i class="fas fa-check text-success me-2"></i> Ruang baca nyaman</li>
-                        </ul>
+                
+                <div class="col-md-4">
+                    <div class="card shadow h-100 facility-card fade-in-up" style="animation-delay: 0.6s;">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-book fa-3x text-success mb-3"></i>
+                            <h5>Perpustakaan Digital</h5>
+                            <p class="text-muted">Perpustakaan modern dengan koleksi buku dan e-book</p>
+                            <ul class="list-unstyled text-start">
+                                <li><i class="fas fa-check text-success me-2"></i> 10,000+ buku fisik</li>
+                                <li><i class="fas fa-check text-success me-2"></i> E-library access</li>
+                                <li><i class="fas fa-check text-success me-2"></i> Ruang baca nyaman</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-            </div>
+            @endif
         </div>
     </div>
 </section>
@@ -753,67 +834,118 @@
             <div class="col-lg-8">
                 <h3 class="mb-4 section-heading fade-in-left text-start"><i class="fas fa-trophy me-2"></i>Prestasi Terbaru</h3>
 
-                <div class="card shadow mb-3 fade-in-left" style="animation-delay: 0.2s;">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-md-2 text-center">
-                                <div class="achievement-badge bg-warning text-white scale-in" style="animation-delay: 0.4s;">
-                                    <i class="fas fa-medal fa-2x"></i>
+                @if($achievements && $achievements->count() > 0)
+                    @foreach($achievements as $index => $achievement)
+                        <div class="card shadow mb-3 fade-in-left" style="animation-delay: {{ ($index + 1) * 0.2 }}s;">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-2 text-center">
+                                        <div class="achievement-badge bg-{{ $achievement->level_badge_color }} text-white scale-in" style="animation-delay: {{ ($index + 2) * 0.2 }}s;">
+                                            <i class="{{ $achievement->category_icon }} fa-2x"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <h5 class="mb-1">{{ $achievement->title }}</h5>
+                                        <p class="text-muted mb-1">{{ $achievement->description }}</p>
+                                        @if($achievement->participant)
+                                            <p class="text-muted mb-1"><strong>Peserta:</strong> {{ $achievement->participant }}</p>
+                                        @endif
+                                        @if($achievement->organizer)
+                                            <p class="text-muted mb-1"><strong>Penyelenggara:</strong> {{ $achievement->organizer }}</p>
+                                        @endif
+                                        <small><i class="fas fa-calendar me-1"></i> 
+                                            @if($achievement->achievement_date)
+                                                {{ $achievement->achievement_date->format('d F Y') }}
+                                            @else
+                                                {{ $achievement->year }}
+                                            @endif
+                                        </small>
+                                    </div>
+                                    <div class="col-md-2 text-end">
+                                        <span class="badge bg-{{ $achievement->level_badge_color }} fs-6 mb-2">{{ $achievement->level_formatted }}</span>
+                                        @if($achievement->position)
+                                            <br><span class="badge bg-{{ $achievement->position_badge_color }} fs-6">{{ $achievement->position_formatted }}</span>
+                                        @endif
+                                        <br><small class="text-muted">{{ $achievement->category_formatted }}</small>
+                                    </div>
                                 </div>
+                                @if($achievement->image)
+                                    <div class="row mt-3">
+                                        <div class="col-12">
+                                            <img src="{{ asset('storage/' . $achievement->image) }}" 
+                                                 alt="{{ $achievement->title }}" 
+                                                 class="img-fluid rounded" 
+                                                 style="max-height: 200px; object-fit: cover;">
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
-                            <div class="col-md-8">
-                                <h5 class="mb-1">Juara 1 Olimpiade Sains Nasional 2024</h5>
-                                <p class="text-muted mb-1">Bidang Matematika - Tingkat Nasional</p>
-                                <small><i class="fas fa-calendar me-1"></i> Agustus 2024</small>
-                            </div>
-                            <div class="col-md-2 text-end">
-                                <span class="badge bg-warning fs-6">Nasional</span>
+                        </div>
+                    @endforeach
+                @else
+                    <!-- Default achievements if none are set -->
+                    <div class="card shadow mb-3 fade-in-left" style="animation-delay: 0.2s;">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-2 text-center">
+                                    <div class="achievement-badge bg-warning text-white scale-in" style="animation-delay: 0.4s;">
+                                        <i class="fas fa-medal fa-2x"></i>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <h5 class="mb-1">Juara 1 Olimpiade Sains Nasional 2024</h5>
+                                    <p class="text-muted mb-1">Bidang Matematika - Tingkat Nasional</p>
+                                    <small><i class="fas fa-calendar me-1"></i> Agustus 2024</small>
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <span class="badge bg-warning fs-6">Nasional</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="card shadow mb-3 fade-in-left" style="animation-delay: 0.4s;">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-md-2 text-center">
-                                <div class="achievement-badge bg-success text-white scale-in" style="animation-delay: 0.6s;">
-                                    <i class="fas fa-leaf fa-2x"></i>
+                    <div class="card shadow mb-3 fade-in-left" style="animation-delay: 0.4s;">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-2 text-center">
+                                    <div class="achievement-badge bg-success text-white scale-in" style="animation-delay: 0.6s;">
+                                        <i class="fas fa-leaf fa-2x"></i>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-8">
-                                <h5 class="mb-1">Sekolah Adiwiyata Tingkat Provinsi</h5>
-                                <p class="text-muted mb-1">Penghargaan sekolah berwawasan lingkungan</p>
-                                <small><i class="fas fa-calendar me-1"></i> Juni 2024</small>
-                            </div>
-                            <div class="col-md-2 text-end">
-                                <span class="badge bg-success fs-6">Provinsi</span>
+                                <div class="col-md-8">
+                                    <h5 class="mb-1">Sekolah Adiwiyata Tingkat Provinsi</h5>
+                                    <p class="text-muted mb-1">Penghargaan sekolah berwawasan lingkungan</p>
+                                    <small><i class="fas fa-calendar me-1"></i> Juni 2024</small>
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <span class="badge bg-success fs-6">Provinsi</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="card shadow mb-3 fade-in-left" style="animation-delay: 0.6s;">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-md-2 text-center">
-                                <div class="achievement-badge bg-info text-white scale-in" style="animation-delay: 0.8s;">
-                                    <i class="fas fa-comments fa-2x"></i>
+                    <div class="card shadow mb-3 fade-in-left" style="animation-delay: 0.6s;">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-2 text-center">
+                                    <div class="achievement-badge bg-info text-white scale-in" style="animation-delay: 0.8s;">
+                                        <i class="fas fa-comments fa-2x"></i>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-8">
-                                <h5 class="mb-1">Juara Umum Debat Bahasa Inggris</h5>
-                                <p class="text-muted mb-1">English Debate Competition 2024</p>
-                                <small><i class="fas fa-calendar me-1"></i> Juli 2024</small>
-                            </div>
-                            <div class="col-md-2 text-end">
-                                <span class="badge bg-info fs-6">Kota</span>
+                                <div class="col-md-8">
+                                    <h5 class="mb-1">Juara Umum Debat Bahasa Inggris</h5>
+                                    <p class="text-muted mb-1">English Debate Competition 2024</p>
+                                    <small><i class="fas fa-calendar me-1"></i> Juli 2024</small>
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <span class="badge bg-info fs-6">Kota</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                @endif
 
-                <a href="#" class="btn btn-primary-enhanced btn-enhanced fade-in-left" style="animation-delay: 0.8s;">
+                <a href="{{ route('public.achievements') }}" class="btn btn-primary-enhanced btn-enhanced fade-in-left" style="animation-delay: 0.8s;">
                     <i class="fas fa-arrow-right me-2"></i>Lihat Semua Prestasi
                 </a>
             </div>
@@ -825,51 +957,78 @@
                         <h5 class="mb-0"><i class="fas fa-building me-2"></i>Informasi Sekolah</h5>
                     </div>
                     <div class="card-body">
-                        <div class="info-item mb-3 fade-in-up" style="animation-delay: 0.2s;">
-                            <div class="d-flex">
-                                <i class="fas fa-calendar-plus fa-lg text-primary me-3 mt-1"></i>
-                                <div>
-                                    <strong>Tahun Berdiri</strong><br>
-                                    <span class="text-muted">1990 (34 tahun)</span>
+                        @if($profile->established_year)
+                            <div class="info-item mb-3 fade-in-up" style="animation-delay: 0.2s;">
+                                <div class="d-flex">
+                                    <i class="fas fa-calendar-plus fa-lg text-primary me-3 mt-1"></i>
+                                    <div>
+                                        <strong>Tahun Berdiri</strong><br>
+                                        <span class="text-muted">{{ $profile->established_year_formatted }}</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="info-item mb-3 fade-in-up" style="animation-delay: 0.4s;">
-                            <div class="d-flex">
-                                <i class="fas fa-award fa-lg text-success me-3 mt-1"></i>
-                                <div>
-                                    <strong>Akreditasi</strong><br>
-                                    <span class="text-muted">A (Unggul)</span>
+                        @endif
+                        
+                        @if($profile->accreditation)
+                            <div class="info-item mb-3 fade-in-up" style="animation-delay: 0.4s;">
+                                <div class="d-flex">
+                                    <i class="fas fa-award fa-lg text-success me-3 mt-1"></i>
+                                    <div>
+                                        <strong>Akreditasi</strong><br>
+                                        <span class="text-muted">{{ $profile->accreditation }} ({{ $profile->accreditation === 'A' ? 'Unggul' : ($profile->accreditation === 'B' ? 'Baik' : 'Cukup') }})</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="info-item mb-3 fade-in-up" style="animation-delay: 0.6s;">
-                            <div class="d-flex">
-                                <i class="fas fa-user-tie fa-lg text-warning me-3 mt-1"></i>
-                                <div>
-                                    <strong>Kepala Sekolah</strong><br>
-                                    <span class="text-muted">Singgih Wibowo A Se.MM</span>
+                        @endif
+                        
+                        @if($principal)
+                            <div class="info-item mb-3 fade-in-up" style="animation-delay: 0.6s;">
+                                <div class="d-flex">
+                                    <i class="fas fa-user-tie fa-lg text-warning me-3 mt-1"></i>
+                                    <div>
+                                        <strong>Kepala Sekolah</strong><br>
+                                        <span class="text-muted">{{ $principal->name }}</span>
+                                        @if($principal->education)
+                                            <br><small class="text-muted">{{ $principal->education }}</small>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="info-item mb-3 fade-in-up" style="animation-delay: 0.8s;">
-                            <div class="d-flex">
-                                <i class="fas fa-graduation-cap fa-lg text-info me-3 mt-1"></i>
-                                <div>
-                                    <strong>Program Studi</strong><br>
-                                    <span class="text-muted">IPA, IPS, Bahasa & Budaya</span>
+                        @elseif($profile->principal_name)
+                            <div class="info-item mb-3 fade-in-up" style="animation-delay: 0.6s;">
+                                <div class="d-flex">
+                                    <i class="fas fa-user-tie fa-lg text-warning me-3 mt-1"></i>
+                                    <div>
+                                        <strong>Kepala Sekolah</strong><br>
+                                        <span class="text-muted">{{ $profile->principal_name }}</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="info-item fade-in-up" style="animation-delay: 1.0s;">
-                            <div class="d-flex">
-                                <i class="fas fa-map-marker-alt fa-lg text-danger me-3 mt-1"></i>
-                                <div>
-                                    <strong>Alamat</strong><br>
-                                    <span class="text-muted">Jl. Pendidikan No. 123, Balong</span>
+                        @endif
+                        
+                        @if($profile->programs && count($profile->programs) > 0)
+                            <div class="info-item mb-3 fade-in-up" style="animation-delay: 0.8s;">
+                                <div class="d-flex">
+                                    <i class="fas fa-graduation-cap fa-lg text-info me-3 mt-1"></i>
+                                    <div>
+                                        <strong>Program Studi</strong><br>
+                                        <span class="text-muted">{{ implode(', ', $profile->programs) }}</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        @endif
+                        
+                        @if($profile->address)
+                            <div class="info-item fade-in-up" style="animation-delay: 1.0s;">
+                                <div class="d-flex">
+                                    <i class="fas fa-map-marker-alt fa-lg text-danger me-3 mt-1"></i>
+                                    <div>
+                                        <strong>Alamat</strong><br>
+                                        <span class="text-muted">{{ $profile->address }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
@@ -879,29 +1038,41 @@
                         <h5 class="mb-0"><i class="fas fa-phone me-2"></i>Kontak</h5>
                     </div>
                     <div class="card-body">
-                        <div class="contact-item mb-3 fade-in-up" style="animation-delay: 0.4s;">
-                            <i class="fas fa-phone text-primary me-2"></i>
-                            <strong>Telepon:</strong><br>
-                            <span class="ms-4">(021) 4567890</span>
-                        </div>
-                        <div class="contact-item mb-3 fade-in-up" style="animation-delay: 0.6s;">
-                            <i class="fas fa-envelope text-success me-2"></i>
-                            <strong>Email:</strong><br>
-                            <span class="ms-4">info@sman1balong.sch.id</span>
-                        </div>
-                        <div class="contact-item mb-3 fade-in-up" style="animation-delay: 0.8s;">
-                            <i class="fas fa-globe text-info me-2"></i>
-                            <strong>Website:</strong><br>
-                            <span class="ms-4">www.sman1balong.sch.id</span>
-                        </div>
-                        <div class="mt-4">
-                            <div class="d-flex justify-content-center gap-3 fade-in-up" style="animation-delay: 1.0s;">
-                                <a href="#" class="text-primary scale-in" style="animation-delay: 1.2s;"><i class="fab fa-facebook-f fa-lg"></i></a>
-                                <a href="#" class="text-info scale-in" style="animation-delay: 1.4s;"><i class="fab fa-instagram fa-lg"></i></a>
-                                <a href="#" class="text-primary scale-in" style="animation-delay: 1.6s;"><i class="fab fa-twitter fa-lg"></i></a>
-                                <a href="#" class="text-danger scale-in" style="animation-delay: 1.8s;"><i class="fab fa-youtube fa-lg"></i></a>
+                        @if($profile->phone)
+                            <div class="contact-item mb-3 fade-in-up" style="animation-delay: 0.4s;">
+                                <i class="fas fa-phone text-primary me-2"></i>
+                                <strong>Telepon:</strong><br>
+                                <span class="ms-4">{{ $profile->phone }}</span>
                             </div>
-                        </div>
+                        @endif
+                        
+                        @if($profile->email)
+                            <div class="contact-item mb-3 fade-in-up" style="animation-delay: 0.6s;">
+                                <i class="fas fa-envelope text-success me-2"></i>
+                                <strong>Email:</strong><br>
+                                <span class="ms-4">{{ $profile->email }}</span>
+                            </div>
+                        @endif
+                        
+                        @if($profile->website)
+                            <div class="contact-item mb-3 fade-in-up" style="animation-delay: 0.8s;">
+                                <i class="fas fa-globe text-info me-2"></i>
+                                <strong>Website:</strong><br>
+                                <span class="ms-4">{{ $profile->website }}</span>
+                            </div>
+                        @endif
+                        
+                        @if($profile->social_media_links && count($profile->social_media_links) > 0)
+                            <div class="mt-4">
+                                <div class="d-flex justify-content-center gap-3 fade-in-up" style="animation-delay: 1.0s;">
+                                    @foreach($profile->social_media_links as $platform => $social)
+                                        <a href="{{ $social['url'] }}" target="_blank" class="text-primary scale-in" style="animation-delay: {{ 1.2 + ($loop->index * 0.2) }}s;">
+                                            <i class="{{ $social['icon'] }} fa-lg"></i>
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -912,75 +1083,153 @@
 <!-- Leadership Section -->
 <section class="py-5">
     <div class="container">
-        <div class="row mb-5">
-            <div class="col-md-8 mx-auto text-center">
-                <h2 class="mb-3 section-heading fade-in-up">Pimpinan Sekolah</h2>
-                <p class="text-muted fade-in-up" style="animation-delay: 0.2s;">Tim kepemimpinan yang berpengalaman dalam mengelola institusi pendidikan</p>
-            </div>
-        </div>
-
-        <div class="row justify-content-center g-4">
-            <div class="col-md-4">
-                <div class="card shadow text-center h-100 fade-in-up">
-                    <div class="card-body p-4">
-                        <div class="leadership-avatar bg-primary text-white rounded-circle mx-auto mb-3 scale-in"
-                            style="animation-delay: 0.2s;">
-                            <i class="fas fa-user fa-2x"></i>
-                        </div>
-                        <h5>Singgih Wibowo A Se.MM</h5>
-                        <p class="text-primary">Kepala Sekolah</p>
-                        <p class="text-muted small">Pengalaman 25 tahun di bidang pendidikan</p>
-                    </div>
+        @if($principal)
+            <div class="row mb-5">
+                <div class="col-md-8 mx-auto text-center">
+                    <h2 class="mb-3 section-heading fade-in-up">Kepala Sekolah</h2>
+                    <p class="text-muted fade-in-up" style="animation-delay: 0.2s;">Pemimpin yang berpengalaman dalam mengelola institusi pendidikan</p>
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <div class="card shadow text-center h-100 fade-in-up" style="animation-delay: 0.2s;">
-                    <div class="card-body p-4">
-                        <div class="leadership-avatar bg-success text-white rounded-circle mx-auto mb-3 scale-in"
-                            style="animation-delay: 0.4s;">
-                            <i class="fas fa-user fa-2x"></i>
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6">
+                    <div class="card shadow text-center h-100 fade-in-up">
+                        <div class="card-body p-4">
+                            @if($principal->photo)
+                                <img src="{{ asset('storage/' . $principal->photo) }}" alt="{{ $principal->name }}" 
+                                     class="leadership-avatar rounded-circle mx-auto mb-3 scale-in" 
+                                     style="animation-delay: 0.2s; width: 150px; height: 150px; object-fit: cover;">
+                            @else
+                                <div class="leadership-avatar bg-primary text-white rounded-circle mx-auto mb-3 scale-in"
+                                    style="animation-delay: 0.2s; width: 150px; height: 150px; display: flex; align-items: center; justify-content: center;">
+                                    @if($principal->initials)
+                                        <span style="font-size: 3rem; font-weight: bold;">{{ $principal->initials }}</span>
+                                    @else
+                                        <i class="fas fa-user fa-3x"></i>
+                                    @endif
+                                </div>
+                            @endif
+                            <h4 class="mb-2">{{ $principal->name }}</h4>
+                            <p class="text-primary fw-bold mb-3">{{ $principal->position }}</p>
+                            
+                            <!-- Principal Information -->
+                            <div class="row mt-4">
+                                @if($principal->education)
+                                    <div class="col-12 mb-3">
+                                        <div class="info-item text-start">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-graduation-cap fa-lg text-primary me-3"></i>
+                                                <div>
+                                                    <strong>Pendidikan</strong><br>
+                                                    <span class="text-muted">{{ $principal->education }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                                
+                                @if($principal->nip)
+                                    <div class="col-12 mb-3">
+                                        <div class="info-item text-start">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-id-card fa-lg text-success me-3"></i>
+                                                <div>
+                                                    <strong>NIP</strong><br>
+                                                    <span class="text-muted">{{ $principal->nip }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                                
+                                @if($principal->phone)
+                                    <div class="col-12 mb-3">
+                                        <div class="info-item text-start">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-phone fa-lg text-info me-3"></i>
+                                                <div>
+                                                    <strong>Telepon</strong><br>
+                                                    <span class="text-muted">{{ $principal->phone }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                                
+                                @if($principal->subject)
+                                    <div class="col-12 mb-3">
+                                        <div class="info-item text-start">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-book fa-lg text-warning me-3"></i>
+                                                <div>
+                                                    <strong>Bidang Keahlian</strong><br>
+                                                    <span class="text-muted">{{ $principal->subject }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                            
+                            <div class="mt-4">
+                                <a href="{{ route('public.teachers.show', $principal->id) }}" class="btn btn-primary btn-enhanced">
+                                    <i class="fas fa-user me-2"></i>Lihat Profil Lengkap
+                                </a>
+                            </div>
                         </div>
-                        <h5>Dr. Siti Nurhaliza, S.Pd</h5>
-                        <p class="text-success">Wakil Kepala Sekolah</p>
-                        <p class="text-muted small">Bidang Kurikulum dan Pembelajaran</p>
                     </div>
+                </div>
+            </div>
+        @elseif($profile->principal_name)
+            <!-- Fallback to profile data if no principal in database -->
+            <div class="row mb-5">
+                <div class="col-md-8 mx-auto text-center">
+                    <h2 class="mb-3 section-heading fade-in-up">Kepala Sekolah</h2>
+                    <p class="text-muted fade-in-up" style="animation-delay: 0.2s;">Pemimpin yang berpengalaman dalam mengelola institusi pendidikan</p>
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <div class="card shadow text-center h-100 fade-in-up" style="animation-delay: 0.4s;">
-                    <div class="card-body p-4">
-                        <div class="leadership-avatar bg-warning text-white rounded-circle mx-auto mb-3 scale-in"
-                            style="animation-delay: 0.6s;">
-                            <i class="fas fa-user fa-2x"></i>
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-4">
+                    <div class="card shadow text-center h-100 fade-in-up">
+                        <div class="card-body p-4">
+                            @if($profile->principal_photo)
+                                <img src="{{ asset($profile->principal_photo) }}" alt="{{ $profile->principal_name }}" 
+                                     class="leadership-avatar rounded-circle mx-auto mb-3 scale-in" 
+                                     style="animation-delay: 0.2s; width: 120px; height: 120px; object-fit: cover;">
+                            @else
+                                <div class="leadership-avatar bg-primary text-white rounded-circle mx-auto mb-3 scale-in"
+                                    style="animation-delay: 0.2s; width: 120px; height: 120px;">
+                                    <i class="fas fa-user fa-3x"></i>
+                                </div>
+                            @endif
+                            <h4 class="mb-2">{{ $profile->principal_name }}</h4>
+                            <p class="text-primary fw-bold mb-3">Kepala Sekolah</p>
+                            <p class="text-muted small">{{ $profile->school_name }}</p>
                         </div>
-                        <h5>Budi Santoso, M.Pd</h5>
-                        <p class="text-warning">Wakil Kepala Sekolah</p>
-                        <p class="text-muted small">Bidang Kesiswaan dan Karakter</p>
                     </div>
                 </div>
             </div>
-        </div>
+        @endif
     </div>
 </section>
 
 <!-- Call to Action -->
-<section class="cta-section">
+<!-- <section class="cta-section">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8 text-center text-lg-start">
-                <h3 class="text-white mb-3 fade-in-left">Tertarik untuk bergabung dengan SMK PGRI 2 PONOROGO?</h3>
-                <p class="text-white mb-4 fade-in-left" style="animation-delay: 0.2s;">Daftarkan diri Anda sekarang dan jadilah bagian dari keluarga besar SMK PGRI 2 PONOROGO</p>
+                <h3 class="text-white mb-3 fade-in-left">{{ $profile->cta_title ?? 'Tertarik untuk bergabung dengan ' . $profile->school_name . '?' }}</h3>
+                <p class="text-white mb-4 fade-in-left" style="animation-delay: 0.2s;">{{ $profile->cta_description ?? 'Daftarkan diri Anda sekarang dan jadilah bagian dari keluarga besar ' . $profile->school_name }}</p>
             </div>
             <div class="col-lg-4 text-center">
-                <a href="#" class="btn btn-light btn-lg px-4 py-2 btn-enhanced scale-in" style="animation-delay: 0.4s;">
-                    <i class="fas fa-user-plus me-2"></i>Daftar Sekarang
+                <a href="{{ $profile->cta_button_url ?? '#' }}" class="btn btn-light btn-lg px-4 py-2 btn-enhanced scale-in" style="animation-delay: 0.4s;">
+                    <i class="fas fa-user-plus me-2"></i>{{ $profile->cta_button_text ?? 'Daftar Sekarang' }}
                 </a>
             </div>
         </div>
     </div>
-</section>
+</section> -->
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>

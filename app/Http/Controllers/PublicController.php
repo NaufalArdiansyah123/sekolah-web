@@ -12,6 +12,9 @@ use App\Models\Post;
 use App\Models\CalendarEvent;
 use App\Models\Agenda;
 use App\Models\Announcement;
+use App\Models\SchoolProfile;
+use App\Models\Vision;
+use App\Models\Achievement;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Schema;
 
@@ -57,22 +60,300 @@ class PublicController extends Controller
 
     public function aboutProfile()
     {
+        $schoolProfile = SchoolProfile::getActiveProfile();
+        
+        // If no active profile, create default data
+        if (!$schoolProfile) {
+            $schoolProfile = $this->getDefaultProfileData();
+        }
+        
+        // Get principal from teachers database
+        $principal = \App\Models\Teacher::where('position', 'Kepala Sekolah')
+                                        ->where('status', 'active')
+                                        ->first();
+        
+        // Override principal data with database data if available
+        if ($principal) {
+            $schoolProfile->principal_name = $principal->name;
+            $schoolProfile->principal_photo = $principal->photo ? asset('storage/' . $principal->photo) : null;
+            $schoolProfile->principal_education = $principal->education;
+            $schoolProfile->principal_nip = $principal->nip;
+            $schoolProfile->principal_email = $principal->email;
+            $schoolProfile->principal_phone = $principal->phone;
+        }
+        
+        // Get latest achievements from database
+        $achievements = Achievement::active()
+                                  ->featured()
+                                  ->latest('achievement_date')
+                                  ->take(6)
+                                  ->get();
+        
+        // If no featured achievements, get latest achievements
+        if ($achievements->count() === 0) {
+            $achievements = Achievement::active()
+                                      ->latest('achievement_date')
+                                      ->take(6)
+                                      ->get();
+        }
+        
         return view('public.about.profile', [
-            'title' => 'Profil Sekolah'
+            'title' => 'Profil Sekolah',
+            'profile' => $schoolProfile,
+            'principal' => $principal,
+            'achievements' => $achievements
         ]);
+    }
+    
+    /**
+     * Get default profile data when no profile is set
+     */
+    private function getDefaultProfileData()
+    {
+        return (object) [
+            'school_name' => 'SMK PGRI 2 PONOROGO',
+            'school_motto' => 'Excellence in Education',
+            'about_description' => 'SMK PGRI 2 PONOROGO adalah institusi pendidikan menengah atas yang telah berkiprah dalam dunia pendidikan selama lebih dari 30 tahun.',
+            'vision' => 'Menjadi sekolah unggulan yang menghasilkan lulusan berkarakter, berprestasi, dan siap menghadapi tantangan masa depan.',
+            'mission' => 'Memberikan pendidikan berkualitas dengan mengintegrasikan nilai-nilai karakter, teknologi, dan kearifan lokal.',
+            'history' => 'Didirikan pada tahun 1990 dengan komitmen memberikan pendidikan terbaik untuk generasi penerus bangsa.',
+            'established_year' => 1990,
+            'accreditation' => 'A',
+            'principal_name' => 'Singgih Wibowo A Se.MM',
+            'address' => 'Jl. Pendidikan No. 123, Balong',
+            'phone' => '(021) 4567890',
+            'email' => 'info@sman1balong.sch.id',
+            'website' => 'www.sman1balong.sch.id',
+            'student_count' => 2400,
+            'teacher_count' => 120,
+            'staff_count' => 40,
+            'industry_partnerships' => 110,
+            'social_media' => [
+                'facebook' => '#',
+                'instagram' => '#',
+                'twitter' => '#',
+                'youtube' => '#'
+            ],
+            'facilities' => [
+                ['name' => 'Studio Seni', 'description' => 'Ruang musik, tari, dan seni rupa untuk pengembangan bakat', 'features' => ['Piano & keyboard', 'Sound system', 'Panggung mini']],
+                ['name' => 'Laboratorium IPA', 'description' => 'Laboratorium lengkap untuk praktikum fisika, kimia, dan biologi', 'features' => ['Mikroskop digital', 'Alat praktikum lengkap', 'Ruang ber-AC']],
+                ['name' => 'Perpustakaan Digital', 'description' => 'Perpustakaan modern dengan koleksi buku dan e-book', 'features' => ['10,000+ buku fisik', 'E-library access', 'Ruang baca nyaman']]
+            ],
+            'achievements' => [
+                ['title' => 'Juara 1 Olimpiade Sains Nasional 2024', 'description' => 'Bidang Matematika - Tingkat Nasional', 'level' => 'Nasional', 'year' => 2024],
+                ['title' => 'Sekolah Adiwiyata Tingkat Provinsi', 'description' => 'Penghargaan sekolah berwawasan lingkungan', 'level' => 'Provinsi', 'year' => 2024],
+                ['title' => 'Juara Umum Debat Bahasa Inggris', 'description' => 'English Debate Competition 2024', 'level' => 'Kota', 'year' => 2024]
+            ],
+            'programs' => [
+                'IPA', 'IPS', 'Bahasa & Budaya'
+            ],
+            'vice_principals' => [
+                ['name' => 'Dr. Siti Nurhaliza, S.Pd', 'position' => 'Wakil Kepala Sekolah', 'field' => 'Bidang Kurikulum dan Pembelajaran'],
+                ['name' => 'Budi Santoso, M.Pd', 'position' => 'Wakil Kepala Sekolah', 'field' => 'Bidang Kesiswaan dan Karakter']
+            ]
+        ];
+    }
+    
+    /**
+     * Get default vision data when no vision is set
+     */
+    private function getDefaultVisionData()
+    {
+        return (object) [
+            'title' => 'Visi & Misi Sekolah',
+            'vision_text' => 'Terwujudnya sekolah yang unggul, berkarakter, dan berwawasan lingkungan dalam menghasilkan lulusan yang cerdas, kreatif, mandiri, dan berakhlak mulia',
+            'hero_title' => 'Visi & Misi',
+            'hero_subtitle' => 'Komitmen kami untuk menciptakan pendidikan berkualitas dan membentuk generasi yang berkarakter, berprestasi, dan siap menghadapi tantangan masa depan.',
+            'hero_image' => null,
+            'mission_items_formatted' => [
+                [
+                    'number' => 1,
+                    'title' => 'Menyelenggarakan pendidikan berkualitas',
+                    'description' => 'dengan mengintegrasikan kurikulum nasional dan teknologi pembelajaran modern',
+                    'icon' => 'fas fa-graduation-cap'
+                ],
+                [
+                    'number' => 2,
+                    'title' => 'Mengembangkan karakter siswa',
+                    'description' => 'melalui program pendidikan nilai-nilai keagamaan, nasionalisme, dan kepemimpinan',
+                    'icon' => 'fas fa-users'
+                ],
+                [
+                    'number' => 3,
+                    'title' => 'Memfasilitasi pengembangan bakat dan minat',
+                    'description' => 'siswa melalui kegiatan ekstrakurikuler dan program unggulan',
+                    'icon' => 'fas fa-star'
+                ],
+                [
+                    'number' => 4,
+                    'title' => 'Membangun budaya sekolah',
+                    'description' => 'yang kondusif, aman, nyaman, dan berwawasan lingkungan',
+                    'icon' => 'fas fa-leaf'
+                ],
+                [
+                    'number' => 5,
+                    'title' => 'Menjalin kemitraan strategis',
+                    'description' => 'dengan stakeholder untuk mendukung program pendidikan dan pengembangan sekolah',
+                    'icon' => 'fas fa-handshake'
+                ]
+            ],
+            'goals_with_icons' => [
+                [
+                    'title' => 'Kualitas Akademik',
+                    'description' => 'Meningkatkan prestasi akademik dan daya saing lulusan di tingkat nasional',
+                    'icon' => 'fas fa-graduation-cap',
+                    'color' => 'primary'
+                ],
+                [
+                    'title' => 'Pembentukan Karakter',
+                    'description' => 'Menghasilkan lulusan yang berakhlak mulia dan berkarakter kuat',
+                    'icon' => 'fas fa-users',
+                    'color' => 'success'
+                ],
+                [
+                    'title' => 'Peduli Lingkungan',
+                    'description' => 'Mewujudkan sekolah hijau dan berkelanjutan untuk masa depan',
+                    'icon' => 'fas fa-leaf',
+                    'color' => 'success'
+                ],
+                [
+                    'title' => 'Wawasan Global',
+                    'description' => 'Mempersiapkan siswa dengan kompetensi global dan daya saing internasional',
+                    'icon' => 'fas fa-globe',
+                    'color' => 'info'
+                ]
+            ],
+            'values_with_colors' => [
+                [
+                    'title' => 'KEADILAN',
+                    'description' => 'Perlakuan yang adil dan merata untuk seluruh warga sekolah tanpa diskriminasi',
+                    'icon' => 'fas fa-balance-scale',
+                    'color' => 'primary'
+                ],
+                [
+                    'title' => 'PEDULI LINGKUNGAN',
+                    'description' => 'Kepedulian terhadap kelestarian lingkungan dan pembangunan berkelanjutan',
+                    'icon' => 'fas fa-leaf',
+                    'color' => 'success'
+                ],
+                [
+                    'title' => 'INOVASI',
+                    'description' => 'Kreativitas dan pembaruan berkelanjutan dalam metode dan pendekatan pendidikan',
+                    'icon' => 'fas fa-lightbulb',
+                    'color' => 'info'
+                ]
+            ],
+            'focus_areas_with_icons' => [
+                [
+                    'title' => 'Peningkatan Kualitas Pembelajaran',
+                    'description' => 'Fokus pada inovasi metode pembelajaran dan teknologi pendidikan',
+                    'items' => [
+                        'Implementasi kurikulum merdeka',
+                        'Pembelajaran berbasis teknologi',
+                        'Pengembangan critical thinking',
+                        'Program literasi digital'
+                    ],
+                    'icon' => 'fas fa-brain',
+                    'color' => 'primary'
+                ],
+                [
+                    'title' => 'Pengembangan Karakter',
+                    'description' => 'Pembentukan karakter dan nilai-nilai moral siswa',
+                    'items' => [
+                        'Program pendidikan karakter terintegrasi',
+                        'Kegiatan keagamaan dan spiritual',
+                        'Pengembangan kepemimpinan siswa',
+                        'Program service learning'
+                    ],
+                    'icon' => 'fas fa-seedling',
+                    'color' => 'success'
+                ],
+                [
+                    'title' => 'Prestasi & Kompetisi',
+                    'description' => 'Pengembangan bakat dan prestasi siswa',
+                    'items' => [
+                        'Program olimpiade sains',
+                        'Kompetisi debat dan public speaking',
+                        'Festival seni dan budaya',
+                        'Turnamen olahraga'
+                    ],
+                    'icon' => 'fas fa-medal',
+                    'color' => 'warning'
+                ],
+                [
+                    'title' => 'Kemitraan Global',
+                    'description' => 'Jaringan kerjasama internasional',
+                    'items' => [
+                        'Sister school program',
+                        'Student exchange program',
+                        'International certification',
+                        'Global competency development'
+                    ],
+                    'icon' => 'fas fa-globe',
+                    'color' => 'info'
+                ]
+            ],
+            'roadmap_phases_formatted' => [
+                [
+                    'year' => '2025',
+                    'title' => 'Fase Konsolidasi',
+                    'description' => 'Penguatan sistem manajemen sekolah dan standardisasi proses pembelajaran digital',
+                    'target' => 'Akreditasi A+ dan sertifikasi ISO 9001',
+                    'color' => 'primary',
+                    'status' => 'planned'
+                ],
+                [
+                    'year' => '2026-2027',
+                    'title' => 'Fase Ekspansi',
+                    'description' => 'Pengembangan program unggulan dan kemitraan internasional',
+                    'target' => '3 program sister school dan 5 sertifikasi internasional',
+                    'color' => 'success',
+                    'status' => 'planned'
+                ],
+                [
+                    'year' => '2028-2029',
+                    'title' => 'Fase Optimalisasi',
+                    'description' => 'Implementasi full smart school dan pengembangan pusat keunggulan',
+                    'target' => 'Center of Excellence dan Smart School Certification',
+                    'color' => 'warning',
+                    'status' => 'planned'
+                ],
+                [
+                    'year' => '2030',
+                    'title' => 'Pencapaian Visi',
+                    'description' => 'Menjadi sekolah unggulan rujukan nasional dengan lulusan berkarakter global',
+                    'target' => 'Top 10 sekolah terbaik nasional',
+                    'color' => 'info',
+                    'status' => 'planned'
+                ]
+            ]
+        ];
     }
 
     public function aboutVision()
     {
+        $vision = Vision::getActiveVision();
+        
+        // If no active vision, create default data
+        if (!$vision) {
+            $vision = $this->getDefaultVisionData();
+        }
+        
         return view('public.about.vision', [
-            'title' => 'Visi & Misi'
+            'title' => $vision->meta_title ?? $vision->title ?? 'Visi & Misi',
+            'description' => $vision->meta_description ?? 'Visi, Misi, dan Tujuan Strategis Sekolah',
+            'vision' => $vision
         ]);
     }
     
     public function sejarah()
     {
+        $history = \App\Models\History::getActiveHistory();
+        
         return view('public.about.sejarah', [
-            'title' => 'Sejarah Sekolah'
+            'title' => $history ? $history->meta_title ?? $history->title : 'Sejarah Sekolah',
+            'description' => $history ? $history->meta_description ?? 'Sejarah dan perjalanan sekolah kami' : 'Sejarah dan perjalanan sekolah kami',
+            'history' => $history
         ]);
     }
 
@@ -85,9 +366,8 @@ class PublicController extends Controller
 
     public function achievements()
     {
-        return view('public.achievements.index', [
-            'title' => 'Prestasi Sekolah'
-        ]);
+        // Redirect ke route public achievements
+        return app(\App\Http\Controllers\Public\AchievementController::class)->index(request());
     }
 
     // extracurriculars method moved to Public\ExtracurricularController
@@ -549,7 +829,13 @@ class PublicController extends Controller
 
     public function contact()
     {
-        return view('public.contact');
+        $contact = \App\Models\Contact::getActiveContact();
+        
+        return view('public.contact', [
+            'title' => 'Kontak Kami',
+            'description' => 'Hubungi kami untuk informasi lebih lanjut tentang sekolah',
+            'contact' => $contact
+        ]);
     }
 
     public function announcements(Request $request)

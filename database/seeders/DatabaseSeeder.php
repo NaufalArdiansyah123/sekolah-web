@@ -52,6 +52,10 @@ class DatabaseSeeder extends Seeder
             $this->command->info('\n🏃‍♂️ Seeding Extracurricular Registrations...');
             $this->call(ExtracurricularRegistrationSeeder::class);
             
+            // Seed contacts
+            $this->command->info('\n📞 Seeding Contacts...');
+            $this->call(ContactSeeder::class);
+            
             $this->command->info('\n🎉 Database seeding completed successfully!');
             $this->command->info('\n📋 Summary:');
             $this->command->info('   ✅ Roles created/verified');

@@ -1,12 +1,15 @@
 @extends('layouts.public')
 
+@section('title', $title ?? 'Kontak Kami')
+@section('meta_description', $description ?? 'Hubungi kami untuk informasi lebih lanjut tentang sekolah')
+
 @section('content')
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kontak - SMK PGRI 2 PONOROGO</title>
+    <title>{{ $title ?? 'Kontak Kami' }} - {{ config('app.name') }}</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -81,7 +84,14 @@
 
         /* Hero Section with Parallax Effect */
         .hero {
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            @if($contact && $contact->hero_image_url)
+                background: linear-gradient(rgba(44, 62, 80, 0.7), rgba(52, 152, 219, 0.7)), url('{{ $contact->hero_image_url }}');
+                background-size: cover;
+                background-position: center;
+                background-attachment: fixed;
+            @else
+                background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            @endif
             color: white;
             text-align: center;
             padding: 120px 20px 80px;
@@ -512,6 +522,8 @@
         .social-link.instagram:hover { background: linear-gradient(135deg, #e4405f, #833ab4); }
         .social-link.youtube:hover { background: linear-gradient(135deg, #ff0000, #cc0000); }
         .social-link.twitter:hover { background: linear-gradient(135deg, #1da1f2, #0d8bd9); }
+        .social-link.linkedin:hover { background: linear-gradient(135deg, #0077b5, #005885); }
+        .social-link.telegram:hover { background: linear-gradient(135deg, #0088cc, #006699); }
 
         /* Enhanced Animations */
         .animate-on-scroll {
@@ -666,8 +678,14 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
-            <h1 class="fade-in-up">Hubungi Kami</h1>
-            <p class="fade-in-up">Kami siap membantu Anda untuk informasi seputar SMK PGRI 2 PONOROGO.<br> Jangan ragu untuk menghubungi kami melalui berbagai cara di bawah ini.</p>
+            <h1 class="fade-in-up">{{ $contact ? $contact->title : 'Hubungi Kami' }}</h1>
+            <p class="fade-in-up">
+                @if($contact && $contact->description)
+                    {{ $contact->description }}
+                @else
+                    Kami siap membantu Anda untuk informasi seputar sekolah.<br> Jangan ragu untuk menghubungi kami melalui berbagai cara di bawah ini.
+                @endif
+            </p>
         </div>
     </section>
 
@@ -675,7 +693,7 @@
     <section class="contact-section">
         <div class="section-title fade-in-up">
             <h2>Informasi Kontak</h2>
-            <p>Berbagai cara untuk menghubungi SMK PGRI 2 PONOROGO</p>
+            <p>Berbagai cara untuk menghubungi {{ $contact ? $contact->title : 'sekolah kami' }}</p>
         </div>
 
         <div class="contact-grid">
@@ -683,133 +701,205 @@
             <div class="contact-info fade-in-left">
                 <h3>Detail Kontak</h3>
                 
+                @if($contact && $contact->address)
                 <div class="contact-item">
                     <div class="contact-icon">
                         <i class="fas fa-map-marker-alt"></i>
                     </div>
                     <div class="contact-details">
-                        <h4>Alamat Sekolah</h4>
-                        <p>Jl. Raya Ponorogo - Madiun, Kertosari, Kec. Babadan, Kabupaten Ponorogo, Jawa Timur 63491</p>
+                        <h4>Alamat</h4>
+                        <p>{{ $contact->address }}</p>
                     </div>
                 </div>
+                @endif
 
+                @if($contact && $contact->email)
                 <div class="contact-item">
                     <div class="contact-icon">
                         <i class="fas fa-envelope"></i>
                     </div>
                     <div class="contact-details">
                         <h4>Email</h4>
-                        <p>info@smkpgri2ponorogo.sch.id<br>admin@smkpgri2ponorogo.sch.id</p>
+                        <p>{{ $contact->email }}</p>
                     </div>
                 </div>
+                @endif
 
+                @if($contact && $contact->phone)
                 <div class="contact-item">
                     <div class="contact-icon">
                         <i class="fas fa-phone"></i>
                     </div>
                     <div class="contact-details">
                         <h4>Telepon</h4>
-                        <p>(0352) 123456<br>Fax: (0352) 123457</p>
+                        <p>{{ $contact->formatted_phone ?? $contact->phone }}</p>
                     </div>
                 </div>
+                @endif
 
+                @if($contact && $contact->office_hours)
                 <div class="contact-item">
                     <div class="contact-icon">
                         <i class="fas fa-clock"></i>
                     </div>
                     <div class="contact-details">
                         <h4>Jam Operasional</h4>
-                        <p>Senin - Kamis: 06.45 - 14.00 WIB<br>Jumat: 06.45 - 11.00 WIB<br>Sabtu: 06.45 - 10.00 WIB</p>
+                        <p>{{ $contact->office_hours }}</p>
                     </div>
                 </div>
+                @endif
+
+                @if($contact && $contact->website)
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <div class="contact-details">
+                        <h4>Website</h4>
+                        <p><a href="{{ $contact->website }}" target="_blank" style="color: var(--secondary-color); text-decoration: none;">{{ $contact->website }}</a></p>
+                    </div>
+                </div>
+                @endif
+
+                @if(!$contact)
+                <!-- Default contact info when no contact is set -->
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <div class="contact-details">
+                        <h4>Informasi Kontak</h4>
+                        <p>Informasi kontak sedang diperbarui. Silakan hubungi admin untuk informasi lebih lanjut.</p>
+                    </div>
+                </div>
+                @endif
             </div>
 
             <!-- WhatsApp & Additional Info -->
             <div class="fade-in-right">
                 <!-- WhatsApp Contact -->
+                @if($contact && $contact->social_media && isset($contact->social_media['whatsapp']))
                 <div class="whatsapp-section">
                     <h3>Kontak WhatsApp</h3>
                     <div class="whatsapp-buttons">
-                        <a href="https://wa.me/6285755216048?text=Halo,%20saya%20ingin%20bertanya%20tentang%20SMK%20PGRI%202%20PONOROGO" 
+                        <a href="{{ $contact->social_media['whatsapp'] }}" 
                            target="_blank" 
                            class="whatsapp-btn">
                             <i class="fab fa-whatsapp"></i>
-                            Admin Sekolah (+62 857-5521-6048)
-                        </a>
-                        
-                        <a href="https://wa.me/628987654321?text=Halo,%20saya%20ingin%20bertanya%20tentang%20pendaftaran%20siswa%20baru" 
-                           target="_blank" 
-                           class="whatsapp-btn">
-                            <i class="fab fa-whatsapp"></i>
-                            Pendaftaran Siswa (+62 898-7654-321)
-                        </a>
-                        
-                        <a href="https://wa.me/6285123456789?text=Halo,%20saya%20ingin%20bertanya%20tentang%20program%20akademik" 
-                           target="_blank" 
-                           class="whatsapp-btn">
-                            <i class="fab fa-whatsapp"></i>
-                            Bagian Akademik (+62 851-2345-6789)
+                            Hubungi via WhatsApp
                         </a>
                     </div>
                 </div>
+                @endif
 
                 <!-- Social Media -->
+                @if($contact && $contact->social_media && count(array_filter($contact->social_media)) > 0)
                 <div class="social-section">
                     <h3>Media Sosial</h3>
                     <div class="social-links">
-                        <a href="#" class="social-link facebook" title="Facebook">
+                        @if(isset($contact->social_media['facebook']) && $contact->social_media['facebook'])
+                        <a href="{{ $contact->social_media['facebook'] }}" class="social-link facebook" title="Facebook" target="_blank">
                             <i class="fab fa-facebook-f"></i>
                         </a>
-                        <a href="#" class="social-link instagram" title="Instagram">
+                        @endif
+                        
+                        @if(isset($contact->social_media['instagram']) && $contact->social_media['instagram'])
+                        <a href="{{ $contact->social_media['instagram'] }}" class="social-link instagram" title="Instagram" target="_blank">
                             <i class="fab fa-instagram"></i>
                         </a>
-                        <a href="#" class="social-link youtube" title="YouTube">
+                        @endif
+                        
+                        @if(isset($contact->social_media['youtube']) && $contact->social_media['youtube'])
+                        <a href="{{ $contact->social_media['youtube'] }}" class="social-link youtube" title="YouTube" target="_blank">
                             <i class="fab fa-youtube"></i>
                         </a>
-                        <a href="#" class="social-link twitter" title="Twitter">
+                        @endif
+                        
+                        @if(isset($contact->social_media['twitter']) && $contact->social_media['twitter'])
+                        <a href="{{ $contact->social_media['twitter'] }}" class="social-link twitter" title="Twitter" target="_blank">
                             <i class="fab fa-twitter"></i>
                         </a>
+                        @endif
+                        
+                        @if(isset($contact->social_media['linkedin']) && $contact->social_media['linkedin'])
+                        <a href="{{ $contact->social_media['linkedin'] }}" class="social-link linkedin" title="LinkedIn" target="_blank">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        @endif
+                        
+                        @if(isset($contact->social_media['telegram']) && $contact->social_media['telegram'])
+                        <a href="{{ $contact->social_media['telegram'] }}" class="social-link telegram" title="Telegram" target="_blank">
+                            <i class="fab fa-telegram"></i>
+                        </a>
+                        @endif
                     </div>
                 </div>
+                @endif
 
                 <!-- Map Section -->
+                @if($contact && $contact->map_embed)
                 <div class="map-section">
-                    <h3>Lokasi Sekolah</h3>
+                    <h3>Lokasi {{ $contact->title ?? 'Sekolah' }}</h3>
                     <div class="map-container">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d23687.597645473674!2d111.46019656855499!3d-7.8538656188164016!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e799f86913d49b1%3A0x2eb724e320c5ce2c!2sSMK%20PGRI%202%20Ponorogo!5e0!3m2!1sen!2sid!4v1758501868621!5m2!1sen!2sid" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        @if(strpos($contact->map_embed, '<iframe') !== false)
+                            {!! $contact->map_embed !!}
+                        @else
+                            <iframe src="{{ $contact->map_embed }}" 
+                                    width="100%" 
+                                    height="350" 
+                                    style="border:0;" 
+                                    allowfullscreen="" 
+                                    loading="lazy" 
+                                    referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+                        @endif
                     </div>
                     <p style="margin-top: 20px; color: #666; font-style: italic;">
                         Klik peta untuk melihat lokasi lebih detail di Google Maps
                     </p>
                 </div>
+                @endif
             </div>
         </div>
 
         <!-- Quick Contact Cards -->
         <div class="quick-contact">
-            <div class="quick-card fade-in-up">
-                <div class="quick-icon">
-                    <i class="fas fa-user-graduate"></i>
+            @if($contact && $contact->formatted_quick_cards)
+                @foreach($contact->formatted_quick_cards as $card)
+                    <div class="quick-card fade-in-up">
+                        <div class="quick-icon">
+                            <i class="{{ $card['icon'] ?? 'fas fa-info-circle' }}"></i>
+                        </div>
+                        <h4>{{ $card['title'] ?? 'Quick Contact' }}</h4>
+                        <p>{{ $card['description'] ?? 'Contact information and services.' }}</p>
+                    </div>
+                @endforeach
+            @else
+                <!-- Default cards when no custom cards are set -->
+                <!-- <div class="quick-card fade-in-up">
+                    <div class="quick-icon">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <h4>Penerimaan Siswa</h4>
+                    <p>Informasi lengkap tentang penerimaan siswa baru, syarat pendaftaran, dan jadwal seleksi.</p>
                 </div>
-                <h4>Penerimaan Siswa</h4>
-                <p>Informasi lengkap tentang penerimaan siswa baru, syarat pendaftaran, dan jadwal seleksi.</p>
-            </div>
 
-            <div class="quick-card fade-in-up">
-                <div class="quick-icon">
-                    <i class="fas fa-book"></i>
+                <div class="quick-card fade-in-up">
+                    <div class="quick-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h4>Program Akademik</h4>
+                    <p>Kurikulum, ekstrakurikuler, dan berbagai program unggulan yang tersedia di sekolah kami.</p>
                 </div>
-                <h4>Program Akademik</h4>
-                <p>Kurikulum, ekstrakurikuler, dan berbagai program unggulan yang tersedia di sekolah kami.</p>
-            </div>
 
-            <div class="quick-card fade-in-up">
-                <div class="quick-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <h4>Kerjasama</h4>
-                <p>Peluang kerjasama dengan institusi lain, program magang, dan kemitraan strategis.</p>
-            </div>
+                <div class="quick-card fade-in-up">
+                    <div class="quick-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h4>Kerjasama</h4>
+                    <p>Peluang kerjasama dengan institusi lain, program magang, dan kemitraan strategis.</p>
+                </div> -->
+            @endif
         </div>
     </section>
   

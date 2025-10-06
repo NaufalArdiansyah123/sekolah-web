@@ -14,7 +14,40 @@ class SettingController extends Controller
     public function index()
     {
         try {
+            // Debug: Check for flash messages
+            \Log::info('Settings index loaded:', [
+                'has_success' => session()->has('success'),
+                'success_message' => session('success'),
+                'has_error' => session()->has('error'),
+                'error_message' => session('error'),
+                'all_session_data' => session()->all()
+            ]);
+            
             $settings = Setting::all()->keyBy('key');
+            
+            // Debug: Log current settings for troubleshooting
+            \Log::info('Loading settings page:', [
+                'total_settings' => $settings->count(),
+                'school_logo' => $settings->get('school_logo')?->value ?? 'not found',
+                'school_favicon' => $settings->get('school_favicon')?->value ?? 'not found',
+                'school_name' => $settings->get('school_name')?->value ?? 'not found',
+                'school_subtitle' => $settings->get('school_subtitle')?->value ?? 'not found'
+            ]);
+            
+            // Verify file existence for logo settings
+            if ($settings->has('school_logo') && $settings->get('school_logo')->value) {
+                $logoPath = $settings->get('school_logo')->value;
+                $storagePath = storage_path('app/public/' . $logoPath);
+                $publicPath = public_path('storage/' . $logoPath);
+                
+                \Log::info('Logo file verification on page load:', [
+                    'logo_path' => $logoPath,
+                    'storage_exists' => file_exists($storagePath),
+                    'public_exists' => file_exists($publicPath),
+                    'storage_path' => $storagePath,
+                    'public_path' => $publicPath
+                ]);
+            }
             
             // Get system information
             $systemInfo = $this->getSystemInfo();
@@ -112,28 +145,231 @@ class SettingController extends Controller
             if ($request->has('backup_retention_days')) {
                 $validationRules['backup_retention_days'] = 'nullable|integer|min:7|max:365';
             }
+            if ($request->hasFile('school_logo')) {
+                $validationRules['school_logo'] = 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048';
+            }
+            if ($request->hasFile('school_favicon')) {
+                $validationRules['school_favicon'] = 'nullable|image|mimes:jpeg,png,jpg,gif,ico|max:1024';
+            }
+            if ($request->has('school_name')) {
+                $validationRules['school_name'] = 'nullable|string|max:255';
+            }
+            if ($request->has('school_subtitle')) {
+                $validationRules['school_subtitle'] = 'nullable|string|max:255';
+            }
+
             
             if (!empty($validationRules)) {
                 $request->validate($validationRules);
             }
             
-            // Process file uploads first
+            // Process file uploads first with enhanced logging
             $fileFields = ['school_logo', 'school_favicon'];
             foreach ($fileFields as $field) {
                 if ($request->hasFile($field)) {
                     $file = $request->file($field);
-                    $path = $file->store('school', 'public');
                     
-                    // Delete old file if exists
-                    $oldSetting = Setting::where('key', $field)->first();
-                    if ($oldSetting && $oldSetting->value && Storage::disk('public')->exists($oldSetting->value)) {
-                        Storage::disk('public')->delete($oldSetting->value);
+                    \Log::info('Processing file upload:', [
+                        'field' => $field,
+                        'original_name' => $file->getClientOriginalName(),
+                        'size' => $file->getSize(),
+                        'mime_type' => $file->getMimeType(),
+                        'tmp_name' => $file->getPathname(),
+                        'is_valid' => $file->isValid(),
+                        'error' => $file->getError()
+                    ]);
+                    
+                    // Store file with better error handling
+                    try {
+                        // Validate file before processing
+                        if (!$file->isValid()) {
+                            throw new \Exception('Invalid file upload for ' . $field . '. Error code: ' . $file->getError());
+                        }
+                        
+                        // Additional validation
+                        if ($file->getError() !== UPLOAD_ERR_OK) {
+                            throw new \Exception('File upload error for ' . $field . '. Error code: ' . $file->getError());
+                        }
+                        
+                        // Validate file type
+                        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                        if (!in_array($file->getMimeType(), $allowedTypes)) {
+                            throw new \Exception('Invalid file type for ' . $field . '. Got: ' . $file->getMimeType());
+                        }
+                        
+                        // Generate unique filename
+                        $extension = $file->getClientOriginalExtension();
+                        if (empty($extension)) {
+                            $extension = 'png'; // Default extension
+                        }
+                        $filename = time() . '_' . uniqid() . '_' . $field . '.' . $extension;
+                        
+                        \Log::info('Generated filename:', [
+                            'field' => $field,
+                            'filename' => $filename,
+                            'extension' => $extension
+                        ]);
+                        
+                        // Ensure storage directory exists
+                        $storageDir = storage_path('app/public/school');
+                        if (!is_dir($storageDir)) {
+                            mkdir($storageDir, 0755, true);
+                            \Log::info('Created storage directory:', ['dir' => $storageDir]);
+                        }
+                        
+                        // Use Laravel's storage with better error handling
+                        try {
+                            // Store file using Laravel's storage system
+                            $path = Storage::disk('public')->putFileAs('school', $file, $filename);
+                            
+                            if (!$path) {
+                                throw new \Exception('Storage::putFileAs returned false for ' . $field);
+                            }
+                            
+                            \Log::info('File stored using Storage::putFileAs:', [
+                                'field' => $field,
+                                'filename' => $filename,
+                                'returned_path' => $path
+                            ]);
+                            
+                        } catch (\Exception $storageException) {
+                            \Log::error('Storage::putFileAs failed, trying manual move:', [
+                                'error' => $storageException->getMessage()
+                            ]);
+                            
+                            // Fallback to manual file move
+                            $destinationPath = storage_path('app/public/school');
+                            
+                            // Ensure destination exists
+                            if (!is_dir($destinationPath)) {
+                                mkdir($destinationPath, 0755, true);
+                            }
+                            
+                            // Get temp file path
+                            $tempPath = $file->getRealPath();
+                            $destinationFile = $destinationPath . DIRECTORY_SEPARATOR . $filename;
+                            
+                            // Copy file manually
+                            if (!copy($tempPath, $destinationFile)) {
+                                throw new \Exception('Failed to copy file manually for ' . $field);
+                            }
+                            
+                            $path = 'school/' . $filename;
+                            
+                            \Log::info('File stored manually:', [
+                                'field' => $field,
+                                'temp_path' => $tempPath,
+                                'destination' => $destinationFile,
+                                'final_path' => $path
+                            ]);
+                        }
+                        
+                        // Final validation of path
+                        if (strpos($path, 'tmp') !== false || strpos($path, 'temp') !== false || strpos($path, 'C:') !== false) {
+                            throw new \Exception('Invalid path generated: ' . $path);
+                        }
+                        
+                        \Log::info('File stored successfully:', [
+                            'field' => $field,
+                            'original_name' => $file->getClientOriginalName(),
+                            'stored_filename' => $filename,
+                            'path' => $path,
+                            'full_storage_path' => storage_path('app/public/' . $path),
+                            'full_public_path' => public_path('storage/' . $path)
+                        ]);
+                        
+                        // Verify file was actually stored
+                        $storedFilePath = storage_path('app/public/' . $path);
+                        $publicFilePath = public_path('storage/' . $path);
+                        
+                        if (!file_exists($storedFilePath)) {
+                            throw new \Exception('File was not stored properly: ' . $storedFilePath);
+                        }
+                        
+                        // Validate that path doesn't contain temp directory
+                        if (strpos($path, 'tmp') !== false || strpos($path, 'temp') !== false) {
+                            throw new \Exception('Invalid path detected (contains temp): ' . $path);
+                        }
+                        
+                        // Delete old file if exists
+                        $oldSetting = Setting::where('key', $field)->first();
+                        if ($oldSetting && $oldSetting->value && Storage::disk('public')->exists($oldSetting->value)) {
+                            \Log::info('Deleting old file:', ['old_path' => $oldSetting->value]);
+                            Storage::disk('public')->delete($oldSetting->value);
+                        }
+                        
+                        // Final validation before saving to database
+                        if (empty($path) || strpos($path, 'tmp') !== false || strpos($path, 'C:') !== false) {
+                            throw new \Exception('Invalid path before database save: ' . $path);
+                        }
+                        
+                        // Save to database with additional validation
+                        $setting = Setting::updateOrCreate(
+                            ['key' => $field],
+                            ['value' => $path, 'type' => 'file', 'group' => 'school']
+                        );
+                        
+                        // Verify what was actually saved
+                        $savedSetting = Setting::where('key', $field)->first();
+                        
+                        \Log::info('Setting saved to database:', [
+                            'field' => $field,
+                            'setting_id' => $setting->id,
+                            'saved_value' => $savedSetting->value,
+                            'expected_value' => $path,
+                            'values_match' => ($savedSetting->value === $path),
+                            'created_at' => $setting->created_at,
+                            'updated_at' => $setting->updated_at
+                        ]);
+                        
+                        // Final verification
+                        \Log::info('Final file verification:', [
+                            'storage_exists' => file_exists($storedFilePath),
+                            'public_exists' => file_exists($publicFilePath),
+                            'storage_path' => $storedFilePath,
+                            'public_path' => $publicFilePath,
+                            'asset_url' => asset('storage/' . $path),
+                            'saved_path_in_db' => $savedSetting->value
+                        ]);
+                        
+                        // Double check for temp paths in database
+                        if (strpos($savedSetting->value, 'tmp') !== false) {
+                            \Log::error('CRITICAL: Temp path saved to database!', [
+                                'field' => $field,
+                                'saved_value' => $savedSetting->value,
+                                'expected_value' => $path
+                            ]);
+                            throw new \Exception('Temp path was saved to database: ' . $savedSetting->value);
+                        }
+                        
+                    } catch (\Exception $e) {
+                        \Log::error('Error processing file upload:', [
+                            'field' => $field,
+                            'error' => $e->getMessage(),
+                            'trace' => $e->getTraceAsString(),
+                            'file_info' => [
+                                'tmp_name' => $file->getPathname(),
+                                'original_name' => $file->getClientOriginalName(),
+                                'size' => $file->getSize(),
+                                'mime_type' => $file->getMimeType(),
+                                'is_valid' => $file->isValid(),
+                                'error_code' => $file->getError()
+                            ]
+                        ]);
+                        
+                        // Log detailed error and return user-friendly message
+                        \Log::error('Complete file upload failure:', [
+                            'field' => $field,
+                            'error' => $e->getMessage(),
+                            'trace' => $e->getTraceAsString(),
+                            'request_data' => $request->except(['_token', '_method'])
+                        ]);
+                        
+                        // Return error response with user-friendly message
+                        return redirect()->back()
+                                       ->withInput()
+                                       ->with('error', 'Gagal mengupload file ' . $field . '. Silakan coba lagi atau hubungi administrator.');
                     }
-                    
-                    Setting::updateOrCreate(
-                        ['key' => $field],
-                        ['value' => $path, 'type' => 'file', 'group' => 'school']
-                    );
                 }
             }
             
@@ -142,12 +378,32 @@ class SettingController extends Controller
                 'maintenance_mode', 'allow_registration', 'auto_backup_enabled'
             ];
             
-            // Process other settings
+            // Process other settings (exclude file fields completely)
             $settingsData = $request->except(['_token', '_method'] + $fileFields);
             
+            // Remove any file-related data that might have slipped through
+            foreach ($fileFields as $fileField) {
+                if (isset($settingsData[$fileField])) {
+                    unset($settingsData[$fileField]);
+                    \Log::info('Removed file field from settings data:', ['field' => $fileField]);
+                }
+            }
+            
+            \Log::info('Processing non-file settings:', [
+                'settings_count' => count($settingsData),
+                'settings_keys' => array_keys($settingsData)
+            ]);
+            
             foreach ($settingsData as $key => $value) {
+                // Skip file fields (double check)
+                if (in_array($key, $fileFields)) {
+                    \Log::warning('Skipping file field in non-file processing:', ['key' => $key]);
+                    continue;
+                }
+                
                 // Skip empty values
                 if ($value === null || $value === '') {
+                    \Log::debug('Skipping empty setting:', ['key' => $key, 'value' => $value]);
                     continue;
                 }
                 
@@ -184,6 +440,8 @@ class SettingController extends Controller
             
             // Clear cache after updating settings
             try {
+                \Log::info('Clearing caches after settings update');
+                
                 Artisan::call('config:clear');
                 Artisan::call('cache:clear');
                 
@@ -192,15 +450,53 @@ class SettingController extends Controller
                 
                 // Clear static cache in AttendanceLog
                 \App\Models\AttendanceLog::clearSettingsCache();
-                \Log::info('Clearing attendance settings cache');
+                \Log::info('All caches cleared successfully');
                 
             } catch (\Exception $e) {
                 \Log::warning('Cache clear failed: ' . $e->getMessage());
             }
             
+            // Verify settings are saved correctly before redirect
+            $savedSettings = Setting::whereIn('key', ['school_logo', 'school_favicon', 'school_name', 'school_subtitle'])
+                                   ->get()
+                                   ->keyBy('key');
+            
+            \Log::info('Settings verification after save:', [
+                'school_logo' => $savedSettings->get('school_logo')?->value ?? 'not found',
+                'school_favicon' => $savedSettings->get('school_favicon')?->value ?? 'not found',
+                'school_name' => $savedSettings->get('school_name')?->value ?? 'not found',
+                'school_subtitle' => $savedSettings->get('school_subtitle')?->value ?? 'not found'
+            ]);
+            
+            // Check for any temp paths that might have been saved
+            foreach ($savedSettings as $key => $setting) {
+                if ($setting && strpos($setting->value, 'tmp') !== false) {
+                    \Log::error('CRITICAL: Temp path found in saved settings!', [
+                        'key' => $key,
+                        'value' => $setting->value
+                    ]);
+                }
+            }
+            
+            // Clear all possible caches one more time
+            try {
+                \Cache::flush();
+                \Artisan::call('view:clear');
+                \Log::info('Additional cache clear completed');
+            } catch (\Exception $e) {
+                \Log::warning('Additional cache clear failed: ' . $e->getMessage());
+            }
+            
+            \Log::info('Settings update completed successfully');
+            
+            // Force session save before redirect
+            session()->save();
+            
+            \Log::info('Setting flash message and redirecting');
+            
             return redirect()->route('admin.settings.index')
-                           ->with('success', 'Pengaturan berhasil diperbarui!');
-                           
+                           ->with('success', 'Pengaturan berhasil diperbarui!')
+                           ->with('logo_updated', true); // Flag to indicate logo was updated
         } catch (\Illuminate\Validation\ValidationException $e) {
             \Log::error('Validation error in settings update:', [
                 'errors' => $e->errors(),
@@ -597,7 +893,7 @@ class SettingController extends Controller
     private function getSettingGroup($key)
     {
         $groups = [
-            'school' => ['school_name', 'school_address', 'school_phone', 'school_email', 'school_website', 'principal_name', 'school_npsn', 'school_accreditation', 'school_logo', 'school_favicon'],
+            'school' => ['school_name', 'school_subtitle', 'school_address', 'school_phone', 'school_email', 'school_website', 'principal_name', 'school_npsn', 'school_accreditation', 'school_logo', 'school_favicon'],
             'academic' => ['academic_year', 'semester', 'school_timezone', 'attendance_start_time', 'attendance_end_time', 'late_tolerance_minutes', 'absent_threshold_minutes'],
             'system' => ['maintenance_mode', 'allow_registration', 'max_upload_size', 'session_lifetime', 'max_login_attempts'],
             'email' => ['mail_host', 'mail_port', 'mail_username', 'mail_password', 'mail_encryption', 'mail_from_name'],

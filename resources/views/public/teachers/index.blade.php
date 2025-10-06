@@ -21,7 +21,7 @@
         line-height: 1.6;
     }
     
-    /* Enhanced Hero Section matching profile page */
+    /* Enhanced Hero Section */
     .hero-section {
         background: linear-gradient(
             135deg, 
@@ -268,15 +268,15 @@
         transform: translateY(-2px);
     }
 
-    /* Enhanced Teachers Section */
-    .teachers-section {
+    /* Enhanced Organizational Chart Section */
+    .org-chart-section {
         padding: 80px 0;
         background: var(--light-gray);
     }
 
     .section-title {
         text-align: center;
-        margin-bottom: 3rem;
+        margin-bottom: 4rem;
     }
 
     .section-heading {
@@ -308,14 +308,58 @@
         line-height: 1.6;
     }
 
-    /* Enhanced Teacher Cards */
-    .teachers-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: 2rem;
-        margin-bottom: 3rem;
+    /* Organizational Chart Styles */
+    .org-chart {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3rem;
+        max-width: 1400px;
+        margin: 0 auto;
     }
 
+    /* Principal Level */
+    .principal-level {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    /* Vice Principal Level */
+    .vice-principal-level {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    /* Department Heads Level */
+    .department-heads-level {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        width: 100%;
+        max-width: 1200px;
+    }
+
+    /* Teachers Level */
+    .teachers-level {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        width: 100%;
+    }
+
+    /* Staff Level */
+    .staff-level {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+        width: 100%;
+    }
+
+    /* Enhanced Teacher Cards */
     .teacher-card {
         background: white;
         border-radius: 20px;
@@ -351,10 +395,74 @@
         box-shadow: 0 30px 70px rgba(0,0,0,0.15);
     }
 
+    /* Professional styling for different levels */
+    .teacher-card.principal {
+        background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+        color: white;
+        transform: scale(1.1);
+        border: 3px solid #3b82f6;
+        box-shadow: 0 20px 60px rgba(30, 58, 138, 0.3);
+    }
+
+    .teacher-card.principal:hover {
+        transform: scale(1.15) translateY(-10px);
+        box-shadow: 0 30px 80px rgba(30, 58, 138, 0.4);
+    }
+
+    .teacher-card.vice-principal {
+        background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+        color: white;
+        transform: scale(1.05);
+        border: 2px solid #6b7280;
+        box-shadow: 0 15px 50px rgba(55, 65, 81, 0.3);
+    }
+
+    .teacher-card.vice-principal:hover {
+        transform: scale(1.08) translateY(-10px);
+        box-shadow: 0 25px 70px rgba(55, 65, 81, 0.4);
+    }
+
+    .teacher-card.department-head {
+        background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        color: white;
+        border: 2px solid #34d399;
+        box-shadow: 0 12px 40px rgba(5, 150, 105, 0.3);
+    }
+
+    .teacher-card.department-head:hover {
+        transform: translateY(-12px) scale(1.03);
+        box-shadow: 0 20px 60px rgba(5, 150, 105, 0.4);
+    }
+
+    .teacher-card.teacher {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        color: #1f2937;
+        border: 2px solid #e5e7eb;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .teacher-card.teacher:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+        border-color: #3b82f6;
+    }
+
+    .teacher-card.staff {
+        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+        color: #374151;
+        border: 1px solid #d1d5db;
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    .teacher-card.staff:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        border-color: #6b7280;
+    }
+
     .card-header {
         padding: 2rem;
         text-align: center;
-        background: linear-gradient(135deg, #f8fafc, #e2e8f0);
         position: relative;
         z-index: 2;
     }
@@ -379,7 +487,7 @@
         width: 120px;
         height: 120px;
         border-radius: 50%;
-        background: var(--gradient-primary);
+        background: rgba(255, 255, 255, 0.2);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -391,6 +499,19 @@
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         transition: all 0.3s ease;
     }
+    
+    /* Special placeholder styling for light cards */
+    .teacher-card.teacher .photo-placeholder {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        color: white;
+        border: 4px solid #e5e7eb;
+    }
+    
+    .teacher-card.staff .photo-placeholder {
+        background: linear-gradient(135deg, #6b7280, #4b5563);
+        color: white;
+        border: 4px solid #d1d5db;
+    }
 
     .teacher-card:hover .photo-placeholder {
         transform: scale(1.05);
@@ -400,17 +521,16 @@
     .teacher-name {
         font-size: 1.3rem;
         font-weight: 700;
-        color: var(--primary-color);
         margin-bottom: 0.5rem;
         transition: color 0.3s ease;
     }
 
     .teacher-position {
-        color: var(--secondary-color);
         font-size: 1rem;
         margin-bottom: 1rem;
         font-weight: 600;
         transition: color 0.3s ease;
+        opacity: 0.9;
     }
 
     .card-body {
@@ -432,22 +552,39 @@
         gap: 0.75rem;
         margin-bottom: 0.75rem;
         font-size: 0.9rem;
-        color: var(--dark-gray);
         transition: all 0.3s ease;
         padding: 0.5rem;
         border-radius: 8px;
+        background: rgba(255, 255, 255, 0.1);
     }
 
     .info-item:hover {
-        background: rgba(49, 130, 206, 0.05);
+        background: rgba(255, 255, 255, 0.2);
         transform: translateX(4px);
+    }
+    
+    /* Special info item styling for light cards */
+    .teacher-card.teacher .info-item {
+        background: rgba(59, 130, 246, 0.05);
+    }
+    
+    .teacher-card.teacher .info-item:hover {
+        background: rgba(59, 130, 246, 0.1);
+    }
+    
+    .teacher-card.staff .info-item {
+        background: rgba(107, 114, 128, 0.05);
+    }
+    
+    .teacher-card.staff .info-item:hover {
+        background: rgba(107, 114, 128, 0.1);
     }
 
     .info-icon {
         width: 16px;
         height: 16px;
-        color: var(--secondary-color);
         flex-shrink: 0;
+        opacity: 0.8;
     }
 
     .subject-tags {
@@ -458,54 +595,146 @@
     }
 
     .subject-tag {
-        background: rgba(49, 130, 206, 0.1);
-        color: var(--secondary-color);
+        background: rgba(255, 255, 255, 0.2);
+        color: inherit;
         padding: 0.4rem 0.8rem;
         border-radius: 12px;
         font-size: 0.8rem;
         font-weight: 600;
-        border: 1px solid rgba(49, 130, 206, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
         transition: all 0.3s ease;
     }
 
     .subject-tag:hover {
-        background: rgba(49, 130, 206, 0.2);
+        background: rgba(255, 255, 255, 0.3);
         transform: translateY(-2px);
+    }
+    
+    /* Special subject tag styling for light cards */
+    .teacher-card.teacher .subject-tag {
+        background: rgba(59, 130, 246, 0.1);
+        color: #1d4ed8;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    
+    .teacher-card.teacher .subject-tag:hover {
+        background: rgba(59, 130, 246, 0.2);
+    }
+    
+    .teacher-card.staff .subject-tag {
+        background: rgba(107, 114, 128, 0.1);
+        color: #374151;
+        border: 1px solid rgba(107, 114, 128, 0.2);
+    }
+    
+    .teacher-card.staff .subject-tag:hover {
+        background: rgba(107, 114, 128, 0.2);
     }
 
     .card-footer {
         padding: 1.5rem 2rem;
-        border-top: 1px solid rgba(0,0,0,0.1);
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
         margin-top: auto;
         position: relative;
         z-index: 2;
     }
+    
+    /* Special footer styling for light cards */
+    .teacher-card.teacher .card-footer {
+        border-top: 1px solid rgba(229, 231, 235, 0.5);
+    }
+    
+    .teacher-card.staff .card-footer {
+        border-top: 1px solid rgba(209, 213, 219, 0.5);
+    }
 
     .btn-view-profile {
         width: 100%;
-        background: var(--gradient-primary);
-        color: white;
-        padding: 0.5rem 0.75rem;
-        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.2);
+        color: inherit;
+        padding: 0.75rem;
+        border-radius: 12px;
         text-decoration: none;
-        font-weight: 500;
+        font-weight: 600;
         text-align: center;
         transition: all 0.3s ease;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 0.375rem;
-        box-shadow: 0 2px 8px rgba(49, 130, 206, 0.2);
-        border: none;
-        font-size: 0.875rem;
+        gap: 0.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(10px);
     }
 
     .btn-view-profile:hover {
-        background: linear-gradient(135deg, #2d3748, #2b6cb0);
-        color: white;
+        background: rgba(255, 255, 255, 0.3);
+        color: inherit;
         text-decoration: none;
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(49, 130, 206, 0.4);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Special button styling for light cards */
+    .teacher-card.teacher .btn-view-profile {
+        background: #3b82f6;
+        color: white;
+        border: 1px solid #3b82f6;
+    }
+    
+    .teacher-card.teacher .btn-view-profile:hover {
+        background: #1d4ed8;
+        color: white;
+        border: 1px solid #1d4ed8;
+        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+    }
+    
+    .teacher-card.staff .btn-view-profile {
+        background: #6b7280;
+        color: white;
+        border: 1px solid #6b7280;
+    }
+    
+    .teacher-card.staff .btn-view-profile:hover {
+        background: #4b5563;
+        color: white;
+        border: 1px solid #4b5563;
+        box-shadow: 0 6px 20px rgba(107, 114, 128, 0.3);
+    }
+
+    /* Level Headers */
+    .level-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        width: 100%;
+    }
+
+    .level-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+        position: relative;
+        display: inline-block;
+        padding-bottom: 0.5rem;
+    }
+
+    .level-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+        border-radius: 2px;
+    }
+
+    .level-description {
+        color: var(--dark-gray);
+        font-size: 1rem;
+        max-width: 500px;
+        margin: 0 auto;
     }
 
     /* Enhanced Empty State */
@@ -551,158 +780,6 @@
         font-size: 1.1rem;
     }
 
-    /* Enhanced Pagination */
-    .pagination-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-top: 3rem;
-        padding: 2rem 0;
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-        border: 1px solid rgba(255,255,255,0.8);
-        backdrop-filter: blur(10px);
-    }
-    
-    /* Custom Pagination Styles */
-    .pagination {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin: 0;
-        padding: 0;
-        list-style: none;
-    }
-    
-    .pagination .page-item {
-        margin: 0;
-    }
-    
-    .pagination .page-link {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 45px;
-        height: 45px;
-        border: 2px solid #e5e7eb;
-        border-radius: 12px;
-        color: var(--dark-gray);
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 0.875rem;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        background: white;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .pagination .page-link::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(49, 130, 206, 0.1), transparent);
-        transition: left 0.5s ease;
-    }
-    
-    .pagination .page-link:hover::before {
-        left: 100%;
-    }
-    
-    .pagination .page-link:hover {
-        border-color: var(--secondary-color);
-        color: var(--secondary-color);
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(49, 130, 206, 0.2);
-        background: rgba(49, 130, 206, 0.05);
-    }
-    
-    .pagination .page-item.active .page-link {
-        background: var(--gradient-primary);
-        border-color: var(--secondary-color);
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(49, 130, 206, 0.3);
-        font-weight: 700;
-    }
-    
-    .pagination .page-item.active .page-link:hover {
-        background: linear-gradient(135deg, #2d3748, #2b6cb0);
-        transform: translateY(-4px);
-        box-shadow: 0 12px 35px rgba(49, 130, 206, 0.4);
-    }
-    
-    .pagination .page-item.disabled .page-link {
-        color: #cbd5e0;
-        border-color: #f1f5f9;
-        background: #f8fafc;
-        cursor: not-allowed;
-        transform: none;
-        box-shadow: none;
-    }
-    
-    .pagination .page-item.disabled .page-link:hover {
-        color: #cbd5e0;
-        border-color: #f1f5f9;
-        background: #f8fafc;
-        transform: none;
-        box-shadow: none;
-    }
-    
-    /* Navigation arrows */
-    .pagination .page-link[rel="prev"],
-    .pagination .page-link[rel="next"] {
-        width: 50px;
-        font-size: 1rem;
-        font-weight: 700;
-    }
-    
-    .pagination .page-link[rel="prev"]:hover,
-    .pagination .page-link[rel="next"]:hover {
-        background: var(--gradient-primary);
-        color: white;
-        border-color: var(--secondary-color);
-    }
-    
-    /* Pagination info */
-    .pagination-info {
-        display: flex;
-        align-items: center;
-        gap: 2rem;
-        margin-bottom: 1rem;
-        justify-content: center;
-        color: var(--dark-gray);
-        font-size: 0.875rem;
-        font-weight: 500;
-    }
-    
-    .pagination-info .info-item {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        background: rgba(49, 130, 206, 0.05);
-        border-radius: 8px;
-        border: 1px solid rgba(49, 130, 206, 0.1);
-    }
-    
-    .pagination-info .info-icon {
-        width: 16px;
-        height: 16px;
-        color: var(--secondary-color);
-    }
-    
-    /* Enhanced pagination container with info */
-    .pagination-wrapper {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-    }
-
     /* Responsive Design */
     @media (max-width: 768px) {
         .hero-section {
@@ -723,7 +800,24 @@
             grid-template-columns: 1fr;
         }
 
-        .teachers-grid {
+        .org-chart {
+            gap: 2rem;
+        }
+
+        .vice-principal-level {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .department-heads-level {
+            grid-template-columns: 1fr;
+        }
+
+        .teachers-level {
+            grid-template-columns: 1fr;
+        }
+
+        .staff-level {
             grid-template-columns: 1fr;
         }
 
@@ -731,35 +825,18 @@
             font-size: 2rem;
         }
 
-        .teacher-card {
-            margin-bottom: 1rem;
+        .teacher-card.principal,
+        .teacher-card.vice-principal {
+            transform: scale(1);
         }
-        
-        /* Mobile pagination adjustments */
-        .pagination-info {
-            flex-direction: column;
-            gap: 0.5rem;
-            text-align: center;
+
+        .teacher-card.principal:hover,
+        .teacher-card.vice-principal:hover {
+            transform: scale(1.02) translateY(-10px);
         }
-        
-        .pagination-info .info-item {
-            font-size: 0.75rem;
-            padding: 0.375rem 0.75rem;
-        }
-        
-        .pagination .page-link {
-            width: 40px;
-            height: 40px;
-            font-size: 0.75rem;
-        }
-        
-        .pagination .page-link[rel="prev"],
-        .pagination .page-link[rel="next"] {
-            width: 45px;
-        }
-        
-        .pagination {
-            gap: 0.25rem;
+
+        .level-title {
+            font-size: 1.5rem;
         }
     }
 
@@ -768,7 +845,7 @@
             font-size: 2rem;
         }
         
-        .teachers-section {
+        .org-chart-section {
             padding: 60px 0;
         }
         
@@ -776,6 +853,20 @@
         .card-body,
         .card-footer {
             padding: 1.5rem;
+        }
+
+        .teacher-photo,
+        .photo-placeholder {
+            width: 100px;
+            height: 100px;
+        }
+
+        .teacher-name {
+            font-size: 1.1rem;
+        }
+
+        .teacher-position {
+            font-size: 0.9rem;
         }
     }
 
@@ -793,14 +884,14 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8">
-                <h1 class="fade-in-left">Guru & Staff SMA Negeri 99</h1>
+                <h1 class="fade-in-left">Struktur Organisasi Sekolah</h1>
                 <p class="lead fade-in-left" style="animation-delay: 0.2s;">
-                    Bertemu dengan tim pendidik berpengalaman dan berdedikasi yang berkomitmen 
-                    memberikan pendidikan terbaik untuk membentuk generasi unggul dan berkarakter.
+                    Mengenal lebih dekat dengan struktur kepemimpinan dan tim pendidik 
+                    yang berdedikasi dalam memberikan pendidikan terbaik untuk siswa-siswi kami.
                 </p>
             </div>
             <div class="col-lg-4 text-center">
-                <i class="fas fa-chalkboard-teacher hero-icon scale-in" style="animation-delay: 0.4s;"></i>
+                <i class="fas fa-sitemap hero-icon scale-in" style="animation-delay: 0.4s;"></i>
             </div>
         </div>
     </div>
@@ -822,7 +913,7 @@
                         <div class="mb-3">
                             <i class="fas fa-users fa-3x text-primary"></i>
                         </div>
-                        <h2 class="display-4 fw-bold text-primary mb-2">{{ $teachers->total() }}</h2>
+                        <h2 class="display-4 fw-bold text-primary mb-2">{{ $teachers->count() }}</h2>
                         <p class="text-muted mb-0 fw-medium">TOTAL GURU & STAFF</p>
                         <div class="stats-bar bg-primary"></div>
                     </div>
@@ -834,7 +925,7 @@
                         <div class="mb-3">
                             <i class="fas fa-chalkboard-teacher fa-3x text-success"></i>
                         </div>
-                        <h2 class="display-4 fw-bold text-success mb-2">{{ $teachers->where('status', 'active')->count() }}</h2>
+                        <h2 class="display-4 fw-bold text-success mb-2">{{ $teachers->count() }}</h2>
                         <p class="text-muted mb-0 fw-medium">GURU AKTIF</p>
                         <div class="stats-bar bg-success"></div>
                     </div>
@@ -925,20 +1016,316 @@
     </div>
 </section>
 
-<!-- Enhanced Teachers Section -->
-<section class="teachers-section">
+<!-- Enhanced Organizational Chart Section -->
+<section class="org-chart-section">
     <div class="container">
         <div class="section-title">
-            <h2 class="section-heading fade-in-up">Tenaga Pendidik Kami</h2>
+            <h2 class="section-heading fade-in-up">Struktur Organisasi</h2>
             <p class="section-subtitle fade-in-up" style="animation-delay: 0.2s;">
-                Guru-guru berpengalaman dan berkualitas yang siap membimbing siswa meraih prestasi terbaik
+                Hierarki kepemimpinan dan struktur organisasi sekolah yang terorganisir dengan baik
             </p>
         </div>
 
-        <div class="teachers-grid">
-            @if($teachers->count() > 0)
-                @foreach($teachers as $index => $teacher)
-                <div class="teacher-card fade-in-up" style="animation-delay: {{ ($index % 6) * 0.1 }}s;">
+        <div class="org-chart">
+            @php
+                // Group teachers by position hierarchy - Fixed filters
+                $principal = $teachers->filter(function($teacher) {
+                    return stripos($teacher->position, 'Kepala Sekolah') !== false;
+                })->first();
+                
+                $vicePrincipals = $teachers->filter(function($teacher) {
+                    return stripos($teacher->position, 'Wakil Kepala') !== false;
+                });
+                
+                $departmentHeads = $teachers->filter(function($teacher) {
+                    $pos = strtolower($teacher->position);
+                    return (stripos($teacher->position, 'Kepala') !== false && 
+                            stripos($teacher->position, 'Kepala Sekolah') === false && 
+                            stripos($teacher->position, 'Wakil Kepala') === false);
+                });
+                
+                $regularTeachers = $teachers->filter(function($teacher) {
+                    return (stripos($teacher->position, 'Guru') !== false && 
+                            stripos($teacher->position, 'Kepala') === false && 
+                            stripos($teacher->position, 'Wakil') === false);
+                });
+                
+                // Separate different types of teachers
+                $guruSenior = $teachers->filter(function($teacher) {
+                    return (stripos($teacher->position, 'Guru Senior') !== false);
+                });
+                
+                $guruKelas = $teachers->filter(function($teacher) {
+                    return (stripos($teacher->position, 'Guru Kelas') !== false);
+                });
+                
+                $guruMataPelajaran = $teachers->filter(function($teacher) {
+                    return (stripos($teacher->position, 'Guru Mata Pelajaran') !== false);
+                });
+                
+                $guruBengkel = $teachers->filter(function($teacher) {
+                    return (stripos($teacher->position, 'Guru Bengkel') !== false);
+                });
+                
+                $guruBK = $teachers->filter(function($teacher) {
+                    return (stripos($teacher->position, 'Guru BK') !== false);
+                });
+                
+                $guruLainnya = $teachers->filter(function($teacher) {
+                    return (stripos($teacher->position, 'Guru') !== false && 
+                            stripos($teacher->position, 'Kepala') === false && 
+                            stripos($teacher->position, 'Wakil') === false &&
+                            stripos($teacher->position, 'Guru Senior') === false &&
+                            stripos($teacher->position, 'Guru Kelas') === false &&
+                            stripos($teacher->position, 'Guru Mata Pelajaran') === false &&
+                            stripos($teacher->position, 'Guru Bengkel') === false &&
+                            stripos($teacher->position, 'Guru BK') === false);
+                });
+                
+                $staff = $teachers->filter(function($teacher) {
+                    return (stripos($teacher->position, 'Kepala') === false && 
+                            stripos($teacher->position, 'Guru') === false && 
+                            stripos($teacher->position, 'Wakil') === false);
+                });
+                
+                // All filters are now working correctly
+            @endphp
+
+            <!-- Principal Level -->
+            @if($principal)
+            <div class="principal-level fade-in-up">
+                <div class="level-header">
+                    <h3 class="level-title">Kepala Sekolah</h3>
+                    <p class="level-description">Pemimpin tertinggi yang bertanggung jawab atas seluruh kegiatan sekolah</p>
+                </div>
+                <div class="teacher-card principal">
+                    <div class="card-header">
+                        @if($principal->photo)
+                            <img src="{{ asset('storage/' . $principal->photo) }}" 
+                                 alt="{{ $principal->name }}" 
+                                 class="teacher-photo">
+                        @else
+                            <div class="photo-placeholder">
+                                {{ $principal->initials }}
+                            </div>
+                        @endif
+                        <h3 class="teacher-name">{{ $principal->name }}</h3>
+                        <p class="teacher-position">{{ $principal->position }}</p>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="teacher-info">
+                            @if($principal->education)
+                                <div class="info-item">
+                                    <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+                                    </svg>
+                                    <span>{{ $principal->education }}</span>
+                                </div>
+                            @endif
+
+                            @if($principal->nip)
+                                <div class="info-item">
+                                    <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V4a2 2 0 114 0v2m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/>
+                                    </svg>
+                                    <span>NIP: {{ $principal->nip }}</span>
+                                </div>
+                            @endif
+                            
+                            @if($principal->phone)
+                                <div class="info-item">
+                                    <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                    </svg>
+                                    <span>{{ $principal->phone }}</span>
+                                </div>
+                            @endif
+                        </div>
+
+                        @if($principal->subject)
+                        <div class="subject-tags">
+                            @foreach(explode(',', $principal->subject) as $subject)
+                                <span class="subject-tag">{{ trim($subject) }}</span>
+                            @endforeach
+                        </div>
+                        @endif
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ route('public.teachers.show', $principal->id) }}" class="btn-view-profile">
+                            <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                            Lihat Profil
+                        </a>
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            <!-- Vice Principal Level -->
+            @if($vicePrincipals->count() > 0)
+            <div class="vice-principal-level fade-in-up" style="animation-delay: 0.2s;">
+                <div class="level-header">
+                    <h3 class="level-title">Wakil Kepala Sekolah</h3>
+                    <p class="level-description">Membantu kepala sekolah dalam menjalankan tugas dan tanggung jawab</p>
+                </div>
+                @foreach($vicePrincipals as $index => $vp)
+                <div class="teacher-card vice-principal" style="animation-delay: {{ 0.3 + ($index * 0.1) }}s;">
+                    <div class="card-header">
+                        @if($vp->photo)
+                            <img src="{{ asset('storage/' . $vp->photo) }}" 
+                                 alt="{{ $vp->name }}" 
+                                 class="teacher-photo">
+                        @else
+                            <div class="photo-placeholder">
+                                {{ $vp->initials }}
+                            </div>
+                        @endif
+                        <h3 class="teacher-name">{{ $vp->name }}</h3>
+                        <p class="teacher-position">{{ $vp->position }}</p>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="teacher-info">
+                            @if($vp->education)
+                                <div class="info-item">
+                                    <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+                                    </svg>
+                                    <span>{{ $vp->education }}</span>
+                                </div>
+                            @endif
+
+                            @if($vp->nip)
+                                <div class="info-item">
+                                    <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V4a2 2 0 114 0v2m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/>
+                                    </svg>
+                                    <span>NIP: {{ $vp->nip }}</span>
+                                </div>
+                            @endif
+                            
+                            @if($vp->phone)
+                                <div class="info-item">
+                                    <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                    </svg>
+                                    <span>{{ $vp->phone }}</span>
+                                </div>
+                            @endif
+                        </div>
+
+                        @if($vp->subject)
+                        <div class="subject-tags">
+                            @foreach(explode(',', $vp->subject) as $subject)
+                                <span class="subject-tag">{{ trim($subject) }}</span>
+                            @endforeach
+                        </div>
+                        @endif
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ route('public.teachers.show', $vp->id) }}" class="btn-view-profile">
+                            <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                            Lihat Profil
+                        </a>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            @endif
+
+            <!-- Department Heads Level -->
+            @if($departmentHeads->count() > 0)
+            <div class="department-heads-level fade-in-up" style="animation-delay: 0.4s;">
+                <div class="level-header">
+                    <h3 class="level-title">Kepala Bagian & Koordinator</h3>
+                    <p class="level-description">Memimpin dan mengkoordinasikan berbagai bidang dan program sekolah</p>
+                </div>
+                @foreach($departmentHeads as $index => $head)
+                <div class="teacher-card department-head" style="animation-delay: {{ 0.5 + ($index * 0.1) }}s;">
+                    <div class="card-header">
+                        @if($head->photo)
+                            <img src="{{ asset('storage/' . $head->photo) }}" 
+                                 alt="{{ $head->name }}" 
+                                 class="teacher-photo">
+                        @else
+                            <div class="photo-placeholder">
+                                {{ $head->initials }}
+                            </div>
+                        @endif
+                        <h3 class="teacher-name">{{ $head->name }}</h3>
+                        <p class="teacher-position">{{ $head->position }}</p>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="teacher-info">
+                            @if($head->education)
+                                <div class="info-item">
+                                    <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+                                    </svg>
+                                    <span>{{ $head->education }}</span>
+                                </div>
+                            @endif
+
+                            @if($head->nip)
+                                <div class="info-item">
+                                    <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V4a2 2 0 114 0v2m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/>
+                                    </svg>
+                                    <span>NIP: {{ $head->nip }}</span>
+                                </div>
+                            @endif
+                            
+                            @if($head->phone)
+                                <div class="info-item">
+                                    <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                    </svg>
+                                    <span>{{ $head->phone }}</span>
+                                </div>
+                            @endif
+                        </div>
+
+                        @if($head->subject)
+                        <div class="subject-tags">
+                            @foreach(explode(',', $head->subject) as $subject)
+                                <span class="subject-tag">{{ trim($subject) }}</span>
+                            @endforeach
+                        </div>
+                        @endif
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ route('public.teachers.show', $head->id) }}" class="btn-view-profile">
+                            <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                            Lihat Profil
+                        </a>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            @endif
+
+            <!-- Teachers Level -->
+            @if($regularTeachers->count() > 0)
+            <div class="teachers-level fade-in-up" style="animation-delay: 0.6s;">
+                <div class="level-header">
+                    <h3 class="level-title">Guru Mata Pelajaran</h3>
+                    <p class="level-description">Tim pengajar yang berdedikasi dalam memberikan pendidikan berkualitas</p>
+                </div>
+                @foreach($regularTeachers as $index => $teacher)
+                <div class="teacher-card teacher" style="animation-delay: {{ 0.7 + ($index * 0.05) }}s;">
                     <div class="card-header">
                         @if($teacher->photo)
                             <img src="{{ asset('storage/' . $teacher->photo) }}" 
@@ -955,15 +1342,6 @@
                     
                     <div class="card-body">
                         <div class="teacher-info">
-                            @if($teacher->email)
-                                <div class="info-item">
-                                    <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                    </svg>
-                                    <span>{{ $teacher->email }}</span>
-                                </div>
-                            @endif
-                            
                             @if($teacher->education)
                                 <div class="info-item">
                                     <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -982,13 +1360,24 @@
                                     <span>NIP: {{ $teacher->nip }}</span>
                                 </div>
                             @endif
+                            
+                            @if($teacher->phone)
+                                <div class="info-item">
+                                    <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                    </svg>
+                                    <span>{{ $teacher->phone }}</span>
+                                </div>
+                            @endif
                         </div>
 
+                        @if($teacher->subject)
                         <div class="subject-tags">
                             @foreach(explode(',', $teacher->subject) as $subject)
                                 <span class="subject-tag">{{ trim($subject) }}</span>
                             @endforeach
                         </div>
+                        @endif
                     </div>
 
                     <div class="card-footer">
@@ -1001,107 +1390,335 @@
                     </div>
                 </div>
                 @endforeach
-            @else
-                <!-- Enhanced Empty State -->
-                <div class="empty-state fade-in-up">
-                    <div class="empty-icon">
-                        <i class="fas fa-user-friends fa-3x"></i>
-                    </div>
-                    <h3 class="empty-title">Tidak Ada Guru Ditemukan</h3>
-                    <p class="empty-description">
-                        @if(request()->hasAny(['search', 'subject', 'position']))
-                            Tidak ada guru yang sesuai dengan kriteria pencarian Anda. Silakan coba dengan kata kunci yang berbeda.
-                        @else
-                            Saat ini belum ada data guru yang tersedia.
-                        @endif
-                    </p>
-                    @if(request()->hasAny(['search', 'subject', 'position']))
-                        <a href="{{ route('public.teachers.index') }}" class="btn-reset">
-                            <i class="fas fa-undo me-2"></i>Hapus Filter
-                        </a>
-                    @endif
-                </div>
+            </div>
             @endif
-        </div>
 
-        <!-- Enhanced Pagination -->
-        @if($teachers->hasPages())
-            <div class="pagination-container fade-in-up">
-                <div class="pagination-wrapper">
-                    <!-- Pagination Info -->
-                    <div class="pagination-info">
-                        <div class="info-item">
-                            <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                            </svg>
-                            <span>Menampilkan {{ $teachers->firstItem() ?? 0 }} - {{ $teachers->lastItem() ?? 0 }} dari {{ $teachers->total() }} guru</span>
-                        </div>
-                        <div class="info-item">
-                            <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                            </svg>
-                            <span>Halaman {{ $teachers->currentPage() }} dari {{ $teachers->lastPage() }}</span>
-                        </div>
+            <!-- Guru Bengkel Level -->
+            @if($guruBengkel->count() > 0)
+            <div class="teachers-level fade-in-up" style="animation-delay: 0.7s;">
+                <div class="level-header">
+                    <h3 class="level-title">Guru Bengkel</h3>
+                    <p class="level-description">Guru yang mengajar praktik dan keterampilan di bengkel</p>
+                </div>
+                @foreach($guruBengkel as $index => $teacher)
+                <div class="teacher-card teacher" style="animation-delay: {{ 0.8 + ($index * 0.05) }}s;">
+                    <div class="card-header">
+                        @if($teacher->photo)
+                            <img src="{{ asset('storage/' . $teacher->photo) }}" 
+                                 alt="{{ $teacher->name }}" 
+                                 class="teacher-photo">
+                        @else
+                            <div class="photo-placeholder">
+                                {{ $teacher->initials }}
+                            </div>
+                        @endif
+                        <h3 class="teacher-name">{{ $teacher->name }}</h3>
+                        <p class="teacher-position">{{ $teacher->position }}</p>
                     </div>
                     
-                    <!-- Custom Pagination Links -->
-                    <nav aria-label="Pagination Navigation">
-                        <ul class="pagination">
-                            {{-- Previous Page Link --}}
-                            @if ($teachers->onFirstPage())
-                                <li class="page-item disabled">
-                                    <span class="page-link">
-                                        <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                                        </svg>
-                                    </span>
-                                </li>
-                            @else
-                                <li class="page-item">
-                                    <a class="page-link" href="{{ $teachers->appends(request()->query())->previousPageUrl() }}" rel="prev">
-                                        <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                                        </svg>
-                                    </a>
-                                </li>
+                    <div class="card-body">
+                        <div class="teacher-info">
+                            @if($teacher->education)
+                                <div class="info-item">
+                                    <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+                                    </svg>
+                                    <span>{{ $teacher->education }}</span>
+                                </div>
                             @endif
 
-                            {{-- Pagination Elements --}}
-                            @foreach ($teachers->appends(request()->query())->getUrlRange(1, $teachers->lastPage()) as $page => $url)
-                                @if ($page == $teachers->currentPage())
-                                    <li class="page-item active">
-                                        <span class="page-link">{{ $page }}</span>
-                                    </li>
-                                @else
-                                    <li class="page-item">
-                                        <a class="page-link" href="{{ $url }}">{{ $page }}</a>
-                                    </li>
-                                @endif
+                            @if($teacher->nip)
+                                <div class="info-item">
+                                    <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V4a2 2 0 114 0v2m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/>
+                                    </svg>
+                                    <span>NIP: {{ $teacher->nip }}</span>
+                                </div>
+                            @endif
+                            
+                            @if($teacher->phone)
+                                <div class="info-item">
+                                    <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                    </svg>
+                                    <span>{{ $teacher->phone }}</span>
+                                </div>
+                            @endif
+                        </div>
+
+                        @if($teacher->subject)
+                        <div class="subject-tags">
+                            @foreach(explode(',', $teacher->subject) as $subject)
+                                <span class="subject-tag">{{ trim($subject) }}</span>
                             @endforeach
+                        </div>
+                        @endif
+                    </div>
 
-                            {{-- Next Page Link --}}
-                            @if ($teachers->hasMorePages())
-                                <li class="page-item">
-                                    <a class="page-link" href="{{ $teachers->appends(request()->query())->nextPageUrl() }}" rel="next">
-                                        <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                        </svg>
-                                    </a>
-                                </li>
-                            @else
-                                <li class="page-item disabled">
-                                    <span class="page-link">
-                                        <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                        </svg>
-                                    </span>
-                                </li>
-                            @endif
-                        </ul>
-                    </nav>
+                    <div class="card-footer">
+                        <a href="{{ route('public.teachers.show', $teacher->id) }}" class="btn-view-profile">
+                            <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                            Lihat Profil
+                        </a>
+                    </div>
                 </div>
+                @endforeach
             </div>
-        @endif
+            @endif
+
+            <!-- Guru BK Level -->
+            @if($guruBK->count() > 0)
+            <div class="teachers-level fade-in-up" style="animation-delay: 0.8s;">
+                <div class="level-header">
+                    <h3 class="level-title">Guru Bimbingan Konseling</h3>
+                    <p class="level-description">Guru yang memberikan bimbingan dan konseling kepada siswa</p>
+                </div>
+                @foreach($guruBK as $index => $teacher)
+                <div class="teacher-card teacher" style="animation-delay: {{ 0.9 + ($index * 0.05) }}s;">
+                    <div class="card-header">
+                        @if($teacher->photo)
+                            <img src="{{ asset('storage/' . $teacher->photo) }}" 
+                                 alt="{{ $teacher->name }}" 
+                                 class="teacher-photo">
+                        @else
+                            <div class="photo-placeholder">
+                                {{ $teacher->initials }}
+                            </div>
+                        @endif
+                        <h3 class="teacher-name">{{ $teacher->name }}</h3>
+                        <p class="teacher-position">{{ $teacher->position }}</p>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="teacher-info">
+                            @if($teacher->education)
+                                <div class="info-item">
+                                    <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+                                    </svg>
+                                    <span>{{ $teacher->education }}</span>
+                                </div>
+                            @endif
+
+                            @if($teacher->nip)
+                                <div class="info-item">
+                                    <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V4a2 2 0 114 0v2m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/>
+                                    </svg>
+                                    <span>NIP: {{ $teacher->nip }}</span>
+                                </div>
+                            @endif
+                            
+                            @if($teacher->phone)
+                                <div class="info-item">
+                                    <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                    </svg>
+                                    <span>{{ $teacher->phone }}</span>
+                                </div>
+                            @endif
+                        </div>
+
+                        @if($teacher->subject)
+                        <div class="subject-tags">
+                            @foreach(explode(',', $teacher->subject) as $subject)
+                                <span class="subject-tag">{{ trim($subject) }}</span>
+                            @endforeach
+                        </div>
+                        @endif
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ route('public.teachers.show', $teacher->id) }}" class="btn-view-profile">
+                            <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                            Lihat Profil
+                        </a>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            @endif
+
+            <!-- Guru Lainnya Level -->
+            @if($guruLainnya->count() > 0)
+            <div class="teachers-level fade-in-up" style="animation-delay: 0.9s;">
+                <div class="level-header">
+                    <h3 class="level-title">Guru Lainnya</h3>
+                    <p class="level-description">Guru dengan posisi khusus dan spesialisasi tertentu</p>
+                </div>
+                @foreach($guruLainnya as $index => $teacher)
+                <div class="teacher-card teacher" style="animation-delay: {{ 1.0 + ($index * 0.05) }}s;">
+                    <div class="card-header">
+                        @if($teacher->photo)
+                            <img src="{{ asset('storage/' . $teacher->photo) }}" 
+                                 alt="{{ $teacher->name }}" 
+                                 class="teacher-photo">
+                        @else
+                            <div class="photo-placeholder">
+                                {{ $teacher->initials }}
+                            </div>
+                        @endif
+                        <h3 class="teacher-name">{{ $teacher->name }}</h3>
+                        <p class="teacher-position">{{ $teacher->position }}</p>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="teacher-info">
+                            @if($teacher->education)
+                                <div class="info-item">
+                                    <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+                                    </svg>
+                                    <span>{{ $teacher->education }}</span>
+                                </div>
+                            @endif
+
+                            @if($teacher->nip)
+                                <div class="info-item">
+                                    <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V4a2 2 0 114 0v2m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/>
+                                    </svg>
+                                    <span>NIP: {{ $teacher->nip }}</span>
+                                </div>
+                            @endif
+                            
+                            @if($teacher->phone)
+                                <div class="info-item">
+                                    <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                    </svg>
+                                    <span>{{ $teacher->phone }}</span>
+                                </div>
+                            @endif
+                        </div>
+
+                        @if($teacher->subject)
+                        <div class="subject-tags">
+                            @foreach(explode(',', $teacher->subject) as $subject)
+                                <span class="subject-tag">{{ trim($subject) }}</span>
+                            @endforeach
+                        </div>
+                        @endif
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ route('public.teachers.show', $teacher->id) }}" class="btn-view-profile">
+                            <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                            Lihat Profil
+                        </a>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            @endif
+
+            <!-- Staff Level -->
+            @if($staff->count() > 0)
+            <div class="staff-level fade-in-up" style="animation-delay: 0.8s;">
+                <div class="level-header">
+                    <h3 class="level-title">Tenaga Kependidikan</h3>
+                    <p class="level-description">Tim pendukung yang membantu kelancaran operasional sekolah</p>
+                </div>
+                @foreach($staff as $index => $staffMember)
+                <div class="teacher-card staff" style="animation-delay: {{ 0.9 + ($index * 0.05) }}s;">
+                    <div class="card-header">
+                        @if($staffMember->photo)
+                            <img src="{{ asset('storage/' . $staffMember->photo) }}" 
+                                 alt="{{ $staffMember->name }}" 
+                                 class="teacher-photo">
+                        @else
+                            <div class="photo-placeholder">
+                                {{ $staffMember->initials }}
+                            </div>
+                        @endif
+                        <h3 class="teacher-name">{{ $staffMember->name }}</h3>
+                        <p class="teacher-position">{{ $staffMember->position }}</p>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="teacher-info">
+                            @if($staffMember->education)
+                                <div class="info-item">
+                                    <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+                                    </svg>
+                                    <span>{{ $staffMember->education }}</span>
+                                </div>
+                            @endif
+
+                            @if($staffMember->nip)
+                                <div class="info-item">
+                                    <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V4a2 2 0 114 0v2m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/>
+                                    </svg>
+                                    <span>NIP: {{ $staffMember->nip }}</span>
+                                </div>
+                            @endif
+                            
+                            @if($staffMember->phone)
+                                <div class="info-item">
+                                    <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                    </svg>
+                                    <span>{{ $staffMember->phone }}</span>
+                                </div>
+                            @endif
+                        </div>
+
+                        @if($staffMember->subject)
+                        <div class="subject-tags">
+                            @foreach(explode(',', $staffMember->subject) as $subject)
+                                <span class="subject-tag">{{ trim($subject) }}</span>
+                            @endforeach
+                        </div>
+                        @endif
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ route('public.teachers.show', $staffMember->id) }}" class="btn-view-profile">
+                            <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                            Lihat Profil
+                        </a>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            @endif
+
+            <!-- Empty State -->
+            @if($teachers->count() == 0)
+            <div class="empty-state fade-in-up">
+                <div class="empty-icon">
+                    <i class="fas fa-user-friends fa-3x"></i>
+                </div>
+                <h3 class="empty-title">Tidak Ada Data Guru</h3>
+                <p class="empty-description">
+                    @if(request()->hasAny(['search', 'subject', 'position']))
+                        Tidak ada guru yang sesuai dengan kriteria pencarian Anda. Silakan coba dengan kata kunci yang berbeda.
+                    @else
+                        Saat ini belum ada data guru yang tersedia.
+                    @endif
+                </p>
+                @if(request()->hasAny(['search', 'subject', 'position']))
+                    <a href="{{ route('public.teachers.index') }}" class="btn-reset">
+                        <i class="fas fa-undo me-2"></i>Hapus Filter
+                    </a>
+                @endif
+            </div>
+            @endif
+        </div>
     </div>
 </section>
 
@@ -1132,17 +1749,28 @@ document.addEventListener('DOMContentLoaded', function() {
     const teacherCards = document.querySelectorAll('.teacher-card');
     teacherCards.forEach((card, index) => {
         card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-20px) scale(1.03)';
+            if (this.classList.contains('principal')) {
+                this.style.transform = 'scale(1.15) translateY(-15px)';
+            } else if (this.classList.contains('vice-principal')) {
+                this.style.transform = 'scale(1.08) translateY(-15px)';
+            } else if (this.classList.contains('department-head')) {
+                this.style.transform = 'translateY(-15px) scale(1.05)';
+            } else {
+                this.style.transform = 'translateY(-15px) scale(1.03)';
+            }
             this.style.zIndex = '10';
         });
         
         card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0) scale(1)';
+            if (this.classList.contains('principal')) {
+                this.style.transform = 'scale(1.1)';
+            } else if (this.classList.contains('vice-principal')) {
+                this.style.transform = 'scale(1.05)';
+            } else {
+                this.style.transform = 'translateY(0) scale(1)';
+            }
             this.style.zIndex = '1';
         });
-
-        // Add staggered animation delay
-        card.style.animationDelay = `${(index % 6) * 0.1}s`;
     });
 
     // Enhanced filter form interactions
@@ -1217,41 +1845,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Enhanced pagination button interactions
-    document.querySelectorAll('.pagination .page-link').forEach(link => {
-        if (!link.closest('.page-item.disabled')) {
-            link.addEventListener('click', function(e) {
-                // Add loading state for pagination
-                if (this.getAttribute('href')) {
-                    const originalContent = this.innerHTML;
-                    this.innerHTML = '<i class="fas fa-spinner fa-spin" style="font-size: 14px;"></i>';
-                    this.style.pointerEvents = 'none';
-                    
-                    // Reset after a short delay if navigation doesn't happen
-                    setTimeout(() => {
-                        if (this.innerHTML.includes('spinner')) {
-                            this.innerHTML = originalContent;
-                            this.style.pointerEvents = 'auto';
-                        }
-                    }, 3000);
-                }
-            });
-            
-            // Add hover sound effect (optional)
-            link.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-3px) scale(1.05)';
-            });
-            
-            link.addEventListener('mouseleave', function() {
-                if (!this.closest('.page-item.active')) {
-                    this.style.transform = 'translateY(0) scale(1)';
-                }
-            });
-        }
-    });
-    
     // Add ripple effect to buttons
-    document.querySelectorAll('.btn-filter, .btn-reset, .btn-view-profile, .pagination .page-link').forEach(button => {
+    document.querySelectorAll('.btn-filter, .btn-reset, .btn-view-profile').forEach(button => {
         button.addEventListener('click', function(e) {
             const ripple = document.createElement('div');
             const rect = this.getBoundingClientRect();
@@ -1297,7 +1892,7 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
     document.head.appendChild(style);
 
-    console.log('Enhanced teachers page animations loaded successfully!');
+    console.log('Enhanced organizational chart loaded successfully!');
 });
 </script>
 @endsection

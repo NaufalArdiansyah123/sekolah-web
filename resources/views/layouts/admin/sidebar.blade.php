@@ -673,6 +673,11 @@
                  x-transition:leave-start="opacity-100 transform scale-100"
                  x-transition:leave-end="opacity-0 transform scale-95"
                  class="nav-dropdown-content">
+                <a href="{{ route('admin.achievements.index') }}" 
+                   class="nav-dropdown-item {{ request()->routeIs('admin.achievements.*') ? 'active' : '' }}"
+                   @click="sidebarOpen = false">
+                    🏆 Prestasi Sekolah
+                </a>
                 <a href="{{ route('admin.extracurriculars.index') }}" 
                    class="nav-dropdown-item {{ request()->routeIs('admin.extracurriculars.index') ? 'active' : '' }}"
                    @click="sidebarOpen = false">
@@ -817,6 +822,46 @@
         <div class="nav-section-title">
             <span>System</span>
         </div>
+
+        <!-- School Profile -->
+        <a href="{{ route('admin.school-profile.index') }}" 
+           class="sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('admin.school-profile*') ? 'active' : '' }}"
+           @click="sidebarOpen = false">
+            <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+            <span>Profil Sekolah</span>
+        </a>
+
+        <!-- Vision & Mission -->
+        <a href="{{ route('admin.vision.index') }}" 
+           class="sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('admin.vision*') ? 'active' : '' }}"
+           @click="sidebarOpen = false">
+            <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            <span>Visi & Misi</span>
+        </a>
+
+        <!-- History -->
+        <a href="{{ route('admin.history.index') }}" 
+           class="sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('admin.history*') ? 'active' : '' }}"
+           @click="sidebarOpen = false">
+            <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Sejarah Sekolah</span>
+        </a>
+
+        <!-- Contacts -->
+        <a href="{{ route('admin.contacts.index') }}" 
+           class="sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('admin.contacts*') ? 'active' : '' }}"
+           @click="sidebarOpen = false">
+            <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            <span>Kontak</span>
+        </a>
 
         <!-- Settings -->
         <a href="{{ route('admin.settings.index') }}" 

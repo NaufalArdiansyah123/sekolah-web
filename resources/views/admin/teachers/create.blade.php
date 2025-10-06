@@ -480,18 +480,47 @@
                             name="position" 
                             required>
                         <option value="">Select Position</option>
-                        <option value="Guru Kelas" {{ old('position') == 'Guru Kelas' ? 'selected' : '' }}>Guru Kelas</option>
+                        @php
+                            // Check if Kepala Sekolah already exists
+                            $hasKepalaSekolah = \App\Models\Teacher::where('position', 'Kepala Sekolah')
+                                                                  ->where('status', 'active')
+                                                                  ->exists();
+                            
+                            // Check if Wakil Kepala Sekolah already exists
+                            $hasWakilKepalaSekolah = \App\Models\Teacher::where('position', 'Wakil Kepala Sekolah')
+                                                                       ->where('status', 'active')
+                                                                       ->exists();
+                        @endphp
+                        
+                        @if(!$hasKepalaSekolah)
+                            <option value="Kepala Sekolah" {{ old('position') == 'Kepala Sekolah' ? 'selected' : '' }}>Kepala Sekolah</option>
+                        @endif
+                        
+                        @if(!$hasWakilKepalaSekolah)
+                            <option value="Wakil Kepala Sekolah" {{ old('position') == 'Wakil Kepala Sekolah' ? 'selected' : '' }}>Wakil Kepala Sekolah</option>
+                        @endif
+                        
                         <option value="Guru Mata Pelajaran" {{ old('position') == 'Guru Mata Pelajaran' ? 'selected' : '' }}>Guru Mata Pelajaran</option>
-                        <option value="Kepala Sekolah" {{ old('position') == 'Kepala Sekolah' ? 'selected' : '' }}>Kepala Sekolah</option>
-                        <option value="Wakil Kepala Sekolah" {{ old('position') == 'Wakil Kepala Sekolah' ? 'selected' : '' }}>Wakil Kepala Sekolah</option>
+                        <option value="Guru Bengkel" {{ old('position') == 'Guru Bengkel' ? 'selected' : '' }}>Guru Bengkel</option>
                         <option value="Guru BK" {{ old('position') == 'Guru BK' ? 'selected' : '' }}>Guru BK</option>
-                        <option value="Staff Administrasi" {{ old('position') == 'Staff Administrasi' ? 'selected' : '' }}>Staff Administrasi</option>
-                        <option value="Staff Perpustakaan" {{ old('position') == 'Staff Perpustakaan' ? 'selected' : '' }}>Staff Perpustakaan</option>
-                        <option value="Staff TU" {{ old('position') == 'Staff TU' ? 'selected' : '' }}>Staff TU</option>
                     </select>
                     @error('position')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
+                    
+                    @if($hasKepalaSekolah && $hasWakilKepalaSekolah)
+                        <small class="text-warning mt-2 d-block">
+                            <i class="fas fa-info-circle"></i> Kepala Sekolah dan Wakil Kepala Sekolah sudah ada. Hanya dapat memilih posisi guru.
+                        </small>
+                    @elseif($hasKepalaSekolah)
+                        <small class="text-warning mt-2 d-block">
+                            <i class="fas fa-info-circle"></i> Kepala Sekolah sudah ada. Posisi tidak tersedia.
+                        </small>
+                    @elseif($hasWakilKepalaSekolah)
+                        <small class="text-warning mt-2 d-block">
+                            <i class="fas fa-info-circle"></i> Wakil Kepala Sekolah sudah ada. Posisi tidak tersedia.
+                        </small>
+                    @endif
                 </div>
 
                 <div class="form-group">

@@ -2,245 +2,423 @@
 
 namespace App\Services;
 
-use App\Models\AdminNotification;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Schema;
 
 class NotificationService
 {
     /**
-     * Create student notification
+     * Show success notification
      */
-    public static function studentAction($action, $student, $additionalData = [])
+    public static function success($title, $message = null, $details = [])
     {
-        $messages = [
-            'create' => "Siswa baru '{$student->name}' telah ditambahkan ke kelas {$student->class}",
-            'update' => "Data siswa '{$student->name}' telah diperbarui",
-            'delete' => "Siswa '{$student->name}' telah dihapus dari sistem",
-        ];
-
-        $titles = [
-            'create' => 'Siswa Baru Ditambahkan',
-            'update' => 'Data Siswa Diperbarui',
-            'delete' => 'Siswa Dihapus',
-        ];
-
-        AdminNotification::createNotification(
-            'student',
-            $action,
-            $titles[$action] ?? 'Aktivitas Siswa',
-            $messages[$action] ?? "Aktivitas {$action} pada siswa {$student->name}",
-            $student->id,
-            get_class($student),
-            array_merge([
-                'student_name' => $student->name,
-                'student_nis' => $student->nis,
-                'student_class' => $student->class,
-            ], $additionalData)
-        );
+        return self::addNotification('success', $title, $message, $details);
     }
 
     /**
-     * Create teacher notification
+     * Show error notification
      */
-    public static function teacherAction($action, $teacher, $additionalData = [])
+    public static function error($title, $message = null, $details = [])
     {
-        $messages = [
-            'create' => "Guru baru '{$teacher->name}' telah ditambahkan dengan mata pelajaran {$teacher->subject}",
-            'update' => "Data guru '{$teacher->name}' telah diperbarui",
-            'delete' => "Guru '{$teacher->name}' telah dihapus dari sistem",
-        ];
-
-        $titles = [
-            'create' => 'Guru Baru Ditambahkan',
-            'update' => 'Data Guru Diperbarui',
-            'delete' => 'Guru Dihapus',
-        ];
-
-        AdminNotification::createNotification(
-            'teacher',
-            $action,
-            $titles[$action] ?? 'Aktivitas Guru',
-            $messages[$action] ?? "Aktivitas {$action} pada guru {$teacher->name}",
-            $teacher->id,
-            get_class($teacher),
-            array_merge([
-                'teacher_name' => $teacher->name,
-                'teacher_nip' => $teacher->nip,
-                'teacher_subject' => $teacher->subject,
-            ], $additionalData)
-        );
+        return self::addNotification('error', $title, $message, $details);
     }
 
     /**
-     * Create media upload notification
+     * Show warning notification
      */
-    public static function mediaUpload($type, $filename, $size = null, $additionalData = [])
+    public static function warning($title, $message = null, $details = [])
     {
-        $messages = [
-            'gallery' => "Foto baru '{$filename}' telah diupload ke galeri",
-            'video' => "Video baru '{$filename}' telah diupload",
-            'slideshow' => "Gambar slideshow '{$filename}' telah diupload",
-            'media' => "File media '{$filename}' telah diupload",
-        ];
-
-        $titles = [
-            'gallery' => 'Foto Baru Diupload',
-            'video' => 'Video Baru Diupload',
-            'slideshow' => 'Slideshow Diupload',
-            'media' => 'Media Diupload',
-        ];
-
-        AdminNotification::createNotification(
-            $type,
-            'upload',
-            $titles[$type] ?? 'Media Diupload',
-            $messages[$type] ?? "File {$filename} telah diupload",
-            null,
-            null,
-            array_merge([
-                'filename' => $filename,
-                'file_size' => $size,
-                'upload_time' => now()->toDateTimeString(),
-            ], $additionalData)
-        );
+        return self::addNotification('warning', $title, $message, $details);
     }
 
     /**
-     * Create bulk action notification
+     * Show info notification
      */
-    public static function bulkAction($type, $action, $count, $additionalData = [])
+    public static function info($title, $message = null, $details = [])
     {
-        $messages = [
-            'student' => [
-                'delete' => "{$count} siswa telah dihapus secara bersamaan",
-                'activate' => "{$count} siswa telah diaktifkan",
-                'deactivate' => "{$count} siswa telah dinonaktifkan",
-                'graduate' => "{$count} siswa telah diluluskan",
-            ],
-        ];
-
-        $titles = [
-            'student' => [
-                'delete' => 'Hapus Siswa Massal',
-                'activate' => 'Aktivasi Siswa Massal',
-                'deactivate' => 'Nonaktifkan Siswa Massal',
-                'graduate' => 'Kelulusan Siswa Massal',
-            ],
-        ];
-
-        AdminNotification::createNotification(
-            $type,
-            $action,
-            $titles[$type][$action] ?? 'Aksi Massal',
-            $messages[$type][$action] ?? "Aksi {$action} dilakukan pada {$count} {$type}",
-            null,
-            null,
-            array_merge([
-                'count' => $count,
-                'bulk_action' => true,
-            ], $additionalData)
-        );
+        return self::addNotification('info', $title, $message, $details);
     }
 
     /**
-     * Get recent notifications for dashboard
+     * Add notification to session
      */
-    public static function getRecentNotifications($limit = 10)
+    private static function addNotification($type, $title, $message = null, $details = [])
     {
-        try {
-            if (!class_exists('App\Models\AdminNotification')) {
-                return collect();
-            }
-            
-            return AdminNotification::with('user')
-                ->latest()
-                ->take($limit)
-                ->get();
-        } catch (\Exception $e) {
-            \Log::warning('Failed to get recent notifications: ' . $e->getMessage());
-            return collect();
-        }
+        $notification = [
+            'type' => $type,
+            'title' => $title,
+            'message' => $message,
+            'details' => $details,
+            'timestamp' => now()->format('H:i:s'),
+            'id' => uniqid()
+        ];
+
+        Session::flash('notification', $notification);
+        
+        return $notification;
     }
 
     /**
-     * Get unread count
+     * Create notification for create operation
+     */
+    public static function created($entityName, $entityTitle = null, $additionalInfo = [])
+    {
+        $title = "✅ {$entityName} Berhasil Dibuat";
+        $message = $entityTitle ? "'{$entityTitle}' telah berhasil ditambahkan ke sistem." : "Data baru telah berhasil ditambahkan.";
+        
+        $details = array_merge([
+            'action' => 'create',
+            'entity' => $entityName,
+            'time' => now()->format('d M Y, H:i:s')
+        ], $additionalInfo);
+
+        return self::success($title, $message, $details);
+    }
+
+    /**
+     * Create notification for update operation
+     */
+    public static function updated($entityName, $entityTitle = null, $changes = [])
+    {
+        $title = "📝 {$entityName} Berhasil Diperbarui";
+        $message = $entityTitle ? "'{$entityTitle}' telah berhasil diperbarui." : "Data telah berhasil diperbarui.";
+        
+        $details = [
+            'action' => 'update',
+            'entity' => $entityName,
+            'changes' => $changes,
+            'time' => now()->format('d M Y, H:i:s')
+        ];
+
+        return self::success($title, $message, $details);
+    }
+
+    /**
+     * Create notification for delete operation
+     */
+    public static function deleted($entityName, $entityTitle = null, $additionalInfo = [])
+    {
+        $title = "🗑️ {$entityName} Berhasil Dihapus";
+        $message = $entityTitle ? "'{$entityTitle}' telah berhasil dihapus dari sistem." : "Data telah berhasil dihapus.";
+        
+        $details = array_merge([
+            'action' => 'delete',
+            'entity' => $entityName,
+            'time' => now()->format('d M Y, H:i:s')
+        ], $additionalInfo);
+
+        return self::success($title, $message, $details);
+    }
+
+    /**
+     * Create notification for activation operation
+     */
+    public static function activated($entityName, $entityTitle = null)
+    {
+        $title = "🟢 {$entityName} Diaktifkan";
+        $message = $entityTitle ? "'{$entityTitle}' telah berhasil diaktifkan." : "Data telah berhasil diaktifkan.";
+        
+        $details = [
+            'action' => 'activate',
+            'entity' => $entityName,
+            'time' => now()->format('d M Y, H:i:s')
+        ];
+
+        return self::success($title, $message, $details);
+    }
+
+    /**
+     * Create notification for deactivation operation
+     */
+    public static function deactivated($entityName, $entityTitle = null)
+    {
+        $title = "🔴 {$entityName} Dinonaktifkan";
+        $message = $entityTitle ? "'{$entityTitle}' telah berhasil dinonaktifkan." : "Data telah berhasil dinonaktifkan.";
+        
+        $details = [
+            'action' => 'deactivate',
+            'entity' => $entityName,
+            'time' => now()->format('d M Y, H:i:s')
+        ];
+
+        return self::success($title, $message, $details);
+    }
+
+    /**
+     * Create notification for validation errors
+     */
+    public static function validationError($errors = [])
+    {
+        $title = "❌ Validasi Gagal";
+        $message = "Terdapat kesalahan dalam data yang dimasukkan. Silakan periksa kembali.";
+        
+        $details = [
+            'action' => 'validation_error',
+            'errors' => $errors,
+            'time' => now()->format('d M Y, H:i:s')
+        ];
+
+        return self::error($title, $message, $details);
+    }
+
+    /**
+     * Create notification for file upload
+     */
+    public static function fileUploaded($fileName, $fileType = 'file')
+    {
+        $title = "📁 File Berhasil Diunggah";
+        $message = "File '{$fileName}' telah berhasil diunggah.";
+        
+        $details = [
+            'action' => 'file_upload',
+            'file_name' => $fileName,
+            'file_type' => $fileType,
+            'time' => now()->format('d M Y, H:i:s')
+        ];
+
+        return self::success($title, $message, $details);
+    }
+
+    /**
+     * Create notification for bulk operations
+     */
+    public static function bulkOperation($action, $count, $entityName)
+    {
+        $title = "📊 Operasi Massal Berhasil";
+        $message = "{$count} {$entityName} telah berhasil {$action}.";
+        
+        $details = [
+            'action' => 'bulk_operation',
+            'operation' => $action,
+            'count' => $count,
+            'entity' => $entityName,
+            'time' => now()->format('d M Y, H:i:s')
+        ];
+
+        return self::success($title, $message, $details);
+    }
+
+    /**
+     * Get notification icon based on type
+     */
+    public static function getIcon($type)
+    {
+        $icons = [
+            'success' => '✅',
+            'error' => '❌',
+            'warning' => '⚠️',
+            'info' => 'ℹ️'
+        ];
+
+        return $icons[$type] ?? 'ℹ️';
+    }
+
+    /**
+     * Get notification color based on type
+     */
+    public static function getColor($type)
+    {
+        $colors = [
+            'success' => 'green',
+            'error' => 'red',
+            'warning' => 'yellow',
+            'info' => 'blue'
+        ];
+
+        return $colors[$type] ?? 'blue';
+    }
+
+    /**
+     * Get unread notification count
      */
     public static function getUnreadCount()
     {
         try {
-            if (!class_exists('App\Models\AdminNotification')) {
-                return 0;
+            // Check if AdminNotification model exists and table is available
+            if (class_exists('App\Models\AdminNotification') && \Schema::hasTable('admin_notifications')) {
+                return \App\Models\AdminNotification::where('is_read', false)->count();
             }
             
-            return AdminNotification::unread()->count();
+            // Fallback to session-based notifications
+            $notifications = self::getAllNotifications();
+            $unreadCount = 0;
+            
+            foreach ($notifications as $notification) {
+                if (!isset($notification['read']) || !$notification['read']) {
+                    $unreadCount++;
+                }
+            }
+            
+            return $unreadCount;
         } catch (\Exception $e) {
-            \Log::warning('Failed to get unread count: ' . $e->getMessage());
+            // Return 0 if there's any error
             return 0;
         }
     }
 
     /**
-     * Mark all as read
+     * Get all notifications from session
      */
-    public static function markAllAsRead()
+    public static function getAllNotifications()
     {
-        AdminNotification::unread()->update(['is_read' => true]);
+        return Session::get('notifications', []);
     }
 
     /**
-     * Create student registration notification
+     * Clear all notifications
      */
-    public static function createStudentNotification($action, $student, $title, $message, $additionalData = [])
+    public static function clearAll()
+    {
+        Session::forget('notifications');
+        Session::forget('notification');
+    }
+
+    /**
+     * Add multiple notifications to session
+     */
+    public static function addMultiple($notifications)
+    {
+        $existingNotifications = Session::get('notifications', []);
+        $allNotifications = array_merge($existingNotifications, $notifications);
+        Session::put('notifications', $allNotifications);
+        
+        return $allNotifications;
+    }
+
+    /**
+     * Get recent notifications (last N notifications)
+     */
+    public static function getRecent($limit = 5)
+    {
+        $notifications = self::getAllNotifications();
+        return array_slice($notifications, -$limit, $limit);
+    }
+
+    /**
+     * Get recent notifications for admin
+     */
+    public static function getRecentNotifications($limit = 5)
     {
         try {
-            // Check if AdminNotification model exists
-            if (!class_exists('App\Models\AdminNotification')) {
-                \Log::info('AdminNotification model not found, skipping notification creation');
-                return;
+            // Check if AdminNotification model exists and table is available
+            if (class_exists('App\Models\AdminNotification') && \Schema::hasTable('admin_notifications')) {
+                return \App\Models\AdminNotification::with('user')
+                    ->latest()
+                    ->limit($limit)
+                    ->get();
             }
-
-            // Check if the model has the createNotification method
-            if (!method_exists('App\Models\AdminNotification', 'createNotification')) {
-                \Log::info('AdminNotification::createNotification method not found, skipping notification creation');
-                return;
-            }
-
-            // Safely get student data
-            $studentData = [
-                'student_name' => $student->name ?? 'Unknown',
-                'student_email' => $student->email ?? 'Unknown',
-                'registration_date' => $student->created_at ? $student->created_at->toDateTimeString() : now()->toDateTimeString(),
-            ];
-
-            // Add optional fields if they exist
-            if (isset($student->nis)) {
-                $studentData['student_nis'] = $student->nis;
-            }
-            if (isset($student->class)) {
-                $studentData['student_class'] = $student->class;
-            }
-
-            AdminNotification::createNotification(
-                'student',
-                $action,
-                $title,
-                $message,
-                $student->id,
-                get_class($student),
-                array_merge($studentData, $additionalData)
-            );
-
-            \Log::info('Student notification created successfully', [
-                'action' => $action,
-                'student_id' => $student->id,
-                'title' => $title
-            ]);
-
+            
+            // Fallback to session-based notifications
+            return collect(self::getRecent($limit));
         } catch (\Exception $e) {
-            \Log::warning('Failed to create student notification (non-critical)', [
-                'error' => $e->getMessage(),
-                'student_id' => $student->id ?? 'unknown',
-                'action' => $action
-            ]);
+            // Return empty collection if there's any error
+            return collect();
         }
+    }
+
+    /**
+     * Mark notification as read
+     */
+    public static function markAsRead($notificationId)
+    {
+        $notifications = Session::get('notifications', []);
+        
+        foreach ($notifications as &$notification) {
+            if ($notification['id'] === $notificationId) {
+                $notification['read'] = true;
+                break;
+            }
+        }
+        
+        Session::put('notifications', $notifications);
+    }
+
+    /**
+     * Mark all notifications as read
+     */
+    public static function markAllAsRead()
+    {
+        try {
+            // Check if AdminNotification model exists and table is available
+            if (class_exists('App\Models\AdminNotification') && Schema::hasTable('admin_notifications')) {
+                $count = \App\Models\AdminNotification::where('is_read', false)->count();
+                \App\Models\AdminNotification::where('is_read', false)->update(['is_read' => true]);
+                return $count;
+            }
+            
+            // Fallback to session-based notifications
+            $notifications = Session::get('notifications', []);
+            
+            foreach ($notifications as &$notification) {
+                $notification['read'] = true;
+            }
+            
+            Session::put('notifications', $notifications);
+            
+            return count($notifications);
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
+
+    /**
+     * Get notification statistics
+     */
+    public static function getStats()
+    {
+        $notifications = self::getAllNotifications();
+        
+        $stats = [
+            'total' => count($notifications),
+            'unread' => 0,
+            'by_type' => [
+                'success' => 0,
+                'error' => 0,
+                'warning' => 0,
+                'info' => 0
+            ]
+        ];
+        
+        foreach ($notifications as $notification) {
+            if (!isset($notification['read']) || !$notification['read']) {
+                $stats['unread']++;
+            }
+            
+            $type = $notification['type'] ?? 'info';
+            if (isset($stats['by_type'][$type])) {
+                $stats['by_type'][$type]++;
+            }
+        }
+        
+        return $stats;
+    }
+
+    /**
+     * Create system notification (for admin alerts)
+     */
+    public static function system($title, $message = null, $priority = 'normal')
+    {
+        $details = [
+            'action' => 'system',
+            'priority' => $priority,
+            'time' => now()->format('d M Y, H:i:s')
+        ];
+
+        return self::info($title, $message, $details);
+    }
+
+    /**
+     * Create maintenance notification
+     */
+    public static function maintenance($title, $message = null, $scheduledTime = null)
+    {
+        $details = [
+            'action' => 'maintenance',
+            'scheduled_time' => $scheduledTime,
+            'time' => now()->format('d M Y, H:i:s')
+        ];
+
+        return self::warning($title, $message, $details);
     }
 }
