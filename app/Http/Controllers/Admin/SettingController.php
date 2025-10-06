@@ -523,37 +523,97 @@ class SettingController extends Controller
     public function reset(Request $request)
     {
         try {
-            // Reset settings to default values
+            \Log::info('Reset settings to default requested');
+            
+            // Reset settings to default values based on actual form fields
             $defaultSettings = [
-                'site_name' => 'School Management System',
-                'site_description' => 'Sistem Manajemen Sekolah',
-                'site_email' => 'admin@school.com',
-                'site_phone' => '',
-                'site_address' => '',
-                'maintenance_mode' => 'false',
-                'registration_enabled' => 'true',
-                'email_notifications' => 'true',
-                'sms_notifications' => 'false',
+                // School Settings
+                'school_name' => 'SMK PGRI 2 PONOROGO',
+                'school_subtitle' => 'Terbukti Lebih Maju',
+                'school_description' => 'Excellence in Education - Membentuk generasi yang berkarakter dan berprestasi untuk masa depan Indonesia yang gemilang.',
+                
+                // Academic Settings
+                'academic_year' => '2024/2025',
+                'semester' => '1',
+                'school_timezone' => 'Asia/Jakarta',
+                'attendance_start_time' => '07:00',
+                'attendance_end_time' => '07:30',
+                
+                // System Settings
+                'maintenance_mode' => '0',
+                'allow_registration' => '1',
+                'max_upload_size' => '10',
+                'session_lifetime' => '120',
+                'max_login_attempts' => '5',
+                
+                // Appearance Settings
+                'navbar_bg_color' => '#1a202c',
+                'navbar_text_color' => '#ffffff',
+                'navbar_hover_color' => '#3182ce',
+                'navbar_hover_text_color' => '#ffffff',
+                'navbar_active_color' => '#4299e1',
+                
+                // Backup Settings
+                'auto_backup_enabled' => '0',
                 'backup_frequency' => 'daily',
-                'max_file_size' => '10',
-                'allowed_file_types' => 'jpg,jpeg,png,pdf,doc,docx',
-                'timezone' => 'Asia/Jakarta',
-                'date_format' => 'd/m/Y',
-                'time_format' => 'H:i',
+                'backup_retention_days' => '30',
             ];
 
+            \Log::info('Resetting settings to default values:', $defaultSettings);
+
             foreach ($defaultSettings as $key => $value) {
+                // Determine setting group and type
+                $group = $this->getSettingGroup($key);
+                $type = $this->getSettingType($key, $value);
+                
                 Setting::updateOrCreate(
                     ['key' => $key],
-                    ['value' => $value]
+                    [
+                        'value' => $value,
+                        'type' => $type,
+                        'group' => $group
+                    ]
                 );
+                
+                \Log::info('Reset setting:', [
+                    'key' => $key,
+                    'value' => $value,
+                    'type' => $type,
+                    'group' => $group
+                ]);
             }
+            
+            // Note: We don't reset file settings (school_logo, school_favicon) 
+            // as they would need to be re-uploaded by the user
+            
+            // Clear cache after resetting settings
+            try {
+                \Log::info('Clearing caches after settings reset');
+                
+                Artisan::call('config:clear');
+                Artisan::call('cache:clear');
+                
+                // Clear settings cache specifically
+                Setting::clearCache();
+                
+                \Log::info('All caches cleared successfully after reset');
+                
+            } catch (\Exception $e) {
+                \Log::warning('Cache clear failed after reset: ' . $e->getMessage());
+            }
+
+            \Log::info('Settings reset completed successfully');
 
             return response()->json([
                 'success' => true,
-                'message' => 'Pengaturan berhasil direset ke default!'
+                'message' => 'Pengaturan berhasil direset ke nilai default! Halaman akan dimuat ulang untuk menampilkan perubahan.'
             ]);
         } catch (\Exception $e) {
+            \Log::error('Error resetting settings:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal mereset pengaturan: ' . $e->getMessage()
@@ -898,6 +958,7 @@ class SettingController extends Controller
             'system' => ['maintenance_mode', 'allow_registration', 'max_upload_size', 'session_lifetime', 'max_login_attempts'],
             'email' => ['mail_host', 'mail_port', 'mail_username', 'mail_password', 'mail_encryption', 'mail_from_name'],
             'notification' => ['email_notifications_enabled', 'notification_frequency', 'registration_notifications', 'system_notifications', 'announcement_notifications', 'agenda_notifications'],
+            'appearance' => ['navbar_bg_color', 'navbar_text_color', 'navbar_hover_color', 'navbar_hover_text_color', 'navbar_active_color'],
             'backup' => ['auto_backup_enabled', 'backup_frequency', 'backup_retention_days']
         ];
         

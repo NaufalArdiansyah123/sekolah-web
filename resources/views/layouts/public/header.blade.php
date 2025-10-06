@@ -30,10 +30,19 @@
         <div class="flex justify-between items-center py-4">
             <!-- Logo -->
             <div class="flex items-center">
-                <img class="h-12 w-auto" src="{{ asset('images/logo.png') }}" alt="{{ config('app.name') }}">
+                @php
+                    $schoolLogo = \App\Models\Setting::get('school_logo');
+                    $schoolName = \App\Models\Setting::get('school_name', 'SMK PGRI 2 PONOROGO');
+                    $schoolSubtitle = \App\Models\Setting::get('school_subtitle', 'Excellence in Education');
+                @endphp
+                @if($schoolLogo && !str_contains($schoolLogo, 'tmp'))
+                    <img class="h-12 w-auto" src="{{ asset('storage/' . $schoolLogo) }}" alt="{{ $schoolName }}" onerror="this.src='{{ asset('images/logo.png') }}'">
+                @else
+                    <img class="h-12 w-auto" src="{{ asset('images/logo.png') }}" alt="{{ $schoolName }}">
+                @endif
                 <div class="ml-3">
-                    <h1 class="text-xl font-bold text-gray-900">SMK PGRI 2 PONOROGO</h1>
-                    <p class="text-sm text-gray-600">Excellence in Education</p>
+                    <h1 class="text-xl font-bold text-gray-900">{{ $schoolName }}</h1>
+                    <p class="text-sm text-gray-600">{{ $schoolSubtitle }}</p>
                 </div>
             </div>
 

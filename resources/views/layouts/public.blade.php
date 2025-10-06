@@ -6,7 +6,7 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <meta name="description" content="Website resmi sekolah">
-    <title>SMK PGRI 2 PONOROGO</title>
+    <title>@yield('title', \App\Models\Setting::get('school_name', 'SMK PGRI 2 PONOROGO'))</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -143,7 +143,7 @@
             height: 100%;
             background: linear-gradient(90deg, #63b3ed, #4299e1, #3182ce);
             border-radius: 2px;
-            animation: progressLoad 2.5s ease-out forwards;
+            animation: progressLoad 1.5s ease-out forwards;
             position: relative;
         }
         
@@ -1103,7 +1103,7 @@
             <div class="loader-logo">
                 <i class="fas fa-graduation-cap"></i>
             </div>
-            <div class="loader-text">SMK PGRI 2 PONOROGO</div>
+            <div class="loader-text">{{ \App\Models\Setting::get('school_name', 'SMK PGRI 2 PONOROGO') }}</div>
             <div class="loader-progress">
                 <div class="loader-progress-bar"></div>
             </div>
@@ -1119,13 +1119,24 @@
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid px-4">
             <!-- Enhanced Brand -->
+           <!-- Enhanced Brand -->
             <a class="navbar-brand" href="{{ route('home') }}">
                 <div class="brand-icon">
-                    <img src="{{ asset('images/logo-sterida.png') }}" alt="Logo SMK PGRI 2 PONOROGO" onerror="this.style.display='none'">
+                    @php
+                        // Force fresh data dari database
+                        $schoolLogo = \App\Models\Setting::where('key', 'school_logo')->value('value');
+                        $schoolName = \App\Models\Setting::where('key', 'school_name')->value('value') ?: 'SMK PGRI 2 PONOROGO';
+                        $schoolSubtitle = \App\Models\Setting::where('key', 'school_subtitle')->value('value') ?: 'Terbukti Lebih Maju';
+                    @endphp
+                    @if($schoolLogo && !str_contains($schoolLogo, 'tmp'))
+                        <img src="{{ asset('storage/' . $schoolLogo) }}" alt="Logo {{ $schoolName }}" onerror="this.src='{{ asset('images/logo-sterida.png') }}'; console.log('Logo fallback used');">
+                    @else
+                        <img src="{{ asset('images/logo-sterida.png') }}" alt="Logo {{ $schoolName }}" onerror="this.style.display='none'">
+                    @endif
                 </div>
                 <div class="brand-text">
-                    <span class="brand-main">SMK PGRI 2 PONOROGO</span>
-                    <span class="brand-sub d-none d-lg-block">Terbukti Lebih Maju</span>
+                    <span class="brand-main">{{ $schoolName }}</span>
+                    <span class="brand-sub d-none d-lg-block">{{ $schoolSubtitle }}</span>
                 </div>
             </a>
 
@@ -1339,7 +1350,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
-                    <h5><i class="fas fa-graduation-cap me-2"></i>SMK PGRI 2 PONOROGO</h5>
+                    <h5><i class="fas fa-graduation-cap me-2"></i>{{ \App\Models\Setting::get('school_name', 'SMK PGRI 2 PONOROGO') }}</h5>
                     <p class="mb-3">Excellence in Education - Membentuk generasi yang berkarakter dan berprestasi untuk
                         masa depan Indonesia yang gemilang.</p>
                     <div class="social-links">
@@ -1400,7 +1411,7 @@
             <hr style="border-color: rgba(255,255,255,0.2); margin: 2rem 0 1rem 0;">
             <div class="row align-items-center">
                 <div class="col-md-6">
-                    <p class="mb-0">&copy; 2024 SMK PGRI 2 PONOROGO. All rights reserved.</p>
+                    <p class="mb-0">&copy; 2024 {{ \App\Models\Setting::get('school_name', 'SMK PGRI 2 PONOROGO') }}. All rights reserved.</p>
                 </div>
                 <div class="col-md-6 text-md-end">
                     <p class="mb-0">
@@ -1438,7 +1449,7 @@
                         }
                     }, 800);
                 }
-            }, 2500); // Show loading for 2.5 seconds to see full animation
+            }, 1500); // Show loading for 1.5 seconds
         });
         
         // Scroll Animation System
@@ -1624,7 +1635,7 @@
             if (pageLoader && pageLoader.parentNode) {
                 pageLoader.parentNode.removeChild(pageLoader);
             }
-        }, 4000); // Maximum 4 seconds
+        }, 3000); // Maximum 3 seconds
         
         // Add some interactive feedback
         document.addEventListener('DOMContentLoaded', function() {
