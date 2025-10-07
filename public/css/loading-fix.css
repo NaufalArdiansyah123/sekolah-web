@@ -1,0 +1,101 @@
+/* Enhanced Loading Screen Fix - Global CSS */
+
+/* Lock body during loading */
+html.loading {
+    overflow: hidden !important;
+    height: 100% !important;
+}
+
+html.loading body {
+    overflow: hidden !important;
+    position: fixed !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: #1a202c !important;
+}
+
+/* Hide specific content elements during loading */
+html.loading main,
+html.loading footer,
+html.loading .navbar,
+html.loading nav:not(.page-loader):not(.loader-content),
+html.loading .navbar-brand,
+html.loading .navbar-nav,
+html.loading .navbar-toggler,
+html.loading section:not(.page-loader):not(.loader-content),
+html.loading header:not(.page-loader):not(.loader-content),
+html.loading .container:not(.loader-content),
+html.loading .container-fluid:not(.loader-content) {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    position: relative !important;
+    z-index: -1 !important;
+    display: none !important;
+}
+
+/* Ensure loading screen is always visible */
+html.loading .page-loader {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 999999 !important;
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 25%, #3182ce 50%, #4299e1 75%, #63b3ed 100%) !important;
+    background-size: 400% 400% !important;
+    animation: gradientShift 4s ease infinite !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Force loader content visibility */
+html.loading .page-loader,
+html.loading .page-loader *,
+html.loading .loader-content,
+html.loading .loader-content *,
+html.loading .loader-particles,
+html.loading .loader-particles *,
+html.loading .particle,
+html.loading .loader-logo,
+html.loading .loader-logo *,
+html.loading .loader-text,
+html.loading .loader-progress,
+html.loading .loader-progress *,
+html.loading .loader-dots,
+html.loading .loader-dots *,
+html.loading .loader-dot {
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    z-index: 999999 !important;
+    display: block !important;
+}
+
+/* Special handling for flex elements */
+html.loading .page-loader {
+    display: flex !important;
+}
+
+html.loading .loader-content {
+    display: block !important;
+}
+
+html.loading .loader-dots {
+    display: flex !important;
+}
+
+/* Gradient animation */
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Smooth transition after loading */
+html:not(.loading) * {
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}

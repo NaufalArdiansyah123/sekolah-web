@@ -1,0 +1,784 @@
+/* Enhanced Admin Forms Styling */
+
+/* CSS Variables for consistent theming */
+:root {
+    --form-primary-color: #6366f1;
+    --form-primary-dark: #4f46e5;
+    --form-secondary-color: #8b5cf6;
+    --form-success-color: #10b981;
+    --form-warning-color: #f59e0b;
+    --form-danger-color: #ef4444;
+    --form-info-color: #3b82f6;
+    --form-light-bg: #f8fafc;
+    --form-white: #ffffff;
+    --form-gray-50: #f9fafb;
+    --form-gray-100: #f3f4f6;
+    --form-gray-200: #e5e7eb;
+    --form-gray-300: #d1d5db;
+    --form-gray-400: #9ca3af;
+    --form-gray-500: #6b7280;
+    --form-gray-600: #4b5563;
+    --form-gray-700: #374151;
+    --form-gray-800: #1f2937;
+    --form-gray-900: #111827;
+    --form-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --form-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --form-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --form-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --form-shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    --form-border-radius: 12px;
+    --form-border-radius-lg: 16px;
+    --form-border-radius-xl: 20px;
+}
+
+/* Dark mode variables */
+.dark {
+    --form-light-bg: #1f2937;
+    --form-white: #374151;
+    --form-gray-50: #374151;
+    --form-gray-100: #4b5563;
+    --form-gray-200: #6b7280;
+    --form-gray-300: #9ca3af;
+    --form-gray-400: #d1d5db;
+    --form-gray-500: #e5e7eb;
+    --form-gray-600: #f3f4f6;
+    --form-gray-700: #f9fafb;
+    --form-gray-800: #ffffff;
+    --form-gray-900: #ffffff;
+}
+
+/* Enhanced Form Container */
+.form-container-enhanced {
+    background: var(--form-white);
+    border-radius: var(--form-border-radius-xl);
+    box-shadow: var(--form-shadow-xl);
+    overflow: hidden;
+    margin: 0 auto;
+    max-width: 1200px;
+}
+
+/* Enhanced Form Header */
+.form-header-enhanced {
+    background: linear-gradient(135deg, var(--form-primary-color) 0%, var(--form-primary-dark) 100%);
+    color: white;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.form-header-enhanced::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.form-title-enhanced {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.form-subtitle-enhanced {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin-bottom: 0;
+    position: relative;
+    z-index: 2;
+}
+
+/* Enhanced Form Sections */
+.form-section-enhanced {
+    background: var(--form-white);
+    border: 1px solid var(--form-gray-200);
+    border-radius: var(--form-border-radius-lg);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--form-shadow);
+    border-left: 4px solid var(--form-primary-color);
+    transition: all 0.3s ease;
+}
+
+.form-section-enhanced:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--form-shadow-lg);
+}
+
+.section-title-enhanced {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--form-gray-800);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.section-icon-enhanced {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--form-primary-color), var(--form-secondary-color));
+    color: white;
+    border-radius: var(--form-border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+}
+
+/* Enhanced Form Groups */
+.form-group-enhanced {
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.form-label-enhanced {
+    font-weight: 600;
+    color: var(--form-gray-700);
+    margin-bottom: 0.5rem;
+    display: block;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+}
+
+.form-label-enhanced .required {
+    color: var(--form-danger-color);
+    margin-left: 0.25rem;
+}
+
+/* Enhanced Form Controls */
+.form-control-enhanced, 
+.form-select-enhanced {
+    border: 2px solid var(--form-gray-200);
+    border-radius: var(--form-border-radius);
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: var(--form-white);
+    color: var(--form-gray-800);
+    width: 100%;
+    position: relative;
+}
+
+.form-control-enhanced:focus, 
+.form-select-enhanced:focus {
+    border-color: var(--form-primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    outline: none;
+    transform: translateY(-1px);
+}
+
+.form-control-enhanced:hover:not(:focus), 
+.form-select-enhanced:hover:not(:focus) {
+    border-color: var(--form-gray-300);
+    box-shadow: var(--form-shadow-sm);
+}
+
+/* Validation States */
+.form-control-enhanced.is-invalid, 
+.form-select-enhanced.is-invalid {
+    border-color: var(--form-danger-color);
+    background: #fef2f2;
+    animation: shake 0.5s ease-in-out;
+}
+
+.form-control-enhanced.is-valid, 
+.form-select-enhanced.is-valid {
+    border-color: var(--form-success-color);
+    background: #f0fdf4;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* Enhanced Feedback */
+.invalid-feedback-enhanced {
+    color: var(--form-danger-color);
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.5rem;
+    background: #fef2f2;
+    border-radius: 8px;
+    border-left: 3px solid var(--form-danger-color);
+}
+
+.valid-feedback-enhanced {
+    color: var(--form-success-color);
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.5rem;
+    background: #f0fdf4;
+    border-radius: 8px;
+    border-left: 3px solid var(--form-success-color);
+}
+
+.form-text-enhanced {
+    color: var(--form-gray-500);
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* Enhanced Buttons */
+.btn-enhanced {
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--form-border-radius);
+    font-weight: 600;
+    border: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-enhanced::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.btn-enhanced:hover::before {
+    left: 100%;
+}
+
+.btn-enhanced:hover {
+    transform: translateY(-2px);
+    text-decoration: none;
+}
+
+.btn-primary-enhanced {
+    background: linear-gradient(135deg, var(--form-primary-color), var(--form-primary-dark));
+    color: white;
+    box-shadow: var(--form-shadow);
+}
+
+.btn-primary-enhanced:hover {
+    background: linear-gradient(135deg, var(--form-primary-dark), var(--form-secondary-color));
+    color: white;
+    box-shadow: var(--form-shadow-lg);
+}
+
+.btn-secondary-enhanced {
+    background: var(--form-gray-100);
+    color: var(--form-gray-700);
+    border: 2px solid var(--form-gray-200);
+}
+
+.btn-secondary-enhanced:hover {
+    background: var(--form-gray-200);
+    color: var(--form-gray-800);
+}
+
+.btn-success-enhanced {
+    background: linear-gradient(135deg, var(--form-success-color), #059669);
+    color: white;
+    box-shadow: var(--form-shadow);
+}
+
+.btn-success-enhanced:hover {
+    background: linear-gradient(135deg, #059669, #047857);
+    color: white;
+    box-shadow: var(--form-shadow-lg);
+}
+
+.btn-danger-enhanced {
+    background: linear-gradient(135deg, var(--form-danger-color), #dc2626);
+    color: white;
+    box-shadow: var(--form-shadow);
+}
+
+.btn-danger-enhanced:hover {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    color: white;
+    box-shadow: var(--form-shadow-lg);
+}
+
+.btn-outline-enhanced {
+    background: transparent;
+    border: 2px solid var(--form-gray-300);
+    color: var(--form-gray-600);
+}
+
+.btn-outline-enhanced:hover {
+    background: var(--form-gray-100);
+    color: var(--form-gray-700);
+    border-color: var(--form-gray-400);
+}
+
+/* Enhanced File Upload */
+.file-upload-enhanced {
+    border: 2px dashed var(--form-gray-300);
+    border-radius: var(--form-border-radius-lg);
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    background: var(--form-gray-50);
+    cursor: pointer;
+    color: var(--form-gray-600);
+    position: relative;
+    overflow: hidden;
+}
+
+.file-upload-enhanced:hover {
+    border-color: var(--form-primary-color);
+    background: #f0f9ff;
+    color: var(--form-primary-color);
+    transform: scale(1.02);
+}
+
+.file-upload-enhanced.dragover {
+    border-color: var(--form-primary-color);
+    background: #eff6ff;
+    transform: scale(1.02);
+}
+
+.file-upload-enhanced input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.file-preview-enhanced {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: var(--form-border-radius);
+    box-shadow: var(--form-shadow-lg);
+    margin: 1rem auto;
+    transition: all 0.3s ease;
+}
+
+.file-preview-enhanced:hover {
+    transform: scale(1.05);
+    box-shadow: var(--form-shadow-xl);
+}
+
+/* Enhanced Checkboxes and Radios */
+.form-check-enhanced {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    border-radius: var(--form-border-radius);
+    transition: all 0.3s ease;
+}
+
+.form-check-enhanced:hover {
+    background: var(--form-gray-50);
+}
+
+.form-check-input-enhanced {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--form-primary-color);
+    border-radius: 4px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    appearance: none;
+    background: var(--form-white);
+}
+
+.form-check-input-enhanced[type="radio"] {
+    border-radius: 50%;
+}
+
+.form-check-input-enhanced:checked {
+    background: var(--form-primary-color);
+    border-color: var(--form-primary-color);
+}
+
+.form-check-input-enhanced:checked::after {
+    content: '✓';
+    color: white;
+    font-size: 12px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.form-check-input-enhanced[type="radio"]:checked::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+}
+
+.form-check-label-enhanced {
+    font-weight: 500;
+    color: var(--form-gray-700);
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Enhanced Textarea */
+.form-textarea-enhanced {
+    border: 2px solid var(--form-gray-200);
+    border-radius: var(--form-border-radius);
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+    background: var(--form-white);
+    color: var(--form-gray-800);
+    width: 100%;
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-textarea-enhanced:focus {
+    border-color: var(--form-primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    outline: none;
+}
+
+/* Enhanced Select */
+.form-select-enhanced {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+}
+
+/* Enhanced Input Groups */
+.input-group-enhanced {
+    display: flex;
+    align-items: stretch;
+    border-radius: var(--form-border-radius);
+    overflow: hidden;
+    box-shadow: var(--form-shadow-sm);
+    transition: all 0.3s ease;
+}
+
+.input-group-enhanced:focus-within {
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.input-group-text-enhanced {
+    background: var(--form-gray-100);
+    border: 2px solid var(--form-gray-200);
+    border-right: none;
+    padding: 0.75rem 1rem;
+    color: var(--form-gray-600);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+}
+
+.input-group-enhanced .form-control-enhanced {
+    border-left: none;
+    border-radius: 0;
+}
+
+.input-group-enhanced .form-control-enhanced:focus {
+    box-shadow: none;
+}
+
+/* Enhanced Form Actions */
+.form-actions-enhanced {
+    background: var(--form-gray-50);
+    padding: 2rem;
+    border-top: 1px solid var(--form-gray-200);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+/* Enhanced Alerts */
+.alert-enhanced {
+    border-radius: var(--form-border-radius);
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: var(--form-shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+.alert-enhanced::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+}
+
+.alert-danger-enhanced {
+    background: #fef2f2;
+    color: #991b1b;
+}
+
+.alert-danger-enhanced::before {
+    background: var(--form-danger-color);
+}
+
+.alert-success-enhanced {
+    background: #f0fdf4;
+    color: #166534;
+}
+
+.alert-success-enhanced::before {
+    background: var(--form-success-color);
+}
+
+.alert-info-enhanced {
+    background: #eff6ff;
+    color: #1e40af;
+}
+
+.alert-info-enhanced::before {
+    background: var(--form-info-color);
+}
+
+.alert-warning-enhanced {
+    background: #fffbeb;
+    color: #92400e;
+}
+
+.alert-warning-enhanced::before {
+    background: var(--form-warning-color);
+}
+
+/* Enhanced Loading States */
+.form-loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.form-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid var(--form-primary-color);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Enhanced Floating Labels */
+.form-floating-enhanced {
+    position: relative;
+}
+
+.form-floating-enhanced .form-control-enhanced {
+    padding: 1rem 0.75rem 0.25rem;
+}
+
+.form-floating-enhanced label {
+    position: absolute;
+    top: 0;
+    left: 0.75rem;
+    height: 100%;
+    padding: 1rem 0;
+    pointer-events: none;
+    border: 1px solid transparent;
+    transform-origin: 0 0;
+    transition: opacity 0.1s ease-in-out, transform 0.1s ease-in-out;
+    color: var(--form-gray-500);
+}
+
+.form-floating-enhanced .form-control-enhanced:focus ~ label,
+.form-floating-enhanced .form-control-enhanced:not(:placeholder-shown) ~ label {
+    opacity: 0.65;
+    transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+}
+
+/* Enhanced Progress Indicators */
+.form-progress-enhanced {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.form-progress-enhanced::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--form-gray-200);
+    z-index: 1;
+}
+
+.form-step-enhanced {
+    background: var(--form-white);
+    border: 2px solid var(--form-gray-200);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.875rem;
+    position: relative;
+    z-index: 2;
+    transition: all 0.3s ease;
+}
+
+.form-step-enhanced.active {
+    background: var(--form-primary-color);
+    border-color: var(--form-primary-color);
+    color: white;
+}
+
+.form-step-enhanced.completed {
+    background: var(--form-success-color);
+    border-color: var(--form-success-color);
+    color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .form-container-enhanced {
+        margin: 1rem;
+        border-radius: var(--form-border-radius);
+    }
+
+    .form-header-enhanced {
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .form-title-enhanced {
+        font-size: 1.5rem;
+    }
+
+    .form-section-enhanced {
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-actions-enhanced {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-enhanced {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Animation Classes */
+.fade-in-enhanced {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUpEnhanced 0.6s ease forwards;
+}
+
+.fade-in-enhanced:nth-child(1) { animation-delay: 0.1s; }
+.fade-in-enhanced:nth-child(2) { animation-delay: 0.2s; }
+.fade-in-enhanced:nth-child(3) { animation-delay: 0.3s; }
+.fade-in-enhanced:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes fadeInUpEnhanced {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Utility Classes */
+.text-required {
+    color: var(--form-danger-color);
+}
+
+.form-help-text {
+    font-size: 0.75rem;
+    color: var(--form-gray-500);
+    margin-top: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.form-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--form-gray-200), transparent);
+    margin: 2rem 0;
+}
+
+/* Dark Mode Adjustments */
+.dark .form-control-enhanced.is-invalid,
+.dark .form-select-enhanced.is-invalid {
+    background: #7f1d1d;
+    color: #fecaca;
+}
+
+.dark .form-control-enhanced.is-valid,
+.dark .form-select-enhanced.is-valid {
+    background: #14532d;
+    color: #bbf7d0;
+}
+
+.dark .alert-danger-enhanced {
+    background: #7f1d1d;
+    color: #fecaca;
+}
+
+.dark .alert-success-enhanced {
+    background: #14532d;
+    color: #bbf7d0;
+}
+
+.dark .alert-info-enhanced {
+    background: #1e3a8a;
+    color: #bfdbfe;
+}
+
+.dark .alert-warning-enhanced {
+    background: #92400e;
+    color: #fbbf24;
+}

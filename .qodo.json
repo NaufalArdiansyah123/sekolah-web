@@ -1,0 +1,67 @@
+{
+  "version": "1.0",
+  "project": {
+    "name": "sekolah-web",
+    "type": "laravel",
+    "language": "php",
+    "framework": "laravel"
+  },
+  "analysis": {
+    "enabled": true,
+    "include": [
+      "app/**/*.php",
+      "config/**/*.php",
+      "database/**/*.php",
+      "routes/**/*.php",
+      "resources/**/*.php",
+      "resources/**/*.js",
+      "resources/**/*.vue",
+      "resources/**/*.blade.php"
+    ],
+    "exclude": [
+      "vendor/**",
+      "node_modules/**",
+      "storage/**",
+      "bootstrap/cache/**",
+      "public/build/**",
+      "*.log",
+      "*.cache"
+    ]
+  },
+  "code_review": {
+    "enabled": true,
+    "auto_review": false,
+    "rules": {
+      "security": true,
+      "performance": true,
+      "maintainability": true,
+      "best_practices": true
+    }
+  },
+  "testing": {
+    "enabled": true,
+    "framework": "phpunit",
+    "test_paths": [
+      "tests/**/*.php"
+    ]
+  },
+  "git": {
+    "enabled": true,
+    "hooks": {
+      "pre_commit": false,
+      "pre_push": false
+    }
+  },
+  "integrations": {
+    "laravel": {
+      "artisan_commands": true,
+      "blade_templates": true,
+      "eloquent_models": true
+    },
+    "frontend": {
+      "vite": true,
+      "tailwind": true,
+      "alpine": true
+    }
+  }
+}

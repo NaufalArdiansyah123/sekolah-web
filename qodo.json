@@ -1,0 +1,174 @@
+{
+  "project": {
+    "name": "sekolah-web",
+    "type": "laravel",
+    "version": "10.x",
+    "description": "Laravel School Management System",
+    "framework": {
+      "name": "laravel",
+      "version": "10.x",
+      "php_version": "8.1+",
+      "build_tool": "vite",
+      "frontend": ["tailwindcss", "alpinejs"],
+      "testing": "phpunit"
+    }
+  },
+  "analysis": {
+    "enabled": true,
+    "include": [
+      "app/**/*.php",
+      "config/**/*.php",
+      "database/**/*.php",
+      "routes/**/*.php",
+      "resources/**/*.blade.php",
+      "resources/**/*.js",
+      "resources/**/*.css",
+      "tests/**/*.php"
+    ],
+    "exclude": [
+      "vendor/**",
+      "node_modules/**",
+      "storage/**",
+      "bootstrap/cache/**",
+      "public/build/**",
+      "*.log"
+    ],
+    "rules": {
+      "security": {
+        "enabled": true,
+        "level": "strict",
+        "checks": [
+          "sql_injection",
+          "xss_prevention",
+          "csrf_protection",
+          "authentication",
+          "authorization",
+          "file_upload_security",
+          "session_security",
+          "input_validation"
+        ]
+      },
+      "performance": {
+        "enabled": true,
+        "level": "moderate",
+        "checks": [
+          "database_queries",
+          "caching_opportunities",
+          "asset_optimization",
+          "memory_usage",
+          "response_time"
+        ]
+      },
+      "quality": {
+        "enabled": true,
+        "level": "moderate",
+        "checks": [
+          "code_complexity",
+          "duplication",
+          "naming_conventions",
+          "documentation",
+          "laravel_best_practices"
+        ]
+      },
+      "maintainability": {
+        "enabled": true,
+        "level": "moderate",
+        "checks": [
+          "code_organization",
+          "dependency_management",
+          "test_coverage",
+          "error_handling"
+        ]
+      }
+    }
+  },
+  "testing": {
+    "framework": "phpunit",
+    "config_file": "phpunit.xml",
+    "test_directories": ["tests/"],
+    "coverage": {
+      "enabled": true,
+      "minimum_threshold": 70,
+      "report_format": ["html", "text"]
+    }
+  },
+  "workflows": {
+    "pre_commit": {
+      "enabled": false,
+      "quick_scan": true,
+      "block_on_high_severity": true
+    },
+    "pull_request": {
+      "enabled": true,
+      "full_analysis": true,
+      "generate_report": true
+    },
+    "scheduled": {
+      "enabled": false,
+      "frequency": "weekly",
+      "full_scan": true
+    }
+  },
+  "reporting": {
+    "output_directory": "qodo-reports",
+    "formats": ["html", "json", "markdown"],
+    "include_metrics": true,
+    "include_suggestions": true,
+    "severity_levels": ["critical", "high", "medium", "low", "info"]
+  },
+  "integrations": {
+    "git": {
+      "enabled": true,
+      "hooks": {
+        "pre_commit": false,
+        "pre_push": false
+      }
+    },
+    "laravel": {
+      "artisan_commands": true,
+      "eloquent_analysis": true,
+      "blade_template_analysis": true,
+      "route_analysis": true,
+      "middleware_analysis": true
+    },
+    "frontend": {
+      "vite": true,
+      "tailwindcss": true,
+      "alpinejs": true
+    }
+  },
+  "custom_rules": {
+    "laravel_specific": [
+      {
+        "name": "proper_model_relationships",
+        "description": "Ensure Eloquent relationships are properly defined",
+        "severity": "medium"
+      },
+      {
+        "name": "route_security",
+        "description": "Check for proper middleware usage on routes",
+        "severity": "high"
+      },
+      {
+        "name": "blade_security",
+        "description": "Ensure proper escaping in Blade templates",
+        "severity": "high"
+      },
+      {
+        "name": "database_migrations",
+        "description": "Validate migration file structure and safety",
+        "severity": "medium"
+      }
+    ]
+  },
+  "notifications": {
+    "enabled": true,
+    "channels": ["console"],
+    "severity_threshold": "medium"
+  },
+  "cache": {
+    "enabled": true,
+    "ttl": 3600,
+    "directory": ".qodo/cache"
+  }
+}
