@@ -4,83 +4,13 @@
 
 @section('content')
     <div class="settings-page">
-        <!-- Hero Header -->
-        <div class="hero-header">
-            <div class="hero-content">
-                <div class="hero-icon">
-                    <div class="icon-wrapper">
-                        <i class="fas fa-cogs"></i>
-                    </div>
-                </div>
-                <div class="hero-text">
-                    <h1 class="hero-title">System Settings</h1>
-                    <p class="hero-subtitle">Configure and customize your school management system with advanced controls
-                    </p>
-                    <div class="hero-breadcrumb">
-                        <span class="breadcrumb-item">
-                            <i class="fas fa-home"></i>
-                            <a href="{{ route('admin.dashboard') }}">Dashboard</a>
-                        </span>
-                        <span class="breadcrumb-separator">
-                            <i class="fas fa-chevron-right"></i>
-                        </span>
-                        <span class="breadcrumb-item active">Settings</span>
-                    </div>
-                </div>
+        <!-- Simple Header -->
+        <div class="page-header">
+            <div class="header-content">
+                <h1 class="page-title">System Settings</h1>
+                <p class="page-subtitle">Configure your school management system</p>
             </div>
-
         </div>
-
-        <!-- Alert Messages -->
-        @if(session('success'))
-            <div class="alert-container">
-                <div class="alert alert-success">
-                    <div class="alert-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="alert-content">
-                        <h4 class="alert-title">Success!</h4>
-                        <p class="alert-message">{{ session('success') }}</p>
-                    </div>
-                    <button type="button" class="alert-close" onclick="this.parentElement.parentElement.remove()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-            <script>
-                console.log('Success message displayed:', '{{ session('success') }}');
-            </script>
-        @endif
-
-        @if(session('error'))
-            <div class="alert-container">
-                <div class="alert alert-error">
-                    <div class="alert-icon">
-                        <i class="fas fa-exclamation-circle"></i>
-                    </div>
-                    <div class="alert-content">
-                        <h4 class="alert-title">Error!</h4>
-                        <p class="alert-message">{{ session('error') }}</p>
-                    </div>
-                    <button type="button" class="alert-close" onclick="this.parentElement.parentElement.remove()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-            <script>
-                console.log('Error message displayed:', '{{ session('error') }}');
-            </script>
-        @endif
-
-        <!-- Debug Session Data -->
-        <script>
-            console.log('Page loaded - Session data check:', {
-                'has_success': {{ session()->has('success') ? 'true' : 'false' }},
-                'has_error': {{ session()->has('error') ? 'true' : 'false' }},
-                'success_message': '{{ session('success') }}',
-                'error_message': '{{ session('error') }}'
-            });
-        </script>
 
         <!-- Main Settings Container -->
         <form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data" id="settingsForm">
@@ -88,256 +18,114 @@
             @method('PUT')
 
             <div class="settings-container">
-                <!-- Enhanced Tab Navigation -->
+                <!-- Simple Tab Navigation -->
                 <div class="tab-navigation">
-                    <div class="nav-background"></div>
-                    <div class="nav-content">
-                        <div class="nav-tabs">
-                            <button type="button" class="nav-tab active" data-tab="school">
-                                <div class="tab-icon-wrapper">
-                                    <div class="tab-icon">
-                                        <i class="fas fa-school"></i>
-                                    </div>
-                                </div>
-                                <div class="tab-text">
-                                    <span class="tab-title">School</span>
-                                    <span class="tab-description">Logo & Identity</span>
-                                </div>
-                            </button>
-
-                            <button type="button" class="nav-tab" data-tab="academic">
-                                <div class="tab-icon-wrapper">
-                                    <div class="tab-icon">
-                                        <i class="fas fa-graduation-cap"></i>
-                                    </div>
-                                </div>
-                                <div class="tab-text">
-                                    <span class="tab-title">Academic</span>
-                                    <span class="tab-description">Year & Schedule Settings</span>
-                                </div>
-                            </button>
-
-                            <button type="button" class="nav-tab" data-tab="system">
-                                <div class="tab-icon-wrapper">
-                                    <div class="tab-icon">
-                                        <i class="fas fa-cog"></i>
-                                    </div>
-                                </div>
-                                <div class="tab-text">
-                                    <span class="tab-title">System</span>
-                                    <span class="tab-description">Security & Performance</span>
-                                </div>
-                            </button>
-
-
-
-                            <button type="button" class="nav-tab" data-tab="backup">
-                                <div class="tab-icon-wrapper">
-                                    <div class="tab-icon">
-                                        <i class="fas fa-database"></i>
-                                    </div>
-                                </div>
-                                <div class="tab-text">
-                                    <span class="tab-title">Backup</span>
-                                    <span class="tab-description">Data & Maintenance</span>
-                                </div>
-                            </button>
-                        </div>
-                        <div class="nav-slider"></div>
+                    <div class="nav-tabs">
+                        <button type="button" class="nav-tab active" data-tab="school">
+                            <i class="fas fa-school"></i>
+                            <span>School</span>
+                        </button>
+                        <button type="button" class="nav-tab" data-tab="academic">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>Academic</span>
+                        </button>
+                        <button type="button" class="nav-tab" data-tab="system">
+                            <i class="fas fa-cog"></i>
+                            <span>System</span>
+                        </button>
+                        <button type="button" class="nav-tab" data-tab="footer">
+                            <i class="fas fa-globe"></i>
+                            <span>Footer</span>
+                        </button>
+                        <button type="button" class="nav-tab" data-tab="backup">
+                            <i class="fas fa-database"></i>
+                            <span>Backup</span>
+                        </button>
                     </div>
                 </div>
 
-                <!-- Tab Content Panels -->
+                <!-- Tab Content -->
                 <div class="tab-content">
                     <!-- School Settings Panel -->
                     <div class="tab-panel active" id="school-panel">
                         <div class="panel-header">
-                            <div class="header-icon">
-                                <i class="fas fa-school"></i>
-                            </div>
-                            <div class="header-content">
-                                <h2 class="panel-title">School Settings</h2>
-                                <p class="panel-subtitle">Configure school identity, logo, and basic information</p>
-                            </div>
+                            <h2>School Settings</h2>
+                            <p>Configure school identity and logo</p>
                         </div>
 
-                        <div class="panel-content">
-                            <div class="settings-grid">
-                                <!-- School Identity Card -->
-                                <div class="setting-card">
-                                    <div class="card-header">
-                                        <div class="card-icon">
-                                            <i class="fas fa-id-card"></i>
-                                        </div>
-                                        <div class="card-title">
-                                            <h3>School Identity</h3>
-                                            <p>Configure school name and subtitle</p>
-                                        </div>
+                        <div class="settings-grid">
+                            <!-- School Identity -->
+                            <div class="setting-card">
+                                <div class="card-header">
+                                    <h3>School Identity</h3>
+                                </div>
+                                <div class="card-content">
+                                    <div class="form-group">
+                                        <label for="school_name">School Name</label>
+                                        <input type="text" class="form-control @error('school_name') error @enderror"
+                                            id="school_name" name="school_name"
+                                            value="{{ old('school_name', $settings['school_name']->value ?? 'SMA Negeri 1') }}">
+                                        @error('school_name')
+                                            <div class="error-message">{{ $message }}</div>
+                                        @enderror
                                     </div>
-                                    <div class="card-content">
-                                        <div class="form-group">
-                                            <div class="input-container">
-                                                <input type="text"
-                                                    class="form-control @error('school_name') error @enderror"
-                                                    id="school_name" name="school_name"
-                                                    value="{{ old('school_name', $settings['school_name']->value ?? 'SMA Negeri 1') }}"
-                                                    placeholder=" ">
-                                                <label for="school_name" class="form-label">School Name</label>
-                                                <div class="input-border"></div>
-                                                <div class="input-focus"></div>
-                                            </div>
-                                            @error('school_name')
-                                                <div class="error-message">
-                                                    <i class="fas fa-exclamation-triangle"></i>
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
 
-                                        <div class="form-group">
-                                            <div class="input-container">
-                                                <input type="text"
-                                                    class="form-control @error('school_subtitle') error @enderror"
-                                                    id="school_subtitle" name="school_subtitle"
-                                                    value="{{ old('school_subtitle', $settings['school_subtitle']->value ?? 'Admin Panel') }}"
-                                                    placeholder=" ">
-                                                <label for="school_subtitle" class="form-label">School Subtitle</label>
-                                                <div class="input-border"></div>
-                                                <div class="input-focus"></div>
-                                            </div>
-                                            @error('school_subtitle')
-                                                <div class="error-message">
-                                                    <i class="fas fa-exclamation-triangle"></i>
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
+                                    <div class="form-group">
+                                        <label for="school_subtitle">School Subtitle</label>
+                                        <input type="text" class="form-control @error('school_subtitle') error @enderror"
+                                            id="school_subtitle" name="school_subtitle"
+                                            value="{{ old('school_subtitle', $settings['school_subtitle']->value ?? 'Admin Panel') }}">
+                                        @error('school_subtitle')
+                                            <div class="error-message">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
+                            </div>
 
-
-
-                                <!-- School Logo Card -->
-                                <div class="setting-card">
-                                    <div class="card-header">
-                                        <div class="card-icon">
-                                            <i class="fas fa-image"></i>
+                            <!-- School Logo -->
+                            <div class="setting-card">
+                                <div class="card-header">
+                                    <h3>School Logo</h3>
+                                </div>
+                                <div class="card-content">
+                                    <div class="form-group">
+                                        <label>Current Logo</label>
+                                        <div class="file-preview">
+                                            @if(isset($settings['school_logo']) && $settings['school_logo']->value)
+                                                <img src="{{ asset('storage/' . $settings['school_logo']->value) }}" 
+                                                     alt="Current Logo" class="current-logo" id="currentLogo">
+                                            @else
+                                                <div class="no-logo" id="noLogo">
+                                                    <i class="fas fa-school"></i>
+                                                    <p>No logo uploaded</p>
+                                                </div>
+                                            @endif
                                         </div>
-                                        <div class="card-title">
-                                            <h3>School Logo</h3>
-                                            <p>Upload and manage school logo</p>
-                                        </div>
+                                        <input type="file" class="form-control @error('school_logo') error @enderror"
+                                            id="school_logo" name="school_logo" accept="image/*" onchange="previewLogo(this)">
+                                        @error('school_logo')
+                                            <div class="error-message">{{ $message }}</div>
+                                        @enderror
                                     </div>
-                                    <div class="card-content">
-                                        <div class="form-group">
-                                            <!-- Debug Info -->
-                                            <!-- Logo setting exists: {{ isset($settings['school_logo']) ? 'YES' : 'NO' }} -->
-                                            <!-- Logo value: {{ isset($settings['school_logo']) ? ($settings['school_logo']->value ?? 'NULL') : 'NOT_SET' }} -->
-                                            <!-- Asset URL: {{ isset($settings['school_logo']) && $settings['school_logo']->value ? asset('storage/' . $settings['school_logo']->value) : 'NO_URL' }} -->
 
-                                            <div class="file-upload-container">
-                                                <div class="file-upload-preview">
-                                                    @if(isset($settings['school_logo']) && $settings['school_logo']->value && !str_contains($settings['school_logo']->value, 'tmp'))
-                                                        @php
-                                                            $logoPath = $settings['school_logo']->value;
-                                                            $assetUrl = asset('storage/' . $logoPath);
-                                                            $fileExists = file_exists(public_path('storage/' . $logoPath));
-                                                        @endphp
-                                                        <!-- Debug: File exists = {{ $fileExists ? 'YES' : 'NO' }} -->
-                                                        <!-- Debug: Full URL = {{ $assetUrl }} -->
-                                                        <!-- Debug: Path valid = {{ !str_contains($logoPath, 'tmp') ? 'YES' : 'NO' }} -->
-
-                                                        @if($fileExists)
-                                                            <img src="{{ $assetUrl }}" alt="Current Logo" class="current-logo"
-                                                                id="currentLogo"
-                                                                onerror="console.error('Logo failed to load:', this.src); this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                                            <div class="no-logo-placeholder" id="noLogoPlaceholder"
-                                                                style="display: none;">
-                                                                <i class="fas fa-school fa-3x"></i>
-                                                                <p>Logo failed to load<br><small>Path: {{ $logoPath }}</small></p>
-                                                            </div>
-                                                        @else
-                                                            <div class="no-logo-placeholder" id="noLogoPlaceholder">
-                                                                <i class="fas fa-school fa-3x"></i>
-                                                                <p>Logo file not found<br><small>Path: {{ $logoPath }}</small></p>
-                                                            </div>
-                                                        @endif
-                                                    @else
-                                                        <div class="no-logo-placeholder" id="noLogoPlaceholder">
-                                                            <i class="fas fa-school fa-3x"></i>
-                                                            <p>No logo uploaded</p>
-                                                            @if(isset($settings['school_logo']) && str_contains($settings['school_logo']->value, 'tmp'))
-                                                                <small style="color: #e74c3c;">Invalid logo path detected</small>
-                                                            @endif
-                                                        </div>
-                                                    @endif
+                                    <div class="form-group">
+                                        <label>Favicon</label>
+                                        <div class="file-preview favicon-preview">
+                                            @if(isset($settings['school_favicon']) && $settings['school_favicon']->value)
+                                                <img src="{{ asset('storage/' . $settings['school_favicon']->value) }}" 
+                                                     alt="Current Favicon" class="current-favicon" id="currentFavicon">
+                                            @else
+                                                <div class="no-favicon" id="noFavicon">
+                                                    <i class="fas fa-star"></i>
+                                                    <p>No favicon</p>
                                                 </div>
-                                                <div class="file-upload-input">
-                                                    <input type="file"
-                                                        class="form-control-file @error('school_logo') error @enderror"
-                                                        id="school_logo" name="school_logo" accept="image/*"
-                                                        onchange="previewLogo(this)">
-                                                    <label for="school_logo" class="file-upload-label">
-                                                        <div class="file-upload-icon">
-                                                            <i class="fas fa-cloud-upload-alt"></i>
-                                                        </div>
-                                                        <div class="file-upload-text">
-                                                            <span class="file-upload-title">Choose Logo File</span>
-                                                            <span class="file-upload-subtitle">PNG, JPG up to 2MB</span>
-                                                        </div>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            @error('school_logo')
-                                                <div class="error-message">
-                                                    <i class="fas fa-exclamation-triangle"></i>
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
+                                            @endif
                                         </div>
-
-                                        <div class="form-group">
-                                            <div class="file-upload-container">
-                                                <div class="file-upload-preview favicon-preview">
-                                                    @if(isset($settings['school_favicon']) && $settings['school_favicon']->value)
-                                                        <img src="{{ asset('storage/' . $settings['school_favicon']->value) }}"
-                                                            alt="Current Favicon" class="current-favicon" id="currentFavicon"
-                                                            onerror="console.log('Favicon failed to load:', this.src); this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                                        <div class="no-favicon-placeholder" id="noFaviconPlaceholder"
-                                                            style="display: none;">
-                                                            <i class="fas fa-star"></i>
-                                                            <p>Favicon failed to load</p>
-                                                        </div>
-                                                    @else
-                                                        <div class="no-favicon-placeholder" id="noFaviconPlaceholder">
-                                                            <i class="fas fa-star"></i>
-                                                            <p>No favicon</p>
-                                                        </div>
-                                                    @endif
-                                                </div>
-                                                <div class="file-upload-input">
-                                                    <input type="file"
-                                                        class="form-control-file @error('school_favicon') error @enderror"
-                                                        id="school_favicon" name="school_favicon" accept="image/*"
-                                                        onchange="previewFavicon(this)">
-                                                    <label for="school_favicon" class="file-upload-label">
-                                                        <div class="file-upload-icon">
-                                                            <i class="fas fa-star"></i>
-                                                        </div>
-                                                        <div class="file-upload-text">
-                                                            <span class="file-upload-title">Choose Favicon</span>
-                                                            <span class="file-upload-subtitle">ICO, PNG 32x32px</span>
-                                                        </div>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            @error('school_favicon')
-                                                <div class="error-message">
-                                                    <i class="fas fa-exclamation-triangle"></i>
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
+                                        <input type="file" class="form-control @error('school_favicon') error @enderror"
+                                            id="school_favicon" name="school_favicon" accept="image/*" onchange="previewFavicon(this)">
+                                        @error('school_favicon')
+                                            <div class="error-message">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
@@ -347,146 +135,74 @@
                     <!-- Academic Settings Panel -->
                     <div class="tab-panel" id="academic-panel">
                         <div class="panel-header">
-                            <div class="header-icon">
-                                <i class="fas fa-graduation-cap"></i>
-                            </div>
-                            <div class="header-content">
-                                <h2 class="panel-title">Academic Settings</h2>
-                                <p class="panel-subtitle">Configure academic year, semester, and attendance settings for
-                                    your institution</p>
-                            </div>
+                            <h2>Academic Settings</h2>
+                            <p>Configure academic year and attendance</p>
                         </div>
 
-                        <div class="panel-content">
-                            <div class="settings-grid">
-                                <!-- Academic Year Card -->
-                                <div class="setting-card">
-                                    <div class="card-header">
-                                        <div class="card-icon">
-                                            <i class="fas fa-calendar-alt"></i>
-                                        </div>
-                                        <div class="card-title">
-                                            <h3>Academic Year</h3>
-                                            <p>Configure current academic period</p>
-                                        </div>
+                        <div class="settings-grid">
+                            <div class="setting-card">
+                                <div class="card-header">
+                                    <h3>Academic Year</h3>
+                                </div>
+                                <div class="card-content">
+                                    <div class="form-group">
+                                        <label for="academic_year">Academic Year</label>
+                                        <input type="text" class="form-control @error('academic_year') error @enderror"
+                                            id="academic_year" name="academic_year"
+                                            value="{{ old('academic_year', $settings['academic_year']->value ?? '2024/2025') }}">
+                                        @error('academic_year')
+                                            <div class="error-message">{{ $message }}</div>
+                                        @enderror
                                     </div>
-                                    <div class="card-content">
-                                        <div class="form-group">
-                                            <div class="input-container">
-                                                <input type="text"
-                                                    class="form-control @error('academic_year') error @enderror"
-                                                    id="academic_year" name="academic_year"
-                                                    value="{{ old('academic_year', $settings['academic_year']->value ?? '2024/2025') }}"
-                                                    placeholder=" ">
-                                                <label for="academic_year" class="form-label">Academic Year</label>
-                                                <div class="input-border"></div>
-                                                <div class="input-focus"></div>
-                                            </div>
-                                            @error('academic_year')
-                                                <div class="error-message">
-                                                    <i class="fas fa-exclamation-triangle"></i>
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
 
-                                        <div class="form-group">
-                                            <div class="select-container">
-                                                <select class="form-select @error('semester') error @enderror" id="semester"
-                                                    name="semester">
-                                                    <option value="1" {{ old('semester', $settings['semester']->value ?? '') == '1' ? 'selected' : '' }}>Semester 1 (Odd)</option>
-                                                    <option value="2" {{ old('semester', $settings['semester']->value ?? '') == '2' ? 'selected' : '' }}>Semester 2 (Even)</option>
-                                                </select>
-                                                <label for="semester" class="form-label">Current Semester</label>
-                                                <div class="select-arrow">
-                                                    <i class="fas fa-chevron-down"></i>
-                                                </div>
-                                                <div class="input-border"></div>
-                                                <div class="input-focus"></div>
-                                            </div>
-                                            @error('semester')
-                                                <div class="error-message">
-                                                    <i class="fas fa-exclamation-triangle"></i>
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
+                                    <div class="form-group">
+                                        <label for="semester">Current Semester</label>
+                                        <select class="form-control @error('semester') error @enderror" id="semester" name="semester">
+                                            <option value="1" {{ old('semester', $settings['semester']->value ?? '') == '1' ? 'selected' : '' }}>Semester 1 (Odd)</option>
+                                            <option value="2" {{ old('semester', $settings['semester']->value ?? '') == '2' ? 'selected' : '' }}>Semester 2 (Even)</option>
+                                        </select>
+                                        @error('semester')
+                                            <div class="error-message">{{ $message }}</div>
+                                        @enderror
+                                    </div>
 
-                                        <div class="form-group">
-                                            <div class="select-container">
-                                                <select class="form-select @error('school_timezone') error @enderror"
-                                                    id="school_timezone" name="school_timezone">
-                                                    <option value="Asia/Jakarta" {{ old('school_timezone', $settings['school_timezone']->value ?? 'Asia/Jakarta') == 'Asia/Jakarta' ? 'selected' : '' }}>Asia/Jakarta
-                                                        (WIB)</option>
-                                                    <option value="Asia/Makassar" {{ old('school_timezone', $settings['school_timezone']->value ?? '') == 'Asia/Makassar' ? 'selected' : '' }}>Asia/Makassar (WITA)</option>
-                                                    <option value="Asia/Jayapura" {{ old('school_timezone', $settings['school_timezone']->value ?? '') == 'Asia/Jayapura' ? 'selected' : '' }}>Asia/Jayapura (WIT)</option>
-                                                </select>
-                                                <label for="school_timezone" class="form-label">Timezone</label>
-                                                <div class="select-arrow">
-                                                    <i class="fas fa-chevron-down"></i>
-                                                </div>
-                                                <div class="input-border"></div>
-                                                <div class="input-focus"></div>
-                                            </div>
-                                            @error('school_timezone')
-                                                <div class="error-message">
-                                                    <i class="fas fa-exclamation-triangle"></i>
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
+                                    <div class="form-group">
+                                        <label for="school_timezone">Timezone</label>
+                                        <select class="form-control @error('school_timezone') error @enderror" id="school_timezone" name="school_timezone">
+                                            <option value="Asia/Jakarta" {{ old('school_timezone', $settings['school_timezone']->value ?? 'Asia/Jakarta') == 'Asia/Jakarta' ? 'selected' : '' }}>Asia/Jakarta (WIB)</option>
+                                            <option value="Asia/Makassar" {{ old('school_timezone', $settings['school_timezone']->value ?? '') == 'Asia/Makassar' ? 'selected' : '' }}>Asia/Makassar (WITA)</option>
+                                            <option value="Asia/Jayapura" {{ old('school_timezone', $settings['school_timezone']->value ?? '') == 'Asia/Jayapura' ? 'selected' : '' }}>Asia/Jayapura (WIT)</option>
+                                        </select>
+                                        @error('school_timezone')
+                                            <div class="error-message">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
+                            </div>
 
-                                <!-- Attendance Settings Card -->
-                                <div class="setting-card">
-                                    <div class="card-header">
-                                        <div class="card-icon">
-                                            <i class="fas fa-clock"></i>
-                                        </div>
-                                        <div class="card-title">
-                                            <h3>Attendance Settings</h3>
-                                            <p>Configure attendance time windows and policies</p>
-                                        </div>
+                            <div class="setting-card">
+                                <div class="card-header">
+                                    <h3>Attendance Settings</h3>
+                                </div>
+                                <div class="card-content">
+                                    <div class="form-group">
+                                        <label for="attendance_start_time">Attendance Start Time</label>
+                                        <input type="time" class="form-control @error('attendance_start_time') error @enderror"
+                                            id="attendance_start_time" name="attendance_start_time"
+                                            value="{{ old('attendance_start_time', $settings['attendance_start_time']->value ?? '07:00') }}">
+                                        @error('attendance_start_time')
+                                            <div class="error-message">{{ $message }}</div>
+                                        @enderror
                                     </div>
-                                    <div class="card-content">
-                                        <div class="form-group">
-                                            <div class="input-container">
-                                                <input type="time"
-                                                    class="form-control @error('attendance_start_time') error @enderror"
-                                                    id="attendance_start_time" name="attendance_start_time"
-                                                    value="{{ old('attendance_start_time', $settings['attendance_start_time']->value ?? '07:00') }}">
-                                                <label for="attendance_start_time" class="form-label">Attendance Start
-                                                    Time</label>
-                                                <div class="input-border"></div>
-                                                <div class="input-focus"></div>
-                                            </div>
-                                            @error('attendance_start_time')
-                                                <div class="error-message">
-                                                    <i class="fas fa-exclamation-triangle"></i>
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
 
-                                        <div class="form-group">
-                                            <div class="input-container">
-                                                <input type="time"
-                                                    class="form-control @error('attendance_end_time') error @enderror"
-                                                    id="attendance_end_time" name="attendance_end_time"
-                                                    value="{{ old('attendance_end_time', $settings['attendance_end_time']->value ?? '07:30') }}">
-                                                <label for="attendance_end_time" class="form-label">Attendance End
-                                                    Time</label>
-                                                <div class="input-border"></div>
-                                                <div class="input-focus"></div>
-                                            </div>
-                                            @error('attendance_end_time')
-                                                <div class="error-message">
-                                                    <i class="fas fa-exclamation-triangle"></i>
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
+                                    <div class="form-group">
+                                        <label for="attendance_end_time">Attendance End Time</label>
+                                        <input type="time" class="form-control @error('attendance_end_time') error @enderror"
+                                            id="attendance_end_time" name="attendance_end_time"
+                                            value="{{ old('attendance_end_time', $settings['attendance_end_time']->value ?? '07:30') }}">
+                                        @error('attendance_end_time')
+                                            <div class="error-message">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
@@ -496,304 +212,263 @@
                     <!-- System Settings Panel -->
                     <div class="tab-panel" id="system-panel">
                         <div class="panel-header">
-                            <div class="header-icon">
-                                <i class="fas fa-cog"></i>
-                            </div>
-                            <div class="header-content">
-                                <h2 class="panel-title">System Settings</h2>
-                                <p class="panel-subtitle">Configure system security, performance limits, and operational
-                                    controls</p>
-                            </div>
+                            <h2>System Settings</h2>
+                            <p>Configure system security and limits</p>
                         </div>
 
-                        <div class="panel-content">
-                            <div class="settings-grid">
-                                <!-- System Control Card -->
-                                <div class="setting-card">
-                                    <div class="card-header">
-                                        <div class="card-icon">
-                                            <i class="fas fa-shield-alt"></i>
-                                        </div>
-                                        <div class="card-title">
-                                            <h3>System Control</h3>
-                                            <p>Manage system operational modes</p>
+                        <div class="settings-grid">
+                            <div class="setting-card">
+                                <div class="card-header">
+                                    <h3>System Control</h3>
+                                </div>
+                                <div class="card-content">
+                                    <div class="form-group">
+                                        <div class="toggle-item">
+                                            <label for="maintenance_mode">Maintenance Mode</label>
+                                            <div class="toggle-switch">
+                                                <input type="hidden" name="maintenance_mode" value="0">
+                                                <input type="checkbox" id="maintenance_mode" name="maintenance_mode"
+                                                    value="1" {{ old('maintenance_mode', $settings['maintenance_mode']->value ?? '0') == '1' ? 'checked' : '' }}>
+                                                <label for="maintenance_mode" class="switch"></label>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="card-content">
-                                        <div class="toggle-group">
-                                            <div class="toggle-item">
-                                                <div class="toggle-info">
-                                                    <h4 class="toggle-title">Maintenance Mode</h4>
-                                                    <p class="toggle-description">Put the site in maintenance mode for
-                                                        updates and repairs</p>
-                                                </div>
-                                                <div class="toggle-switch">
-                                                    <input type="hidden" name="maintenance_mode" value="0">
-                                                    <input type="checkbox" id="maintenance_mode" name="maintenance_mode"
-                                                        value="1" {{ old('maintenance_mode', $settings['maintenance_mode']->value ?? '0') == '1' ? 'checked' : '' }}>
-                                                    <label for="maintenance_mode" class="switch">
-                                                        <span class="slider"></span>
-                                                        <span class="switch-text on">ON</span>
-                                                        <span class="switch-text off">OFF</span>
-                                                    </label>
-                                                </div>
-                                            </div>
 
-                                            <div class="toggle-item">
-                                                <div class="toggle-info">
-                                                    <h4 class="toggle-title">Pendaftaran Akun Siswa</h4>
-                                                    <p class="toggle-description">Izinkan siswa untuk mendaftar akun baru di
-                                                        platform</p>
-                                                </div>
-                                                <div class="toggle-switch">
-                                                    <input type="hidden" name="allow_registration" value="0">
-                                                    <input type="checkbox" id="allow_registration" name="allow_registration"
-                                                        value="1" {{ old('allow_registration', $settings['allow_registration']->value ?? '1') == '1' ? 'checked' : '' }}>
-                                                    <label for="allow_registration" class="switch">
-                                                        <span class="slider"></span>
-                                                        <span class="switch-text on">ON</span>
-                                                        <span class="switch-text off">OFF</span>
-                                                    </label>
-                                                </div>
+                                    <div class="form-group">
+                                        <div class="toggle-item">
+                                            <label for="allow_registration">Allow Student Registration</label>
+                                            <div class="toggle-switch">
+                                                <input type="hidden" name="allow_registration" value="0">
+                                                <input type="checkbox" id="allow_registration" name="allow_registration"
+                                                    value="1" {{ old('allow_registration', $settings['allow_registration']->value ?? '1') == '1' ? 'checked' : '' }}>
+                                                <label for="allow_registration" class="switch"></label>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <!-- Security & Limits Card -->
-                                <div class="setting-card">
-                                    <div class="card-header">
-                                        <div class="card-icon">
-                                            <i class="fas fa-user-shield"></i>
-                                        </div>
-                                        <div class="card-title">
-                                            <h3>Security & Limits</h3>
-                                            <p>Configure security and performance limits</p>
-                                        </div>
+                            <div class="setting-card">
+                                <div class="card-header">
+                                    <h3>Security & Limits</h3>
+                                </div>
+                                <div class="card-content">
+                                    <div class="form-group">
+                                        <label for="max_upload_size">Max Upload Size (MB)</label>
+                                        <input type="number" class="form-control @error('max_upload_size') error @enderror"
+                                            id="max_upload_size" name="max_upload_size"
+                                            value="{{ old('max_upload_size', $settings['max_upload_size']->value ?? '10') }}"
+                                            min="1" max="100">
+                                        @error('max_upload_size')
+                                            <div class="error-message">{{ $message }}</div>
+                                        @enderror
                                     </div>
-                                    <div class="card-content">
-                                        <div class="form-group">
-                                            <div class="input-container">
-                                                <input type="number"
-                                                    class="form-control @error('max_upload_size') error @enderror"
-                                                    id="max_upload_size" name="max_upload_size"
-                                                    value="{{ old('max_upload_size', $settings['max_upload_size']->value ?? '10') }}"
-                                                    min="1" max="100" placeholder=" ">
-                                                <label for="max_upload_size" class="form-label">Max Upload Size (MB)</label>
-                                                <div class="input-border"></div>
-                                                <div class="input-focus"></div>
-                                            </div>
-                                            @error('max_upload_size')
-                                                <div class="error-message">
-                                                    <i class="fas fa-exclamation-triangle"></i>
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
 
-                                        <div class="form-group">
-                                            <div class="input-container">
-                                                <input type="number"
-                                                    class="form-control @error('session_lifetime') error @enderror"
-                                                    id="session_lifetime" name="session_lifetime"
-                                                    value="{{ old('session_lifetime', $settings['session_lifetime']->value ?? '120') }}"
-                                                    min="30" max="1440" placeholder=" ">
-                                                <label for="session_lifetime" class="form-label">Session Lifetime
-                                                    (minutes)</label>
-                                                <div class="input-border"></div>
-                                                <div class="input-focus"></div>
-                                            </div>
-                                            @error('session_lifetime')
-                                                <div class="error-message">
-                                                    <i class="fas fa-exclamation-triangle"></i>
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
+                                    <div class="form-group">
+                                        <label for="session_lifetime">Session Lifetime (minutes)</label>
+                                        <input type="number" class="form-control @error('session_lifetime') error @enderror"
+                                            id="session_lifetime" name="session_lifetime"
+                                            value="{{ old('session_lifetime', $settings['session_lifetime']->value ?? '120') }}"
+                                            min="30" max="1440">
+                                        @error('session_lifetime')
+                                            <div class="error-message">{{ $message }}</div>
+                                        @enderror
+                                    </div>
 
-                                        <div class="form-group">
-                                            <div class="input-container">
-                                                <input type="number"
-                                                    class="form-control @error('max_login_attempts') error @enderror"
-                                                    id="max_login_attempts" name="max_login_attempts"
-                                                    value="{{ old('max_login_attempts', $settings['max_login_attempts']->value ?? '5') }}"
-                                                    min="3" max="10" placeholder=" ">
-                                                <label for="max_login_attempts" class="form-label">Max Login
-                                                    Attempts</label>
-                                                <div class="input-border"></div>
-                                                <div class="input-focus"></div>
-                                            </div>
-                                            @error('max_login_attempts')
-                                                <div class="error-message">
-                                                    <i class="fas fa-exclamation-triangle"></i>
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
+                                    <div class="form-group">
+                                        <label for="max_login_attempts">Max Login Attempts</label>
+                                        <input type="number" class="form-control @error('max_login_attempts') error @enderror"
+                                            id="max_login_attempts" name="max_login_attempts"
+                                            value="{{ old('max_login_attempts', $settings['max_login_attempts']->value ?? '5') }}"
+                                            min="3" max="10">
+                                        @error('max_login_attempts')
+                                            <div class="error-message">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
+                   
 
-
-                    <!-- Backup & Maintenance Panel -->
-                    <div class="tab-panel" id="backup-panel">
+                    <!-- Footer Settings Panel -->
+                    <div class="tab-panel" id="footer-panel">
                         <div class="panel-header">
-                            <div class="header-icon">
-                                <i class="fas fa-database"></i>
-                            </div>
-                            <div class="header-content">
-                                <h2 class="panel-title">Backup & Maintenance</h2>
-                                <p class="panel-subtitle">Configure backup settings and access system maintenance tools</p>
-                            </div>
+                            <h2>Footer Settings</h2>
+                            <p>Configure footer content and social media</p>
                         </div>
 
-                        <div class="panel-content">
-                            <div class="settings-grid">
-                                <!-- Backup Settings Card -->
-                                <div class="setting-card">
-                                    <div class="card-header">
-                                        <div class="card-icon">
-                                            <i class="fas fa-database"></i>
-                                        </div>
-                                        <div class="card-title">
-                                            <h3>Backup Settings</h3>
-                                            <p>Configure automatic backup preferences</p>
-                                        </div>
-                                    </div>
-                                    <div class="card-content">
-                                        <div class="toggle-group">
-                                            <div class="toggle-item">
-                                                <div class="toggle-info">
-                                                    <h4 class="toggle-title">Auto Backup</h4>
-                                                    <p class="toggle-description">Automatically create system backups on
-                                                        schedule</p>
-                                                </div>
-                                                <div class="toggle-switch">
-                                                    <input type="hidden" name="auto_backup_enabled" value="0">
-                                                    <input type="checkbox" id="auto_backup_enabled"
-                                                        name="auto_backup_enabled" value="1" {{ old('auto_backup_enabled', $settings['auto_backup_enabled']->value ?? '0') == '1' ? 'checked' : '' }}>
-                                                    <label for="auto_backup_enabled" class="switch">
-                                                        <span class="slider"></span>
-                                                        <span class="switch-text on">ON</span>
-                                                        <span class="switch-text off">OFF</span>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <div class="select-container">
-                                                <select class="form-select @error('backup_frequency') error @enderror"
-                                                    id="backup_frequency" name="backup_frequency">
-                                                    <option value="daily" {{ old('backup_frequency', $settings['backup_frequency']->value ?? 'daily') == 'daily' ? 'selected' : '' }}>Daily</option>
-                                                    <option value="weekly" {{ old('backup_frequency', $settings['backup_frequency']->value ?? '') == 'weekly' ? 'selected' : '' }}>Weekly</option>
-                                                    <option value="monthly" {{ old('backup_frequency', $settings['backup_frequency']->value ?? '') == 'monthly' ? 'selected' : '' }}>Monthly</option>
-                                                </select>
-                                                <label for="backup_frequency" class="form-label">Backup Frequency</label>
-                                                <div class="select-arrow">
-                                                    <i class="fas fa-chevron-down"></i>
-                                                </div>
-                                                <div class="input-border"></div>
-                                                <div class="input-focus"></div>
-                                            </div>
-                                            @error('backup_frequency')
-                                                <div class="error-message">
-                                                    <i class="fas fa-exclamation-triangle"></i>
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
-
-                                        <div class="form-group">
-                                            <div class="input-container">
-                                                <input type="number"
-                                                    class="form-control @error('backup_retention_days') error @enderror"
-                                                    id="backup_retention_days" name="backup_retention_days"
-                                                    value="{{ old('backup_retention_days', $settings['backup_retention_days']->value ?? '30') }}"
-                                                    min="7" max="365" placeholder=" ">
-                                                <label for="backup_retention_days" class="form-label">Retention Days</label>
-                                                <div class="input-border"></div>
-                                                <div class="input-focus"></div>
-                                            </div>
-                                            @error('backup_retention_days')
-                                                <div class="error-message">
-                                                    <i class="fas fa-exclamation-triangle"></i>
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
+                        <div class="settings-grid">
+                            <div class="setting-card">
+                                <div class="card-header">
+                                    <h3>Footer Content</h3>
+                                </div>
+                                <div class="card-content">
+                                    <div class="form-group">
+                                        <label for="footer_description">Footer Description</label>
+                                        <textarea class="form-control @error('footer_description') error @enderror"
+                                            id="footer_description" name="footer_description" rows="4">{{ old('footer_description', $settings['footer_description']->value ?? 'Excellence in Education - Membentuk generasi yang berkarakter dan berprestasi untuk masa depan Indonesia yang gemilang.') }}</textarea>
+                                        @error('footer_description')
+                                            <div class="error-message">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
+                            </div>
 
-                                <!-- Quick Actions Card -->
-                                <div class="setting-card actions-card">
-                                    <div class="card-header">
-                                        <div class="card-icon">
-                                            <i class="fas fa-tools"></i>
-                                        </div>
-                                        <div class="card-title">
-                                            <h3>Quick Actions</h3>
-                                            <p>System maintenance and utility tools</p>
+                            <div class="setting-card">
+                                <div class="card-header">
+                                    <h3>Social Media Links</h3>
+                                </div>
+                                <div class="card-content">
+                                    <div class="form-group">
+                                        <label for="footer_facebook">Facebook URL</label>
+                                        <input type="url" class="form-control @error('footer_facebook') error @enderror"
+                                            id="footer_facebook" name="footer_facebook"
+                                            value="{{ old('footer_facebook', $settings['footer_facebook']->value ?? '') }}">
+                                        @error('footer_facebook')
+                                            <div class="error-message">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="footer_instagram">Instagram URL</label>
+                                        <input type="url" class="form-control @error('footer_instagram') error @enderror"
+                                            id="footer_instagram" name="footer_instagram"
+                                            value="{{ old('footer_instagram', $settings['footer_instagram']->value ?? '') }}">
+                                        @error('footer_instagram')
+                                            <div class="error-message">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="footer_youtube">YouTube URL</label>
+                                        <input type="url" class="form-control @error('footer_youtube') error @enderror"
+                                            id="footer_youtube" name="footer_youtube"
+                                            value="{{ old('footer_youtube', $settings['footer_youtube']->value ?? '') }}">
+                                        @error('footer_youtube')
+                                            <div class="error-message">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="footer_twitter">Twitter URL</label>
+                                        <input type="url" class="form-control @error('footer_twitter') error @enderror"
+                                            id="footer_twitter" name="footer_twitter"
+                                            value="{{ old('footer_twitter', $settings['footer_twitter']->value ?? '') }}">
+                                        @error('footer_twitter')
+                                            <div class="error-message">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="setting-card">
+                                <div class="card-header">
+                                    <h3>Contact Information</h3>
+                                </div>
+                                <div class="card-content">
+                                    <div class="form-group">
+                                        <label for="footer_address">Address</label>
+                                        <textarea class="form-control @error('footer_address') error @enderror"
+                                            id="footer_address" name="footer_address" rows="3">{{ old('footer_address', $settings['footer_address']->value ?? 'Jl. Pendidikan No. 123, Ponorogo, Jawa Timur 63411') }}</textarea>
+                                        @error('footer_address')
+                                            <div class="error-message">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="footer_phone">Phone Number</label>
+                                        <input type="text" class="form-control @error('footer_phone') error @enderror"
+                                            id="footer_phone" name="footer_phone"
+                                            value="{{ old('footer_phone', $settings['footer_phone']->value ?? '(0352) 123-4567') }}">
+                                        @error('footer_phone')
+                                            <div class="error-message">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="footer_email">Email Address</label>
+                                        <input type="email" class="form-control @error('footer_email') error @enderror"
+                                            id="footer_email" name="footer_email"
+                                            value="{{ old('footer_email', $settings['footer_email']->value ?? 'info@smkpgri2ponorogo.sch.id') }}">
+                                        @error('footer_email')
+                                            <div class="error-message">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Backup Settings Panel -->
+                    <div class="tab-panel" id="backup-panel">
+                        <div class="panel-header">
+                            <h2>Backup & Maintenance</h2>
+                            <p>Configure backup settings and system tools</p>
+                        </div>
+
+                        <div class="settings-grid">
+                            <div class="setting-card">
+                                <div class="card-header">
+                                    <h3>Backup Settings</h3>
+                                </div>
+                                <div class="card-content">
+                                    <div class="form-group">
+                                        <div class="toggle-item">
+                                            <label for="auto_backup_enabled">Auto Backup</label>
+                                            <div class="toggle-switch">
+                                                <input type="hidden" name="auto_backup_enabled" value="0">
+                                                <input type="checkbox" id="auto_backup_enabled" name="auto_backup_enabled"
+                                                    value="1" {{ old('auto_backup_enabled', $settings['auto_backup_enabled']->value ?? '0') == '1' ? 'checked' : '' }}>
+                                                <label for="auto_backup_enabled" class="switch"></label>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="card-content">
-                                        <div class="actions-grid">
-                                            <button type="button" class="action-btn primary"
-                                                onclick="window.open('{{ route('admin.backup.index') }}', '_blank')">
-                                                <div class="action-icon">
-                                                    <i class="fas fa-database"></i>
-                                                </div>
-                                                <div class="action-content">
-                                                    <span class="action-title">Manage Backups</span>
-                                                    <span class="action-subtitle">Create and manage system backups</span>
-                                                </div>
-                                                <div class="action-arrow">
-                                                    <i class="fas fa-arrow-right"></i>
-                                                </div>
-                                            </button>
 
-                                            <button type="button" class="action-btn warning" onclick="clearCache()">
-                                                <div class="action-icon">
-                                                    <i class="fas fa-broom"></i>
-                                                </div>
-                                                <div class="action-content">
-                                                    <span class="action-title">Clear Cache</span>
-                                                    <span class="action-subtitle">Clear application cache files</span>
-                                                </div>
-                                                <div class="action-arrow">
-                                                    <i class="fas fa-arrow-right"></i>
-                                                </div>
-                                            </button>
+                                    <div class="form-group">
+                                        <label for="backup_frequency">Backup Frequency</label>
+                                        <select class="form-control @error('backup_frequency') error @enderror" id="backup_frequency" name="backup_frequency">
+                                            <option value="daily" {{ old('backup_frequency', $settings['backup_frequency']->value ?? 'daily') == 'daily' ? 'selected' : '' }}>Daily</option>
+                                            <option value="weekly" {{ old('backup_frequency', $settings['backup_frequency']->value ?? '') == 'weekly' ? 'selected' : '' }}>Weekly</option>
+                                            <option value="monthly" {{ old('backup_frequency', $settings['backup_frequency']->value ?? '') == 'monthly' ? 'selected' : '' }}>Monthly</option>
+                                        </select>
+                                        @error('backup_frequency')
+                                            <div class="error-message">{{ $message }}</div>
+                                        @enderror
+                                    </div>
 
-                                            <button type="button" class="action-btn info" onclick="optimizeSystem()">
-                                                <div class="action-icon">
-                                                    <i class="fas fa-rocket"></i>
-                                                </div>
-                                                <div class="action-content">
-                                                    <span class="action-title">Optimize System</span>
-                                                    <span class="action-subtitle">Optimize system performance</span>
-                                                </div>
-                                                <div class="action-arrow">
-                                                    <i class="fas fa-arrow-right"></i>
-                                                </div>
-                                            </button>
+                                    <div class="form-group">
+                                        <label for="backup_retention_days">Retention Days</label>
+                                        <input type="number" class="form-control @error('backup_retention_days') error @enderror"
+                                            id="backup_retention_days" name="backup_retention_days"
+                                            value="{{ old('backup_retention_days', $settings['backup_retention_days']->value ?? '30') }}"
+                                            min="7" max="365">
+                                        @error('backup_retention_days')
+                                            <div class="error-message">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
 
-                                            <button type="button" class="action-btn success" onclick="testEmail()">
-                                                <div class="action-icon">
-                                                    <i class="fas fa-envelope-open"></i>
-                                                </div>
-                                                <div class="action-content">
-                                                    <span class="action-title">Test Email</span>
-                                                    <span class="action-subtitle">Test email configuration</span>
-                                                </div>
-                                                <div class="action-arrow">
-                                                    <i class="fas fa-arrow-right"></i>
-                                                </div>
-                                            </button>
-                                        </div>
+                            <div class="setting-card">
+                                <div class="card-header">
+                                    <h3>Quick Actions</h3>
+                                </div>
+                                <div class="card-content">
+                                    <div class="action-buttons">
+                                        <button type="button" class="action-btn" onclick="window.open('{{ route('admin.backup.index') }}', '_blank')">
+                                            <i class="fas fa-database"></i>
+                                            Manage Backups
+                                        </button>
+                                        <button type="button" class="action-btn" onclick="clearCache()">
+                                            <i class="fas fa-broom"></i>
+                                            Clear Cache
+                                        </button>
+                                        <button type="button" class="action-btn" onclick="testEmail()">
+                                            <i class="fas fa-envelope"></i>
+                                            Test Email
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -801,26 +476,16 @@
                     </div>
                 </div>
 
-                <!-- Enhanced Action Bar -->
+                <!-- Action Bar -->
                 <div class="action-bar">
-                    <div class="action-left">
-                        <button type="button" class="btn btn-outline" onclick="resetForm()">
-                            <i class="fas fa-undo"></i>
-                            <span>Reset to Default</span>
-                        </button>
-                        <button type="button" class="btn btn-outline" onclick="previewChanges()">
-                            <i class="fas fa-eye"></i>
-                            <span>Preview Changes</span>
-                        </button>
-                    </div>
-                    <div class="action-right">
-                        <button type="button" class="btn btn-secondary" onclick="window.history.back()">
-                            <i class="fas fa-times"></i>
-                            <span>Cancel</span>
-                        </button>
+                    <div class="action-buttons">
+                        <!-- <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                            <i class="fas fa-arrow-left"></i>
+                            Back
+                        </button> -->
                         <button type="submit" class="btn btn-primary" id="saveButton">
                             <i class="fas fa-save"></i>
-                            <span>Save Settings</span>
+                            Save Settings
                         </button>
                     </div>
                 </div>
@@ -828,56 +493,34 @@
         </form>
     </div>
 
-    <!-- Enhanced Test Email Modal -->
-    <div class="modal-overlay" id="testEmailModal">
-        <div class="modal-backdrop"></div>
+    <!-- Simple Alert Modal -->
+    <div class="modal-overlay" id="alertModal">
         <div class="modal-container">
             <div class="modal-header">
-                <div class="modal-icon">
-                    <i class="fas fa-envelope-open"></i>
+                <div class="modal-icon" id="alertModalIcon">
+                    <i class="fas fa-check-circle"></i>
                 </div>
-                <div class="modal-title">
-                    <h3>Test Email Configuration</h3>
-                    <p>Send a test email to verify your SMTP settings</p>
+                <div class="modal-content">
+                    <h3 id="alertModalTitle">Success!</h3>
+                    <p id="alertModalMessage">Settings have been saved successfully.</p>
                 </div>
-                <button type="button" class="modal-close" onclick="closeModal('testEmailModal')">
+                <button type="button" class="modal-close" onclick="closeModal()">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <div class="input-container">
-                        <input type="email" class="form-control" id="testEmailAddress" placeholder=" " required>
-                        <label for="testEmailAddress" class="form-label">Email Address</label>
-                        <div class="input-border"></div>
-                        <div class="input-focus"></div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="select-container">
-                        <select class="form-select" id="testEmailTemplate">
-                            <option value="basic">Basic Test</option>
-                            <option value="welcome">Welcome Message</option>
-                            <option value="notification">Notification</option>
-                            <option value="announcement">Announcement</option>
-                        </select>
-                        <label for="testEmailTemplate" class="form-label">Email Template</label>
-                        <div class="select-arrow">
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                        <div class="input-border"></div>
-                        <div class="input-focus"></div>
-                    </div>
-                </div>
-            </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeModal('testEmailModal')">
-                    <span>Cancel</span>
-                </button>
-                <button type="button" class="btn btn-primary" onclick="sendTestEmail()">
-                    <i class="fas fa-paper-plane"></i>
-                    <span>Send Test Email</span>
-                </button>
+                <button type="button" class="btn btn-primary" onclick="closeModal()">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Modal -->
+    <div class="modal-overlay" id="loadingModal">
+        <div class="modal-container loading-modal">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <h3>Saving Settings...</h3>
+                <p>Please wait...</p>
             </div>
         </div>
     </div>
@@ -886,333 +529,163 @@
 
 @push('styles')
     <style>
-        /* Settings Page Styles - Uses Layout CSS Variables */
+        /* CSS Variables for Dark Mode Support */
+        :root {
+            /* Light Mode Colors */
+            --color-bg-primary: #f8f9fa;
+            --color-bg-secondary: #ffffff;
+            --color-bg-tertiary: #f7fafc;
+            --color-text-primary: #2d3748;
+            --color-text-secondary: #4a5568;
+            --color-text-muted: #718096;
+            --color-border: #e2e8f0;
+            --color-border-light: #edf2f7;
+            --color-shadow: rgba(0, 0, 0, 0.1);
+            --color-shadow-modal: rgba(0, 0, 0, 0.2);
+            --color-overlay: rgba(0, 0, 0, 0.5);
+            
+            /* Button Colors */
+            --color-primary: #4299e1;
+            --color-primary-hover: #3182ce;
+            --color-secondary: #edf2f7;
+            --color-secondary-hover: #e2e8f0;
+            --color-success: #48bb78;
+            --color-error: #e53e3e;
+            
+            /* Form Colors */
+            --color-input-bg: #ffffff;
+            --color-input-border: #e2e8f0;
+            --color-input-focus: #4299e1;
+            --color-input-error: #e53e3e;
+            
+            /* Toggle Colors */
+            --color-toggle-bg: #cbd5e0;
+            --color-toggle-active: #4299e1;
+            --color-toggle-thumb: #ffffff;
+            
+            /* File Preview Colors */
+            --color-file-preview-bg: #f7fafc;
+            --color-file-preview-border: #e2e8f0;
+            --color-file-preview-text: #a0aec0;
+        }
+
+        /* Dark Mode Colors - Applied via .dark class */
+        .dark {
+            --color-bg-primary: #1a202c;
+            --color-bg-secondary: #2d3748;
+            --color-bg-tertiary: #4a5568;
+            --color-text-primary: #f7fafc;
+            --color-text-secondary: #e2e8f0;
+            --color-text-muted: #a0aec0;
+            --color-border: #4a5568;
+            --color-border-light: #718096;
+            --color-shadow: rgba(0, 0, 0, 0.3);
+            --color-shadow-modal: rgba(0, 0, 0, 0.5);
+            --color-overlay: rgba(0, 0, 0, 0.7);
+            
+            --color-secondary: #4a5568;
+            --color-secondary-hover: #718096;
+            
+            --color-input-bg: #2d3748;
+            --color-input-border: #4a5568;
+            --color-toggle-bg: #4a5568;
+            --color-toggle-thumb: #e2e8f0;
+            
+            --color-file-preview-bg: #2d3748;
+            --color-file-preview-border: #4a5568;
+            --color-file-preview-text: #718096;
+        }
+
+        /* Smooth transitions for color changes */
+        * {
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Settings Page Styles with Dark Mode Support */
         .settings-page {
+            padding: 20px;
+            background-color: var(--color-bg-primary);
             min-height: 100vh;
-            position: relative;
-            padding: 2rem;
-            background-color: var(--bg-secondary);
-            color: var(--text-primary);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
-            transition: all 0.3s ease;
         }
 
-        /* Hero Header */
-        .hero-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 24px;
-            padding: 3rem;
-            margin-bottom: 3rem;
-            color: white;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
-
-        .hero-content {
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-            position: relative;
-            z-index: 2;
-            margin-bottom: 2rem;
-        }
-
-        .hero-icon .icon-wrapper {
-            width: 80px;
-            height: 80px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .hero-text {
-            flex: 1;
-        }
-
-        .hero-title {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin: 0 0 0.5rem 0;
-        }
-
-        .hero-subtitle {
-            font-size: 1.125rem;
-            margin: 0 0 1rem 0;
-            opacity: 0.9;
-            line-height: 1.6;
-        }
-
-        .hero-breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.875rem;
-        }
-
-        .breadcrumb-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            opacity: 0.8;
-        }
-
-        .breadcrumb-item a {
-            color: white;
-            text-decoration: none;
-        }
-
-        .breadcrumb-item.active {
-            opacity: 1;
-            font-weight: 500;
-        }
-
-        .breadcrumb-separator {
-            opacity: 0.6;
-            font-size: 0.75rem;
-        }
-
-        .hero-stats {
-            display: flex;
-            gap: 2rem;
-            position: relative;
-            z-index: 2;
-        }
-
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 1rem 1.5rem;
-            border-radius: 16px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .stat-item:hover {
-            transform: translateY(-2px);
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .stat-icon {
-            width: 48px;
-            height: 48px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-        }
-
-        .stat-content {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .stat-number {
-            font-size: 1.5rem;
-            font-weight: 700;
-            line-height: 1;
-        }
-
-        .stat-label {
-            font-size: 0.875rem;
-            opacity: 0.8;
-        }
-
-        /* Alert Messages */
-        .alert-container {
-            margin-bottom: 2rem;
-        }
-
-        .alert {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1.5rem;
-            border-radius: 16px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            border: none;
-        }
-
-        .alert-success {
-            background: linear-gradient(135deg, rgba(79, 172, 254, 0.1) 0%, rgba(0, 242, 254, 0.1) 100%);
-            color: #0369a1;
-            border-left: 4px solid #4facfe;
-        }
-
-        .alert-error {
-            background: linear-gradient(135deg, rgba(250, 112, 154, 0.1) 0%, rgba(254, 225, 64, 0.1) 100%);
-            color: #dc2626;
-            border-left: 4px solid #fa709a;
-        }
-
-        .alert-icon {
-            font-size: 1.5rem;
-        }
-
-        .alert-content h4 {
-            margin: 0 0 0.25rem 0;
-            font-weight: 600;
-            font-size: 1.125rem;
-        }
-
-        .alert-content p {
-            margin: 0;
-            opacity: 0.9;
-        }
-
-        .alert-close {
-            background: none;
-            border: none;
-            color: currentColor;
-            opacity: 0.7;
-            cursor: pointer;
-            padding: 0.5rem;
+        /* Header */
+        .page-header {
+            background: var(--color-bg-secondary);
+            padding: 30px;
             border-radius: 8px;
-            transition: all 0.2s ease;
-            margin-left: auto;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px var(--color-shadow);
         }
 
-        .alert-close:hover {
-            opacity: 1;
-            background: rgba(0, 0, 0, 0.1);
+        .page-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            color: var(--color-text-primary);
+        }
+
+        .page-subtitle {
+            font-size: 16px;
+            color: var(--color-text-muted);
+            margin: 0;
         }
 
         /* Settings Container */
         .settings-container {
-            background-color: var(--bg-primary);
-            border-radius: 24px;
-            box-shadow: 0 25px 50px -12px var(--shadow-color);
+            background: var(--color-bg-secondary);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px var(--color-shadow);
             overflow: hidden;
-            border: 1px solid var(--border-color);
-            backdrop-filter: blur(20px);
         }
 
         /* Tab Navigation */
         .tab-navigation {
-            position: relative;
-            background-color: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .nav-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
-        }
-
-        .nav-content {
-            position: relative;
-            z-index: 2;
+            border-bottom: 1px solid var(--color-border);
+            background: var(--color-bg-tertiary);
         }
 
         .nav-tabs {
             display: flex;
-            position: relative;
+            padding: 0 20px;
+            overflow-x: auto;
         }
 
         .nav-tab {
-            flex: 1;
             display: flex;
             align-items: center;
-            gap: 1rem;
-            padding: 2rem;
+            gap: 8px;
+            padding: 15px 20px;
             background: none;
             border: none;
-            color: var(--text-secondary);
             cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            text-align: left;
+            color: var(--color-text-muted);
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
         }
 
         .nav-tab:hover {
-            background: rgba(102, 126, 234, 0.1);
-            color: #667eea;
+            color: var(--color-primary);
+            background: rgba(66, 153, 225, 0.1);
         }
 
         .nav-tab.active {
-            color: #667eea;
-            background: rgba(102, 126, 234, 0.1);
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+            background: var(--color-bg-secondary);
         }
 
-        .tab-icon-wrapper {
-            position: relative;
-        }
-
-        .tab-icon {
-            width: 56px;
-            height: 56px;
-            background-color: var(--bg-primary);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 1px 3px var(--shadow-color);
-            position: relative;
-            z-index: 2;
-        }
-
-        .nav-tab.active .tab-icon {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            transform: scale(1.05);
-            box-shadow: 0 10px 15px -3px var(--shadow-color);
-        }
-
-        .tab-text {
-            flex: 1;
-        }
-
-        .tab-title {
-            display: block;
-            font-size: 1.125rem;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .tab-description {
-            display: block;
-            font-size: 0.875rem;
-            opacity: 0.7;
-        }
-
-        .nav-slider {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            height: 3px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            transition: all 0.3s ease;
-            width: 25%;
-            transform: translateX(0);
+        .nav-tab i {
+            font-size: 16px;
         }
 
         /* Tab Content */
         .tab-content {
-            position: relative;
+            padding: 30px;
         }
 
         .tab-panel {
             display: none;
-            padding: 3rem;
         }
 
         .tab-panel.active {
@@ -1220,1049 +693,558 @@
         }
 
         .panel-header {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-            padding-bottom: 2rem;
-            border-bottom: 2px solid var(--border-color);
-            position: relative;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--color-border);
         }
 
-        .panel-header::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 100px;
-            height: 2px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .panel-header h2 {
+            font-size: 24px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            color: var(--color-text-primary);
         }
 
-        .header-icon {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.75rem;
-            color: white;
-            box-shadow: 0 10px 15px -3px var(--shadow-color);
-        }
-
-        .header-content {
-            flex: 1;
-        }
-
-        .panel-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin: 0 0 0.5rem 0;
-        }
-
-        .panel-subtitle {
-            font-size: 1.125rem;
-            color: var(--text-secondary);
+        .panel-header p {
+            font-size: 16px;
+            color: var(--color-text-muted);
             margin: 0;
-            line-height: 1.6;
         }
 
         /* Settings Grid */
         .settings-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 2rem;
+            gap: 20px;
         }
 
         /* Setting Cards */
         .setting-card {
-            background-color: var(--bg-primary);
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
             overflow: hidden;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px -1px var(--shadow-color);
-            position: relative;
-        }
-
-        .setting-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            transform: scaleX(0);
-            transition: all 0.3s ease;
-        }
-
-        .setting-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 25px 50px -12px var(--shadow-color);
-        }
-
-        .setting-card:hover::before {
-            transform: scaleX(1);
         }
 
         .card-header {
-            background-color: var(--bg-secondary);
-            padding: 2rem;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
+            background: var(--color-bg-tertiary);
+            padding: 20px;
+            border-bottom: 1px solid var(--color-border);
         }
 
-        .card-icon {
-            width: 56px;
-            height: 56px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            box-shadow: 0 4px 6px -1px var(--shadow-color);
-        }
-
-        .card-title h3 {
-            font-size: 1.25rem;
+        .card-header h3 {
+            font-size: 18px;
             font-weight: 600;
-            color: var(--text-primary);
-            margin: 0 0 0.25rem 0;
-        }
-
-        .card-title p {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
             margin: 0;
+            color: var(--color-text-primary);
         }
 
         .card-content {
-            padding: 2rem;
+            padding: 20px;
         }
 
-        /* File Upload Styles */
-        .file-upload-container {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .file-upload-preview {
-            width: 100%;
-            min-height: 120px;
-            border: 2px dashed var(--border-color);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: var(--bg-tertiary);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .file-upload-preview:hover {
-            border-color: #667eea;
-            background-color: var(--bg-secondary);
-        }
-
-        .current-logo,
-        .current-favicon {
-            max-width: 100%;
-            max-height: 100px;
-            object-fit: contain;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px -1px var(--shadow-color);
-        }
-
-        .no-logo-placeholder,
-        .no-favicon-placeholder {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            color: var(--text-secondary);
-            padding: 2rem;
-            text-align: center;
-        }
-
-        .no-logo-placeholder i,
-        .no-favicon-placeholder i {
-            font-size: 2rem;
-            opacity: 0.5;
-        }
-
-        .no-logo-placeholder p,
-        .no-favicon-placeholder p {
-            margin: 0;
-            font-size: 0.875rem;
-            opacity: 0.7;
-        }
-
-        .file-upload-input {
-            position: relative;
-        }
-
-        .form-control-file {
-            position: absolute;
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-            z-index: 2;
-        }
-
-        .file-upload-label {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem 1.5rem;
-            border: 2px dashed var(--border-color);
-            border-radius: 16px;
-            background-color: var(--bg-primary);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .file-upload-label:hover {
-            border-color: #667eea;
-            background-color: var(--bg-secondary);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 6px -1px var(--shadow-color);
-        }
-
-        .file-upload-icon {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.25rem;
-            flex-shrink: 0;
-        }
-
-        .file-upload-text {
-            flex: 1;
-        }
-
-        .file-upload-title {
-            display: block;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.25rem;
-        }
-
-        .file-upload-subtitle {
-            display: block;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-
-        /* Form Controls */
+        /* Form Elements */
         .form-group {
-            margin-bottom: 2rem;
-            position: relative;
+            margin-bottom: 20px;
         }
 
-        .input-container,
-        .select-container {
-            position: relative;
+        .form-group:last-child {
+            margin-bottom: 0;
         }
 
-        .form-control,
-        .form-select {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid var(--border-color);
-            border-radius: 16px;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            outline: none;
-            appearance: none;
-        }
-
-        .form-control:focus,
-        .form-select:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-            transform: translateY(-1px);
-        }
-
-        .form-control.error,
-        .form-select.error {
-            border-color: #fa709a;
-            box-shadow: 0 0 0 4px rgba(250, 112, 154, 0.1);
-        }
-
-        .form-label {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            color: var(--text-secondary);
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            pointer-events: none;
-            background-color: var(--bg-primary);
-            padding: 0 0.5rem;
-            z-index: 2;
-        }
-
-        .form-control:focus+.form-label,
-        .form-control:not(:placeholder-shown)+.form-label,
-        .form-select:focus+.form-label,
-        .form-select:not([value=""])+.form-label {
-            top: -0.5rem;
-            left: 0.75rem;
-            font-size: 0.875rem;
-            color: #667eea;
+        .form-group label {
+            display: block;
             font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--color-text-secondary);
         }
 
-        .input-border {
-            position: absolute;
-            bottom: 0;
-            left: 0;
+        .form-control {
             width: 100%;
-            height: 2px;
-            background: var(--border-color);
-            border-radius: 1px;
+            padding: 12px;
+            border: 1px solid var(--color-input-border);
+            border-radius: 6px;
+            font-size: 14px;
+            background: var(--color-input-bg);
+            color: var(--color-text-primary);
         }
 
-        .input-focus {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            transition: all 0.3s ease;
-            border-radius: 1px;
+        .form-control:focus {
+            outline: none;
+            border-color: var(--color-input-focus);
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
         }
 
-        .form-control:focus~.input-focus,
-        .form-select:focus~.input-focus {
-            width: 100%;
-            left: 0;
-        }
-
-        .select-arrow {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-secondary);
-            pointer-events: none;
-            transition: all 0.3s ease;
-        }
-
-        .form-select:focus~.select-arrow {
-            color: #667eea;
-            transform: translateY(-50%) rotate(180deg);
+        .form-control.error {
+            border-color: var(--color-input-error);
         }
 
         .error-message {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #fa709a;
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
+            color: var(--color-error);
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        /* File Preview */
+        .file-preview {
+            margin-bottom: 15px;
+            padding: 20px;
+            border: 2px dashed var(--color-file-preview-border);
+            border-radius: 6px;
+            text-align: center;
+            background: var(--color-file-preview-bg);
+        }
+
+        .current-logo {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 6px;
+        }
+
+        .current-favicon {
+            max-width: 32px;
+            max-height: 32px;
+        }
+
+        .no-logo, .no-favicon {
+            color: var(--color-file-preview-text);
+        }
+
+        .no-logo i, .no-favicon i {
+            font-size: 32px;
+            margin-bottom: 8px;
         }
 
         /* Toggle Switches */
-        .toggle-group {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
         .toggle-item {
             display: flex;
             justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .toggle-item label {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .toggle-label {
+            display: flex;
             align-items: center;
-            padding: 1.5rem;
-            background-color: var(--bg-tertiary);
-            border-radius: 16px;
-            border: 2px solid var(--border-color);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .toggle-item:hover {
-            border-color: #667eea;
-            background-color: var(--bg-primary);
-            transform: translateY(-1px);
-            box-shadow: 0 10px 15px -3px var(--shadow-color);
-        }
-
-        .toggle-info h4 {
-            margin: 0 0 0.5rem 0;
+            gap: 8px;
             font-weight: 600;
-            color: var(--text-primary);
-            font-size: 1.125rem;
+            color: var(--color-text-primary);
         }
 
-        .toggle-info p {
-            margin: 0;
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            line-height: 1.5;
+        .toggle-description {
+            display: block;
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--color-text-muted);
+            margin-top: 4px;
+        }
+
+        .dark-mode-icon {
+            color: var(--color-primary);
         }
 
         .toggle-switch {
             position: relative;
-        }
-
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
+            flex-shrink: 0;
         }
 
         .switch {
             position: relative;
             display: inline-block;
-            width: 80px;
-            height: 40px;
+            width: 50px;
+            height: 24px;
             cursor: pointer;
         }
 
-        .slider {
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .switch:before {
+            content: "";
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: #ccc;
-            border-radius: 40px;
-            transition: all 0.3s ease;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: var(--color-toggle-bg);
+            border-radius: 24px;
+            transition: 0.3s;
         }
 
-        .slider:before {
-            position: absolute;
+        .switch:after {
             content: "";
-            height: 32px;
-            width: 32px;
-            left: 4px;
-            bottom: 4px;
-            background: white;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px -1px var(--shadow-color);
-        }
-
-        input:checked+.switch .slider {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
-        }
-
-        input:checked+.switch .slider:before {
-            transform: translateX(40px);
-        }
-
-        .switch-text {
             position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 0.75rem;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background-color: var(--color-toggle-thumb);
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        input:checked + .switch:before {
+            background-color: var(--color-toggle-active);
+        }
+
+        input:checked + .switch:after {
+            transform: translateX(26px);
+        }
+
+        /* Dark Mode Switch Special Styling */
+        .dark-mode-switch:before {
+            background: linear-gradient(45deg, #cbd5e0, #e2e8f0);
+        }
+
+        input:checked + .dark-mode-switch:before {
+            background: linear-gradient(45deg, #4299e1, #3182ce);
+        }
+
+        /* Theme Preview */
+        .theme-preview {
+            margin-top: 15px;
+            padding: 20px;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            background: var(--color-bg-tertiary);
+        }
+
+        .preview-card {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .preview-header {
+            padding: 15px;
+            background: var(--color-bg-tertiary);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .preview-title {
             font-weight: 600;
-            transition: all 0.3s ease;
+            color: var(--color-text-primary);
+            margin-bottom: 4px;
         }
 
-        .switch-text.on {
-            left: 8px;
+        .preview-subtitle {
+            font-size: 12px;
+            color: var(--color-text-muted);
+        }
+
+        .preview-content {
+            padding: 15px;
+        }
+
+        .preview-input {
+            margin-bottom: 15px;
+        }
+
+        .preview-input label {
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .preview-input input {
+            padding: 8px;
+            font-size: 12px;
+        }
+
+        .preview-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .preview-btn {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+
+        .preview-btn.primary {
+            background: var(--color-primary);
             color: white;
-            opacity: 0;
         }
 
-        .switch-text.off {
-            right: 8px;
-            color: var(--text-secondary);
-            opacity: 1;
+        .preview-btn.secondary {
+            background: var(--color-secondary);
+            color: var(--color-text-secondary);
+            border-color: var(--color-border);
         }
 
-        input:checked+.switch .switch-text.on {
-            opacity: 1;
+        /* Theme Status */
+        .theme-status {
+            padding: 15px;
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            background: var(--color-bg-tertiary);
         }
 
-        input:checked+.switch .switch-text.off {
-            opacity: 0;
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .status-indicator i {
+            color: var(--color-primary);
+        }
+
+        .status-indicator span {
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+
+        .status-description {
+            font-size: 12px;
+            color: var(--color-text-muted);
+            line-height: 1.4;
         }
 
         /* Action Buttons */
-        .actions-card {
-            grid-column: span 2;
-        }
-
-        .actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .action-btn {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            padding: 1.5rem;
-            border: 2px solid transparent;
-            border-radius: 16px;
-            background-color: var(--bg-tertiary);
-            color: var(--text-primary);
+            gap: 8px;
+            padding: 12px 16px;
+            background: var(--color-bg-tertiary);
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: left;
-            position: relative;
-            overflow: hidden;
+            font-size: 14px;
+            color: var(--color-text-secondary);
         }
 
         .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 20px 25px -5px var(--shadow-color);
-        }
-
-        .action-btn.primary {
-            border-color: #667eea;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-        }
-
-        .action-btn.warning {
-            border-color: #43e97b;
-            background: linear-gradient(135deg, rgba(67, 233, 123, 0.1) 0%, rgba(56, 249, 215, 0.1) 100%);
-        }
-
-        .action-btn.info {
-            border-color: #a8edea;
-            background: linear-gradient(135deg, rgba(168, 237, 234, 0.1) 0%, rgba(254, 214, 227, 0.1) 100%);
-        }
-
-        .action-btn.success {
-            border-color: #4facfe;
-            background: linear-gradient(135deg, rgba(79, 172, 254, 0.1) 0%, rgba(0, 242, 254, 0.1) 100%);
-        }
-
-        .action-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            background-color: var(--bg-primary);
-            box-shadow: 0 1px 3px var(--shadow-color);
-            transition: all 0.3s ease;
-        }
-
-        .action-btn.primary .action-icon {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .action-btn.warning .action-icon {
-            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-            color: white;
-        }
-
-        .action-btn.info .action-icon {
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-            color: white;
-        }
-
-        .action-btn.success .action-icon {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-        }
-
-        .action-btn:hover .action-icon {
-            transform: scale(1.05);
-        }
-
-        .action-content {
-            flex: 1;
-        }
-
-        .action-title {
-            display: block;
-            font-weight: 600;
-            font-size: 1.125rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .action-subtitle {
-            display: block;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            line-height: 1.4;
-        }
-
-        .action-arrow {
-            font-size: 1.25rem;
-            color: var(--text-secondary);
-            transition: all 0.3s ease;
-        }
-
-        .action-btn:hover .action-arrow {
-            color: #667eea;
-            transform: translateX(3px);
+            background: var(--color-secondary-hover);
+            border-color: var(--color-border-light);
         }
 
         /* Action Bar */
         .action-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 2rem 3rem;
-            background-color: var(--bg-secondary);
-            border-top: 1px solid var(--border-color);
-            position: relative;
+            padding: 20px 30px;
+            background: var(--color-bg-tertiary);
+            border-top: 1px solid var(--color-border);
         }
 
-        .action-bar::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            opacity: 0.3;
+        .action-bar .action-buttons {
+            justify-content: flex-end;
         }
 
-        .action-left,
-        .action-right {
-            display: flex;
-            gap: 1rem;
-        }
-
-        /* Buttons */
         .btn {
             display: inline-flex;
             align-items: center;
-            gap: 0.75rem;
-            padding: 1rem 2rem;
-            border-radius: 16px;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: 6px;
             font-weight: 500;
+            font-size: 14px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-            position: relative;
-            overflow: hidden;
-            font-size: 1rem;
+            border: 1px solid transparent;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--color-primary);
             color: white;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-color: var(--color-primary);
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            background: var(--color-primary-hover);
+            border-color: var(--color-primary-hover);
         }
 
         .btn-secondary {
-            background-color: var(--bg-tertiary);
-            color: var(--text-primary);
-            border-color: var(--border-color);
+            background: var(--color-secondary);
+            color: var(--color-text-secondary);
+            border-color: var(--color-border);
         }
 
         .btn-secondary:hover {
-            background-color: var(--bg-secondary);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 6px -1px var(--shadow-color);
+            background: var(--color-secondary-hover);
         }
 
-        .btn-outline {
-            background: transparent;
-            color: var(--text-secondary);
-            border-color: var(--border-color);
-        }
-
-        .btn-outline:hover {
-            background-color: var(--bg-tertiary);
-            color: var(--text-primary);
-            border-color: #667eea;
-        }
-
-        /* Color Picker Styles */
-        .color-picker-container {
-            margin-bottom: 1.5rem;
-        }
-
-        .color-input-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-top: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .color-picker {
-            width: 60px;
-            height: 40px;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            cursor: pointer;
-            background: none;
-            transition: all 0.3s ease;
-        }
-
-        .color-picker:hover {
-            border-color: #667eea;
-            transform: scale(1.05);
-        }
-
-        .color-text-input {
-            flex: 1;
-            padding: 0.75rem 1rem;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            font-family: 'Courier New', monospace;
-            font-size: 0.875rem;
-            transition: all 0.3s ease;
-        }
-
-        .color-text-input:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-            outline: none;
-        }
-
-        .color-preview {
-            width: 40px;
-            height: 40px;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .color-preview::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, #ccc 25%, transparent 25%),
-                linear-gradient(-45deg, #ccc 25%, transparent 25%),
-                linear-gradient(45deg, transparent 75%, #ccc 75%),
-                linear-gradient(-45deg, transparent 75%, #ccc 75%);
-            background-size: 8px 8px;
-            background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
-        }
-
-        .color-preview::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: var(--preview-color, #ffffff);
-        }
-
-        .color-help {
-            display: block;
-            color: var(--text-secondary);
-            font-size: 0.75rem;
-            margin-top: 0.25rem;
-            line-height: 1.4;
-        }
-
-        /* Navbar Preview Styles */
-        .navbar-preview-container {
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .navbar-preview {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 1.5rem;
-            background-color: var(--navbar-bg, #ffffff);
-            color: var(--navbar-text, #333333);
-            border-radius: 12px;
-            border: 2px solid var(--border-color);
-            margin-top: 0.5rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .navbar-brand {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-weight: 600;
-            font-size: 1.125rem;
-            color: inherit;
-        }
-
-        .navbar-brand i {
-            font-size: 1.5rem;
-            color: var(--navbar-text, #333333);
-        }
-
-        .navbar-menu {
-            display: flex;
-            gap: 1.5rem;
-        }
-
-        .nav-link {
-            color: var(--navbar-text, #333333);
-            text-decoration: none;
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .nav-link:hover {
-            color: var(--navbar-hover, #007bff);
-            background-color: rgba(0, 123, 255, 0.1);
-            text-decoration: none;
-        }
-
-        /* Responsive navbar preview */
-        @media (max-width: 768px) {
-            .navbar-preview {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
-            }
-
-            .navbar-menu {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 1rem;
-            }
-        }
-
-        /* Enhanced Modal */
+        /* Modal Styles */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            right: 0;
+            bottom: 0;
+            background: var(--color-overlay);
             display: none;
             align-items: center;
             justify-content: center;
             z-index: 1000;
         }
 
-        .modal-overlay.active {
+        .modal-overlay.show {
             display: flex;
         }
 
-        .modal-backdrop {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
-        }
-
         .modal-container {
-            background-color: var(--bg-primary);
-            border-radius: 24px;
-            box-shadow: 0 25px 50px -12px var(--shadow-color);
-            max-width: 500px;
+            background: var(--color-bg-secondary);
+            border-radius: 8px;
+            box-shadow: 0 10px 25px var(--color-shadow-modal);
+            max-width: 400px;
             width: 90%;
-            max-height: 90vh;
             overflow: hidden;
-            position: relative;
-            z-index: 2;
-            border: 1px solid var(--border-color);
         }
 
         .modal-header {
             display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 2rem;
-            border-bottom: 1px solid var(--border-color);
-            background-color: var(--bg-secondary);
+            align-items: flex-start;
+            gap: 15px;
+            padding: 20px;
         }
 
         .modal-icon {
-            width: 56px;
-            height: 56px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 16px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 20px;
             color: white;
-            font-size: 1.5rem;
+            flex-shrink: 0;
         }
 
-        .modal-title {
+        .modal-icon.success {
+            background: var(--color-success);
+        }
+
+        .modal-icon.error {
+            background: var(--color-error);
+        }
+
+        .modal-content {
             flex: 1;
         }
 
-        .modal-title h3 {
-            margin: 0 0 0.25rem 0;
-            font-size: 1.25rem;
+        .modal-content h3 {
+            font-size: 18px;
             font-weight: 600;
+            margin: 0 0 8px 0;
+            color: var(--color-text-primary);
         }
 
-        .modal-title p {
+        .modal-content p {
+            font-size: 14px;
+            color: var(--color-text-muted);
             margin: 0;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
         }
 
         .modal-close {
             background: none;
             border: none;
-            color: var(--text-secondary);
+            color: var(--color-text-muted);
             cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 8px;
-            transition: all 0.2s ease;
+            padding: 4px;
         }
 
         .modal-close:hover {
-            background-color: var(--bg-tertiary);
-            color: var(--text-primary);
-        }
-
-        .modal-body {
-            padding: 2rem;
+            color: var(--color-text-secondary);
         }
 
         .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
-            padding: 2rem;
-            border-top: 1px solid var(--border-color);
-            background-color: var(--bg-secondary);
+            padding: 0 20px 20px;
+            text-align: right;
         }
 
-        /* Responsive Design */
-        @media (max-width: 1024px) {
+        /* Loading Modal */
+        .loading-modal {
+            text-align: center;
+        }
+
+        .loading-content {
+            padding: 30px;
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--color-border);
+            border-top: 3px solid var(--color-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-content h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            color: var(--color-text-primary);
+        }
+
+        .loading-content p {
+            font-size: 14px;
+            color: var(--color-text-muted);
+            margin: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .settings-page {
+                padding: 10px;
+            }
+
+            .nav-tabs {
+                flex-wrap: wrap;
+                padding: 0 10px;
+            }
+
+            .nav-tab {
+                padding: 12px 15px;
+            }
+
+            .nav-tab span {
+                display: none;
+            }
+
+            .tab-content {
+                padding: 20px;
+            }
+
             .settings-grid {
                 grid-template-columns: 1fr;
             }
 
-            .actions-card {
-                grid-column: span 1;
-            }
-
-            .actions-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .hero-stats {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .stat-item {
+            .action-bar .action-buttons {
                 justify-content: center;
             }
-        }
 
-        @media (max-width: 768px) {
-            .settings-page {
-                padding: 1rem;
-            }
-
-            .hero-header {
-                padding: 2rem;
-            }
-
-            .hero-content {
+            .toggle-item {
                 flex-direction: column;
-                text-align: center;
-                gap: 1rem;
+                align-items: flex-start;
+                gap: 10px;
             }
 
-            .hero-title {
-                font-size: 2rem;
-            }
-
-            .nav-tabs {
-                flex-direction: column;
-            }
-
-            .nav-tab {
-                padding: 1.5rem;
-            }
-
-            .tab-panel {
-                padding: 2rem;
-            }
-
-            .panel-header {
-                flex-direction: column;
-                text-align: center;
-                gap: 1rem;
-            }
-
-            .action-bar {
-                flex-direction: column;
-                gap: 1rem;
-                padding: 2rem;
-            }
-
-            .action-left,
-            .action-right {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero-header {
-                padding: 1.5rem;
-            }
-
-            .hero-title {
-                font-size: 1.75rem;
-            }
-
-            .tab-panel {
-                padding: 1rem;
-            }
-
-            .card-header,
-            .card-content {
-                padding: 1.5rem;
-            }
-
-            .btn {
-                padding: 0.875rem 1.5rem;
-                font-size: 0.875rem;
+            .toggle-switch {
+                align-self: flex-end;
             }
         }
     </style>
@@ -2270,280 +1252,316 @@
 
 @push('scripts')
     <script>
-        // Tab navigation functionality
-        document.addEventListener('DOMContentLoaded', function () {
+        // Dark Mode Toggle Functions
+        function toggleDarkMode() {
+            const body = document.body;
+            const toggle = document.getElementById('dark_mode_toggle');
+            const themeStatus = document.getElementById('themeStatus');
+            const themeDescription = document.getElementById('themeDescription');
+            
+            if (toggle.checked) {
+                // Enable dark mode
+                body.classList.add('dark');
+                localStorage.setItem('darkMode', 'enabled');
+                
+                // Update status
+                themeStatus.innerHTML = '<i class="fas fa-moon"></i><span>Dark Mode Active</span>';
+                themeDescription.textContent = 'The interface is currently using the dark theme with dark backgrounds and light text for better viewing in low light conditions.';
+                
+                console.log('Dark mode enabled');
+            } else {
+                // Disable dark mode
+                body.classList.remove('dark');
+                localStorage.setItem('darkMode', 'disabled');
+                
+                // Update status
+                themeStatus.innerHTML = '<i class="fas fa-sun"></i><span>Light Mode Active</span>';
+                themeDescription.textContent = 'The interface is currently using the light theme with bright backgrounds and dark text.';
+                
+                console.log('Dark mode disabled');
+            }
+        }
+
+        function resetTheme() {
+            const body = document.body;
+            const toggle = document.getElementById('dark_mode_toggle');
+            const themeStatus = document.getElementById('themeStatus');
+            const themeDescription = document.getElementById('themeDescription');
+            
+            // Remove dark mode and clear localStorage
+            body.classList.remove('dark');
+            localStorage.removeItem('darkMode');
+            toggle.checked = false;
+            
+            // Update status
+            themeStatus.innerHTML = '<i class="fas fa-sun"></i><span>Light Mode Active</span>';
+            themeDescription.textContent = 'The interface is currently using the light theme with bright backgrounds and dark text.';
+            
+            showModal('success', 'Theme Reset', 'Theme has been reset to system default (Light Mode).');
+        }
+
+        // Initialize dark mode on page load
+        function initializeDarkMode() {
+            const darkMode = localStorage.getItem('darkMode');
+            const toggle = document.getElementById('dark_mode_toggle');
+            const body = document.body;
+            
+            if (darkMode === 'enabled') {
+                body.classList.add('dark');
+                toggle.checked = true;
+                
+                // Update status
+                const themeStatus = document.getElementById('themeStatus');
+                const themeDescription = document.getElementById('themeDescription');
+                if (themeStatus && themeDescription) {
+                    themeStatus.innerHTML = '<i class="fas fa-moon"></i><span>Dark Mode Active</span>';
+                    themeDescription.textContent = 'The interface is currently using the dark theme with dark backgrounds and light text for better viewing in low light conditions.';
+                }
+            }
+        }
+
+        // Simple Modal Functions
+        function showModal(type, title, message) {
+            const modal = document.getElementById('alertModal');
+            const icon = document.getElementById('alertModalIcon');
+            const titleEl = document.getElementById('alertModalTitle');
+            const messageEl = document.getElementById('alertModalMessage');
+            
+            if (!modal || !icon || !titleEl || !messageEl) {
+                alert(title + '\n' + message);
+                return;
+            }
+            
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+            
+            // Set icon
+            icon.className = 'modal-icon ' + type;
+            const iconEl = icon.querySelector('i');
+            if (iconEl) {
+                iconEl.className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-triangle';
+            }
+            
+            modal.classList.add('show');
+            
+            // Auto close success messages
+            if (type === 'success') {
+                setTimeout(() => {
+                    closeModal();
+                }, 5000);
+            }
+        }
+
+        function closeModal() {
+            const modals = document.querySelectorAll('.modal-overlay');
+            modals.forEach(modal => modal.classList.remove('show'));
+        }
+
+        function showLoading() {
+            const modal = document.getElementById('loadingModal');
+            if (modal) {
+                modal.classList.add('show');
+            }
+        }
+
+        function hideLoading() {
+            const modal = document.getElementById('loadingModal');
+            if (modal) {
+                modal.classList.remove('show');
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize dark mode
+            initializeDarkMode();
+            
+            // Tab Navigation
             const tabs = document.querySelectorAll('.nav-tab');
             const panels = document.querySelectorAll('.tab-panel');
-            const slider = document.querySelector('.nav-slider');
 
-            // Check if logo was just updated and refresh if needed
-            @if(session('logo_updated'))
-                console.log('Logo was updated, refreshing logo display...');
-                setTimeout(function () {
-                    // Force page reload to ensure fresh data
-                    console.log('Reloading page to show updated logo...');
-                    window.location.reload();
-                }, 1000);
-            @endif
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const targetTab = this.dataset.tab;
+                    
+                    tabs.forEach(t => t.classList.remove('active'));
+                    panels.forEach(p => p.classList.remove('active'));
+                    
+                    this.classList.add('active');
+                    document.getElementById(targetTab + '-panel').classList.add('active');
+                });
+            });
 
-        // Handle form submission with loading state
-        const settingsForm = document.getElementById('settingsForm');
-            const saveButton = document.getElementById('saveButton');
-
-            if (settingsForm && saveButton) {
-                settingsForm.addEventListener('submit', function (e) {
-                    // Don't prevent submission - let it go through normally
-                    console.log('Form submitted, saving settings...', {
-                        'form_action': settingsForm.action,
-                        'form_method': settingsForm.method,
-                        'timestamp': new Date().toISOString()
-                    });
-
-                    // Show loading state but don't disable
-                    const originalText = saveButton.querySelector('span').textContent;
-                    const originalIcon = saveButton.querySelector('i').className;
-                    saveButton.querySelector('span').textContent = 'Saving...';
-                    saveButton.querySelector('i').className = 'fas fa-spinner fa-spin';
-
-                    // Don't prevent form submission - let it proceed normally
-                    // The server will handle the redirect and show success message
+            // Form submission
+            const form = document.getElementById('settingsForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    showLoading();
+                    
+                    // Store submission flag with timestamp
+                    sessionStorage.setItem('formSubmitted', 'true');
+                    sessionStorage.setItem('formSubmittedTime', Date.now().toString());
                 });
             }
 
-            function switchTab(targetTab) {
-                // Remove active class from all tabs and panels
-                tabs.forEach(tab => tab.classList.remove('active'));
-                panels.forEach(panel => panel.classList.remove('active'));
-
-                // Add active class to target tab
-                targetTab.classList.add('active');
-
-                // Show corresponding panel
-                const targetPanel = document.getElementById(targetTab.dataset.tab + '-panel');
-                if (targetPanel) {
-                    targetPanel.classList.add('active');
-                }
-
-                // Move slider
-                const tabIndex = Array.from(tabs).indexOf(targetTab);
-                const sliderWidth = 100 / tabs.length;
-                slider.style.transform = `translateX(${tabIndex * 100}%)`;
-                slider.style.width = `${sliderWidth}%`;
-            }
-
-            // Add click event listeners to tabs
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => switchTab(tab));
-            });
-
-            // Initialize slider position
-            const activeTab = document.querySelector('.nav-tab.active');
-            if (activeTab) {
-                switchTab(activeTab);
+            // Check for form submission return with timestamp validation
+            const formSubmitted = sessionStorage.getItem('formSubmitted');
+            const formSubmittedTime = sessionStorage.getItem('formSubmittedTime');
+            const currentTime = Date.now();
+            
+            // Only check for messages if form was submitted within last 10 seconds
+            if (formSubmitted === 'true' && formSubmittedTime && (currentTime - parseInt(formSubmittedTime)) < 10000) {
+                sessionStorage.removeItem('formSubmitted');
+                sessionStorage.removeItem('formSubmittedTime');
+                hideLoading();
+                
+                // Wait for session to be available
+                setTimeout(checkMessages, 500);
+            } else {
+                // Normal page load or old form submission - clear flags and skip alternative message check
+                sessionStorage.removeItem('formSubmitted');
+                sessionStorage.removeItem('formSubmittedTime');
+                setTimeout(checkMessagesNormal, 100);
             }
         });
 
-        // Modal functions
-        window.testEmail = function () {
-            document.getElementById('testEmailModal').classList.add('active');
-        };
-
-        window.closeModal = function (modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        };
-
-        window.sendTestEmail = function () {
-            const email = document.getElementById('testEmailAddress').value;
-            const template = document.getElementById('testEmailTemplate').value;
-
-            if (!email) {
-                alert('Please enter an email address');
+        // Enhanced session message detection (FORM SUBMISSION ONLY)
+        function checkMessages() {
+            const sessionData = {
+                success: @json(session('success')),
+                error: @json(session('error')),
+                settings_success_message: @json(session('settings_success_message')),
+                settings_error_message: @json(session('settings_error_message')),
+                has_success: @json(session()->has('success')),
+                has_error: @json(session()->has('error')),
+                has_settings_success: @json(session()->has('settings_success_message')),
+                has_settings_error: @json(session()->has('settings_error_message'))
+            };
+            
+            // Check for alternative success message (NEW METHOD - PRIORITY 1)
+            if (sessionData.settings_success_message) {
+                showModal('success', 'Settings Updated!', sessionData.settings_success_message);
+                
+                // Clear the message after displaying (simulate flash behavior)
+                fetch('/admin/settings/clear-message', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Content-Type': 'application/json'
+                    }
+                }).catch(err => console.log('Clear message error:', err));
+                
+                return;
+            }
+            
+            // Check for alternative error message (NEW METHOD - PRIORITY 2)
+            if (sessionData.settings_error_message) {
+                showModal('error', 'Settings Error!', sessionData.settings_error_message);
+                
+                // Clear the message after displaying
+                fetch('/admin/settings/clear-message', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Content-Type': 'application/json'
+                    }
+                }).catch(err => console.log('Clear message error:', err));
+                
+                return;
+            }
+            
+            // Continue with standard message checking
+            checkMessagesNormal();
+        }
+        
+        // Normal page load message detection (EXCLUDES ALTERNATIVE MESSAGES)
+        function checkMessagesNormal() {
+            const sessionData = {
+                success: @json(session('success')),
+                error: @json(session('error')),
+                has_success: @json(session()->has('success')),
+                has_error: @json(session()->has('error'))
+            };
+            
+            // Check for success message
+            if (sessionData.success) {
+                showModal('success', 'Success!', sessionData.success);
                 return;
             }
 
-            // Here you would make an AJAX call to send test email
-            alert('Test email sent to: ' + email);
-            closeModal('testEmailModal');
-        };
-
-        // Other utility functions
-        window.clearCache = function () {
-            if (confirm('Are you sure you want to clear the application cache?')) {
-                // Make AJAX call to clear cache
-                alert('Cache cleared successfully!');
+            // Check for error message
+            if (sessionData.error) {
+                showModal('error', 'Error!', sessionData.error);
+                return;
             }
-        };
 
-        window.optimizeSystem = function () {
-            if (confirm('Are you sure you want to optimize the system?')) {
-                // Make AJAX call to optimize system
-                alert('System optimization completed!');
-            }
-        };
+            // Check for validation errors
+            @if($errors->any() && old())
+                const errors = @json($errors->all());
+                showModal('error', 'Validation Error!', errors.join('\n'));
+                return;
+            @endif
+        }
 
-        window.resetForm = function () {
-            if (confirm('Are you sure you want to reset all settings to default values?')) {
-                document.getElementById('settingsForm').reset();
-            }
-        };
-
-        window.previewChanges = function () {
-            alert('Preview functionality would show changes before saving.');
-        };
-
-        // Enhanced File preview functions
-        window.previewLogo = function (input) {
-            console.log('previewLogo called', input);
-
+        // File Preview Functions
+        function previewLogo(input) {
             if (input.files && input.files[0]) {
-                const file = input.files[0];
-                console.log('File selected:', {
-                    name: file.name,
-                    size: file.size,
-                    type: file.type,
-                    lastModified: file.lastModified
-                });
-
-                // Validate file type
-                if (!file.type.startsWith('image/')) {
-                    alert('Please select an image file');
-                    input.value = ''; // Clear the input
-                    return;
-                }
-
-                // Validate file size (2MB)
-                if (file.size > 2 * 1024 * 1024) {
-                    alert('File size must be less than 2MB');
-                    input.value = ''; // Clear the input
-                    return;
-                }
-
                 const reader = new FileReader();
-                reader.onload = function (e) {
-                    console.log('File loaded successfully for preview');
-
-                    const preview = document.querySelector('.file-upload-preview');
-                    const placeholder = document.getElementById('noLogoPlaceholder');
-                    let currentLogo = document.getElementById('currentLogo');
-
-                    console.log('Preview elements:', { preview, placeholder, currentLogo });
-
-                    // Hide placeholder
-                    if (placeholder) {
-                        placeholder.style.display = 'none';
+                reader.onload = function(e) {
+                    const preview = document.getElementById('currentLogo');
+                    const noLogo = document.getElementById('noLogo');
+                    
+                    if (preview) {
+                        preview.src = e.target.result;
+                        preview.style.display = 'block';
                     }
-
-                    // Update or create image
-                    if (currentLogo) {
-                        currentLogo.src = e.target.result;
-                        currentLogo.style.display = 'block';
-                        currentLogo.onerror = null; // Remove error handler for preview
-                        console.log('Updated existing logo with preview');
-                    } else {
-                        // Create new image element
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.className = 'current-logo';
-                        img.id = 'currentLogo';
-                        img.alt = 'Logo Preview';
-                        img.style.display = 'block';
-
-                        // Clear preview and add new image
-                        if (preview) {
-                            preview.innerHTML = '';
-                            preview.appendChild(img);
-                            console.log('Created new logo element for preview');
-                        }
+                    if (noLogo) {
+                        noLogo.style.display = 'none';
                     }
                 };
-
-                reader.onerror = function (e) {
-                    console.error('Error reading file:', e);
-                    alert('Error reading file. Please try again.');
-                    input.value = ''; // Clear the input
-                };
-
-                reader.readAsDataURL(file);
-            } else {
-                console.log('No file selected');
+                reader.readAsDataURL(input.files[0]);
             }
-        };
+        }
 
-        window.previewFavicon = function (input) {
-            console.log('previewFavicon called', input);
-
+        function previewFavicon(input) {
             if (input.files && input.files[0]) {
-                const file = input.files[0];
-                console.log('Favicon file selected:', {
-                    name: file.name,
-                    size: file.size,
-                    type: file.type,
-                    lastModified: file.lastModified
-                });
-
-                // Validate file type
-                if (!file.type.startsWith('image/')) {
-                    alert('Please select an image file');
-                    input.value = ''; // Clear the input
-                    return;
-                }
-
-                // Validate file size (1MB)
-                if (file.size > 1024 * 1024) {
-                    alert('Favicon file size must be less than 1MB');
-                    input.value = ''; // Clear the input
-                    return;
-                }
-
                 const reader = new FileReader();
-                reader.onload = function (e) {
-                    console.log('Favicon file loaded successfully for preview');
-
-                    const preview = document.querySelector('.favicon-preview');
-                    const placeholder = document.getElementById('noFaviconPlaceholder');
-                    let currentFavicon = document.getElementById('currentFavicon');
-
-                    console.log('Favicon preview elements:', { preview, placeholder, currentFavicon });
-
-                    // Hide placeholder
-                    if (placeholder) {
-                        placeholder.style.display = 'none';
+                reader.onload = function(e) {
+                    const preview = document.getElementById('currentFavicon');
+                    const noFavicon = document.getElementById('noFavicon');
+                    
+                    if (preview) {
+                        preview.src = e.target.result;
+                        preview.style.display = 'block';
                     }
-
-                    // Update or create image
-                    if (currentFavicon) {
-                        currentFavicon.src = e.target.result;
-                        currentFavicon.style.display = 'block';
-                        currentFavicon.onerror = null; // Remove error handler for preview
-                        console.log('Updated existing favicon with preview');
-                    } else {
-                        // Create new image element
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.className = 'current-favicon';
-                        img.id = 'currentFavicon';
-                        img.alt = 'Favicon Preview';
-                        img.style.display = 'block';
-
-                        // Clear preview and add new image
-                        if (preview) {
-                            preview.innerHTML = '';
-                            preview.appendChild(img);
-                            console.log('Created new favicon element for preview');
-                        }
+                    if (noFavicon) {
+                        noFavicon.style.display = 'none';
                     }
                 };
-
-                reader.onerror = function (e) {
-                    console.error('Error reading favicon file:', e);
-                    alert('Error reading favicon file. Please try again.');
-                    input.value = ''; // Clear the input
-                };
-
-                reader.readAsDataURL(file);
-            } else {
-                console.log('No favicon file selected');
+                reader.readAsDataURL(input.files[0]);
             }
-        };
+        }
+
+        // Utility Functions
+        function clearCache() {
+            showModal('success', 'Cache Cleared', 'Application cache has been cleared successfully.');
+        }
+
+        function testEmail() {
+            showModal('success', 'Test Email', 'Test email functionality will be implemented soon.');
+        }
+
+        // Modal Event Handlers
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal-overlay')) {
+                closeModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
     </script>
 @endpush

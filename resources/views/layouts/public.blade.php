@@ -1335,7 +1335,6 @@
                         </a>
                     </li>
                     -->
-
             </div>
         </div>
     </nav>
@@ -1351,61 +1350,108 @@
             <div class="row">
                 <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
                     <h5><i class="fas fa-graduation-cap me-2"></i>{{ \App\Models\Setting::get('school_name', 'SMK PGRI 2 PONOROGO') }}</h5>
-                    <p class="mb-3">Excellence in Education - Membentuk generasi yang berkarakter dan berprestasi untuk
-                        masa depan Indonesia yang gemilang.</p>
+                    <p class="mb-3">{{ \App\Models\Setting::get('footer_description', 'Excellence in Education - Membentuk generasi yang berkarakter dan berprestasi untuk masa depan Indonesia yang gemilang.') }}</p>
                     <div class="social-links">
-                        <a href="#" class="text-white me-3" aria-label="Facebook">
-                            <i class="fab fa-facebook fa-lg"></i>
-                        </a>
-                        <a href="#" class="text-white me-3" aria-label="Instagram">
-                            <i class="fab fa-instagram fa-lg"></i>
-                        </a>
-                        <a href="#" class="text-white me-3" aria-label="YouTube">
-                            <i class="fab fa-youtube fa-lg"></i>
-                        </a>
-                        <a href="#" class="text-white" aria-label="Twitter">
-                            <i class="fab fa-twitter fa-lg"></i>
-                        </a>
+                        @php
+                            $facebookUrl = \App\Models\Setting::get('footer_facebook');
+                            $instagramUrl = \App\Models\Setting::get('footer_instagram');
+                            $youtubeUrl = \App\Models\Setting::get('footer_youtube');
+                            $twitterUrl = \App\Models\Setting::get('footer_twitter');
+                        @endphp
+                        
+                        @if($facebookUrl)
+                            <a href="{{ $facebookUrl }}" class="text-white me-3" aria-label="Facebook" target="_blank" rel="noopener">
+                                <i class="fab fa-facebook fa-lg"></i>
+                            </a>
+                        @endif
+                        
+                        @if($instagramUrl)
+                            <a href="{{ $instagramUrl }}" class="text-white me-3" aria-label="Instagram" target="_blank" rel="noopener">
+                                <i class="fab fa-instagram fa-lg"></i>
+                            </a>
+                        @endif
+                        
+                        @if($youtubeUrl)
+                            <a href="{{ $youtubeUrl }}" class="text-white me-3" aria-label="YouTube" target="_blank" rel="noopener">
+                                <i class="fab fa-youtube fa-lg"></i>
+                            </a>
+                        @endif
+                        
+                        @if($twitterUrl)
+                            <a href="{{ $twitterUrl }}" class="text-white" aria-label="Twitter" target="_blank" rel="noopener">
+                                <i class="fab fa-twitter fa-lg"></i>
+                            </a>
+                        @endif
+                        
+                        @if(!$facebookUrl && !$instagramUrl && !$youtubeUrl && !$twitterUrl)
+                            <!-- Default social links when no settings are configured -->
+                            <a href="#" class="text-white me-3" aria-label="Facebook">
+                                <i class="fab fa-facebook fa-lg"></i>
+                            </a>
+                            <a href="#" class="text-white me-3" aria-label="Instagram">
+                                <i class="fab fa-instagram fa-lg"></i>
+                            </a>
+                            <a href="#" class="text-white me-3" aria-label="YouTube">
+                                <i class="fab fa-youtube fa-lg"></i>
+                            </a>
+                            <a href="#" class="text-white" aria-label="Twitter">
+                                <i class="fab fa-twitter fa-lg"></i>
+                            </a>
+                        @endif
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
                     <h6 class="fw-bold mb-3">Quick Links</h6>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#profile" class="text-white-50 text-decoration-none">Profil
+                        <li class="mb-2"><a href="{{ route('about.profile') }}" class="text-white-50 text-decoration-none">Profil
                                 Sekolah</a></li>
-                        <li class="mb-2"><a href="#facilities" class="text-white-50 text-decoration-none">Fasilitas</a>
+                        <li class="mb-2"><a href="{{ route('facilities.index') }}" class="text-white-50 text-decoration-none">Fasilitas</a>
                         </li>
-                        <li class="mb-2"><a href="#achievements" class="text-white-50 text-decoration-none">Prestasi</a>
+                        <li class="mb-2"><a href="{{ route('public.achievements') }}" class="text-white-50 text-decoration-none">Prestasi</a>
                         </li>
-                        <li class="mb-2"><a href="#extra" class="text-white-50 text-decoration-none">Ekstrakurikuler</a>
+                        <li class="mb-2"><a href="{{ route('public.extracurriculars.index') }}" class="text-white-50 text-decoration-none">Ekstrakurikuler</a>
                         </li>
                     </ul>
                 </div>
                 <div class="col-lg-2 col-md-6 mb-4 mb-lg-0">
                     <h6 class="fw-bold mb-3">Akademik</h6>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#programs" class="text-white-50 text-decoration-none">Program
+                        <li class="mb-2"><a href="{{ route('public.academic.programs') }}" class="text-white-50 text-decoration-none">Program
                                 Studi</a></li>
-                        <li class="mb-2"><a href="#calendar" class="text-white-50 text-decoration-none">Kalender</a>
+                        <li class="mb-2"><a href="{{ route('academic.calendar') }}" class="text-white-50 text-decoration-none">Kalender</a>
                         </li>
-                        <li class="mb-2"><a href="#gallery" class="text-white-50 text-decoration-none">Galeri</a></li>
-                        <li class="mb-2"><a href="#videos" class="text-white-50 text-decoration-none">Video</a></li>
+                        <li class="mb-2"><a href="{{ route('gallery.index') }}" class="text-white-50 text-decoration-none">Galeri</a></li>
+                        <li class="mb-2"><a href="{{ route('public.videos.index') }}" class="text-white-50 text-decoration-none">Video</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <h6 class="fw-bold mb-3">Kontak Kami</h6>
-                    <p class="mb-2">
-                        <i class="fas fa-map-marker-alt me-2"></i>
-                        <small>Jl. Pendidikan No. 123<br>Ponorogo, Jawa Timur 63411</small>
-                    </p>
-                    <p class="mb-2">
-                        <i class="fas fa-phone me-2"></i>
-                        <small>(0352) 123-4567</small>
-                    </p>
-                    <p class="mb-0">
-                        <i class="fas fa-envelope me-2"></i>
-                        <small>info@smkpgri2ponorogo.sch.id</small>
-                    </p>
+                    @php
+                        $footerAddress = \App\Models\Setting::get('footer_address', 'Jl. Pendidikan No. 123, Ponorogo, Jawa Timur 63411');
+                        $footerPhone = \App\Models\Setting::get('footer_phone', '(0352) 123-4567');
+                        $footerEmail = \App\Models\Setting::get('footer_email', 'info@smkpgri2ponorogo.sch.id');
+                    @endphp
+                    
+                    @if($footerAddress)
+                        <p class="mb-2">
+                            <i class="fas fa-map-marker-alt me-2"></i>
+                            <small>{!! nl2br(e($footerAddress)) !!}</small>
+                        </p>
+                    @endif
+                    
+                    @if($footerPhone)
+                        <p class="mb-2">
+                            <i class="fas fa-phone me-2"></i>
+                            <small>{{ $footerPhone }}</small>
+                        </p>
+                    @endif
+                    
+                    @if($footerEmail)
+                        <p class="mb-0">
+                            <i class="fas fa-envelope me-2"></i>
+                            <small><a href="mailto:{{ $footerEmail }}" class="text-white-50 text-decoration-none">{{ $footerEmail }}</a></small>
+                        </p>
+                    @endif
                 </div>
             </div>
             <hr style="border-color: rgba(255,255,255,0.2); margin: 2rem 0 1rem 0;">

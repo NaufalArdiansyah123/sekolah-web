@@ -62,7 +62,7 @@ function updateAllAvatars(newAvatarUrl) {
     // Force refresh of all img elements that might be user avatars
     const allImages = document.querySelectorAll('img');
     allImages.forEach(img => {
-        if (img.alt && (img.alt.toLowerCase().includes('avatar') || img.alt.toLowerCase().includes(auth?.user?.name?.toLowerCase() || ''))) {
+        if (img.alt && (img.alt.toLowerCase().includes('avatar') || img.alt.toLowerCase().includes('user'))) {
             img.src = newAvatarUrl;
             console.log('Updated avatar by alt text:', img.alt);
         }
@@ -127,21 +127,47 @@ function initializeAvatarErrorHandling() {
     });
 }
 
+/**
+ * Initialize MutationObserver safely
+ */
+function initializeMutationObserver() {
+    // Check if document.body exists and is a valid Node
+    if (document.body && document.body instanceof Node) {
+        try {
+            const observer = new MutationObserver(() => {
+                initializeAvatarErrorHandling();
+            });
+
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+            
+            console.log('MutationObserver initialized successfully');
+        } catch (error) {
+            console.warn('Failed to initialize MutationObserver:', error);
+        }
+    } else {
+        console.warn('document.body not available for MutationObserver');
+    }
+}
+
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     initializeAvatarErrorHandling();
+    initializeMutationObserver();
     console.log('Avatar helper initialized');
 });
 
-// Re-initialize when new content is added dynamically
-const observer = new MutationObserver(() => {
+// Fallback initialization if DOMContentLoaded already fired
+if (document.readyState === 'loading') {
+    // DOM is still loading, wait for DOMContentLoaded
+} else {
+    // DOM is already loaded
     initializeAvatarErrorHandling();
-});
-
-observer.observe(document.body, {
-    childList: true,
-    subtree: true
-});
+    initializeMutationObserver();
+    console.log('Avatar helper initialized (fallback)');
+}
 
 // Add a delayed update function for cases where elements load later
 function delayedAvatarUpdate(newAvatarUrl, maxAttempts = 5, delay = 500) {

@@ -20,6 +20,10 @@ class SettingController extends Controller
                 'success_message' => session('success'),
                 'has_error' => session()->has('error'),
                 'error_message' => session('error'),
+                'has_settings_success_message' => session()->has('settings_success_message'),
+                'settings_success_message' => session('settings_success_message'),
+                'has_alt_success_message' => session()->has('alt_success_message'),
+                'alt_success_message' => session('alt_success_message'),
                 'all_session_data' => session()->all()
             ]);
             
@@ -105,6 +109,9 @@ class SettingController extends Controller
                 'content_type' => $request->header('Content-Type')
             ]);
             
+            // Set form submission timestamp for client-side detection
+            session()->put('last_form_submission', now()->timestamp);
+            
             // Simplified validation - no strict rules
             $validationRules = [];
             
@@ -156,6 +163,30 @@ class SettingController extends Controller
             }
             if ($request->has('school_subtitle')) {
                 $validationRules['school_subtitle'] = 'nullable|string|max:255';
+            }
+            if ($request->has('footer_description')) {
+                $validationRules['footer_description'] = 'nullable|string|max:500';
+            }
+            if ($request->has('footer_facebook')) {
+                $validationRules['footer_facebook'] = 'nullable|url|max:255';
+            }
+            if ($request->has('footer_instagram')) {
+                $validationRules['footer_instagram'] = 'nullable|url|max:255';
+            }
+            if ($request->has('footer_youtube')) {
+                $validationRules['footer_youtube'] = 'nullable|url|max:255';
+            }
+            if ($request->has('footer_twitter')) {
+                $validationRules['footer_twitter'] = 'nullable|url|max:255';
+            }
+            if ($request->has('footer_address')) {
+                $validationRules['footer_address'] = 'nullable|string|max:500';
+            }
+            if ($request->has('footer_phone')) {
+                $validationRules['footer_phone'] = 'nullable|string|max:50';
+            }
+            if ($request->has('footer_email')) {
+                $validationRules['footer_email'] = 'nullable|email|max:255';
             }
 
             
@@ -365,10 +396,13 @@ class SettingController extends Controller
                             'request_data' => $request->except(['_token', '_method'])
                         ]);
                         
-                        // Return error response with user-friendly message
-                        return redirect()->back()
-                                       ->withInput()
-                                       ->with('error', 'Gagal mengupload file ' . $field . '. Silakan coba lagi atau hubungi administrator.');
+                        // Use alternative session method for error message
+                        session()->put('settings_error_message', 'Gagal mengupload file ' . $field . '. Silakan coba lagi atau hubungi administrator.');
+                        session()->put('settings_message_timestamp', now()->timestamp);
+                        session()->put('settings_message_type', 'error');
+                        session()->save();
+                        
+                        return redirect()->back()->withInput();
                     }
                 }
             }
@@ -489,24 +523,37 @@ class SettingController extends Controller
             
             \Log::info('Settings update completed successfully');
             
-            // Force session save before redirect
+            // Use alternative session method (flash system not working)
+            session()->put('settings_success_message', 'Pengaturan berhasil diperbarui!');
+            session()->put('settings_message_timestamp', now()->timestamp);
+            session()->put('settings_message_type', 'success');
             session()->save();
             
-            \Log::info('Setting flash message and redirecting');
+            \Log::info('Settings success message set using alternative method:', [
+                'has_settings_success_message' => session()->has('settings_success_message'),
+                'settings_success_message' => session('settings_success_message'),
+                'settings_message_type' => session('settings_message_type'),
+                'timestamp' => session('settings_message_timestamp'),
+                'session_id' => session()->getId()
+            ]);
             
-            return redirect()->route('admin.settings.index')
-                           ->with('success', 'Pengaturan berhasil diperbarui!')
-                           ->with('logo_updated', true); // Flag to indicate logo was updated
+            return redirect()->route('admin.settings.index');
+            
         } catch (\Illuminate\Validation\ValidationException $e) {
             \Log::error('Validation error in settings update:', [
                 'errors' => $e->errors(),
                 'request' => $request->all()
             ]);
             
+            // Use alternative session method for validation errors
+            session()->put('settings_error_message', 'Terdapat kesalahan validasi. Silakan periksa kembali.');
+            session()->put('settings_message_timestamp', now()->timestamp);
+            session()->put('settings_message_type', 'error');
+            session()->save();
+            
             return redirect()->back()
                            ->withErrors($e->errors())
-                           ->withInput()
-                           ->with('error', 'Terdapat kesalahan validasi. Silakan periksa kembali.');
+                           ->withInput();
         } catch (\Exception $e) {
             \Log::error('Error updating settings:', [
                 'error' => $e->getMessage(),
@@ -514,10 +561,28 @@ class SettingController extends Controller
                 'request' => $request->except(['_token', '_method'])
             ]);
             
-            return redirect()->back()
-                           ->withInput()
-                           ->with('error', 'Terjadi kesalahan saat menyimpan pengaturan. Silakan coba lagi.');
+            // Use alternative session method for general errors
+            session()->put('settings_error_message', 'Terjadi kesalahan saat menyimpan pengaturan. Silakan coba lagi.');
+            session()->put('settings_message_timestamp', now()->timestamp);
+            session()->put('settings_message_type', 'error');
+            session()->save();
+            
+            return redirect()->back()->withInput();
         }
+    }
+
+    // Add method to clear alternative session messages
+    public function clearMessage()
+    {
+        session()->forget([
+            'settings_success_message', 
+            'settings_error_message', 
+            'settings_message_timestamp', 
+            'settings_message_type',
+            'alt_success_message',
+            'alt_message_timestamp'
+        ]);
+        return response()->json(['status' => 'cleared']);
     }
 
     public function reset(Request $request)
@@ -557,6 +622,16 @@ class SettingController extends Controller
                 'auto_backup_enabled' => '0',
                 'backup_frequency' => 'daily',
                 'backup_retention_days' => '30',
+                
+                // Footer Settings
+                'footer_description' => 'Excellence in Education - Membentuk generasi yang berkarakter dan berprestasi untuk masa depan Indonesia yang gemilang.',
+                'footer_facebook' => '',
+                'footer_instagram' => '',
+                'footer_youtube' => '',
+                'footer_twitter' => '',
+                'footer_address' => 'Jl. Pendidikan No. 123, Ponorogo, Jawa Timur 63411',
+                'footer_phone' => '(0352) 123-4567',
+                'footer_email' => 'info@smkpgri2ponorogo.sch.id',
             ];
 
             \Log::info('Resetting settings to default values:', $defaultSettings);
@@ -959,7 +1034,8 @@ class SettingController extends Controller
             'email' => ['mail_host', 'mail_port', 'mail_username', 'mail_password', 'mail_encryption', 'mail_from_name'],
             'notification' => ['email_notifications_enabled', 'notification_frequency', 'registration_notifications', 'system_notifications', 'announcement_notifications', 'agenda_notifications'],
             'appearance' => ['navbar_bg_color', 'navbar_text_color', 'navbar_hover_color', 'navbar_hover_text_color', 'navbar_active_color'],
-            'backup' => ['auto_backup_enabled', 'backup_frequency', 'backup_retention_days']
+            'backup' => ['auto_backup_enabled', 'backup_frequency', 'backup_retention_days'],
+            'footer' => ['footer_description', 'footer_facebook', 'footer_instagram', 'footer_youtube', 'footer_twitter', 'footer_address', 'footer_phone', 'footer_email']
         ];
         
         foreach ($groups as $group => $keys) {

@@ -56,6 +56,10 @@ class DatabaseSeeder extends Seeder
             $this->command->info('\n📞 Seeding Contacts...');
             $this->call(ContactSeeder::class);
             
+            // Seed study programs
+            $this->command->info('\n📚 Seeding Study Programs...');
+            $this->call(StudyProgramSeeder::class);
+            
             $this->command->info('\n🎉 Database seeding completed successfully!');
             $this->command->info('\n📋 Summary:');
             $this->command->info('   ✅ Roles created/verified');
@@ -64,6 +68,7 @@ class DatabaseSeeder extends Seeder
             $this->command->info('   ✅ 5 blog posts created');
             $this->command->info('   ✅ 5 announcements created');
             $this->command->info('   ✅ 15 teachers created with accounts');
+            $this->command->info('   ✅ 5 study programs created');
             $this->command->info('\n🔑 Default Password: "password"');
             $this->command->info('\n📧 Original Login Credentials:');
             $this->command->info('   - admin@sman99.sch.id / password (Administrator)');

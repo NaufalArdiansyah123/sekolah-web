@@ -1,0 +1,193 @@
+/* Enhanced Program Card Styling */
+
+/* Program Footer Layout */
+.program-footer {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding-top: 1.5rem !important;
+    border-top: 2px solid #e2e8f0 !important;
+    margin-top: auto !important;
+}
+
+.program-faculty {
+    display: flex !important;
+    align-items: center !important;
+    font-size: 0.75rem !important;
+    color: #6c757d !important;
+}
+
+.program-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+}
+
+/* Enhanced Learn More Button */
+.program-link {
+    background: linear-gradient(135deg, #3182ce, #2563eb) !important;
+    border: none !important;
+    color: white !important;
+    padding: 0.75rem 1.25rem !important;
+    border-radius: 12px !important;
+    text-decoration: none !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    box-shadow: 0 4px 12px rgba(49, 130, 206, 0.3) !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+/* Shimmer Effect */
+.program-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.program-link:hover::before {
+    left: 100%;
+}
+
+/* Hover Effects */
+.program-link:hover {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+    color: white !important;
+    text-decoration: none !important;
+    transform: translateY(-3px) scale(1.05) !important;
+    box-shadow: 0 8px 25px rgba(49, 130, 206, 0.5) !important;
+}
+
+/* Arrow Animation */
+.program-link .arrow-icon {
+    transition: transform 0.3s ease;
+}
+
+.program-link:hover .arrow-icon {
+    transform: translateX(4px);
+}
+
+/* Download Button */
+.btn-outline-secondary {
+    border: 2px solid #e2e8f0 !important;
+    color: #6c757d !important;
+    background: white !important;
+    transition: all 0.3s ease !important;
+    border-radius: 12px !important;
+    padding: 0.75rem !important;
+    width: 40px !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.btn-outline-secondary:hover {
+    background: #3182ce !important;
+    border-color: #3182ce !important;
+    color: white !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(49, 130, 206, 0.3) !important;
+}
+
+/* Program Content Layout */
+.program-content {
+    padding: 2rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+}
+
+/* Button Focus State */
+.program-link:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 4px rgba(49, 130, 206, 0.2) !important;
+}
+
+/* Button Active State */
+.program-link:active {
+    transform: translateY(-1px) scale(1.02) !important;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .program-footer {
+        flex-direction: column !important;
+        gap: 1rem !important;
+        align-items: stretch !important;
+    }
+
+    .program-actions {
+        justify-content: center !important;
+    }
+
+    .program-link {
+        flex: 1 !important;
+        justify-content: center !important;
+        padding: 1rem 1.5rem !important;
+        font-size: 0.9rem !important;
+    }
+
+    .btn-outline-secondary {
+        width: 45px !important;
+        height: 45px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .program-link {
+        padding: 0.875rem 1.25rem !important;
+        font-size: 0.85rem !important;
+    }
+}
+
+/* Additional Enhancements */
+.program-link:not(:hover) {
+    animation: subtlePulse 3s ease-in-out infinite;
+}
+
+@keyframes subtlePulse {
+    0%, 100% {
+        box-shadow: 0 4px 12px rgba(49, 130, 206, 0.3);
+    }
+    50% {
+        box-shadow: 0 4px 12px rgba(49, 130, 206, 0.4);
+    }
+}
+
+/* Accessibility Improvements */
+.program-link:focus-visible {
+    outline: 2px solid #3182ce !important;
+    outline-offset: 2px !important;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    .program-link {
+        border: 2px solid currentColor !important;
+    }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    .program-link,
+    .program-link::before,
+    .arrow-icon,
+    .btn-outline-secondary {
+        transition: none !important;
+        animation: none !important;
+    }
+    
+    .program-link:hover {
+        transform: none !important;
+    }
+}

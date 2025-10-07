@@ -712,6 +712,11 @@
                    @click="sidebarOpen = false">
                     📅 Kalender Akademik
                 </a>
+                <a href="<?php echo e(route('admin.study-programs.index')); ?>" 
+                   class="nav-dropdown-item <?php echo e(request()->routeIs('admin.study-programs.*') ? 'active' : ''); ?>"
+                   @click="sidebarOpen = false">
+                    📚 Program Studi
+                </a>
             </div>
         </div>
 

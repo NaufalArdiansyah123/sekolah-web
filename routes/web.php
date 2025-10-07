@@ -27,6 +27,7 @@ use App\Http\Controllers\Admin\{
     SettingController,
     SlideshowController,
     CalendarController,
+    StudyProgramController,
 };
 
 // Import Public Controllers
@@ -38,6 +39,201 @@ use App\Http\Controllers\Student\AssignmentController;
 use App\Http\Controllers\Student\GradeController;
 use App\Http\Controllers\Student\QuizController;
 use App\Http\Controllers\Student\AttendanceController;
+// use App\Http\Controllers\Admin\StudyProgramController;
+
+/*
+|--------------------------------------------------------------------------
+| Debug Session Routes (REMOVE IN PRODUCTION)
+|--------------------------------------------------------------------------
+*/
+
+// Simple session debug routes
+Route::middleware(['web'])->group(function () {
+    
+    // Test session set
+    Route::get('/debug/session/set', function() {
+        \Log::info('🧪 Debug session set route called');
+        
+        session(['debug_test' => 'Session is working!']);
+        session(['debug_time' => now()->toDateTimeString()]);
+        session()->save();
+        
+        \Log::info('🧪 Session data set:', [
+            'session_id' => session()->getId(),
+            'debug_test' => session('debug_test'),
+            'all_session' => session()->all()
+        ]);
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Session data set',
+            'session_id' => session()->getId(),
+            'data' => session()->all()
+        ]);
+    });
+    
+    // Test session get
+    Route::get('/debug/session/get', function() {
+        \Log::info('🧪 Debug session get route called');
+        
+        $data = [
+            'session_id' => session()->getId(),
+            'debug_test' => session('debug_test'),
+            'all_session' => session()->all()
+        ];
+        
+        \Log::info('🧪 Session data retrieved:', $data);
+        
+        return response()->json($data);
+    });
+    
+    // Test flash message
+    Route::get('/debug/session/flash', function() {
+        \Log::info('🧪 Debug flash message route called');
+        
+        session()->flash('debug_flash', 'This is a flash message!');
+        session()->save();
+        
+        \Log::info('🧪 Flash message set:', [
+            'session_id' => session()->getId(),
+            'has_debug_flash' => session()->has('debug_flash'),
+            'all_session' => session()->all()
+        ]);
+        
+        return redirect('/debug/session/check-flash');
+    });
+    
+    // Check flash message
+    Route::get('/debug/session/check-flash', function() {
+        \Log::info('🧪 Debug check flash route called');
+        
+        $data = [
+            'session_id' => session()->getId(),
+            'has_debug_flash' => session()->has('debug_flash'),
+            'debug_flash' => session('debug_flash'),
+            'all_session' => session()->all()
+        ];
+        
+        \Log::info('🧪 Flash message checked:', $data);
+        
+        return response()->json($data);
+    });
+    
+    // Test alternative session method (using put instead of flash)
+    Route::get('/debug/session/alt-success', function() {
+        \Log::info('🧪 Debug alternative success route called');
+        
+        // Use session put instead of flash
+        session()->put('alt_success_message', 'Alternative success message - modal should appear!');
+        session()->put('alt_message_timestamp', now()->timestamp);
+        session()->save();
+        
+        \Log::info('🧪 Alternative session message set:', [
+            'session_id' => session()->getId(),
+            'has_alt_success_message' => session()->has('alt_success_message'),
+            'alt_success_message' => session('alt_success_message'),
+            'timestamp' => session('alt_message_timestamp'),
+            'all_session' => session()->all()
+        ]);
+        
+        return redirect()->route('admin.settings.index');
+    });
+    
+    // Test alternative session page (Laravel route)
+    Route::get('/test-alternative-session', function() {
+        $html = '<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Alternative Session Method</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .debug-box { background: #f0f0f0; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .error { background: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .btn { padding: 10px 15px; margin: 5px; background: #007bff; color: white; text-decoration: none; border-radius: 3px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Alternative Session Method</h1>
+    
+    <div class="debug-box">
+        <strong>🔍 Current Session Status:</strong><br>
+        Session ID: ' . session()->getId() . '<br>
+        Session Driver: ' . config('session.driver') . '<br>
+        Session Cookie: ' . config('session.cookie') . '<br>
+    </div>';
+    
+        // Handle test actions
+        if (request()->has('action')) {
+            switch (request()->get('action')) {
+                case 'set_alt_success':
+                    session()->put('alt_success_message', 'Alternative success message - this should work!');
+                    session()->put('alt_message_timestamp', now()->timestamp);
+                    session()->save();
+                    $html .= '<div class="success">✅ Alternative success message set in session!</div>';
+                    break;
+                    
+                case 'clear_session':
+                    session()->flush();
+                    session()->regenerate();
+                    $html .= '<div class="success">🧹 Session cleared and regenerated!</div>';
+                    break;
+            }
+        }
+        
+        // Display current session data
+        $html .= '<div class="debug-box">';
+        $html .= '<strong>📊 Current Session Data:</strong><br>';
+        $sessionData = session()->all();
+        if (empty($sessionData)) {
+            $html .= 'No session data found.<br>';
+        } else {
+            foreach ($sessionData as $key => $value) {
+                if (!in_array($key, ['_token', '_previous'])) {
+                    $html .= $key . ': ' . (is_string($value) ? $value : json_encode($value)) . '<br>';
+                }
+            }
+        }
+        $html .= '</div>';
+        
+        // Check for alternative success message
+        if (session()->has('alt_success_message')) {
+            $html .= '<div class="success">';
+            $html .= '🎉 Alternative Success Message Found: ' . session('alt_success_message');
+            if (session()->has('alt_message_timestamp')) {
+                $html .= '<br>⏰ Timestamp: ' . date('Y-m-d H:i:s', session('alt_message_timestamp'));
+            }
+            $html .= '</div>';
+            
+            // Clear the message after displaying (simulate flash behavior)
+            session()->forget(['alt_success_message', 'alt_message_timestamp']);
+        }
+        
+        $html .= '
+    <h3>🧪 Test Actions:</h3>
+    <a href="?action=set_alt_success" class="btn">Set Alternative Success Message</a>
+    <a href="?action=clear_session" class="btn">Clear Session</a>
+    <a href="/test-alternative-session" class="btn">Refresh Page</a>
+    
+    <h3>🔗 Laravel Debug Routes:</h3>
+    <a href="/debug/session/alt-success" class="btn">Test Laravel Alternative Success</a>
+    <a href="/admin/settings" class="btn">Go to Settings Page</a>
+    
+    <script>
+        // Auto-refresh after action
+        if (window.location.search.includes("action=")) {
+            setTimeout(() => {
+                window.location.href = "/test-alternative-session";
+            }, 3000);
+        }
+    </script>
+</body>
+</html>';
+        
+        return response($html);
+    });
+    
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -68,6 +264,17 @@ Route::prefix('achievements')->name('public.achievements.')->group(function () {
     Route::get('/{achievement}', [PublicAchievementController::class, 'show'])->name('show');
 });
 
+// Public Study Programs Routes
+Route::prefix('study-programs')->name('study-programs.')->group(function () {
+    Route::get('/', [App\Http\Controllers\StudyProgramController::class, 'index'])->name('index');
+    Route::get('/search', [App\Http\Controllers\StudyProgramController::class, 'search'])->name('search');
+    Route::get('/featured', [App\Http\Controllers\StudyProgramController::class, 'featured'])->name('featured');
+    Route::get('/statistics', [App\Http\Controllers\StudyProgramController::class, 'statistics'])->name('statistics');
+    Route::get('/degree/{degree}', [App\Http\Controllers\StudyProgramController::class, 'byDegree'])->name('by-degree');
+    Route::get('/faculty/{faculty}', [App\Http\Controllers\StudyProgramController::class, 'byFaculty'])->name('by-faculty');
+    Route::get('/{studyProgram}', [App\Http\Controllers\StudyProgramController::class, 'show'])->name('show');
+});
+
 // Alternative naming for backward compatibility
 Route::get('/achievements', [PublicAchievementController::class, 'index'])->name('achievements.index');
 Route::get('/achievements/{achievement}', [PublicAchievementController::class, 'show'])->name('achievements.show');
@@ -75,7 +282,7 @@ Route::get('/achievements/{achievement}', [PublicAchievementController::class, '
 // Simple route name for easy access
 Route::get('/prestasi', [PublicAchievementController::class, 'index'])->name('public.achievements');
 Route::get('/prestasi/{achievement}', [PublicAchievementController::class, 'show'])->name('public.achievements.show');
-Route::get('/academic/programs', [PublicController::class, 'academicPrograms'])->name('public.academic.programs');
+Route::get('/academic/programs', [App\Http\Controllers\StudyProgramController::class, 'index'])->name('public.academic.programs');
 Route::get('/academic/calendar', [PublicController::class, 'academicCalendar'])->name('academic.calendar');
 Route::get('/videos', [PublicController::class, 'videos'])->name('public.videos.index');
 Route::get('/videos/{id}', [PublicController::class, 'videoDetail'])->name('public.videos.show');
@@ -336,6 +543,48 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/settings/clear-logs', [App\Http\Controllers\Admin\SettingController::class, 'clearLogs'])->name('settings.clear-logs');
     Route::get('/settings/system-monitoring', [App\Http\Controllers\Admin\SettingController::class, 'systemMonitoring'])->name('settings.system-monitoring');
     
+    // Test routes for debugging modal issues (remove in production)
+    Route::get('/settings/test-success', function() {
+        \Log::info('🧪 Test success route called');
+        
+        // Test the exact same method as the real controller
+        \Log::info('🧪 Before redirect - session state:', [
+            'session_id' => session()->getId(),
+            'all_session' => session()->all()
+        ]);
+        
+        // Use the exact same redirect method as SettingController
+        return redirect()->route('admin.settings.index')
+                        ->with('success', 'Test success message - modal should appear!')
+                        ->with('test_flag', 'success_test')
+                        ->with('debug_timestamp', now()->toDateTimeString());
+    })->name('settings.test-success');
+    
+    Route::get('/settings/test-error', function() {
+        \Log::info('🧪 Test error route called');
+        
+        session()->flash('error', 'Test error message - modal should appear!');
+        session()->save();
+        
+        \Log::info('🧪 Error session set in test route:', [
+            'has_error' => session()->has('error'),
+            'error_value' => session('error'),
+            'session_id' => session()->getId()
+        ]);
+        
+        return redirect()->route('admin.settings.index')
+                        ->with('error', 'Test error message - modal should appear!')
+                        ->with('test_flag', 'error_test');
+    })->name('settings.test-error');
+    
+    Route::get('/settings/test-validation', function() {
+        \Log::info('🧪 Test validation route called');
+        
+        return redirect()->route('admin.settings.index')
+                        ->withErrors(['test_field' => 'This is a test validation error'])
+                        ->withInput(['test_field' => 'test_value'])
+                        ->with('test_flag', 'validation_test');
+    })->name('settings.test-validation');
 
     // Vision & Mission Management
     Route::resource('vision', App\Http\Controllers\Admin\VisionController::class);
@@ -458,6 +707,21 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::post('/{achievement}/toggle-status', [AchievementController::class, 'toggleStatus'])->name('toggle-status');
         Route::post('/{achievement}/toggle-featured', [AchievementController::class, 'toggleFeatured'])->name('toggle-featured');
         Route::post('/bulk-action', [AchievementController::class, 'bulkAction'])->name('bulk-action');
+    });
+    
+    // Study Programs Management Routes
+    Route::prefix('study-programs')->name('study-programs.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\StudyProgramController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\Admin\StudyProgramController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\Admin\StudyProgramController::class, 'store'])->name('store');
+        Route::get('/{studyProgram}', [App\Http\Controllers\Admin\StudyProgramController::class, 'show'])->name('show');
+        Route::get('/{studyProgram}/edit', [App\Http\Controllers\Admin\StudyProgramController::class, 'edit'])->name('edit');
+        Route::put('/{studyProgram}', [App\Http\Controllers\Admin\StudyProgramController::class, 'update'])->name('update');
+        Route::delete('/{studyProgram}', [App\Http\Controllers\Admin\StudyProgramController::class, 'destroy'])->name('destroy');
+        Route::post('/{studyProgram}/activate', [App\Http\Controllers\Admin\StudyProgramController::class, 'activate'])->name('activate');
+        Route::post('/{studyProgram}/deactivate', [App\Http\Controllers\Admin\StudyProgramController::class, 'deactivate'])->name('deactivate');
+        Route::post('/{studyProgram}/feature', [App\Http\Controllers\Admin\StudyProgramController::class, 'feature'])->name('feature');
+        Route::post('/{studyProgram}/unfeature', [App\Http\Controllers\Admin\StudyProgramController::class, 'unfeature'])->name('unfeature');
     });
 });
 

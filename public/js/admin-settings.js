@@ -80,7 +80,11 @@ class AdminSettingsManager {
             
             // Validate file type
             if (!file.type.startsWith('image/')) {
-                window.adminNotifications?.error('File Error', 'Please select a valid image file');
+                if (window.showAlertModal) {
+                    window.showAlertModal('error', 'File Error', 'Please select a valid image file');
+                } else {
+                    alert('Please select a valid image file');
+                }
                 input.value = '';
                 return;
             }
@@ -89,7 +93,11 @@ class AdminSettingsManager {
             const maxSize = type === 'logo' ? 2 * 1024 * 1024 : 1 * 1024 * 1024;
             if (file.size > maxSize) {
                 const maxSizeMB = maxSize / (1024 * 1024);
-                window.adminNotifications?.error('File Error', `File size must be less than ${maxSizeMB}MB`);
+                if (window.showAlertModal) {
+                    window.showAlertModal('error', 'File Error', `File size must be less than ${maxSizeMB}MB`);
+                } else {
+                    alert(`File size must be less than ${maxSizeMB}MB`);
+                }
                 input.value = '';
                 return;
             }
@@ -114,7 +122,9 @@ class AdminSettingsManager {
                 }
 
                 // Show success notification
-                window.adminNotifications?.success('Preview Ready', `${type} preview updated successfully`);
+                if (window.showAlertModal) {
+                    window.showAlertModal('success', 'Preview Ready', `${type} preview updated successfully`);
+                }
             };
             reader.readAsDataURL(file);
         }
@@ -164,7 +174,11 @@ class AdminSettingsManager {
         if (this.isValidColor(color)) {
             this.updateColorPreview(fieldId, color);
         } else {
-            window.adminNotifications?.warning('Invalid Color', 'Please enter a valid hex color code');
+            if (window.showAlertModal) {
+                window.showAlertModal('warning', 'Invalid Color', 'Please enter a valid hex color code');
+            } else {
+                alert('Please enter a valid hex color code');
+            }
         }
     }
 
@@ -247,13 +261,17 @@ class AdminSettingsManager {
                 this.updateColorPreview(key, preset[key]);
             });
             this.updateNavbarPreview();
-            window.adminNotifications?.success('Theme Applied', `${theme.charAt(0).toUpperCase() + theme.slice(1)} theme applied successfully`);
+            if (window.showAlertModal) {
+                window.showAlertModal('success', 'Theme Applied', `${theme.charAt(0).toUpperCase() + theme.slice(1)} theme applied successfully`);
+            }
         }
     }
 
     resetNavbarColors() {
         this.applyPresetColors('dark');
-        window.adminNotifications?.info('Colors Reset', 'Navbar colors reset to default');
+        if (window.showAlertModal) {
+            window.showAlertModal('info', 'Colors Reset', 'Navbar colors reset to default');
+        }
     }
 
     // Form Validation
@@ -265,7 +283,11 @@ class AdminSettingsManager {
         form.addEventListener('submit', (e) => {
             if (!this.validateForm()) {
                 e.preventDefault();
-                window.adminNotifications?.error('Validation Error', 'Please fix the errors before submitting');
+                if (window.showAlertModal) {
+                    window.showAlertModal('error', 'Validation Error', 'Please fix the errors before submitting');
+                } else {
+                    alert('Please fix the errors before submitting');
+                }
             }
         });
     }
@@ -290,16 +312,245 @@ class AdminSettingsManager {
     initQuickActions() {
         // Clear Cache
         window.clearCache = () => {
-            window.adminNotifications?.info('Processing', 'Clearing cache...');
+            if (window.showAlertModal) {
+                window.showAlertModal('info', 'Processing', 'Clearing cache...');
+            }
             
             fetch('/admin/settings/clear-cache', {
                 method: 'POST',
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name=\"csrf-token\"]')?.getAttribute('content'),
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
                     'Content-Type': 'application/json'
                 }
             })
-            .then(response => response.json())\n            .then(data => {\n                if (data.success) {\n                    window.adminNotifications?.success('Success', data.message);\n                } else {\n                    window.adminNotifications?.error('Error', data.message);\n                }\n            })\n            .catch(error => {\n                window.adminNotifications?.error('Error', 'Failed to clear cache');\n            });\n        };\n\n        // Optimize System\n        window.optimizeSystem = () => {\n            window.adminNotifications?.info('Processing', 'Optimizing system...');\n            \n            fetch('/admin/settings/optimize', {\n                method: 'POST',\n                headers: {\n                    'X-CSRF-TOKEN': document.querySelector('meta[name=\"csrf-token\"]')?.getAttribute('content'),\n                    'Content-Type': 'application/json'\n                }\n            })\n            .then(response => response.json())\n            .then(data => {\n                if (data.success) {\n                    window.adminNotifications?.success('Success', data.message);\n                } else {\n                    window.adminNotifications?.error('Error', data.message);\n                }\n            })\n            .catch(error => {\n                window.adminNotifications?.error('Error', 'Failed to optimize system');\n            });\n        };\n    }\n\n    // Modal Functions\n    initModals() {\n        window.testEmail = () => {\n            const modal = document.getElementById('testEmailModal');\n            if (modal) {\n                modal.style.display = 'flex';\n                document.body.style.overflow = 'hidden';\n            }\n        };\n\n        window.closeModal = (modalId) => {\n            const modal = document.getElementById(modalId);\n            if (modal) {\n                modal.style.display = 'none';\n                document.body.style.overflow = 'auto';\n            }\n        };\n\n        window.sendTestEmail = () => {\n            const email = document.getElementById('testEmailAddress')?.value;\n            const template = document.getElementById('testEmailTemplate')?.value;\n\n            if (!email) {\n                window.adminNotifications?.error('Validation Error', 'Please enter an email address');\n                return;\n            }\n\n            window.adminNotifications?.info('Sending', 'Sending test email...');\n\n            fetch('/admin/settings/test-email', {\n                method: 'POST',\n                headers: {\n                    'X-CSRF-TOKEN': document.querySelector('meta[name=\"csrf-token\"]')?.getAttribute('content'),\n                    'Content-Type': 'application/json'\n                },\n                body: JSON.stringify({ email, template })\n            })\n            .then(response => response.json())\n            .then(data => {\n                if (data.success) {\n                    window.adminNotifications?.success('Email Sent', data.message);\n                    window.closeModal('testEmailModal');\n                } else {\n                    window.adminNotifications?.error('Email Failed', data.message);\n                }\n            })\n            .catch(error => {\n                window.adminNotifications?.error('Error', 'Failed to send test email');\n            });\n        };\n    }\n\n    // Utility Functions\n    resetForm() {\n        if (confirm('Are you sure you want to reset all settings to default values?')) {\n            window.adminNotifications?.info('Processing', 'Resetting form to defaults...');\n            \n            fetch('/admin/settings/reset', {\n                method: 'POST',\n                headers: {\n                    'X-CSRF-TOKEN': document.querySelector('meta[name=\"csrf-token\"]')?.getAttribute('content'),\n                    'Content-Type': 'application/json'\n                }\n            })\n            .then(response => response.json())\n            .then(data => {\n                if (data.success) {\n                    window.adminNotifications?.success('Reset Complete', data.message);\n                    setTimeout(() => {\n                        window.location.reload();\n                    }, 1500);\n                } else {\n                    window.adminNotifications?.error('Reset Failed', data.message);\n                }\n            })\n            .catch(error => {\n                window.adminNotifications?.error('Error', 'Failed to reset settings');\n            });\n        }\n    }\n\n    previewChanges() {\n        window.adminNotifications?.info('Preview', 'Changes will be visible after saving');\n    }\n}\n\n// Global functions for backward compatibility\nwindow.previewLogo = function(input) {\n    window.adminSettings?.previewFile(input, 'logo');\n};\n\nwindow.previewFavicon = function(input) {\n    window.adminSettings?.previewFile(input, 'favicon');\n};\n\nwindow.updateColorPreview = function(fieldId, color) {\n    window.adminSettings?.updateColorPreview(fieldId, color);\n};\n\nwindow.updateColorPicker = function(fieldId, color) {\n    window.adminSettings?.updateColorPicker(fieldId, color);\n};\n\nwindow.applyPresetColors = function(theme) {\n    window.adminSettings?.applyPresetColors(theme);\n};\n\nwindow.resetNavbarColors = function() {\n    window.adminSettings?.resetNavbarColors();\n};\n\nwindow.resetForm = function() {\n    window.adminSettings?.resetForm();\n};\n\nwindow.previewChanges = function() {\n    window.adminSettings?.previewChanges();\n};\n\n// Initialize when DOM is ready\ndocument.addEventListener('DOMContentLoaded', function() {\n    // Initialize settings manager\n    window.adminSettings = new AdminSettingsManager();\n    \n    console.log('⚙️ Admin settings functionality loaded!');\n});\n\n// Export for use in other scripts\nif (typeof module !== 'undefined' && module.exports) {\n    module.exports = { AdminSettingsManager };\n}"
-  }
-]
-</invoke>
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (window.showAlertModal) {
+                        window.showAlertModal('success', 'Success', data.message);
+                    } else {
+                        alert('Success: ' + data.message);
+                    }
+                } else {
+                    if (window.showAlertModal) {
+                        window.showAlertModal('error', 'Error', data.message);
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                }
+            })
+            .catch(error => {
+                if (window.showAlertModal) {
+                    window.showAlertModal('error', 'Error', 'Failed to clear cache');
+                } else {
+                    alert('Failed to clear cache');
+                }
+            });
+        };
+
+        // Optimize System
+        window.optimizeSystem = () => {
+            if (window.showAlertModal) {
+                window.showAlertModal('info', 'Processing', 'Optimizing system...');
+            }
+            
+            fetch('/admin/settings/optimize', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (window.showAlertModal) {
+                        window.showAlertModal('success', 'Success', data.message);
+                    } else {
+                        alert('Success: ' + data.message);
+                    }
+                } else {
+                    if (window.showAlertModal) {
+                        window.showAlertModal('error', 'Error', data.message);
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                }
+            })
+            .catch(error => {
+                if (window.showAlertModal) {
+                    window.showAlertModal('error', 'Error', 'Failed to optimize system');
+                } else {
+                    alert('Failed to optimize system');
+                }
+            });
+        };
+    }
+
+    // Modal Functions
+    initModals() {
+        window.testEmail = () => {
+            const modal = document.getElementById('testEmailModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        };
+
+        window.closeModal = (modalId) => {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        };
+
+        window.sendTestEmail = () => {
+            const email = document.getElementById('testEmailAddress')?.value;
+            const template = document.getElementById('testEmailTemplate')?.value;
+
+            if (!email) {
+                if (window.showAlertModal) {
+                    window.showAlertModal('error', 'Validation Error', 'Please enter an email address');
+                } else {
+                    alert('Please enter an email address');
+                }
+                return;
+            }
+
+            if (window.showAlertModal) {
+                window.showAlertModal('info', 'Sending', 'Sending test email...');
+            }
+
+            fetch('/admin/settings/test-email', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, template })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (window.showAlertModal) {
+                        window.showAlertModal('success', 'Email Sent', data.message);
+                    } else {
+                        alert('Email Sent: ' + data.message);
+                    }
+                    window.closeModal('testEmailModal');
+                } else {
+                    if (window.showAlertModal) {
+                        window.showAlertModal('error', 'Email Failed', data.message);
+                    } else {
+                        alert('Email Failed: ' + data.message);
+                    }
+                }
+            })
+            .catch(error => {
+                if (window.showAlertModal) {
+                    window.showAlertModal('error', 'Error', 'Failed to send test email');
+                } else {
+                    alert('Failed to send test email');
+                }
+            });
+        };
+    }
+
+    // Utility Functions
+    resetForm() {
+        if (confirm('Are you sure you want to reset all settings to default values?')) {
+            if (window.showAlertModal) {
+                window.showAlertModal('info', 'Processing', 'Resetting form to defaults...');
+            }
+            
+            fetch('/admin/settings/reset', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (window.showAlertModal) {
+                        window.showAlertModal('success', 'Reset Complete', data.message);
+                    } else {
+                        alert('Reset Complete: ' + data.message);
+                    }
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    if (window.showAlertModal) {
+                        window.showAlertModal('error', 'Reset Failed', data.message);
+                    } else {
+                        alert('Reset Failed: ' + data.message);
+                    }
+                }
+            })
+            .catch(error => {
+                if (window.showAlertModal) {
+                    window.showAlertModal('error', 'Error', 'Failed to reset settings');
+                } else {
+                    alert('Failed to reset settings');
+                }
+            });
+        }
+    }
+
+    previewChanges() {
+        if (window.showAlertModal) {
+            window.showAlertModal('info', 'Preview', 'Changes will be visible after saving');
+        } else {
+            alert('Changes will be visible after saving');
+        }
+    }
+}
+
+// Global functions for backward compatibility
+window.previewLogo = function(input) {
+    window.adminSettings?.previewFile(input, 'logo');
+};
+
+window.previewFavicon = function(input) {
+    window.adminSettings?.previewFile(input, 'favicon');
+};
+
+window.updateColorPreview = function(fieldId, color) {
+    window.adminSettings?.updateColorPreview(fieldId, color);
+};
+
+window.updateColorPicker = function(fieldId, color) {
+    window.adminSettings?.updateColorPicker(fieldId, color);
+};
+
+window.applyPresetColors = function(theme) {
+    window.adminSettings?.applyPresetColors(theme);
+};
+
+window.resetNavbarColors = function() {
+    window.adminSettings?.resetNavbarColors();
+};
+
+window.resetForm = function() {
+    window.adminSettings?.resetForm();
+};
+
+window.previewChanges = function() {
+    window.adminSettings?.previewChanges();
+};
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize settings manager
+    window.adminSettings = new AdminSettingsManager();
+    
+    console.log('⚙️ Admin settings functionality loaded!');
+});
+
+// Export for use in other scripts
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { AdminSettingsManager };
+}

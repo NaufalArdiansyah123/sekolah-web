@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Extracurricular;
 use App\Models\ExtracurricularRegistration;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class ExtracurricularRegistrationSeeder extends Seeder
 {
@@ -20,6 +22,25 @@ class ExtracurricularRegistrationSeeder extends Seeder
             $this->command->info('No extracurriculars found. Please create some extracurriculars first.');
             return;
         }
+        
+        // Get admin user ID for approved_by field
+        $adminUser = DB::table('users')
+            ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+            ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+            ->where('roles.name', 'admin')
+            ->select('users.id')
+            ->first();
+            
+        if (!$adminUser) {
+            // Fallback: get any user
+            $adminUser = User::first();
+            if (!$adminUser) {
+                $this->command->error('No users found in database. Please create users first.');
+                return;
+            }
+        }
+        
+        $adminUserId = $adminUser->id;
 
         // Sample student data
         $students = [
@@ -136,7 +157,7 @@ class ExtracurricularRegistrationSeeder extends Seeder
                         'status' => $student['status'],
                         'registered_at' => now(),
                         'approved_at' => $student['status'] === 'approved' ? now() : null,
-                        'approved_by' => $student['status'] === 'approved' ? 1 : null, // Assuming admin user ID is 1
+                        'approved_by' => $student['status'] === 'approved' ? $adminUserId : null
                     ]);
                 }
             }
