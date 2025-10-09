@@ -292,6 +292,7 @@ Route::get('/achievements/{achievement}', [PublicAchievementController::class, '
 Route::get('/prestasi', [PublicAchievementController::class, 'index'])->name('public.achievements');
 Route::get('/prestasi/{achievement}', [PublicAchievementController::class, 'show'])->name('public.achievements.show');
 Route::get('/academic/programs', [App\Http\Controllers\StudyProgramController::class, 'index'])->name('public.academic.programs');
+Route::get('/academic/programs/{studyProgram}', [App\Http\Controllers\StudyProgramController::class, 'show'])->name('public.academic.program-detail');
 Route::get('/academic/calendar', [PublicController::class, 'academicCalendar'])->name('academic.calendar');
 Route::get('/videos', [PublicController::class, 'videos'])->name('public.videos.index');
 Route::get('/videos/{id}', [PublicController::class, 'videoDetail'])->name('public.videos.show');

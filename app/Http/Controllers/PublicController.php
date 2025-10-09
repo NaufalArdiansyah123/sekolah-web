@@ -47,13 +47,36 @@ class PublicController extends Controller
                           ->take(3)
                           ->get();
     
+    // Get school profile for statistics
+    $schoolProfile = SchoolProfile::getActiveProfile();
+    
+    // Prepare statistics data from school profile
+    $stats = [
+        'total_students' => $schoolProfile->student_count ?? 2400,
+        'total_teachers' => $schoolProfile->teacher_count ?? 120,
+        'total_achievements' => $schoolProfile->achievements ? count($schoolProfile->achievements) : 85,
+        'graduation_rate' => $schoolProfile->graduation_rate ?? 98
+    ];
+    
+    // If no school profile, use default values
+    if (!$schoolProfile) {
+        $stats = [
+            'total_students' => 2400,
+            'total_teachers' => 120,
+            'total_achievements' => 85,
+            'graduation_rate' => 98
+        ];
+    }
+    
     return view('public.home', [
         'title' => 'Beranda',
-        'description' => 'Website resmi SMA Negeri 1 - Excellence in Education',
+        'description' => 'Website resmi SMK PGRI 2 PONOROGO - Excellence in Education',
         'slideshows' => $slideshows,
         'latestNews' => $latestNews,
         'latestAnnouncements' => $latestAnnouncements,
-        'upcomingAgendas' => $upcomingAgendas
+        'upcomingAgendas' => $upcomingAgendas,
+        'stats' => $stats,
+        'schoolProfile' => $schoolProfile
     ]);
 }
 
@@ -128,6 +151,7 @@ class PublicController extends Controller
             'teacher_count' => 120,
             'staff_count' => 40,
             'industry_partnerships' => 110,
+            'graduation_rate' => 98,
             'social_media' => [
                 'facebook' => '#',
                 'instagram' => '#',

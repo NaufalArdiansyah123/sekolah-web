@@ -481,6 +481,10 @@
         box-shadow: 0 25px 50px rgba(0,0,0,0.15) !important;
     }
     
+    .stats-card:hover .stats-number {
+        animation: numberPulse 0.6s ease-in-out;
+    }
+    
     .stats-card::before {
         content: '';
         position: absolute;
@@ -538,14 +542,55 @@
         opacity: 1;
     }
     
-    /* Counter Animation Keyframes */
+    /* Enhanced Counter Animation Keyframes */
     @keyframes countUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
+        0% { 
+            opacity: 0; 
+            transform: translateY(20px) scale(0.8); 
+        }
+        50% {
+            opacity: 0.7;
+            transform: translateY(-5px) scale(1.05);
+        }
+        100% { 
+            opacity: 1; 
+            transform: translateY(0) scale(1); 
+        }
+    }
+    
+    @keyframes numberPulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
     }
     
     .stats-number.counting {
-        animation: countUp 0.6s ease-out;
+        animation: countUp 0.8s ease-out;
+    }
+    
+    .stats-number {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+    }
+    
+    .stats-number::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 120%;
+        height: 120%;
+        background: radial-gradient(circle, rgba(251, 191, 36, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        transition: transform 0.3s ease;
+        z-index: -1;
+        opacity: 0;
+    }
+    
+    .stats-card:hover .stats-number::after {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
     }
     
     /* Enhanced Featured Content */
@@ -1027,7 +1072,7 @@
                         <div class="stats-icon-wrapper mb-3">
                             <i class="fas fa-users fa-3x text-primary stats-icon"></i>
                         </div>
-                        <h2 class="stats-number display-4 fw-bold text-primary mb-2" data-target="2400">2400</h2>
+                        <h2 class="stats-number display-4 fw-bold text-primary mb-2" data-target="<?php echo e($stats['total_students']); ?>">0</h2>
                         <p class="stats-label text-muted mb-0 fw-medium">JUMLAH SISWA</p>
                         <div class="stats-bar bg-primary"></div>
                     </div>
@@ -1040,7 +1085,7 @@
                         <div class="stats-icon-wrapper mb-3">
                             <i class="fas fa-chalkboard-teacher fa-3x text-success stats-icon"></i>
                         </div>
-                        <h2 class="stats-number display-4 fw-bold text-success mb-2" data-target="120">120</h2>
+                        <h2 class="stats-number display-4 fw-bold text-success mb-2" data-target="<?php echo e($stats['total_teachers']); ?>">0</h2>
                         <p class="stats-label text-muted mb-0 fw-medium">JUMLAH GURU</p>
                         <div class="stats-bar bg-success"></div>
                     </div>
@@ -1053,7 +1098,7 @@
                         <div class="stats-icon-wrapper mb-3">
                             <i class="fas fa-trophy fa-3x" style="color: var(--gold-color);"></i>
                         </div>
-                        <h2 class="stats-number display-4 fw-bold mb-2" style="color: var(--gold-color);" data-target="85">85</h2>
+                        <h2 class="stats-number display-4 fw-bold mb-2" style="color: var(--gold-color);" data-target="<?php echo e($stats['total_achievements']); ?>">0</h2>
                         <p class="stats-label text-muted mb-0 fw-medium">PRESTASI SEKOLAH</p>
                         <div class="stats-bar" style="background-color: var(--gold-color);"></div>
                     </div>
@@ -1066,7 +1111,7 @@
                         <div class="stats-icon-wrapper mb-3">
                             <i class="fas fa-graduation-cap fa-3x text-info stats-icon"></i>
                         </div>
-                        <h2 class="stats-number display-4 fw-bold text-info mb-2" data-target="98">98</h2>
+                        <h2 class="stats-number display-4 fw-bold text-info mb-2" data-target="<?php echo e($stats['graduation_rate']); ?>">0</h2>
                         <p class="stats-label text-muted mb-0 fw-medium">TINGKAT KELULUSAN (%)</p>
                         <div class="stats-bar bg-info"></div>
                     </div>
@@ -1369,7 +1414,7 @@
 
         // Initialize slideshow
         function initEnhancedSlideshow() {
-            showSlideEnhanced(slideIndex);bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+            showSlideEnhanced(slideIndex);
             startAutoSlideEnhanced();
         }
 
@@ -1495,10 +1540,14 @@
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
     const isTouch = 'ontouchstart' in window;
     
+    console.log('=== HOME PAGE INITIALIZATION ===');
     console.log('Device detection:', { isMobile, isTouch, width: window.innerWidth });
+    console.log('Document ready state:', document.readyState);
+    console.log('Current URL:', window.location.href);
+    console.log('===================================');
     
     // Enhanced Counter Animation Function
-    function animateCounter(element, target, duration = 2500) {
+    function animateCounter(element, target, duration = 2000) {
         // Prevent multiple animations on same element
         if (element.dataset.animated === 'true') {
             console.log('Counter already animated:', element);
@@ -1507,22 +1556,40 @@
         
         element.dataset.animated = 'true';
         const start = 0;
-        const increment = target / (duration / 16);
+        const steps = 60; // Number of animation steps
+        const increment = target / steps;
         let current = start;
+        let step = 0;
         
         element.classList.add('counting');
         console.log('Starting counter animation:', { element, target, duration });
         
+        // Reset to 0 first
+        element.textContent = '0';
+        
         const timer = setInterval(() => {
-            current += increment;
-            if (current >= target) {
-                current = target;
+            step++;
+            current = Math.min(target, Math.floor(increment * step));
+            
+            // Add easing effect (ease-out)
+            const progress = step / steps;
+            const easedProgress = 1 - Math.pow(1 - progress, 3);
+            const easedValue = Math.floor(target * easedProgress);
+            
+            element.textContent = easedValue;
+            
+            if (step >= steps || easedValue >= target) {
+                element.textContent = target;
                 clearInterval(timer);
                 console.log('Counter animation completed:', target);
+                
+                // Add completion effect
+                element.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    element.style.transform = 'scale(1)';
+                }, 200);
             }
-            const displayValue = Math.floor(current).toLocaleString();
-            element.textContent = displayValue;
-        }, 16);
+        }, duration / steps);
     }
     
     // Enhanced Stats Animation with Multiple Triggers
@@ -1536,12 +1603,20 @@
                 return;
             }
             
+            // Reset all counters first
+            statsNumbers.forEach(numberElement => {
+                numberElement.textContent = '0';
+                numberElement.style.transform = 'scale(1)';
+                numberElement.classList.remove('counting');
+            });
+            
+            // Start animations with staggered delay
             statsNumbers.forEach((numberElement, index) => {
                 const target = parseInt(numberElement.dataset.target);
-                if (target && !numberElement.dataset.animated) {
+                if (target && !isNaN(target)) {
                     setTimeout(() => {
-                        animateCounter(numberElement, target, 2500);
-                    }, index * 200); // Reduced delay for mobile
+                        animateCounter(numberElement, target, 2000);
+                    }, index * 300); // Staggered animation
                 }
             });
         } catch (error) {
@@ -1550,23 +1625,28 @@
     }
     
     // Mobile-Optimized Intersection Observer
-    const statsObserverOptions = isMobile ? {
-        threshold: 0.1, // Much lower threshold for mobile
-        rootMargin: '0px 0px -50px 0px' // Less strict margin for mobile
-    } : {
-        threshold: 0.3, // Reduced from 0.5 for better desktop experience
-        rootMargin: '0px 0px -100px 0px'
+    const statsObserverOptions = {
+        threshold: isMobile ? 0.1 : 0.3,
+        rootMargin: isMobile ? '0px 0px -30px 0px' : '0px 0px -50px 0px'
     };
     
     console.log('Observer options:', statsObserverOptions);
+    
+    let animationTriggered = false;
     
     const statsObserver = new IntersectionObserver(function(entries) {
         console.log('Intersection observer triggered:', entries.length, 'entries');
         entries.forEach(entry => {
             console.log('Entry intersecting:', entry.isIntersecting, 'ratio:', entry.intersectionRatio);
-            if (entry.isIntersecting) {
+            if (entry.isIntersecting && !animationTriggered) {
                 console.log('Stats section is visible, triggering animation');
-                triggerStatsAnimation();
+                animationTriggered = true;
+                
+                // Small delay to ensure smooth animation
+                setTimeout(() => {
+                    triggerStatsAnimation();
+                }, 100);
+                
                 statsObserver.unobserve(entry.target);
             }
         });
@@ -1576,87 +1656,234 @@
     function initStatsAnimation() {
         try {
             const statsSection = document.querySelector('.stats-section');
+            const statsNumbers = document.querySelectorAll('.stats-number');
+            
+            console.log('Stats elements found:', {
+                statsSection: !!statsSection,
+                statsNumbers: statsNumbers.length,
+                animationTriggered: animationTriggered
+            });
             
             if (!statsSection) {
-                console.warn('Stats section not found!');
+                console.warn('Stats section not found! Retrying in 500ms...');
+                setTimeout(initStatsAnimation, 500);
+                return;
+            }
+            
+            if (statsNumbers.length === 0) {
+                console.warn('No stats numbers found! Retrying in 500ms...');
+                setTimeout(initStatsAnimation, 500);
                 return;
             }
             
             console.log('Initializing stats animation for:', isMobile ? 'mobile' : 'desktop');
             
-            // Method 1: Intersection Observer (Primary)
+            // Method 1: Immediate visibility check (Primary for page load)
+            const rect = statsSection.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+            const isImmediatelyVisible = rect.top < windowHeight * 0.9 && rect.bottom > 0;
+            
+            console.log('Immediate visibility check:', {
+                rectTop: rect.top,
+                rectBottom: rect.bottom,
+                windowHeight: windowHeight,
+                threshold: windowHeight * 0.9,
+                isVisible: isImmediatelyVisible
+            });
+            
+            if (isImmediatelyVisible && !animationTriggered) {
+                console.log('Stats section is immediately visible, triggering animation now!');
+                animationTriggered = true;
+                setTimeout(() => {
+                    triggerStatsAnimation();
+                }, 300); // Small delay for smooth loading
+                return; // Exit early since we're triggering immediately
+            }
+            
+            // Method 2: Intersection Observer (For scroll-triggered animation)
             if (typeof IntersectionObserver !== 'undefined') {
+                console.log('Setting up Intersection Observer...');
                 statsObserver.observe(statsSection);
             } else {
                 console.warn('IntersectionObserver not supported, using fallback');
-                triggerStatsAnimation();
-            }
-            
-            // Method 2: Scroll-based fallback for mobile
-            if (isMobile) {
-                let scrollTriggered = false;
-                
-                function checkScrollPosition() {
-                    try {
-                        if (scrollTriggered) return;
-                        
-                        const rect = statsSection.getBoundingClientRect();
-                        const windowHeight = window.innerHeight;
-                        const isVisible = rect.top < windowHeight * 0.8 && rect.bottom > 0;
-                        
-                        console.log('Scroll check:', { 
-                            rectTop: rect.top, 
-                            windowHeight, 
-                            threshold: windowHeight * 0.8,
-                            isVisible 
-                        });
-                        
-                        if (isVisible) {
-                            console.log('Stats visible via scroll detection');
-                            scrollTriggered = true;
-                            triggerStatsAnimation();
-                            window.removeEventListener('scroll', checkScrollPosition);
-                        }
-                    } catch (error) {
-                        console.error('Error in scroll check:', error);
-                    }
+                if (!animationTriggered) {
+                    animationTriggered = true;
+                    triggerStatsAnimation();
                 }
-                
-                window.addEventListener('scroll', checkScrollPosition);
-                
-                // Check immediately in case already in view
-                setTimeout(checkScrollPosition, 100);
             }
             
-            // Method 3: Manual trigger after delay (Ultimate fallback)
+            // Method 2: Scroll-based fallback
+            let scrollTriggered = false;
+            
+            function checkScrollPosition() {
+                try {
+                    if (scrollTriggered || animationTriggered) return;
+                    
+                    const rect = statsSection.getBoundingClientRect();
+                    const windowHeight = window.innerHeight;
+                    const threshold = isMobile ? 0.7 : 0.8;
+                    const isVisible = rect.top < windowHeight * threshold && rect.bottom > 0;
+                    
+                    console.log('Scroll check:', { 
+                        rectTop: rect.top, 
+                        windowHeight, 
+                        threshold: windowHeight * threshold,
+                        isVisible 
+                    });
+                    
+                    if (isVisible) {
+                        console.log('Stats visible via scroll detection');
+                        scrollTriggered = true;
+                        animationTriggered = true;
+                        
+                        setTimeout(() => {
+                            triggerStatsAnimation();
+                        }, 100);
+                        
+                        window.removeEventListener('scroll', checkScrollPosition);
+                    }
+                } catch (error) {
+                    console.error('Error in scroll check:', error);
+                }
+            }
+            
+            // Throttled scroll listener for better performance
+            let scrollTimeout;
+            function throttledScrollCheck() {
+                if (scrollTimeout) return;
+                scrollTimeout = setTimeout(() => {
+                    checkScrollPosition();
+                    scrollTimeout = null;
+                }, 100);
+            }
+            
+            window.addEventListener('scroll', throttledScrollCheck, { passive: true });
+            
+            // Check immediately in case already in view
+            setTimeout(checkScrollPosition, 200);
+            
+            // Method 3: Aggressive fallback timer (Ultimate fallback)
+            setTimeout(() => {
+                try {
+                    if (!animationTriggered) {
+                        console.log('No animation detected after 2s, triggering manually (fallback)');
+                        animationTriggered = true;
+                        triggerStatsAnimation();
+                    }
+                } catch (error) {
+                    console.error('Error in manual trigger:', error);
+                }
+            }, 2000);
+            
+            // Method 4: Super aggressive fallback for slow connections
             setTimeout(() => {
                 try {
                     const statsNumbers = document.querySelectorAll('.stats-number');
                     const hasAnimated = Array.from(statsNumbers).some(el => el.dataset.animated === 'true');
                     
                     if (!hasAnimated) {
-                        console.log('No animation detected after 3s, triggering manually');
+                        console.log('No animation detected after 4s, forcing animation (super fallback)');
+                        animationTriggered = false; // Reset flag
                         triggerStatsAnimation();
                     }
                 } catch (error) {
-                    console.error('Error in manual trigger:', error);
+                    console.error('Error in super fallback:', error);
                 }
-            }, 3000);
+            }, 4000);
             
-            // Method 4: Touch/Click trigger for mobile debugging
+            // Method 5: Secondary visibility check
+            setTimeout(() => {
+                try {
+                    if (!animationTriggered && statsSection) {
+                        const rect = statsSection.getBoundingClientRect();
+                        const windowHeight = window.innerHeight;
+                        const isVisible = rect.top < windowHeight * 0.8 && rect.bottom > 0;
+                        
+                        console.log('Secondary visibility check:', {
+                            rectTop: rect.top,
+                            windowHeight: windowHeight,
+                            threshold: windowHeight * 0.8,
+                            isVisible: isVisible,
+                            animationTriggered: animationTriggered
+                        });
+                        
+                        if (isVisible) {
+                            console.log('Stats section visible in secondary check, triggering animation');
+                            animationTriggered = true;
+                            setTimeout(() => {
+                                triggerStatsAnimation();
+                            }, 100);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error in secondary visibility check:', error);
+                }
+            }, 800);
+            
+            // Method 6: Touch/Click trigger for mobile debugging
             if (isMobile) {
                 statsSection.addEventListener('touchstart', function() {
-                    console.log('Stats section touched, triggering animation');
-                    triggerStatsAnimation();
+                    if (!animationTriggered) {
+                        console.log('Stats section touched, triggering animation');
+                        animationTriggered = true;
+                        triggerStatsAnimation();
+                    }
                 }, { once: true });
             }
+            
+            // Method 7: Click trigger for desktop debugging
+            statsSection.addEventListener('click', function() {
+                console.log('Stats section clicked - Current state:', {
+                    animationTriggered: animationTriggered,
+                    hasAnimated: Array.from(document.querySelectorAll('.stats-number')).some(el => el.dataset.animated === 'true')
+                });
+            });
+            
+            // Method 8: Reset animation capability
+            window.resetStatsAnimation = function() {
+                console.log('Resetting stats animation...');
+                animationTriggered = false;
+                const statsNumbers = document.querySelectorAll('.stats-number');
+                statsNumbers.forEach(numberElement => {
+                    numberElement.textContent = '0';
+                    numberElement.dataset.animated = 'false';
+                    numberElement.classList.remove('counting');
+                    numberElement.style.transform = 'scale(1)';
+                });
+                console.log('Stats animation reset complete');
+            };
+            
+            // Method 9: Force trigger function for debugging
+            window.forceStatsAnimation = function() {
+                console.log('Force triggering stats animation...');
+                animationTriggered = false; // Reset flag
+                triggerStatsAnimation();
+            };
         } catch (error) {
             console.error('Error initializing stats animation:', error);
         }
     }
     
-    // Initialize stats animation
+    // Initialize stats animation with multiple attempts
+    console.log('Starting stats animation initialization...');
+    
+    // Try immediate initialization
     initStatsAnimation();
+    
+    // Backup initialization attempts
+    setTimeout(() => {
+        if (!animationTriggered) {
+            console.log('Backup initialization attempt 1...');
+            initStatsAnimation();
+        }
+    }, 1000);
+    
+    setTimeout(() => {
+        if (!animationTriggered) {
+            console.log('Backup initialization attempt 2...');
+            initStatsAnimation();
+        }
+    }, 2000);
     
     // Add mobile debug indicator with error handling
     if (isMobile) {
@@ -1683,6 +1910,12 @@
                     debugDiv.style.background = 'rgba(255,0,0,0.8)';
                 }
             };
+            
+            // Add tap to trigger on mobile debug
+            debugDiv.addEventListener('touchstart', () => {
+                console.log('Mobile debug tapped, forcing animation');
+                window.forceStatsAnimation();
+            });
         } catch (error) {
             console.error('Error setting up mobile debug:', error);
         }
@@ -1802,8 +2035,110 @@
         statsNumbers.forEach(numberElement => {
             numberElement.textContent = '0';
             numberElement.classList.remove('counting');
+            numberElement.dataset.animated = 'false';
         });
     });
+    
+    // Initialize stats numbers to 0 on page load
+    const statsNumbers = document.querySelectorAll('.stats-number');
+    statsNumbers.forEach(numberElement => {
+        numberElement.textContent = '0';
+        numberElement.dataset.animated = 'false';
+        numberElement.style.transition = 'transform 0.2s ease';
+    });
+    
+    // Add manual trigger buttons for testing (only in development)
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        // Test button
+        const testButton = document.createElement('button');
+        testButton.innerHTML = 'Test Stats Animation';
+        testButton.style.cssText = `
+            position: fixed;
+            top: 60px;
+            right: 10px;
+            z-index: 9999;
+            padding: 5px 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 12px;
+            cursor: pointer;
+        `;
+        testButton.addEventListener('click', () => {
+            console.log('Test button clicked - resetting and triggering animation');
+            window.resetStatsAnimation();
+            setTimeout(() => {
+                triggerStatsAnimation();
+            }, 100);
+        });
+        document.body.appendChild(testButton);
+        
+        // Force button
+        const forceButton = document.createElement('button');
+        forceButton.innerHTML = 'Force Animation';
+        forceButton.style.cssText = `
+            position: fixed;
+            top: 90px;
+            right: 10px;
+            z-index: 9999;
+            padding: 5px 10px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 12px;
+            cursor: pointer;
+        `;
+        forceButton.addEventListener('click', () => {
+            console.log('Force button clicked');
+            window.forceStatsAnimation();
+        });
+        document.body.appendChild(forceButton);
+        
+        // Debug info button
+        const debugButton = document.createElement('button');
+        debugButton.innerHTML = 'Debug Info';
+        debugButton.style.cssText = `
+            position: fixed;
+            top: 120px;
+            right: 10px;
+            z-index: 9999;
+            padding: 5px 10px;
+            background: #ffc107;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            font-size: 12px;
+            cursor: pointer;
+        `;
+        debugButton.addEventListener('click', () => {
+            const statsSection = document.querySelector('.stats-section');
+            const statsNumbers = document.querySelectorAll('.stats-number');
+            const rect = statsSection ? statsSection.getBoundingClientRect() : null;
+            
+            console.log('=== DEBUG INFO ===');
+            console.log('Animation triggered:', animationTriggered);
+            console.log('Stats section found:', !!statsSection);
+            console.log('Stats numbers found:', statsNumbers.length);
+            console.log('Window height:', window.innerHeight);
+            if (rect) {
+                console.log('Stats section position:', {
+                    top: rect.top,
+                    bottom: rect.bottom,
+                    height: rect.height,
+                    isVisible: rect.top < window.innerHeight && rect.bottom > 0
+                });
+            }
+            console.log('Stats numbers state:', Array.from(statsNumbers).map(el => ({
+                text: el.textContent,
+                target: el.dataset.target,
+                animated: el.dataset.animated
+            })));
+            console.log('==================');
+        });
+        document.body.appendChild(debugButton);
+    }
 
     // Add lazy loading for better performance
     try {
@@ -1824,16 +2159,52 @@
     
         } catch (error) {
             console.error('Error in home page initialization:', error);
+            // Even if there's an error, try to trigger stats animation as fallback
+            setTimeout(() => {
+                try {
+                    console.log('Error fallback: attempting to trigger stats animation');
+                    const statsNumbers = document.querySelectorAll('.stats-number');
+                    if (statsNumbers.length > 0) {
+                        triggerStatsAnimation();
+                    }
+                } catch (fallbackError) {
+                    console.error('Error in fallback trigger:', fallbackError);
+                }
+            }, 1000);
         }
     }
     
-    // Initialize when DOM is ready
+    // Initialize when DOM is ready with multiple attempts
+    console.log('Document ready state:', document.readyState);
+    
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initHomePage);
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOMContentLoaded event fired');
+            initHomePage();
+        });
     } else {
         // DOM already loaded
+        console.log('DOM already loaded, initializing immediately');
         setTimeout(initHomePage, 100);
     }
+    
+    // Additional safety net
+    window.addEventListener('load', () => {
+        console.log('Window load event fired');
+        setTimeout(() => {
+            if (!animationTriggered) {
+                console.log('Window load fallback: triggering stats animation');
+                const statsSection = document.querySelector('.stats-section');
+                if (statsSection) {
+                    const rect = statsSection.getBoundingClientRect();
+                    const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+                    if (isVisible) {
+                        triggerStatsAnimation();
+                    }
+                }
+            }
+        }, 500);
+    });
 })();
 </script>
 <?php $__env->stopSection(); ?>

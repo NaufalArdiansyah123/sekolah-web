@@ -32,6 +32,7 @@ class SchoolProfile extends Model
         'teacher_count',
         'staff_count',
         'industry_partnerships',
+        'graduation_rate',
         'facilities',
         'achievements',
         'programs',
@@ -56,6 +57,7 @@ class SchoolProfile extends Model
         'teacher_count' => 'integer',
         'staff_count' => 'integer',
         'industry_partnerships' => 'integer',
+        'graduation_rate' => 'integer',
         'established_year' => 'integer'
     ];
 

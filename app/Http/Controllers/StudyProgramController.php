@@ -51,7 +51,7 @@ class StudyProgramController extends Controller
             ) + $statistics);
         }
 
-        return view('study-programs.index', compact(
+        return view('public.academic.programs', compact(
             'programs',
             'faculties'
         ) + $statistics);
@@ -77,7 +77,7 @@ class StudyProgramController extends Controller
             ->limit(3)
             ->get();
 
-        return view('study-programs.show', compact('studyProgram', 'relatedPrograms'));
+        return view('public.academic.program-detail', compact('studyProgram', 'relatedPrograms'));
     }
 
     /**

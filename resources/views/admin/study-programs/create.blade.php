@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Create Study Program')
+@section('title', 'Tambah Program Keahlian')
 
 @push('styles')
 <style>
@@ -45,11 +45,11 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 2rem;
-        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        background: linear-gradient(135deg, #059669, #10b981);
         color: white;
         padding: 2rem;
         border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(59, 130, 246, 0.2);
+        box-shadow: 0 4px 20px rgba(16, 185, 129, 0.2);
         position: relative;
         overflow: hidden;
     }
@@ -86,7 +86,7 @@
 
     .btn-back {
         background: white;
-        color: #3b82f6;
+        color: #059669;
         padding: 0.75rem 1.5rem;
         border-radius: 12px;
         text-decoration: none;
@@ -102,7 +102,7 @@
     .btn-back:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-        color: #3b82f6;
+        color: #059669;
         text-decoration: none;
     }
 
@@ -189,8 +189,8 @@
     }
 
     .form-input:focus {
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        border-color: #10b981;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
         outline: none;
     }
 
@@ -211,8 +211,8 @@
     }
 
     .form-select:focus {
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        border-color: #10b981;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
         outline: none;
     }
 
@@ -251,7 +251,7 @@
     }
 
     .btn-primary {
-        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        background: linear-gradient(135deg, #10b981, #059669);
         color: white;
         border: none;
         border-radius: 8px;
@@ -268,7 +268,7 @@
 
     .btn-primary:hover {
         transform: translateY(-1px);
-        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
         color: white;
         text-decoration: none;
     }
@@ -314,9 +314,9 @@
     }
 
     .alert-info {
-        background: rgba(59, 130, 246, 0.1);
-        color: #2563eb;
-        border: 1px solid rgba(59, 130, 246, 0.2);
+        background: rgba(16, 185, 129, 0.1);
+        color: #059669;
+        border: 1px solid rgba(16, 185, 129, 0.2);
     }
 
     /* Dynamic Form Sections */
@@ -329,8 +329,8 @@
     }
 
     .dynamic-section:hover {
-        border-color: #3b82f6;
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+        border-color: #10b981;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
     }
 
     .dynamic-header {
@@ -398,8 +398,8 @@
     }
 
     .subject-item:hover, .specialization-item:hover {
-        border-color: #3b82f6;
-        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+        border-color: #10b981;
+        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
     }
 
     .subject-item-header, .specialization-item-header {
@@ -474,14 +474,14 @@
                 <svg class="w-8 h-8" style="display: inline; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                 </svg>
-                Create Study Program
+                Tambah Program Keahlian
             </h1>
-            <p class="page-subtitle">Create comprehensive study program with detailed academic information</p>
+            <p class="page-subtitle">Buat program keahlian SMK dengan informasi lengkap dan terstruktur</p>
             <a href="{{ route('admin.study-programs.index') }}" class="btn-back">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                 </svg>
-                Back to List
+                Kembali ke Daftar
             </a>
         </div>
     </div>
@@ -493,7 +493,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
             <div>
-                <strong>Please fix the following errors:</strong>
+                <strong>Mohon perbaiki kesalahan berikut:</strong>
                 <ul style="margin: 0.5rem 0 0 1rem; list-style: disc;">
                     @foreach($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -508,9 +508,9 @@
         <div class="form-header">
             <h2>
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h2M7 7h3m3 0h3M7 11h3m3 0h3m-6 4h3"/>
                 </svg>
-                Study Program Details
+                Detail Program Keahlian
             </h2>
         </div>
 
@@ -525,9 +525,9 @@
                         <div class="form-group">
                             <label for="program_name" class="form-label">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h2M7 7h3m3 0h3M7 11h3m3 0h3m-6 4h3"/>
                                 </svg>
-                                Program Name
+                                Nama Program Keahlian
                                 <span class="required">*</span>
                             </label>
                             <input type="text" 
@@ -536,7 +536,7 @@
                                    class="form-input @error('program_name') is-invalid @enderror" 
                                    value="{{ old('program_name') }}" 
                                    required
-                                   placeholder="Enter program name...">
+                                   placeholder="Contoh: Teknik Komputer dan Jaringan">
                             @error('program_name')
                                 <div class="invalid-feedback">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -552,14 +552,14 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
                                 </svg>
-                                Program Code
+                                Kode Program
                             </label>
                             <input type="text" 
                                    name="program_code" 
                                    id="program_code" 
                                    class="form-input @error('program_code') is-invalid @enderror" 
                                    value="{{ old('program_code') }}" 
-                                   placeholder="contoh: TI, SI, MI">
+                                   placeholder="Contoh: TKJ, RPL, MM, TKR">
                             @error('program_code')
                                 <div class="invalid-feedback">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -575,12 +575,12 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                 </svg>
-                                Program Description
+                                Deskripsi Program
                             </label>
                             <textarea name="description" 
                                       id="description" 
                                       class="form-input form-textarea @error('description') is-invalid @enderror" 
-                                      placeholder="Deskripsi singkat tentang program...">{{ old('description') }}</textarea>
+                                      placeholder="Deskripsi singkat tentang program keahlian ini...">{{ old('description') }}</textarea>
                             @error('description')
                                 <div class="invalid-feedback">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -597,12 +597,12 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                 </svg>
-                                Vision
+                                Visi Program
                             </label>
                             <textarea name="vision" 
                                       id="vision" 
                                       class="form-input form-textarea @error('vision') is-invalid @enderror" 
-                                      placeholder="Program vision statement...">{{ old('vision') }}</textarea>
+                                      placeholder="Visi program keahlian...">{{ old('vision') }}</textarea>
                             @error('vision')
                                 <div class="invalid-feedback">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -618,12 +618,12 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v6a2 2 0 002 2h2m0 0h2m-2 0v4a2 2 0 002 2h2a2 2 0 002-2v-4m0 0h2a2 2 0 002-2V7a2 2 0 00-2-2h-2m0 0V3a2 2 0 00-2-2H9a2 2 0 00-2 2v2z"/>
                                 </svg>
-                                Mission
+                                Misi Program
                             </label>
                             <textarea name="mission" 
                                       id="mission" 
                                       class="form-input form-textarea @error('mission') is-invalid @enderror" 
-                                      placeholder="Program mission statement...">{{ old('mission') }}</textarea>
+                                      placeholder="Misi program keahlian...">{{ old('mission') }}</textarea>
                             @error('mission')
                                 <div class="invalid-feedback">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -639,12 +639,12 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2V6"/>
                                 </svg>
-                                Career Prospects
+                                Prospek Karir
                             </label>
                             <textarea name="career_prospects" 
                                       id="career_prospects" 
                                       class="form-input form-textarea @error('career_prospects') is-invalid @enderror" 
-                                      placeholder="Career opportunities for graduates...">{{ old('career_prospects') }}</textarea>
+                                      placeholder="Peluang karir untuk lulusan program ini...">{{ old('career_prospects') }}</textarea>
                             @error('career_prospects')
                                 <div class="invalid-feedback">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -660,12 +660,12 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
                                 </svg>
-                                Admission Requirements
+                                Syarat Masuk
                             </label>
                             <textarea name="admission_requirements" 
                                       id="admission_requirements" 
                                       class="form-input form-textarea @error('admission_requirements') is-invalid @enderror" 
-                                      placeholder="Requirements for admission...">{{ old('admission_requirements') }}</textarea>
+                                      placeholder="Syarat untuk masuk program ini...">{{ old('admission_requirements') }}</textarea>
                             @error('admission_requirements')
                                 <div class="invalid-feedback">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -676,20 +676,20 @@
                             @enderror
                         </div>
 
-                        <!-- Core Subjects Section -->
+                        <!-- Mata Pelajaran Section -->
                         <div class="dynamic-section">
                             <div class="dynamic-header">
                                 <h6 style="margin: 0; display: flex; align-items: center; gap: 0.5rem;">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                                     </svg>
-                                    Core Subjects
+                                    Mata Pelajaran Produktif
                                 </h6>
                                 <button type="button" class="btn-add" onclick="addSubject()">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                                     </svg>
-                                    Add Subject
+                                    Tambah Mata Pelajaran
                                 </button>
                             </div>
                             <div class="dynamic-body">
@@ -697,11 +697,11 @@
                                     <!-- Subjects will be added here dynamically -->
                                 </div>
                                 <div class="form-group" style="margin-top: 1rem;">
-                                    <label for="core_subjects_json" class="form-label">Core Subjects Data (JSON)</label>
+                                    <label for="core_subjects_json" class="form-label">Data Mata Pelajaran (JSON)</label>
                                     <textarea class="form-input @error('core_subjects_json') is-invalid @enderror" 
                                               id="core_subjects_json" name="core_subjects_json" rows="4" readonly
-                                              placeholder='Subjects data will appear here automatically'>{{ old('core_subjects_json', '[]') }}</textarea>
-                                    <div class="form-help">This field will be filled automatically based on the subjects you add above.</div>
+                                              placeholder='Data mata pelajaran akan muncul di sini secara otomatis'>{{ old('core_subjects_json', '[]') }}</textarea>
+                                    <div class="form-help">Field ini akan terisi otomatis berdasarkan mata pelajaran yang ditambahkan di atas.</div>
                                     @error('core_subjects_json')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -709,20 +709,20 @@
                             </div>
                         </div>
 
-                        <!-- Specializations Section -->
+                        <!-- Kompetensi Keahlian Section -->
                         <div class="dynamic-section">
                             <div class="dynamic-header">
                                 <h6 style="margin: 0; display: flex; align-items: center; gap: 0.5rem;">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
                                     </svg>
-                                    Specializations
+                                    Kompetensi Keahlian
                                 </h6>
                                 <button type="button" class="btn-add" onclick="addSpecialization()">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                                     </svg>
-                                    Add Specialization
+                                    Tambah Kompetensi
                                 </button>
                             </div>
                             <div class="dynamic-body">
@@ -730,11 +730,11 @@
                                     <!-- Specializations will be added here dynamically -->
                                 </div>
                                 <div class="form-group" style="margin-top: 1rem;">
-                                    <label for="specializations_json" class="form-label">Specializations Data (JSON)</label>
+                                    <label for="specializations_json" class="form-label">Data Kompetensi (JSON)</label>
                                     <textarea class="form-input @error('specializations_json') is-invalid @enderror" 
                                               id="specializations_json" name="specializations_json" rows="4" readonly
-                                              placeholder='Specializations data will appear here automatically'>{{ old('specializations_json', '[]') }}</textarea>
-                                    <div class="form-help">This field will be filled automatically based on the specializations you add above.</div>
+                                              placeholder='Data kompetensi akan muncul di sini secara otomatis'>{{ old('specializations_json', '[]') }}</textarea>
+                                    <div class="form-help">Field ini akan terisi otomatis berdasarkan kompetensi yang ditambahkan di atas.</div>
                                     @error('specializations_json')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -742,20 +742,20 @@
                             </div>
                         </div>
 
-                        <!-- Facilities Section -->
+                        <!-- Fasilitas Section -->
                         <div class="dynamic-section">
                             <div class="dynamic-header">
                                 <h6 style="margin: 0; display: flex; align-items: center; gap: 0.5rem;">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h2M7 7h3m3 0h3M7 11h3m3 0h3m-6 4h3"/>
                                     </svg>
-                                    Program Facilities
+                                    Fasilitas Program
                                 </h6>
                                 <button type="button" class="btn-add" onclick="addFacility()">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                                     </svg>
-                                    Add Facility
+                                    Tambah Fasilitas
                                 </button>
                             </div>
                             <div class="dynamic-body">
@@ -763,11 +763,11 @@
                                     <!-- Facilities will be added here dynamically -->
                                 </div>
                                 <div class="form-group" style="margin-top: 1rem;">
-                                    <label for="facilities_json" class="form-label">Facilities Data (JSON)</label>
+                                    <label for="facilities_json" class="form-label">Data Fasilitas (JSON)</label>
                                     <textarea class="form-input @error('facilities_json') is-invalid @enderror" 
                                               id="facilities_json" name="facilities_json" rows="4" readonly
-                                              placeholder='Facilities data will appear here automatically'>{{ old('facilities_json', '[]') }}</textarea>
-                                    <div class="form-help">This field will be filled automatically based on the facilities you add above.</div>
+                                              placeholder='Data fasilitas akan muncul di sini secara otomatis'>{{ old('facilities_json', '[]') }}</textarea>
+                                    <div class="form-help">Field ini akan terisi otomatis berdasarkan fasilitas yang ditambahkan di atas.</div>
                                     @error('facilities_json')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -784,16 +784,13 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
                                 </svg>
-                                Degree Level
+                                Jenjang Pendidikan
                                 <span class="required">*</span>
                             </label>
                             <select class="form-input @error('degree_level') is-invalid @enderror" 
                                     id="degree_level" name="degree_level" required>
-                                <option value="">Select Degree Level</option>
-                                <option value="D3" {{ old('degree_level') === 'D3' ? 'selected' : '' }}>D3 (Diploma)</option>
-                                <option value="S1" {{ old('degree_level') === 'S1' ? 'selected' : '' }}>S1 (Bachelor)</option>
-                                <option value="S2" {{ old('degree_level') === 'S2' ? 'selected' : '' }}>S2 (Master)</option>
-                                <option value="S3" {{ old('degree_level') === 'S3' ? 'selected' : '' }}>S3 (Doctoral)</option>
+                                <option value="">Pilih Jenjang</option>
+                                <option value="SMK" {{ old('degree_level') === 'SMK' ? 'selected' : '' }}>SMK (Sekolah Menengah Kejuruan)</option>
                             </select>
                             @error('degree_level')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -805,11 +802,22 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h2M7 7h3m3 0h3M7 11h3m3 0h3m-6 4h3"/>
                                 </svg>
-                                Faculty/Department
+                                Bidang Keahlian
                             </label>
-                            <input type="text" class="form-input @error('faculty') is-invalid @enderror" 
-                                   id="faculty" name="faculty" value="{{ old('faculty') }}" 
-                                   placeholder="Faculty of Engineering">
+                            <select class="form-input @error('faculty') is-invalid @enderror" 
+                                    id="faculty" name="faculty">
+                                <option value="">Pilih Bidang Keahlian</option>
+                                <option value="Teknologi Informasi dan Komunikasi" {{ old('faculty') === 'Teknologi Informasi dan Komunikasi' ? 'selected' : '' }}>Teknologi Informasi dan Komunikasi</option>
+                                <option value="Teknik Mesin" {{ old('faculty') === 'Teknik Mesin' ? 'selected' : '' }}>Teknik Mesin</option>
+                                <option value="Teknik Elektro" {{ old('faculty') === 'Teknik Elektro' ? 'selected' : '' }}>Teknik Elektro</option>
+                                <option value="Teknik Otomotif" {{ old('faculty') === 'Teknik Otomotif' ? 'selected' : '' }}>Teknik Otomotif</option>
+                                <option value="Teknik Bangunan" {{ old('faculty') === 'Teknik Bangunan' ? 'selected' : '' }}>Teknik Bangunan</option>
+                                <option value="Bisnis dan Manajemen" {{ old('faculty') === 'Bisnis dan Manajemen' ? 'selected' : '' }}>Bisnis dan Manajemen</option>
+                                <option value="Pariwisata" {{ old('faculty') === 'Pariwisata' ? 'selected' : '' }}>Pariwisata</option>
+                                <option value="Seni dan Industri Kreatif" {{ old('faculty') === 'Seni dan Industri Kreatif' ? 'selected' : '' }}>Seni dan Industri Kreatif</option>
+                                <option value="Agribisnis dan Agroteknologi" {{ old('faculty') === 'Agribisnis dan Agroteknologi' ? 'selected' : '' }}>Agribisnis dan Agroteknologi</option>
+                                <option value="Kesehatan dan Pekerjaan Sosial" {{ old('faculty') === 'Kesehatan dan Pekerjaan Sosial' ? 'selected' : '' }}>Kesehatan dan Pekerjaan Sosial</option>
+                            </select>
                             @error('faculty')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -820,95 +828,26 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
-                                Duration (Years)
+                                Lama Pendidikan (Tahun)
                             </label>
-                            <input type="number" class="form-input @error('duration_years') is-invalid @enderror" 
-                                   id="duration_years" name="duration_years" value="{{ old('duration_years') }}" 
-                                   min="1" max="10" placeholder="4">
+                            <select class="form-input @error('duration_years') is-invalid @enderror" 
+                                    id="duration_years" name="duration_years">
+                                <option value="">Pilih Lama Pendidikan</option>
+                                <option value="3" {{ old('duration_years') == '3' ? 'selected' : '' }}>3 Tahun</option>
+                                <option value="4" {{ old('duration_years') == '4' ? 'selected' : '' }}>4 Tahun</option>
+                            </select>
                             @error('duration_years')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <div class="form-group">
-                            <label for="total_credits" class="form-label">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                                </svg>
-                                Total Credits
-                            </label>
-                            <input type="number" class="form-input @error('total_credits') is-invalid @enderror" 
-                                   id="total_credits" name="total_credits" value="{{ old('total_credits') }}" 
-                                   min="1" placeholder="144">
-                            @error('total_credits')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
 
-                        <div class="form-group">
-                            <label for="degree_title" class="form-label">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
-                                </svg>
-                                Degree Title
-                            </label>
-                            <input type="text" class="form-input @error('degree_title') is-invalid @enderror" 
-                                   id="degree_title" name="degree_title" value="{{ old('degree_title') }}" 
-                                   placeholder="S.Kom, S.T, S.E">
-                            @error('degree_title')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
 
-                        <div class="form-group">
-                            <label for="accreditation" class="form-label">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
-                                </svg>
-                                Accreditation
-                            </label>
-                            <select class="form-input @error('accreditation') is-invalid @enderror" 
-                                    id="accreditation" name="accreditation">
-                                <option value="">Select Accreditation</option>
-                                <option value="A" {{ old('accreditation') === 'A' ? 'selected' : '' }}>A (Excellent)</option>
-                                <option value="B" {{ old('accreditation') === 'B' ? 'selected' : '' }}>B (Good)</option>
-                                <option value="C" {{ old('accreditation') === 'C' ? 'selected' : '' }}>C (Fair)</option>
-                            </select>
-                            @error('accreditation')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
 
-                        <!-- Admission & Costs -->
-                        <div class="form-group">
-                            <label for="capacity" class="form-label">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                                </svg>
-                                Student Capacity
-                            </label>
-                            <input type="number" class="form-input @error('capacity') is-invalid @enderror" 
-                                   id="capacity" name="capacity" value="{{ old('capacity') }}" 
-                                   min="1" placeholder="40">
-                            @error('capacity')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
 
-                        <div class="form-group">
-                            <label for="tuition_fee" class="form-label">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
-                                </svg>
-                                Tuition Fee (per semester)
-                            </label>
-                            <input type="number" class="form-input @error('tuition_fee') is-invalid @enderror" 
-                                   id="tuition_fee" name="tuition_fee" value="{{ old('tuition_fee') }}" 
-                                   min="0" placeholder="5000000">
-                            @error('tuition_fee')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+
+
+
 
                         <!-- Settings -->
                         <div class="form-group">
@@ -917,23 +856,23 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                 </svg>
-                                Settings
+                                Pengaturan
                             </label>
                             <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                                     <input type="checkbox" id="is_active" name="is_active" value="1" {{ old('is_active') ? 'checked' : '' }}>
                                     <label for="is_active" style="margin: 0; font-weight: normal;">
-                                        Activate this program
+                                        Aktifkan program ini
                                     </label>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                                     <input type="checkbox" id="is_featured" name="is_featured" value="1" {{ old('is_featured') ? 'checked' : '' }}>
                                     <label for="is_featured" style="margin: 0; font-weight: normal;">
-                                        Feature this program
+                                        Jadikan program unggulan
                                     </label>
                                 </div>
                             </div>
-                            <div class="form-help">Active programs will be displayed on the public page. Featured programs will be highlighted.</div>
+                            <div class="form-help">Program aktif akan ditampilkan di halaman publik. Program unggulan akan disorot.</div>
                         </div>
 
                         <!-- Media Upload -->
@@ -942,11 +881,11 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                 </svg>
-                                Program Image
+                                Gambar Program
                             </label>
                             <input type="file" class="form-input @error('program_image') is-invalid @enderror" 
                                    id="program_image" name="program_image" accept="image/*">
-                            <div class="form-help">JPG, PNG, GIF. Max 5MB.</div>
+                            <div class="form-help">JPG, PNG, GIF. Maksimal 5MB.</div>
                             @error('program_image')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -957,11 +896,11 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                 </svg>
-                                Program Brochure
+                                Brosur Program
                             </label>
                             <input type="file" class="form-input @error('brochure_file') is-invalid @enderror" 
                                    id="brochure_file" name="brochure_file" accept=".pdf,.doc,.docx">
-                            <div class="form-help">PDF, DOC, DOCX. Max 10MB.</div>
+                            <div class="form-help">PDF, DOC, DOCX. Maksimal 10MB.</div>
                             @error('brochure_file')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -976,13 +915,13 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
-                    Cancel
+                    Batal
                 </a>
                 <button type="submit" class="btn-primary" id="submitBtn">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                     </svg>
-                    Create Study Program
+                    Simpan Program Keahlian
                 </button>
             </div>
         </form>
@@ -1050,7 +989,7 @@ document.addEventListener('DOMContentLoaded', function() {
         submitBtn.disabled = true;
         submitBtn.innerHTML = `
             <div class="spinner"></div>
-            Creating...
+            Menyimpan...
         `;
         
         // Add loading class to form
@@ -1094,12 +1033,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                 </svg>
-                Create Study Program
+                Simpan Program Keahlian
             `;
             form.classList.remove('loading');
             
             // Show error message
-            alert('Please fill in all required fields.');
+            alert('Mohon lengkapi semua field yang wajib diisi.');
         }
     });
 });
@@ -1110,7 +1049,7 @@ function addSubject() {
         id: ++subjectCounter,
         name: '',
         code: '',
-        credits: '',
+        hours: '',
         semester: '',
         description: ''
     };
@@ -1128,48 +1067,54 @@ function addSubjectToDOM(subject) {
     
     subjectDiv.innerHTML = `
         <div class="subject-item-header">
-            <h6 style="margin: 0; font-size: 0.875rem;">Subject #${subject.id || subjectCounter}</h6>
+            <h6 style="margin: 0; font-size: 0.875rem;">Mata Pelajaran #${subject.id || subjectCounter}</h6>
             <button type="button" class="btn-remove" onclick="removeSubject(${subject.id || subjectCounter})">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H8a1 1 0 00-1 1v3M4 7h16"/>
                 </svg>
-                Remove
+                Hapus
             </button>
         </div>
         <div class="subject-item-body">
             <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1rem;">
                 <div class="form-group">
-                    <label class="form-label">Subject Name</label>
+                    <label class="form-label">Nama Mata Pelajaran</label>
                     <input type="text" class="form-input" value="${subject.name || ''}" 
                            onchange="updateSubjectData(${subject.id || subjectCounter}, 'name', this.value)" 
-                           placeholder="Programming Fundamentals">
+                           placeholder="Contoh: Pemrograman Dasar">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Subject Code</label>
+                    <label class="form-label">Kode Mapel</label>
                     <input type="text" class="form-input" value="${subject.code || ''}" 
                            onchange="updateSubjectData(${subject.id || subjectCounter}, 'code', this.value)" 
-                           placeholder="CS101">
+                           placeholder="Contoh: PD01">
                 </div>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
                 <div class="form-group">
-                    <label class="form-label">Credits</label>
-                    <input type="number" class="form-input" value="${subject.credits || ''}" 
-                           onchange="updateSubjectData(${subject.id || subjectCounter}, 'credits', this.value)" 
-                           placeholder="3" min="1">
+                    <label class="form-label">Jam Pelajaran/Minggu</label>
+                    <input type="number" class="form-input" value="${subject.hours || ''}" 
+                           onchange="updateSubjectData(${subject.id || subjectCounter}, 'hours', this.value)" 
+                           placeholder="4" min="1">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Semester</label>
-                    <input type="number" class="form-input" value="${subject.semester || ''}" 
-                           onchange="updateSubjectData(${subject.id || subjectCounter}, 'semester', this.value)" 
-                           placeholder="1" min="1">
+                    <select class="form-input" onchange="updateSubjectData(${subject.id || subjectCounter}, 'semester', this.value)">
+                        <option value="">Pilih Semester</option>
+                        <option value="1" ${subject.semester == '1' ? 'selected' : ''}>Semester 1</option>
+                        <option value="2" ${subject.semester == '2' ? 'selected' : ''}>Semester 2</option>
+                        <option value="3" ${subject.semester == '3' ? 'selected' : ''}>Semester 3</option>
+                        <option value="4" ${subject.semester == '4' ? 'selected' : ''}>Semester 4</option>
+                        <option value="5" ${subject.semester == '5' ? 'selected' : ''}>Semester 5</option>
+                        <option value="6" ${subject.semester == '6' ? 'selected' : ''}>Semester 6</option>
+                    </select>
                 </div>
             </div>
             <div class="form-group">
                 <label class="form-label">Deskripsi</label>
                 <textarea class="form-input" rows="2" 
                           onchange="updateSubjectData(${subject.id || subjectCounter}, 'description', this.value)" 
-                          placeholder="Brief description of the subject...">${subject.description || ''}</textarea>
+                          placeholder="Deskripsi singkat mata pelajaran...">${subject.description || ''}</textarea>
             </div>
         </div>
     `;
@@ -1221,32 +1166,32 @@ function addSpecializationToDOM(specialization) {
     
     specializationDiv.innerHTML = `
         <div class="specialization-item-header">
-            <h6 style="margin: 0; font-size: 0.875rem;">Specialization #${specialization.id || specializationCounter}</h6>
+            <h6 style="margin: 0; font-size: 0.875rem;">Kompetensi #${specialization.id || specializationCounter}</h6>
             <button type="button" class="btn-remove" onclick="removeSpecialization(${specialization.id || specializationCounter})">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H8a1 1 0 00-1 1v3M4 7h16"/>
                 </svg>
-                Remove
+                Hapus
             </button>
         </div>
         <div class="specialization-item-body">
             <div class="form-group">
-                <label class="form-label">Specialization Name</label>
+                <label class="form-label">Nama Kompetensi</label>
                 <input type="text" class="form-input" value="${specialization.name || ''}" 
                        onchange="updateSpecializationData(${specialization.id || specializationCounter}, 'name', this.value)" 
-                       placeholder="Web Development, Mobile Development, etc.">
+                       placeholder="Contoh: Administrasi Sistem Jaringan">
             </div>
             <div class="form-group">
                 <label class="form-label">Deskripsi</label>
                 <textarea class="form-input" rows="2" 
                           onchange="updateSpecializationData(${specialization.id || specializationCounter}, 'description', this.value)" 
-                          placeholder="Brief description of the specialization...">${specialization.description || ''}</textarea>
+                          placeholder="Deskripsi singkat kompetensi...">${specialization.description || ''}</textarea>
             </div>
             <div class="form-group">
-                <label class="form-label">Requirements</label>
+                <label class="form-label">Persyaratan</label>
                 <textarea class="form-input" rows="2" 
                           onchange="updateSpecializationData(${specialization.id || specializationCounter}, 'requirements', this.value)" 
-                          placeholder="Prerequisites or requirements...">${specialization.requirements || ''}</textarea>
+                          placeholder="Persyaratan atau prasyarat...">${specialization.requirements || ''}</textarea>
             </div>
         </div>
     `;
@@ -1299,50 +1244,50 @@ function addFacilityToDOM(facility) {
     
     facilityDiv.innerHTML = `
         <div class="dynamic-header">
-            <h6 style="margin: 0; font-size: 0.875rem;">Facility #${facility.id || facilityCounter}</h6>
+            <h6 style="margin: 0; font-size: 0.875rem;">Fasilitas #${facility.id || facilityCounter}</h6>
             <button type="button" class="btn-remove" onclick="removeFacility(${facility.id || facilityCounter})">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H8a1 1 0 00-1 1v3M4 7h16"/>
                 </svg>
-                Remove
+                Hapus
             </button>
         </div>
         <div class="dynamic-body">
             <div class="form-group">
-                <label class="form-label">Facility Name</label>
+                <label class="form-label">Nama Fasilitas</label>
                 <input type="text" class="form-input" value="${facility.name || ''}" 
                        onchange="updateFacilityData(${facility.id || facilityCounter}, 'name', this.value)" 
-                       placeholder="Computer Lab, Library, etc.">
+                       placeholder="Contoh: Lab Komputer, Bengkel, dll.">
             </div>
             <div class="form-group">
                 <label class="form-label">Deskripsi</label>
                 <textarea class="form-input" rows="2" 
                           onchange="updateFacilityData(${facility.id || facilityCounter}, 'description', this.value)" 
-                          placeholder="Brief description of the facility...">${facility.description || ''}</textarea>
+                          placeholder="Deskripsi singkat fasilitas...">${facility.description || ''}</textarea>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
                 <div class="form-group">
-                    <label class="form-label">Icon Class</label>
+                    <label class="form-label">Ikon</label>
                     <select class="form-input" onchange="updateFacilityData(${facility.id || facilityCounter}, 'icon', this.value)">
-                        <option value="fas fa-building" ${(facility.icon || 'fas fa-building') === 'fas fa-building' ? 'selected' : ''}>Building</option>
-                        <option value="fas fa-book" ${facility.icon === 'fas fa-book' ? 'selected' : ''}>Library</option>
-                        <option value="fas fa-microscope" ${facility.icon === 'fas fa-microscope' ? 'selected' : ''}>Laboratory</option>
-                        <option value="fas fa-desktop" ${facility.icon === 'fas fa-desktop' ? 'selected' : ''}>Computer Lab</option>
+                        <option value="fas fa-building" ${(facility.icon || 'fas fa-building') === 'fas fa-building' ? 'selected' : ''}>Gedung</option>
+                        <option value="fas fa-book" ${facility.icon === 'fas fa-book' ? 'selected' : ''}>Perpustakaan</option>
+                        <option value="fas fa-microscope" ${facility.icon === 'fas fa-microscope' ? 'selected' : ''}>Laboratorium</option>
+                        <option value="fas fa-desktop" ${facility.icon === 'fas fa-desktop' ? 'selected' : ''}>Lab Komputer</option>
                         <option value="fas fa-wifi" ${facility.icon === 'fas fa-wifi' ? 'selected' : ''}>Internet</option>
                         <option value="fas fa-video" ${facility.icon === 'fas fa-video' ? 'selected' : ''}>Multimedia</option>
-                        <option value="fas fa-tools" ${facility.icon === 'fas fa-tools' ? 'selected' : ''}>Workshop</option>
-                        <option value="fas fa-chalkboard-teacher" ${facility.icon === 'fas fa-chalkboard-teacher' ? 'selected' : ''}>Classroom</option>
+                        <option value="fas fa-tools" ${facility.icon === 'fas fa-tools' ? 'selected' : ''}>Bengkel</option>
+                        <option value="fas fa-chalkboard-teacher" ${facility.icon === 'fas fa-chalkboard-teacher' ? 'selected' : ''}>Ruang Kelas</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Color</label>
+                    <label class="form-label">Warna</label>
                     <select class="form-input" onchange="updateFacilityData(${facility.id || facilityCounter}, 'color', this.value)">
-                        <option value="primary" ${(facility.color || 'primary') === 'primary' ? 'selected' : ''}>Blue</option>
-                        <option value="success" ${facility.color === 'success' ? 'selected' : ''}>Green</option>
-                        <option value="warning" ${facility.color === 'warning' ? 'selected' : ''}>Yellow</option>
-                        <option value="danger" ${facility.color === 'danger' ? 'selected' : ''}>Red</option>
+                        <option value="primary" ${(facility.color || 'primary') === 'primary' ? 'selected' : ''}>Biru</option>
+                        <option value="success" ${facility.color === 'success' ? 'selected' : ''}>Hijau</option>
+                        <option value="warning" ${facility.color === 'warning' ? 'selected' : ''}>Kuning</option>
+                        <option value="danger" ${facility.color === 'danger' ? 'selected' : ''}>Merah</option>
                         <option value="info" ${facility.color === 'info' ? 'selected' : ''}>Cyan</option>
-                        <option value="purple" ${facility.color === 'purple' ? 'selected' : ''}>Purple</option>
+                        <option value="purple" ${facility.color === 'purple' ? 'selected' : ''}>Ungu</option>
                     </select>
                 </div>
             </div>
@@ -1374,4 +1319,4 @@ function updateFacilitiesJSON() {
     jsonTextarea.value = JSON.stringify(facilitiesData, null, 2);
 }
 </script>
-@endsection
+@endsection"
