@@ -687,7 +687,6 @@
                         <tr>
                             <th style="width: 5%">#</th>
                             <th style="width: 30%">School & Details</th>
-                            <th style="width: 15%">Kepala Sekolah</th>
                             <th style="width: 10%">Established</th>
                             <th style="width: 10%">Accreditation</th>
                             <th style="width: 8%">Status</th>
@@ -713,7 +712,6 @@
                                     </div>
                                 @endif
                             </td>
-                            <td>{{ $profile->principal_name ?: '-' }}</td>
                             <td>
                                 @if($profile->established_year)
                                     {{ $profile->established_year }}

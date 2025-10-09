@@ -698,28 +698,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="principal_name" class="form-label">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                </svg>
-                                Principal Name
-                            </label>
-                            <input type="text" 
-                                   name="principal_name" 
-                                   id="principal_name" 
-                                   class="form-input @error('principal_name') is-invalid @enderror" 
-                                   value="{{ old('principal_name') }}" 
-                                   placeholder="Dr. John Doe, S.Pd, M.Pd">
-                            @error('principal_name')
-                                <div class="invalid-feedback">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
+                        
 
                         <div class="form-group">
                             <label for="address" class="form-label">
@@ -867,20 +846,7 @@
                         </div>
 
                         <!-- Media Upload -->
-                        <div class="form-group">
-                            <label for="principal_photo" class="form-label">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                </svg>
-                                Principal Photo
-                            </label>
-                            <input type="file" class="form-input @error('principal_photo') is-invalid @enderror" 
-                                   id="principal_photo" name="principal_photo" accept="image/*">
-                            <div class="form-help">JPG, PNG, GIF. Max 5MB.</div>
-                            @error('principal_photo')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                        
 
                         <div class="form-group">
                             <label for="hero_image" class="form-label">

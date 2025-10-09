@@ -612,25 +612,7 @@
                 </div>
 
                 <!-- Leadership -->
-                <div class="form-section">
-                    <div class="section-header">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                        </svg>
-                        Leadership
-                    </div>
-                    <div class="section-body">
-                        <div class="form-group">
-                            <label for="principal_name" class="form-label">Principal Name</label>
-                            <input type="text" class="form-input @error('principal_name') is-invalid @enderror" 
-                                   id="principal_name" name="principal_name" value="{{ old('principal_name', $schoolProfile->principal_name) }}" 
-                                   placeholder="Dr. John Doe, S.Pd, M.Pd">
-                            @error('principal_name')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
+               
 
                 <!-- Contact Information -->
                 <div class="form-section">
@@ -749,32 +731,11 @@
                 <div class="sidebar-section">
                     <div class="sidebar-header">Media Upload</div>
                     <div class="sidebar-body">
-                        <div class="form-group">
-                            <label for="school_logo" class="form-label">School Logo {{ $schoolProfile->school_logo ? '(Replace)' : '' }}</label>
-                            <input type="file" class="form-input @error('school_logo') is-invalid @enderror" 
-                                   id="school_logo" name="school_logo" accept="image/*">
-                            <div class="form-help">JPG, PNG, GIF. Max 5MB.</div>
-                            @error('school_logo')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                        
 
-                        @if($schoolProfile->principal_photo)
-                            <div class="image-preview">
-                                <label class="form-label">Current Principal Photo:</label>
-                                <img src="{{ asset($schoolProfile->principal_photo) }}" alt="Current Principal Photo">
-                            </div>
-                        @endif
+                       
 
-                        <div class="form-group">
-                            <label for="principal_photo" class="form-label">Principal Photo {{ $schoolProfile->principal_photo ? '(Replace)' : '' }}</label>
-                            <input type="file" class="form-input @error('principal_photo') is-invalid @enderror" 
-                                   id="principal_photo" name="principal_photo" accept="image/*">
-                            <div class="form-help">JPG, PNG, GIF. Max 5MB.</div>
-                            @error('principal_photo')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                        
 
                         @if($schoolProfile->hero_image)
                             <div class="image-preview">
