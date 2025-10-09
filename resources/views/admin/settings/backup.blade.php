@@ -752,7 +752,7 @@
                         <i class="fas fa-chevron-right"></i>
                     </span>
                     <span class="breadcrumb-item">
-                        <a href="{{ route('admin.settings.index') }}">Settings</a>
+                        <a href="{{ route('admin.settings.index') }}">Pengaturan</a>
                     </span>
                     <span class="breadcrumb-separator">
                         <i class="fas fa-chevron-right"></i>
@@ -771,7 +771,7 @@
                     <i class="fas fa-check-circle"></i>
                 </div>
                 <div class="alert-content">
-                    <h4>Success!</h4>
+                    <h4>Berhasil!</h4>
                     <p>{{ session('success') }}</p>
                 </div>
             </div>

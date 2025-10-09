@@ -530,7 +530,7 @@
                                 <label for="program_code" class="form-label">Program Code</label>
                                 <input type="text" class="form-input @error('program_code') is-invalid @enderror" 
                                        id="program_code" name="program_code" value="{{ old('program_code', $studyProgram->program_code) }}" 
-                                       placeholder="e.g., TI, SI, MI">
+                                       placeholder="contoh: TI, SI, MI">
                                 @error('program_code')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -541,7 +541,7 @@
                             <label for="description" class="form-label">Program Description</label>
                             <textarea class="form-input @error('description') is-invalid @enderror" 
                                       id="description" name="description" rows="4" 
-                                      placeholder="Brief description about the program...">{{ old('description', $studyProgram->description) }}</textarea>
+                                      placeholder="Deskripsi singkat tentang program...">{{ old('description', $studyProgram->description) }}</textarea>
                             @error('description')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -736,7 +736,7 @@
             <div>
                 <!-- Settings -->
                 <div class="sidebar-section">
-                    <div class="sidebar-header">Settings</div>
+                    <div class="sidebar-header">Pengaturan</div>
                     <div class="sidebar-body">
                         <div class="checkbox-group" style="margin-bottom: 1rem;">
                             <input type="checkbox" class="checkbox-input" id="is_active" name="is_active" value="1" 
@@ -1077,7 +1077,7 @@ function addSubjectToDOM(subject) {
                 </div>
             </div>
             <div class="form-group">
-                <label class="form-label">Description</label>
+                <label class="form-label">Deskripsi</label>
                 <textarea class="form-input" rows="2" 
                           onchange="updateSubjectData(${subject.id}, 'description', this.value)" 
                           placeholder="Brief description of the subject...">${subject.description || ''}</textarea>
@@ -1148,7 +1148,7 @@ function addSpecializationToDOM(specialization) {
                        placeholder="Web Development, Mobile Development, etc.">
             </div>
             <div class="form-group">
-                <label class="form-label">Description</label>
+                <label class="form-label">Deskripsi</label>
                 <textarea class="form-input" rows="2" 
                           onchange="updateSpecializationData(${specialization.id}, 'description', this.value)" 
                           placeholder="Brief description of the specialization...">${specialization.description || ''}</textarea>
@@ -1226,7 +1226,7 @@ function addFacilityToDOM(facility) {
                        placeholder="Computer Lab, Library, etc.">
             </div>
             <div class="form-group">
-                <label class="form-label">Description</label>
+                <label class="form-label">Deskripsi</label>
                 <textarea class="form-input" rows="2" 
                           onchange="updateFacilityData(${facility.id}, 'description', this.value)" 
                           placeholder="Brief description of the facility...">${facility.description || ''}</textarea>

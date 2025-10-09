@@ -820,7 +820,7 @@
                         </button>
                         <button class="quick-action-btn btn-danger" onclick="confirmDelete()">
                             <i class="fas fa-trash"></i>
-                            <span>Delete</span>
+                            <span>Hapus</span>
                         </button>
                     </div>
                 </div>

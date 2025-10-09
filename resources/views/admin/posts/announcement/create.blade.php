@@ -516,7 +516,7 @@
                                       id="isi" 
                                       class="form-input form-textarea content @error('isi') is-invalid @enderror" 
                                       required
-                                      placeholder="Write your announcement content here...">{{ old('isi') }}</textarea>
+                                      placeholder="Tulis konten pengumuman Anda di sini...">{{ old('isi') }}</textarea>
                             <div class="char-counter" id="contentCounter">0 characters</div>
                             @error('isi')
                                 <div class="invalid-feedback">
@@ -618,8 +618,8 @@
                                 <span class="required">*</span>
                             </label>
                             <select name="status" id="status" class="form-select @error('status') is-invalid @enderror" required>
-                                <option value="draft" {{ old('status', 'draft') === 'draft' ? 'selected' : '' }}>Draft</option>
-                                <option value="published" {{ old('status') === 'published' ? 'selected' : '' }}>Published</option>
+                                <option value="draft" {{ old('status', 'draft') === 'draft' ? 'selected' : '' }}>Draf</option>
+                                <option value="published" {{ old('status') === 'published' ? 'selected' : '' }}>Dipublikasikan</option>
                                 <option value="archived" {{ old('status') === 'archived' ? 'selected' : '' }}>Archived</option>
                             </select>
                             <div class="status-preview" id="statusPreview" style="display: none;"></div>

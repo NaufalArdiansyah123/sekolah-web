@@ -841,7 +841,7 @@
 
         <!-- Attendance Section -->
         <div class="nav-section-title">
-            <span>Attendance</span>
+            <span>Kehadiran</span>
         </div>
 
         <!-- Attendance -->
@@ -888,7 +888,7 @@
                  onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&color=7F9CF5&background=EBF4FF&size=44'">
             <div class="user-info">
                 <div class="user-name">{{ auth()->user()->name }}</div>
-                <div class="user-role">Teacher</div>
+                <div class="user-role">Guru</div>
             </div>
             <div class="user-status"></div>
         </div>

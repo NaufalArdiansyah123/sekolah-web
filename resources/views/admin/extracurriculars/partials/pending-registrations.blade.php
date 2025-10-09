@@ -47,7 +47,7 @@
                     </svg>
                 </div>
                 <div class="btn-content">
-                    <div class="btn-title">Export</div>
+                    <div class="btn-title">Ekspor</div>
                     <div class="btn-subtitle">Pending List</div>
                 </div>
             </button>

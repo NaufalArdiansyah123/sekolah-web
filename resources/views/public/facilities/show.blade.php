@@ -1,561 +1,750 @@
 @extends('layouts.public')
 
-@section('title', $facility->name . ' - Fasilitas Sekolah')
+@section('title', $facility->name . ' - School Facilities')
 
 @section('content')
-<link rel="stylesheet" href="{{ asset('css/public-template.css') }}">
 <style>
-    /* Page-specific styles for Facility Detail */
-    
-    .facility-hero {
-        background: linear-gradient(
-            135deg, 
-            rgba(26, 32, 44, 0.8) 0%, 
-            rgba(49, 130, 206, 0.7) 50%, 
-            rgba(26, 32, 44, 0.8) 100%
-        );
-        min-height: 60vh;
-        position: relative;
-        overflow: hidden;
+    /* CSS Variables */
+    :root {
+        --primary-color: #3b82f6;
+        --primary-hover: #2563eb;
+        --secondary-color: #64748b;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --bg-light: #f8fafc;
+        --bg-white: #ffffff;
+        --text-dark: #1e293b;
+        --text-gray: #64748b;
+        --text-light: #94a3b8;
+        --border-color: #e2e8f0;
+        --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     }
-    
-    .facility-hero::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: 
-            radial-gradient(circle at 20% 50%, rgba(49, 130, 206, 0.3) 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, rgba(66, 153, 225, 0.3) 0%, transparent 50%);
-        z-index: 1;
+
+    /* Base Styles */
+    .facility-detail-page {
+        background: var(--bg-light);
+        min-height: 100vh;
     }
-    
-    .facility-hero .container {
-        position: relative;
-        z-index: 2;
+
+    /* Breadcrumb */
+    .breadcrumb-section {
+        background: var(--bg-white);
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--border-color);
     }
-    
-    .facility-detail-section {
-        padding: 80px 0;
-        background: #f8f9fa;
-    }
-    
-    .facility-image-container {
-        position: relative;
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.15);
-        margin-bottom: 30px;
-    }
-    
-    .facility-image-container img {
-        width: 100%;
-        height: 400px;
-        object-fit: cover;
-    }
-    
-    .facility-status-badge {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        padding: 8px 16px;
-        border-radius: 20px;
-        font-weight: 600;
-        font-size: 0.9rem;
-        backdrop-filter: blur(10px);
-    }
-    
-    .status-active {
-        background: rgba(40, 167, 69, 0.9);
-        color: white;
-    }
-    
-    .status-maintenance {
-        background: rgba(255, 193, 7, 0.9);
-        color: #212529;
-    }
-    
-    .status-inactive {
-        background: rgba(220, 53, 69, 0.9);
-        color: white;
-    }
-    
-    .facility-info-card {
-        background: white;
-        border-radius: 16px;
-        padding: 30px;
-        box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-        margin-bottom: 30px;
-        border: 1px solid rgba(0,0,0,0.05);
-    }
-    
-    .facility-title {
-        font-size: 2.5rem;
-        font-weight: 800;
-        color: var(--primary-color);
-        margin-bottom: 20px;
-        line-height: 1.2;
-    }
-    
-    .facility-category {
-        display: inline-block;
-        background: var(--gradient-primary);
-        color: white;
-        padding: 8px 20px;
-        border-radius: 20px;
-        font-weight: 600;
-        font-size: 0.9rem;
-        margin-bottom: 20px;
-    }
-    
-    .facility-description {
-        font-size: 1.1rem;
-        line-height: 1.8;
-        color: var(--dark-gray);
-        margin-bottom: 30px;
-    }
-    
-    .info-table {
-        background: #f8f9fa;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 30px;
-    }
-    
-    .info-table table {
-        margin-bottom: 0;
-    }
-    
-    .info-table td {
-        padding: 12px 0;
-        border: none;
-        vertical-align: top;
-    }
-    
-    .info-table .info-label {
-        font-weight: 600;
-        color: var(--primary-color);
-        width: 120px;
-    }
-    
-    .features-section {
-        background: white;
-        border-radius: 16px;
-        padding: 30px;
-        box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-        margin-bottom: 30px;
-    }
-    
-    .feature-item {
+
+    .breadcrumb {
         display: flex;
         align-items: center;
-        padding: 12px 0;
-        border-bottom: 1px solid #eee;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        color: var(--text-gray);
     }
-    
-    .feature-item:last-child {
-        border-bottom: none;
+
+    .breadcrumb a {
+        color: var(--primary-color);
+        text-decoration: none;
+        transition: color 0.3s ease;
     }
-    
-    .feature-icon {
-        width: 40px;
-        height: 40px;
-        background: var(--gradient-light);
-        border-radius: 10px;
+
+    .breadcrumb a:hover {
+        color: var(--primary-hover);
+    }
+
+    .breadcrumb-separator {
+        color: var(--text-light);
+    }
+
+    /* Hero Section */
+    .facility-hero {
+        background: var(--bg-white);
+        padding: 3rem 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .hero-content {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 3rem;
+        align-items: start;
+    }
+
+    .hero-main {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .facility-category {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background: var(--primary-color);
+        color: white;
+        border-radius: 25px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 1rem;
+        width: fit-content;
+    }
+
+    .facility-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+
+    .facility-description {
+        font-size: 1.125rem;
+        color: var(--text-gray);
+        line-height: 1.6;
+        margin-bottom: 2rem;
+    }
+
+    .facility-meta {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem;
+        background: var(--bg-light);
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+    }
+
+    .meta-icon {
+        width: 2rem;
+        height: 2rem;
+        background: var(--primary-color);
+        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-right: 15px;
-        color: var(--primary-color);
+        color: white;
+        flex-shrink: 0;
     }
-    
-    .feature-text {
-        flex: 1;
+
+    .meta-content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .meta-label {
+        font-size: 0.75rem;
+        color: var(--text-light);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.25rem;
+    }
+
+    .meta-value {
+        font-weight: 600;
+        color: var(--text-dark);
+    }
+
+    /* Sidebar */
+    .facility-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .sidebar-card {
+        background: var(--bg-white);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border-color);
+    }
+
+    .sidebar-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .back-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        background: var(--primary-color);
+        color: white;
+        border-radius: 12px;
+        text-decoration: none;
         font-weight: 500;
-        color: var(--dark-gray);
+        transition: all 0.3s ease;
+        justify-content: center;
     }
-    
-    .related-facilities {
-        padding: 80px 0;
-        background: white;
+
+    .back-btn:hover {
+        background: var(--primary-hover);
+        color: white;
+        text-decoration: none;
+        transform: translateY(-2px);
     }
-    
+
+    .featured-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+        background: linear-gradient(135deg, var(--warning-color), #f97316);
+        color: white;
+        border-radius: 12px;
+        font-weight: 500;
+        text-align: center;
+        justify-content: center;
+    }
+
+    /* Main Content */
+    .main-content {
+        padding: 3rem 0;
+    }
+
+    .content-grid {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 3rem;
+    }
+
+    .content-main {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .content-section {
+        background: var(--bg-white);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border-color);
+    }
+
+    .section-header {
+        background: var(--bg-light);
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .section-body {
+        padding: 1.5rem;
+    }
+
+    /* Image Section */
+    .facility-image {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        border-radius: 12px;
+    }
+
+    .no-image {
+        width: 100%;
+        height: 400px;
+        background: var(--bg-light);
+        border-radius: 12px;
+        border: 2px dashed var(--border-color);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-light);
+    }
+
+    .no-image svg {
+        width: 4rem;
+        height: 4rem;
+        margin-bottom: 1rem;
+    }
+
+    /* Features Section */
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem;
+        background: var(--bg-light);
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+    }
+
+    .feature-item:hover {
+        background: var(--bg-white);
+        box-shadow: var(--shadow);
+        transform: translateY(-2px);
+    }
+
+    .feature-icon {
+        width: 2rem;
+        height: 2rem;
+        background: var(--success-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .feature-text {
+        font-weight: 500;
+        color: var(--text-dark);
+    }
+
+    /* Related Facilities */
+    .related-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
     .related-card {
-        background: white;
+        background: var(--bg-white);
         border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border-color);
         transition: all 0.3s ease;
         text-decoration: none;
         color: inherit;
-        height: 100%;
     }
-    
+
     .related-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        box-shadow: var(--shadow-lg);
         text-decoration: none;
         color: inherit;
     }
-    
-    .related-card img {
+
+    .related-image {
         width: 100%;
-        height: 200px;
+        height: 150px;
         object-fit: cover;
     }
-    
-    .related-card-body {
-        padding: 20px;
+
+    .related-no-image {
+        width: 100%;
+        height: 150px;
+        background: var(--bg-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-light);
     }
-    
-    .related-card-title {
-        font-size: 1.1rem;
-        font-weight: 600;
+
+    .related-content {
+        padding: 1rem;
+    }
+
+    .related-category {
+        font-size: 0.75rem;
         color: var(--primary-color);
-        margin-bottom: 10px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
     }
-    
-    .related-card-desc {
-        color: var(--dark-gray);
-        font-size: 0.9rem;
+
+    .related-title {
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+        line-height: 1.4;
+    }
+
+    .related-description {
+        font-size: 0.875rem;
+        color: var(--text-gray);
         line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
-    
-    .breadcrumb-custom {
-        background: rgba(255,255,255,0.1);
-        backdrop-filter: blur(10px);
-        border-radius: 10px;
-        padding: 10px 20px;
-        margin-bottom: 20px;
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .hero-content {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .facility-title {
+            font-size: 2rem;
+        }
+
+        .facility-meta {
+            grid-template-columns: 1fr;
+        }
+
+        .content-grid {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .related-grid {
+            grid-template-columns: 1fr;
+        }
     }
-    
-    .breadcrumb-custom a {
-        color: rgba(255,255,255,0.8);
-        text-decoration: none;
+
+    @media (max-width: 480px) {
+        .facility-hero {
+            padding: 2rem 0;
+        }
+
+        .facility-title {
+            font-size: 1.75rem;
+        }
+
+        .facility-description {
+            font-size: 1rem;
+        }
+
+        .section-body {
+            padding: 1rem;
+        }
+
+        .meta-item {
+            padding: 0.75rem;
+        }
     }
-    
-    .breadcrumb-custom a:hover {
-        color: white;
+
+    /* Animation */
+    .fade-in {
+        animation: fadeIn 0.6s ease-out;
     }
-    
-    .breadcrumb-custom .active {
-        color: white;
-    }
-    
-    .action-buttons {
-        margin-top: 30px;
-    }
-    
-    .btn-enhanced {
-        border-radius: 12px;
-        font-weight: 600;
-        padding: 12px 24px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        text-transform: none;
-        letter-spacing: 0.3px;
-    }
-    
-    .btn-enhanced:hover {
-        transform: translateY(-2px);
-    }
-    
-    .btn-primary-enhanced {
-        background: var(--gradient-primary);
-        border: none;
-        box-shadow: 0 8px 25px rgba(49, 130, 206, 0.3);
-    }
-    
-    .btn-primary-enhanced:hover {
-        box-shadow: 0 12px 35px rgba(49, 130, 206, 0.4);
-        background: linear-gradient(135deg, #2d3748, #2b6cb0);
-    }
-    
-    .btn-outline-enhanced {
-        border: 2px solid var(--primary-color);
-        color: var(--primary-color);
-        background: transparent;
-    }
-    
-    .btn-outline-enhanced:hover {
-        background: var(--primary-color);
-        color: white;
-        box-shadow: 0 8px 25px rgba(49, 130, 206, 0.3);
-    }
-    
-    /* Animation Classes */
-    .fade-in-up {
-        opacity: 0;
-        transform: translateY(30px);
-        animation: fadeInUp 0.8s ease forwards;
-    }
-    
-    .fade-in-up:nth-child(2) { animation-delay: 0.2s; }
-    .fade-in-up:nth-child(3) { animation-delay: 0.4s; }
-    .fade-in-up:nth-child(4) { animation-delay: 0.6s; }
-    
-    @keyframes fadeInUp {
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
         to {
             opacity: 1;
             transform: translateY(0);
         }
     }
-    
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        .facility-hero {
-            min-height: 50vh;
-            text-align: center;
-        }
-        
-        .facility-title {
-            font-size: 2rem;
-        }
-        
-        .facility-image-container img {
-            height: 250px;
-        }
-        
-        .info-table .info-label {
-            width: 100px;
-            font-size: 0.9rem;
-        }
-    }
 </style>
 
-<!-- Hero Section -->
-<section class="facility-hero d-flex align-items-center">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 mx-auto">
-                <!-- Breadcrumb -->
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb breadcrumb-custom">
-                        <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('facilities.index') }}">Fasilitas</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">{{ $facility->name }}</li>
-                    </ol>
-                </nav>
-                
-                <h1 class="facility-title text-white fade-in-up">{{ $facility->name }}</h1>
-                <p class="lead text-white-50 fade-in-up">{{ $facility->category_label }} • {{ $facility->location ?: 'Lokasi tidak ditentukan' }}</p>
-            </div>
+<div class="facility-detail-page">
+    <!-- Breadcrumb -->
+    <section class="breadcrumb-section">
+        <div class="container">
+            <nav class="breadcrumb">
+                <a href="{{ route('home') }}">Beranda</a>
+                <span class="breadcrumb-separator">/</span>
+                <a href="{{ route('public.facilities.index') }}">Fasilitas</a>
+                <span class="breadcrumb-separator">/</span>
+                <span>{{ $facility->name }}</span>
+            </nav>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Facility Detail Section -->
-<section class="facility-detail-section">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8">
-                <!-- Facility Image -->
-                <div class="facility-image-container fade-in-up">
-                    <img src="{{ $facility->image_url }}" alt="{{ $facility->name }}">
-                    <div class="facility-status-badge status-{{ $facility->status }}">
-                        @if($facility->status === 'active')
-                            <i class="fas fa-check-circle me-1"></i> Tersedia
-                        @elseif($facility->status === 'maintenance')
-                            <i class="fas fa-tools me-1"></i> Maintenance
-                        @else
-                            <i class="fas fa-times-circle me-1"></i> Tidak Tersedia
-                        @endif
-                    </div>
-                </div>
-                
-                <!-- Facility Info -->
-                <div class="facility-info-card fade-in-up">
-                    <span class="facility-category">{{ $facility->category_label }}</span>
-                    <h2 class="h4 mb-3">Tentang Fasilitas</h2>
+    <!-- Hero Section -->
+    <section class="facility-hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-main">
+                    <div class="facility-category">{{ $facility->category_label }}</div>
+                    <h1 class="facility-title">{{ $facility->name }}</h1>
                     <p class="facility-description">{{ $facility->description }}</p>
                     
-                    @if($facility->status === 'active')
-                        <div class="action-buttons">
-                            <button type="button" class="btn btn-primary-enhanced btn-enhanced me-3">
-                                <i class="fas fa-calendar-plus me-2"></i>Ajukan Penggunaan
-                            </button>
-                            <a href="{{ route('facilities.index') }}" class="btn btn-outline-enhanced btn-enhanced">
-                                <i class="fas fa-arrow-left me-2"></i>Kembali ke Daftar
-                            </a>
+                    <div class="facility-meta">
+                        @if($facility->location)
+                            <div class="meta-item">
+                                <div class="meta-icon">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                </div>
+                                <div class="meta-content">
+                                    <div class="meta-label">Lokasi</div>
+                                    <div class="meta-value">{{ $facility->location }}</div>
+                                </div>
+                            </div>
+                        @endif
+
+                        @if($facility->capacity)
+                            <div class="meta-item">
+                                <div class="meta-icon">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                    </svg>
+                                </div>
+                                <div class="meta-content">
+                                    <div class="meta-label">Kapasitas</div>
+                                    <div class="meta-value">{{ number_format($facility->capacity) }} people</div>
+                                </div>
+                            </div>
+                        @endif
+
+                        <div class="meta-item">
+                            <div class="meta-icon">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div class="meta-content">
+                                <div class="meta-label">Status</div>
+                                <div class="meta-value">{{ ucfirst($facility->status) }}</div>
+                            </div>
                         </div>
-                    @else
-                        <div class="action-buttons">
-                            <a href="{{ route('facilities.index') }}" class="btn btn-outline-enhanced btn-enhanced">
-                                <i class="fas fa-arrow-left me-2"></i>Kembali ke Daftar
-                            </a>
+                    </div>
+                </div>
+
+                <div class="facility-sidebar">
+                    <div class="sidebar-card">
+                        <a href="{{ route('public.facilities.index') }}" class="back-btn">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                            </svg>
+                            Back to Facilities
+                        </a>
+                    </div>
+
+                    @if($facility->is_featured)
+                        <div class="sidebar-card">
+                            <div class="featured-badge">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                                </svg>
+                                Featured Facility
+                            </div>
                         </div>
                     @endif
                 </div>
-                
-                <!-- Features Section -->
-                @if($facility->features && count($facility->features) > 0)
-                    <div class="features-section fade-in-up">
-                        <h3 class="h5 mb-4">
-                            <i class="fas fa-star text-warning me-2"></i>Fitur-fitur Fasilitas
-                        </h3>
-                        <div class="row">
-                            @foreach($facility->features as $feature)
-                                <div class="col-md-6">
-                                    <div class="feature-item">
-                                        <div class="feature-icon">
-                                            <i class="fas fa-check"></i>
-                                        </div>
-                                        <div class="feature-text">{{ $feature }}</div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                @endif
-            </div>
-            
-            <div class="col-lg-4">
-                <!-- Facility Information -->
-                <div class="facility-info-card fade-in-up">
-                    <h3 class="h5 mb-4">
-                        <i class="fas fa-info-circle text-primary me-2"></i>Informasi Fasilitas
-                    </h3>
-                    
-                    <div class="info-table">
-                        <table class="table table-borderless">
-                            <tr>
-                                <td class="info-label">Kategori:</td>
-                                <td>
-                                    <span class="badge bg-secondary">{{ $facility->category_label }}</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="info-label">Status:</td>
-                                <td>
-                                    <span class="badge bg-{{ $facility->status === 'active' ? 'success' : ($facility->status === 'maintenance' ? 'warning' : 'danger') }}">
-                                        @if($facility->status === 'active')
-                                            <i class="fas fa-check-circle me-1"></i> Tersedia
-                                        @elseif($facility->status === 'maintenance')
-                                            <i class="fas fa-tools me-1"></i> Maintenance
-                                        @else
-                                            <i class="fas fa-times-circle me-1"></i> Tidak Tersedia
-                                        @endif
-                                    </span>
-                                </td>
-                            </tr>
-                            @if($facility->capacity)
-                                <tr>
-                                    <td class="info-label">Kapasitas:</td>
-                                    <td>
-                                        <i class="fas fa-users text-muted me-1"></i>
-                                        {{ $facility->capacity }} orang
-                                    </td>
-                                </tr>
-                            @endif
-                            @if($facility->location)
-                                <tr>
-                                    <td class="info-label">Lokasi:</td>
-                                    <td>
-                                        <i class="fas fa-map-marker-alt text-muted me-1"></i>
-                                        {{ $facility->location }}
-                                    </td>
-                                </tr>
-                            @endif
-                            @if($facility->is_featured)
-                                <tr>
-                                    <td class="info-label">Unggulan:</td>
-                                    <td>
-                                        <span class="badge bg-warning">
-                                            <i class="fas fa-star me-1"></i> Fasilitas Unggulan
-                                        </span>
-                                    </td>
-                                </tr>
-                            @endif
-                        </table>
-                    </div>
-                </div>
-                
-                <!-- Contact Information -->
-                <div class="facility-info-card fade-in-up">
-                    <h3 class="h5 mb-4">
-                        <i class="fas fa-phone text-primary me-2"></i>Informasi Kontak
-                    </h3>
-                    <p class="mb-3">
-                        <i class="fas fa-envelope text-muted me-2"></i>
-                        <a href="mailto:info@smkpgri2ponorogo.sch.id">info@smkpgri2ponorogo.sch.id</a>
-                    </p>
-                    <p class="mb-3">
-                        <i class="fas fa-phone text-muted me-2"></i>
-                        <a href="tel:+62351234567">(0351) 234-567</a>
-                    </p>
-                    <p class="mb-0">
-                        <i class="fas fa-clock text-muted me-2"></i>
-                        Senin - Jumat: 07:00 - 16:00
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Related Facilities Section -->
-@if($relatedFacilities->count() > 0)
-    <section class="related-facilities">
-        <div class="container">
-            <div class="section-title text-center mb-5">
-                <h2>Fasilitas Terkait</h2>
-                <p>Fasilitas lain dalam kategori {{ $facility->category_label }}</p>
-            </div>
-            
-            <div class="row">
-                @foreach($relatedFacilities as $related)
-                    <div class="col-lg-4 col-md-6 mb-4 fade-in-up">
-                        <a href="{{ route('facilities.show', $related) }}" class="related-card d-block">
-                            <img src="{{ $related->image_url }}" alt="{{ $related->name }}">
-                            <div class="related-card-body">
-                                <h5 class="related-card-title">{{ $related->name }}</h5>
-                                <p class="related-card-desc">{{ Str::limit($related->description, 100) }}</p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <small class="text-muted">{{ $related->location ?: 'Lokasi tidak ditentukan' }}</small>
-                                    <span class="badge bg-{{ $related->status === 'active' ? 'success' : ($related->status === 'maintenance' ? 'warning' : 'danger') }}">
-                                        {{ $related->status === 'active' ? 'Tersedia' : ($related->status === 'maintenance' ? 'Maintenance' : 'Tidak Tersedia') }}
-                                    </span>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                @endforeach
-            </div>
-            
-            <div class="text-center mt-5">
-                <a href="{{ route('facilities.index') }}" class="btn btn-primary-enhanced btn-enhanced">
-                    <i class="fas fa-building me-2"></i>Lihat Semua Fasilitas
-                </a>
             </div>
         </div>
     </section>
-@endif
 
-<!-- JavaScript untuk Animasi -->
-<script src="{{ asset('js/public-template.js') }}"></script>
+    <!-- Main Content -->
+    <section class="main-content">
+        <div class="container">
+            <div class="content-grid">
+                <div class="content-main">
+                    <!-- Facility Image -->
+                    <div class="content-section fade-in">
+                        <div class="section-header">
+                            <h2 class="section-title">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                Facility Gallery
+                            </h2>
+                        </div>
+                        <div class="section-body">
+                            @if($facility->image)
+                                <img src="{{ $facility->image_url }}" alt="{{ $facility->name }}" class="facility-image">
+                            @else
+                                <div class="no-image">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span>No image available</span>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Features & Amenities -->
+                    @if($facility->features && count($facility->features) > 0)
+                        <div class="content-section fade-in">
+                            <div class="section-header">
+                                <h2 class="section-title">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    Features & Amenities
+                                </h2>
+                            </div>
+                            <div class="section-body">
+                                <div class="features-grid">
+                                    @foreach($facility->features as $feature)
+                                        @if(!empty(trim($feature)))
+                                            <div class="feature-item">
+                                                <div class="feature-icon">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                    </svg>
+                                                </div>
+                                                <span class="feature-text">{{ $feature }}</span>
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
+                    <!-- Related Facilities -->
+                    @if($relatedFacilities->count() > 0)
+                        <div class="content-section fade-in">
+                            <div class="section-header">
+                                <h2 class="section-title">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h2M7 7h3m3 0h3M7 11h3m3 0h3m-6 4h3"/>
+                                    </svg>
+                                    Related {{ $facility->category_label }} Facilities
+                                </h2>
+                            </div>
+                            <div class="section-body">
+                                <div class="related-grid">
+                                    @foreach($relatedFacilities as $related)
+                                        <a href="{{ route('public.facilities.show', $related) }}" class="related-card">
+                                            @if($related->image)
+                                                <img src="{{ $related->image_url }}" alt="{{ $related->name }}" class="related-image">
+                                            @else
+                                                <div class="related-no-image">
+                                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                    </svg>
+                                                </div>
+                                            @endif
+                                            <div class="related-content">
+                                                <div class="related-category">{{ $related->category_label }}</div>
+                                                <h3 class="related-title">{{ $related->name }}</h3>
+                                                <p class="related-description">{{ Str::limit($related->description, 80) }}</p>
+                                            </div>
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Sidebar -->
+                <div class="facility-sidebar">
+                    <!-- Quick Info -->
+                    <div class="sidebar-card">
+                        <h3 class="sidebar-title">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Quick Information
+                        </h3>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg-light); border-radius: 8px;">
+                                <span style="color: var(--text-gray); font-size: 0.875rem;">Kategori</span>
+                                <span style="font-weight: 600; color: var(--text-dark);">{{ $facility->category_label }}</span>
+                            </div>
+                            
+                            @if($facility->location)
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg-light); border-radius: 8px;">
+                                    <span style="color: var(--text-gray); font-size: 0.875rem;">Lokasi</span>
+                                    <span style="font-weight: 600; color: var(--text-dark);">{{ $facility->location }}</span>
+                                </div>
+                            @endif
+                            
+                            @if($facility->capacity)
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg-light); border-radius: 8px;">
+                                    <span style="color: var(--text-gray); font-size: 0.875rem;">Kapasitas</span>
+                                    <span style="font-weight: 600; color: var(--text-dark);">{{ number_format($facility->capacity) }}</span>
+                                </div>
+                            @endif
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg-light); border-radius: 8px;">
+                                <span style="color: var(--text-gray); font-size: 0.875rem;">Status</span>
+                                <span style="font-weight: 600; color: var(--success-color);">{{ ucfirst($facility->status) }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="sidebar-card">
+                        <h3 class="sidebar-title">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                            </svg>
+                            Need More Information?
+                        </h3>
+                        <p style="color: var(--text-gray); margin-bottom: 1rem; font-size: 0.875rem; line-height: 1.5;">
+                            Contact our administration office for more details about this facility or to schedule a visit.
+                        </p>
+                        <a href="{{ route('contact') }}" class="back-btn" style="background: var(--success-color);">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                            Contact Us
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Animation on scroll
-        const animatedElements = document.querySelectorAll('.fade-in-up');
-        
-        function checkScroll() {
-            animatedElements.forEach(element => {
-                const elementPosition = element.getBoundingClientRect().top;
-                const screenPosition = window.innerHeight / 1.3;
-                
-                if (elementPosition < screenPosition) {
-                    element.style.animationPlayState = 'running';
-                }
-            });
-        }
-        
-        // Initial check
-        checkScroll();
-        
-        // Check on scroll
-        window.addEventListener('scroll', checkScroll);
-    });
-</script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add scroll effect to content sections
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
 
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animationDelay = '0.1s';
+                entry.target.classList.add('fade-in');
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.content-section').forEach(section => {
+        observer.observe(section);
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+});
+</script>
 @endsection

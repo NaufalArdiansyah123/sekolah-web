@@ -500,7 +500,7 @@
         <!-- Section Divider -->
         <div class="student-nav-section-divider"></div>
         <div class="student-nav-section-title">
-            <span>Learning Materials</span>
+            <span>Materi Pembelajaran</span>
         </div>
 
         <!-- Semua Materi -->
@@ -615,7 +615,7 @@
                  onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&color=10B981&background=D1FAE5&size=44'">
             <div class="student-user-info">
                 <div class="student-user-name">{{ auth()->user()->name }}</div>
-                <div class="student-user-role">Student</div>
+                <div class="student-user-role">Siswa</div>
             </div>
             <div class="student-user-status"></div>
         </a>

@@ -37,7 +37,7 @@
                         icon="fas fa-heading"
                         :required="true"
                         name="title"
-                        placeholder="Enter a descriptive title"
+                        placeholder="Masukkan judul yang deskriptif"
                         help="Use a clear and descriptive title" />
                 </div>
                 <div class="col-md-4">
@@ -60,7 +60,7 @@
                 type="textarea"
                 name="description"
                 :rows="4"
-                placeholder="Enter a detailed description"
+                placeholder="Masukkan deskripsi detail"
                 help="Provide a comprehensive description of the item" />
         </x-admin.form-section>
         
@@ -77,7 +77,7 @@
                 type="textarea"
                 name="content"
                 :rows="8"
-                placeholder="Write your content here..."
+                placeholder="Tulis konten Anda di sini..."
                 help="Use rich text formatting to enhance your content" />
         </x-admin.form-section>
         
@@ -124,7 +124,7 @@
                         label="Meta Title"
                         icon="fas fa-tag"
                         name="meta_title"
-                        placeholder="SEO optimized title"
+                        placeholder="Judul yang dioptimalkan SEO"
                         help="Recommended: 50-60 characters" />
                 </div>
                 <div class="col-md-6">
@@ -132,7 +132,7 @@
                         label="Meta Keywords"
                         icon="fas fa-hashtag"
                         name="meta_keywords"
-                        placeholder="keyword1, keyword2, keyword3"
+                        placeholder="kata kunci1, kata kunci2, kata kunci3"
                         help="Separate keywords with commas" />
                 </div>
             </div>
@@ -143,7 +143,7 @@
                 type="textarea"
                 name="meta_description"
                 :rows="3"
-                placeholder="Brief description for search engines"
+                placeholder="Deskripsi singkat untuk mesin pencari"
                 help="Recommended: 150-160 characters" />
         </x-admin.form-section>
         

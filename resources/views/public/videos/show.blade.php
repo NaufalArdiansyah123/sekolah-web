@@ -566,7 +566,7 @@
                         </div>
                         <div class="stat-item">
                             <div class="stat-value">{{ number_format($video->downloads) }}</div>
-                            <div class="stat-label">Downloads</div>
+                            <div class="stat-label">Unduhan</div>
                         </div>
                         <div class="stat-item">
                             <div class="stat-value">{{ $video->formatted_file_size }}</div>

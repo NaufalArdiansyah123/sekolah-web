@@ -110,7 +110,7 @@
                             @endphp
                             {{ $grade }}
                         </div>
-                        <div class="text-sm" style="color: var(--text-secondary, #6b7280);">Grade</div>
+                        <div class="text-sm" style="color: var(--text-secondary, #6b7280);">Nilai</div>
                     </div>
                 </div>
                 

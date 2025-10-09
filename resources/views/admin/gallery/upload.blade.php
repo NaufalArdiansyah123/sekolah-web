@@ -565,8 +565,8 @@
                             <option value="school_events" {{ old('category') == 'school_events' ? 'selected' : '' }}>School Events</option>
                             <option value="academic" {{ old('category') == 'academic' ? 'selected' : '' }}>Academic</option>
                             <option value="extracurricular" {{ old('category') == 'extracurricular' ? 'selected' : '' }}>Extracurricular</option>
-                            <option value="achievements" {{ old('category') == 'achievements' ? 'selected' : '' }}>Achievements</option>
-                            <option value="facilities" {{ old('category') == 'facilities' ? 'selected' : '' }}>Facilities</option>
+                            <option value="achievements" {{ old('category') == 'achievements' ? 'selected' : '' }}>Prestasi</option>
+                            <option value="facilities" {{ old('category') == 'facilities' ? 'selected' : '' }}>Fasilitas</option>
                             <option value="general" {{ old('category') == 'general' ? 'selected' : '' }}>General</option>
                         </select>
                     </div>
@@ -574,7 +574,7 @@
             </div>
 
             <div class="form-group">
-                <label for="description" class="form-label">Description</label>
+                <label for="description" class="form-label">Deskripsi</label>
                 <textarea class="form-control" 
                           id="description" 
                           name="description" 

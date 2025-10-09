@@ -480,23 +480,23 @@
                 @method('PUT')
                 
                 <div class="profile-form-group">
-                    <label class="profile-form-label">Full Name</label>
+                    <label class="profile-form-label">Nama Lengkap</label>
                     <input type="text" name="name" value="{{ auth()->user()->name }}" class="profile-form-input" required>
                 </div>
                 
                 <div class="profile-form-group">
-                    <label class="profile-form-label">Email Address</label>
+                    <label class="profile-form-label">Alamat Email</label>
                     <input type="email" name="email" value="{{ auth()->user()->email }}" class="profile-form-input" required>
                 </div>
                 
                 <div class="profile-form-group">
-                    <label class="profile-form-label">Phone Number</label>
+                    <label class="profile-form-label">Nomor Telepon</label>
                     <input type="tel" name="phone" value="{{ auth()->user()->phone ?? '' }}" class="profile-form-input" placeholder="+62 xxx-xxxx-xxxx">
                 </div>
                 
                 <div class="profile-form-group">
                     <label class="profile-form-label">Bio</label>
-                    <textarea name="bio" class="profile-form-textarea" placeholder="Tell us about yourself...">{{ auth()->user()->bio ?? '' }}</textarea>
+                    <textarea name="bio" class="profile-form-textarea" placeholder="Ceritakan tentang diri Anda...">{{ auth()->user()->bio ?? '' }}</textarea>
                 </div>
                 
                 <div style="display: flex; gap: 1rem;">
@@ -523,7 +523,7 @@
             
             <div class="profile-security-item">
                 <div class="profile-security-info">
-                    <div class="profile-security-title">Password</div>
+                    <div class="profile-security-title">Kata Sandi</div>
                     <div class="profile-security-desc">Last changed {{ auth()->user()->password_changed_at ? \Carbon\Carbon::parse(auth()->user()->password_changed_at)->diffForHumans() : 'never' }}</div>
                 </div>
                 <button type="button" class="profile-btn profile-btn-secondary" onclick="changePassword()">

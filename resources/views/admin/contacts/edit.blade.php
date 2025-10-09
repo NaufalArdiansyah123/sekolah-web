@@ -855,12 +855,12 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="form-label">Title</label>
+                                            <label class="form-label">Judul</label>
                                             <input type="text" class="form-input card-title-input" name="" placeholder="Card title">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="form-label">Description</label>
+                                        <label class="form-label">Deskripsi</label>
                                         <textarea class="form-input card-description-input" name="" rows="2" placeholder="Card description..."></textarea>
                                     </div>
                                 </div>
@@ -952,7 +952,7 @@
                                 <span style="font-size: 0.75rem; color: var(--text-primary);">{{ $contact->created_at->format('M d, Y') }}</span>
                             </div>
                             <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span style="font-size: 0.75rem; color: var(--text-secondary);">Last Updated</span>
+                                <span style="font-size: 0.75rem; color: var(--text-secondary);">Terakhir Diperbarui</span>
                                 <span style="font-size: 0.75rem; color: var(--text-primary);">{{ $contact->updated_at->format('M d, Y') }}</span>
             </div>
                         </div>

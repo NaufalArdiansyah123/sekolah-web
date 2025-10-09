@@ -624,7 +624,7 @@
                 </div>
             </div>
             <h3 class="stat-value">{{ $announcements->where('status', 'published')->count() }}</h3>
-            <p class="stat-label">Published</p>
+            <p class="stat-label">Dipublikasikan</p>
         </div>
 
         <div class="stat-card">
@@ -658,11 +658,11 @@
         <form method="GET" action="{{ route('admin.announcements.index') }}">
             <div class="filters-grid">
                 <div class="form-group">
-                    <label class="form-label">Search</label>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search announcements..." class="form-input">
+                    <label class="form-label">Cari</label>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari pengumuman..." class="form-input">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Category</label>
+                    <label class="form-label">Kategori</label>
                     <select name="category" class="form-input">
                         <option value="">All Categories</option>
                         <option value="akademik" {{ request('category') == 'akademik' ? 'selected' : '' }}>Academic</option>
@@ -675,8 +675,8 @@
                     <label class="form-label">Status</label>
                     <select name="status" class="form-input">
                         <option value="">All Status</option>
-                        <option value="published" {{ request('status') == 'published' ? 'selected' : '' }}>Published</option>
-                        <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draft</option>
+                        <option value="published" {{ request('status') == 'published' ? 'selected' : '' }}>Dipublikasikan</option>
+                        <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draf</option>
                         <option value="archived" {{ request('status') == 'archived' ? 'selected' : '' }}>Archived</option>
                     </select>
                 </div>
@@ -731,13 +731,13 @@
                         <tr>
                             <th style="width: 5%">#</th>
                             <th style="width: 35%">Title & Content</th>
-                            <th style="width: 12%">Category</th>
+                            <th style="width: 12%">Kategori</th>
                             <th style="width: 10%">Priority</th>
                             <th style="width: 12%">Author</th>
                             <th style="width: 8%">Status</th>
                             <th style="width: 8%">Views</th>
-                            <th style="width: 10%">Date</th>
-                            <th style="width: 10%">Actions</th>
+                            <th style="width: 10%">Tanggal</th>
+                            <th style="width: 10%">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>

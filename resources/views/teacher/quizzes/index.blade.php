@@ -57,7 +57,7 @@
                     </svg>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium" style="color: var(--text-secondary, #6b7280);">Draft</p>
+                    <p class="text-sm font-medium" style="color: var(--text-secondary, #6b7280);">Draf</p>
                     <p class="text-2xl font-bold" style="color: var(--text-primary, #111827);">{{ $stats['draft'] }}</p>
                 </div>
             </div>
@@ -96,7 +96,7 @@
                     <select name="status" class="rounded-lg border px-3 py-2" style="border-color: var(--border-color, #d1d5db); background: var(--bg-primary, #ffffff); color: var(--text-primary, #111827);" onchange="this.form.submit()">
                         <option value="">Semua Status</option>
                         <option value="published" {{ $currentFilters['status'] == 'published' ? 'selected' : '' }}>Dipublikasi</option>
-                        <option value="draft" {{ $currentFilters['status'] == 'draft' ? 'selected' : '' }}>Draft</option>
+                        <option value="draft" {{ $currentFilters['status'] == 'draft' ? 'selected' : '' }}>Draf</option>
                     </select>
                 </form>
             </div>

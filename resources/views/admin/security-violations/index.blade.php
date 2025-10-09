@@ -93,7 +93,7 @@
                     <label for="status" class="form-label">Status</label>
                     <select class="form-select" id="status" name="status">
                         <option value="">All Status</option>
-                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Menunggu</option>
                         <option value="reviewed" {{ request('status') == 'reviewed' ? 'selected' : '' }}>Reviewed</option>
                         <option value="resolved" {{ request('status') == 'resolved' ? 'selected' : '' }}>Resolved</option>
                         <option value="dismissed" {{ request('status') == 'dismissed' ? 'selected' : '' }}>Dismissed</option>
@@ -112,7 +112,7 @@
                 </div>
                 
                 <div class="col-md-2">
-                    <label for="search" class="form-label">Search</label>
+                    <label for="search" class="form-label">Cari</label>
                     <input type="text" class="form-control" id="search" name="search" placeholder="Student name or NIS" value="{{ request('search') }}">
                 </div>
                 
@@ -161,7 +161,7 @@
                                     <option value="review">Mark as Reviewed</option>
                                     <option value="resolve">Mark as Resolved</option>
                                     <option value="dismiss">Dismiss</option>
-                                    <option value="delete">Delete</option>
+                                    <option value="delete">Hapus</option>
                                 </select>
                                 <button type="submit" class="btn btn-primary" onclick="return confirmBulkAction()">
                                     <i class="fas fa-play"></i> Execute
@@ -184,10 +184,10 @@
                                     <th>Date/Time</th>
                                     <th>Violator</th>
                                     <th>QR Owner</th>
-                                    <th>Type</th>
+                                    <th>Jenis</th>
                                     <th>Severity</th>
                                     <th>Status</th>
-                                    <th>Actions</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -312,7 +312,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                     <button type="submit" class="btn btn-primary">Update Status</button>
                 </div>
             </form>

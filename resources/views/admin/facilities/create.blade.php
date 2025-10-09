@@ -1,577 +1,762 @@
 @extends('layouts.admin')
 
-@section('title', 'Tambah Fasilitas')
-
-@push('styles')
-<link rel="stylesheet" href="{{ asset('css/admin-forms-enhanced.css') }}">
-<style>
-/* Additional styles for file upload */
-.file-upload-enhanced {
-    position: relative;
-    border: 2px dashed var(--form-gray-300);
-    border-radius: 16px;
-    padding: 2rem;
-    text-align: center;
-    transition: all 0.3s ease;
-    background: var(--form-gray-50);
-    cursor: pointer;
-    color: var(--form-gray-600);
-    min-height: 120px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.file-upload-enhanced:hover {
-    border-color: var(--form-primary-color);
-    background: #f0f9ff;
-    color: var(--form-primary-color);
-    transform: scale(1.02);
-}
-
-.file-upload-enhanced.dragover {
-    border-color: var(--form-primary-color);
-    background: #eff6ff;
-    transform: scale(1.02);
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
-}
-
-.file-upload-enhanced input[type="file"] {
-    display: none;
-}
-
-.file-preview-enhanced {
-    transition: all 0.3s ease;
-    border: 3px solid var(--form-white);
-    box-shadow: var(--form-shadow-lg);
-}
-
-.file-preview-enhanced:hover {
-    transform: scale(1.05);
-    box-shadow: var(--form-shadow-xl);
-}
-
-.btn-enhanced.btn-sm {
-    padding: 0.375rem 0.75rem;
-    font-size: 0.75rem;
-    border-radius: 8px;
-}
-
-/* Upload animation */
-@keyframes uploadPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
-
-.file-upload-enhanced.uploading {
-    animation: uploadPulse 1s infinite;
-}
-</style>
-@endpush
+@section('title', 'Create New Facility')
 
 @section('content')
-<div class="page-container" style="background: linear-gradient(135deg, var(--form-primary-color) 0%, var(--form-secondary-color) 100%); min-height: 100vh; padding: 2rem 0;">
-    <div class="form-container-enhanced">
-        <!-- Enhanced Form Header -->
-        <div class="form-header-enhanced">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <h1 class="form-title-enhanced">
-                        <i class="fas fa-building me-3"></i>Tambah Fasilitas Baru
-                    </h1>
-                    <p class="form-subtitle-enhanced">
-                        Lengkapi informasi fasilitas sekolah yang akan ditambahkan
-                    </p>
-                </div>
-                <div class="header-actions">
-                    <a href="{{ route('admin.facilities.index') }}" class="btn-enhanced btn-outline-enhanced" style="background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.3); color: white;">
-                        <i class="fas fa-arrow-left"></i> Kembali
-                    </a>
-                </div>
+<style>
+    /* CSS Variables for Dark Mode */
+    :root {
+        --bg-primary: #ffffff;
+        --bg-secondary: #f8fafc;
+        --bg-tertiary: #f1f5f9;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --text-tertiary: #94a3b8;
+        --border-color: #e2e8f0;
+        --shadow-color: rgba(0, 0, 0, 0.1);
+        --accent-color: #3b82f6;
+        --accent-hover: #2563eb;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+    }
+
+    .dark {
+        --bg-primary: #1e293b;
+        --bg-secondary: #0f172a;
+        --bg-tertiary: #334155;
+        --text-primary: #f1f5f9;
+        --text-secondary: #cbd5e1;
+        --text-tertiary: #94a3b8;
+        --border-color: #334155;
+        --shadow-color: rgba(0, 0, 0, 0.3);
+    }
+
+    /* Base Styles */
+    .facility-create-page {
+        background: var(--bg-secondary);
+        min-height: 100vh;
+        padding: 1.5rem;
+    }
+
+    /* Header Section */
+    .page-header {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 1px 3px var(--shadow-color);
+    }
+
+    .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .page-title {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .page-subtitle {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        margin: 0;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+    }
+
+    /* Buttons */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        font-size: 0.875rem;
+        transition: all 0.15s ease;
+    }
+
+    .btn-primary {
+        background: var(--accent-color);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: var(--accent-hover);
+        color: white;
+        text-decoration: none;
+        transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+        background: var(--border-color);
+        color: var(--text-primary);
+        text-decoration: none;
+    }
+
+    .btn-success {
+        background: var(--success-color);
+        color: white;
+    }
+
+    .btn-success:hover {
+        background: #059669;
+        color: white;
+        text-decoration: none;
+        transform: translateY(-1px);
+    }
+
+    /* Form Section */
+    .form-section {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px var(--shadow-color);
+    }
+
+    .form-header {
+        background: var(--bg-tertiary);
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .form-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-body {
+        padding: 2rem;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .required {
+        color: var(--danger-color);
+    }
+
+    .form-input {
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 0.75rem;
+        font-size: 0.875rem;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        transition: border-color 0.15s ease;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .form-textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .form-help {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        margin-top: 0.25rem;
+    }
+
+    /* File Upload */
+    .file-upload {
+        border: 2px dashed var(--border-color);
+        border-radius: 8px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.15s ease;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .file-upload:hover {
+        border-color: var(--accent-color);
+        background: rgba(59, 130, 246, 0.05);
+    }
+
+    .file-upload.dragover {
+        border-color: var(--accent-color);
+        background: rgba(59, 130, 246, 0.1);
+    }
+
+    .file-upload input[type="file"] {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .upload-icon {
+        width: 3rem;
+        height: 3rem;
+        background: var(--bg-tertiary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        color: var(--text-secondary);
+    }
+
+    .upload-text {
+        color: var(--text-primary);
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    .upload-hint {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+    }
+
+    /* Image Preview */
+    .image-preview {
+        margin-top: 1rem;
+        text-align: center;
+    }
+
+    .preview-image {
+        max-width: 200px;
+        max-height: 200px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        object-fit: cover;
+    }
+
+    .remove-image {
+        margin-top: 0.5rem;
+        background: var(--danger-color);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        cursor: pointer;
+    }
+
+    /* Features List */
+    .features-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .feature-item {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .feature-input {
+        flex: 1;
+    }
+
+    .remove-feature {
+        background: var(--danger-color);
+        color: white;
+        border: none;
+        padding: 0.5rem;
+        border-radius: 6px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .add-feature {
+        background: var(--success-color);
+        color: white;
+        border: none;
+        padding: 0.75rem 1rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Form Actions */
+    .form-actions {
+        background: var(--bg-tertiary);
+        padding: 1.5rem 2rem;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+    }
+
+    /* Alerts */
+    .alert {
+        border-radius: 8px;
+        border: none;
+        padding: 1rem 1.5rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .alert-danger {
+        background: rgba(239, 68, 68, 0.1);
+        color: #dc2626;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .alert-close {
+        background: none;
+        border: none;
+        font-size: 1.25rem;
+        cursor: pointer;
+        color: inherit;
+        opacity: 0.7;
+        margin-left: auto;
+    }
+
+    .alert-close:hover {
+        opacity: 1;
+    }
+
+    /* Error States */
+    .form-input.error {
+        border-color: var(--danger-color);
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    }
+
+    .error-message {
+        color: var(--danger-color);
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .facility-create-page {
+            padding: 1rem;
+        }
+
+        .page-header {
+            padding: 1.5rem;
+        }
+
+        .header-top {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+        }
+
+        .form-body {
+            padding: 1.5rem;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-actions {
+            flex-direction: column;
+            padding: 1.5rem;
+        }
+    }
+
+    /* Loading State */
+    .loading {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+
+    .spinner {
+        display: inline-block;
+        width: 1rem;
+        height: 1rem;
+        border: 2px solid transparent;
+        border-top: 2px solid currentColor;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+
+<div class="facility-create-page">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="header-top">
+            <div>
+                <h1 class="page-title">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                    </svg>
+                    Create New Facility
+                </h1>
+                <p class="page-subtitle">Add a new facility to showcase your school infrastructure</p>
             </div>
-        </div>
-
-        <div class="form-body" style="padding: 2rem;">
-            <!-- Error Messages -->
-            @if ($errors->any())
-                <div class="alert-enhanced alert-danger-enhanced">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <div>
-                        <strong>Terjadi kesalahan:</strong>
-                        <ul class="mb-0 mt-2">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                </div>
-            @endif
-
-            <div class="row">
-                <div class="col-lg-8">
-                    <!-- Main Form Section -->
-                    <div class="form-section-enhanced fade-in-enhanced">
-                        <h3 class="section-title-enhanced">
-                            <div class="section-icon-enhanced">
-                                <i class="fas fa-info-circle"></i>
-                            </div>
-                            Informasi Dasar Fasilitas
-                        </h3>
-                        <form action="{{ route('admin.facilities.store') }}" method="POST" enctype="multipart/form-data" id="facilityForm" data-auto-save="30000">
-                            @csrf
-                            
-                            <!-- Nama Fasilitas -->
-                            <div class="form-group-enhanced">
-                                <label for="name" class="form-label-enhanced">Nama Fasilitas <span class="required">*</span></label>
-                                <input type="text" class="form-control-enhanced @error('name') is-invalid @enderror" 
-                                       id="name" name="name" value="{{ old('name') }}" 
-                                       placeholder="Contoh: Laboratorium Komputer" 
-                                       required data-max-length="100">
-                                @error('name')
-                                    <div class="invalid-feedback-enhanced"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <!-- Deskripsi -->
-                            <div class="form-group-enhanced">
-                                <label for="description" class="form-label-enhanced">Deskripsi <span class="required">*</span></label>
-                                <textarea class="form-textarea-enhanced @error('description') is-invalid @enderror" 
-                                          id="description" name="description" rows="4" 
-                                          placeholder="Jelaskan fasilitas ini secara detail..." 
-                                          required data-max-length="500">{{ old('description') }}</textarea>
-                                @error('description')
-                                    <div class="invalid-feedback-enhanced"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
-                                @enderror
-                                <div class="form-text-enhanced"><i class="fas fa-info-circle"></i> Deskripsi yang baik akan membantu pengunjung memahami fasilitas</div>
-                            </div>
-
-                            <!-- Kategori dan Status -->
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group-enhanced">
-                                        <label for="category" class="form-label-enhanced">Kategori <span class="required">*</span></label>
-                                        <select class="form-select-enhanced @error('category') is-invalid @enderror" 
-                                                id="category" name="category" required>
-                                            <option value="">Pilih Kategori</option>
-                                            @foreach($categories as $key => $label)
-                                                <option value="{{ $key }}" {{ old('category') == $key ? 'selected' : '' }}>
-                                                    {{ $label }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('category')
-                                            <div class="invalid-feedback-enhanced"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group-enhanced">
-                                        <label for="status" class="form-label-enhanced">Status <span class="required">*</span></label>
-                                        <select class="form-select-enhanced @error('status') is-invalid @enderror" 
-                                                id="status" name="status" required>
-                                            @foreach($statuses as $key => $label)
-                                                <option value="{{ $key }}" {{ old('status', 'active') == $key ? 'selected' : '' }}>
-                                                    {{ $label }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        <div class="form-text-enhanced"><i class="fas fa-info-circle"></i> Fasilitas dengan status 'Aktif' akan muncul di halaman publik</div>
-                                        @error('status')
-                                            <div class="invalid-feedback-enhanced"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-
-
-
-                    </div>
-                    
-                    <!-- Media Section -->
-                    <div class="form-section-enhanced fade-in-enhanced">
-                        <h3 class="section-title-enhanced">
-                            <div class="section-icon-enhanced">
-                                <i class="fas fa-image"></i>
-                            </div>
-                            Media & Gambar
-                        </h3>
-                        
-                        <!-- Gambar -->
-                        <div class="form-group-enhanced">
-                            <label for="image" class="form-label-enhanced">Gambar Fasilitas</label>
-                            
-                            <!-- File Upload Area -->
-                            <div class="file-upload-enhanced" data-max-size="2048" id="uploadArea">
-                                <input type="file" id="image" name="image" 
-                                       accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,.jpg,.jpeg,.png,.gif,.webp" 
-                                       class="@error('image') is-invalid @enderror" 
-                                       style="display: none;">
-                                <div class="text-center" id="uploadText">
-                                    <i class="fas fa-cloud-upload-alt fa-3x mb-3" style="color: var(--form-gray-400);"></i>
-                                    <h6>Klik atau seret gambar ke sini</h6>
-                                    <p class="text-muted mb-0">Format: JPG, JPEG, PNG, GIF, WEBP. Maksimal 2MB</p>
-                                </div>
-                            </div>
-                            
-                            <!-- Image Preview -->
-                            <div id="imagePreview" class="mt-3" style="display: none;">
-                                <div class="text-center">
-                                    <img id="previewImg" src="" alt="Preview" class="file-preview-enhanced" 
-                                         style="max-width: 300px; max-height: 200px; border-radius: 12px; box-shadow: var(--form-shadow-lg);">
-                                    <div class="mt-2">
-                                        <button type="button" class="btn-enhanced btn-danger-enhanced btn-sm" onclick="removeImage()">
-                                            <i class="fas fa-trash"></i> Hapus Gambar
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            @error('image')
-                                <div class="invalid-feedback-enhanced"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
-                            @enderror
-                            <div class="form-text-enhanced"><i class="fas fa-info-circle"></i> Gambar akan membantu pengunjung mengenali fasilitas</div>
-                            
-                            <!-- Debug Info (only in development) -->
-                            <div class="mt-2">
-                                <button type="button" class="btn btn-sm btn-outline-info" onclick="testFileInput()">
-                                    <i class="fas fa-bug"></i> Test Upload
-                                </button>
-                                <small class="text-muted ms-2">Klik untuk test fungsi upload</small>
-                            </div>
-                        </div>
-
-                    </div>
-                        </form>
-
-                </div>
-
-                <div class="col-lg-4">
-                    <!-- Help Card -->
-                    <div class="form-section-enhanced fade-in-enhanced">
-                        <h3 class="section-title-enhanced">
-                            <div class="section-icon-enhanced">
-                                <i class="fas fa-info-circle"></i>
-                            </div>
-                            Panduan
-                        </h3>
-                        <div class="alert-enhanced alert-info-enhanced">
-                            <i class="fas fa-lightbulb"></i>
-                            <div>
-                                <h6>Tips Menambah Fasilitas:</h6>
-                                <ul class="list-unstyled mb-0">
-                                    <li class="mb-2">
-                                        <i class="fas fa-check text-success me-2"></i>
-                                        Gunakan nama yang jelas dan mudah dipahami
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="fas fa-check text-success me-2"></i>
-                                        Deskripsi sebaiknya menjelaskan fungsi dan keunggulan fasilitas
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="fas fa-check text-success me-2"></i>
-                                        Pilih kategori yang sesuai untuk memudahkan pencarian
-                                    </li>
-                                    <li class="mb-0">
-                                        <i class="fas fa-check text-success me-2"></i>
-                                        Upload gambar berkualitas baik untuk menarik perhatian
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Preview Card -->
-                    <div class="form-section-enhanced fade-in-enhanced">
-                        <h3 class="section-title-enhanced">
-                            <div class="section-icon-enhanced">
-                                <i class="fas fa-eye"></i>
-                            </div>
-                            Preview
-                        </h3>
-                        <div id="facility-preview">
-                            <div class="text-center text-muted">
-                                <i class="fas fa-building fa-3x mb-3"></i>
-                                <p>Preview akan muncul saat Anda mengisi form</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Enhanced Form Actions -->
-        <div class="form-actions-enhanced">
-            <div class="d-flex gap-2">
-                <a href="{{ route('admin.facilities.index') }}" class="btn-enhanced btn-outline-enhanced">
-                    <i class="fas fa-arrow-left"></i>Kembali
+            <div class="header-actions">
+                <a href="{{ route('admin.facilities.index') }}" class="btn btn-secondary">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    Back to Facilities
                 </a>
-                <button type="button" class="btn-enhanced btn-secondary-enhanced" onclick="resetForm()">
-                    <i class="fas fa-undo"></i>Reset
-                </button>
-            </div>
-            
-            <div class="d-flex gap-2">
-                <button type="submit" form="facilityForm" class="btn-enhanced btn-primary-enhanced" name="action" value="save">
-                    <i class="fas fa-plus"></i>Tambah Fasilitas
-                </button>
-                <button type="submit" form="facilityForm" class="btn-enhanced btn-success-enhanced" name="action" value="save_and_new">
-                    <i class="fas fa-plus-circle"></i>Tambah & Buat Baru
-                </button>
             </div>
         </div>
     </div>
-</div>
-@endsection
 
-@push('scripts')
-<script src="{{ asset('js/admin-forms-enhanced.js') }}"></script>
+    <!-- Alerts -->
+    @if($errors->any())
+        <div class="alert alert-danger">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <div>
+                <strong>Please fix the following errors:</strong>
+                <ul style="margin: 0.5rem 0 0 0; padding-left: 1rem;">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            <button type="button" class="alert-close" onclick="this.parentElement.remove()">&times;</button>
+        </div>
+    @endif
+
+    <!-- Form Section -->
+    <div class="form-section">
+        <div class="form-header">
+            <h2 class="form-title">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h2M7 7h3m3 0h3M7 11h3m3 0h3m-6 4h3"/>
+                </svg>
+                Facility Information
+            </h2>
+        </div>
+
+        <form action="{{ route('admin.facilities.store') }}" method="POST" enctype="multipart/form-data" id="facilityForm">
+            @csrf
+            
+            <div class="form-body">
+                <div class="form-grid">
+                    <!-- Facility Name -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            Facility Name <span class="required">*</span>
+                        </label>
+                        <input type="text" name="name" value="{{ old('name') }}" class="form-input {{ $errors->has('name') ? 'error' : '' }}" placeholder="Enter facility name" required>
+                        @error('name')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
+                        <div class="form-help">Enter a clear and descriptive name for the facility</div>
+                    </div>
+
+                    <!-- Category -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            Category <span class="required">*</span>
+                        </label>
+                        <select name="category" class="form-input {{ $errors->has('category') ? 'error' : '' }}" required>
+                            <option value="">Select Category</option>
+                            @foreach($categories as $key => $label)
+                                <option value="{{ $key }}" {{ old('category') == $key ? 'selected' : '' }}>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                        @error('category')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
+                        <div class="form-help">Choose the most appropriate category</div>
+                    </div>
+
+                    <!-- Location -->
+                    <div class="form-group">
+                        <label class="form-label">Lokasi</label>
+                        <input type="text" name="location" value="{{ old('location') }}" class="form-input {{ $errors->has('location') ? 'error' : '' }}" placeholder="e.g., Building A, Floor 2">
+                        @error('location')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
+                        <div class="form-help">Specify the location within the school</div>
+                    </div>
+
+                    <!-- Capacity -->
+                    <div class="form-group">
+                        <label class="form-label">Kapasitas</label>
+                        <input type="number" name="capacity" value="{{ old('capacity') }}" class="form-input {{ $errors->has('capacity') ? 'error' : '' }}" placeholder="e.g., 50" min="1">
+                        @error('capacity')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
+                        <div class="form-help">Maximum number of people the facility can accommodate</div>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            Status <span class="required">*</span>
+                        </label>
+                        <select name="status" class="form-input {{ $errors->has('status') ? 'error' : '' }}" required>
+                            @foreach($statuses as $key => $label)
+                                <option value="{{ $key }}" {{ old('status', 'active') == $key ? 'selected' : '' }}>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                        @error('status')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
+                        <div class="form-help">Current operational status of the facility</div>
+                    </div>
+
+                    <!-- Is Featured -->
+                    <div class="form-group">
+                        <label class="form-label">Featured Facility</label>
+                        <select name="is_featured" class="form-input">
+                            <option value="0" {{ old('is_featured', '0') == '0' ? 'selected' : '' }}>No</option>
+                            <option value="1" {{ old('is_featured') == '1' ? 'selected' : '' }}>Yes</option>
+                        </select>
+                        <div class="form-help">Featured facilities will be highlighted on the public page</div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="form-group full-width">
+                        <label class="form-label">
+                            Description <span class="required">*</span>
+                        </label>
+                        <textarea name="description" class="form-input form-textarea {{ $errors->has('description') ? 'error' : '' }}" placeholder="Describe the facility, its purpose, and key features..." required>{{ old('description') }}</textarea>
+                        @error('description')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
+                        <div class="form-help">Provide a detailed description of the facility</div>
+                    </div>
+
+                    <!-- Features -->
+                    <div class="form-group full-width">
+                        <label class="form-label">Fitur</label>
+                        <div class="features-list" id="featuresList">
+                            @if(old('features'))
+                                @foreach(old('features') as $index => $feature)
+                                    @if(!empty($feature))
+                                        <div class="feature-item">
+                                            <input type="text" name="features[]" value="{{ $feature }}" class="form-input feature-input" placeholder="Enter a feature">
+                                            <button type="button" class="remove-feature" onclick="removeFeature(this)">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            @else
+                                <div class="feature-item">
+                                    <input type="text" name="features[]" class="form-input feature-input" placeholder="Enter a feature">
+                                    <button type="button" class="remove-feature" onclick="removeFeature(this)">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            @endif
+                        </div>
+                        <button type="button" class="add-feature" onclick="addFeature()">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                            </svg>
+                            Add Feature
+                        </button>
+                        <div class="form-help">List the key features and amenities of this facility</div>
+                    </div>
+
+                    <!-- Image Upload -->
+                    <div class="form-group full-width">
+                        <label class="form-label">Facility Image</label>
+                        <div class="file-upload" id="fileUpload">
+                            <input type="file" name="image" accept="image/*" id="imageInput" onchange="previewImage(this)">
+                            <div class="upload-icon">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <div class="upload-text">Click to upload or drag and drop</div>
+                            <div class="upload-hint">PNG, JPG, GIF up to 2MB</div>
+                        </div>
+                        @error('image')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
+                        <div id="imagePreview" class="image-preview" style="display: none;">
+                            <img id="previewImg" class="preview-image" src="" alt="Preview">
+                            <br>
+                            <button type="button" class="remove-image" onclick="removeImage()">Remove Image</button>
+                        </div>
+                        <div class="form-help">Upload a high-quality image that represents the facility</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{{ route('admin.facilities.index') }}" class="btn btn-secondary">Batal</a>
+                <button type="submit" name="action" value="save" class="btn btn-primary">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    Save Facility
+                </button>
+                <button type="submit" name="action" value="save_and_new" class="btn btn-success">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                    </svg>
+                    Save & Add New
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
-$(document).ready(function() {
-    // Image upload handling
-    const imageInput = document.getElementById('image');
-    const uploadArea = document.getElementById('uploadArea');
-    const uploadText = document.getElementById('uploadText');
-    const imagePreview = document.getElementById('imagePreview');
-    const previewImg = document.getElementById('previewImg');
-    
-    // Click handler for upload area
-    uploadArea.addEventListener('click', function(e) {
+document.addEventListener('DOMContentLoaded', function() {
+    // File upload drag and drop
+    const fileUpload = document.getElementById('fileUpload');
+    const fileInput = document.getElementById('imageInput');
+
+    fileUpload.addEventListener('dragover', function(e) {
         e.preventDefault();
-        e.stopPropagation();
-        imageInput.click();
+        fileUpload.classList.add('dragover');
     });
-    
-    // File input change event (only one handler)
-    imageInput.addEventListener('change', function(e) {
-        const file = this.files[0];
-        if (file) {
-            console.log('File selected:', {
-                name: file.name,
-                type: file.type,
-                size: file.size,
-                lastModified: file.lastModified
-            });
-            
-            // Validate file size (2MB = 2048KB)
-            if (file.size > 2048 * 1024) {
-                const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
-                showAlert('error', `Ukuran file terlalu besar (${sizeMB}MB). Maksimal 2MB.`);
-                this.value = '';
-                return;
-            }
-            
-            // Validate file type - check both MIME type and file extension
-            const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-            const fileName = file.name.toLowerCase();
-            const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
-            const hasValidExtension = allowedExtensions.some(ext => fileName.endsWith(ext));
-            const hasValidMimeType = allowedMimeTypes.includes(file.type);
-            
-            console.log('File validation:', {
-                fileName: fileName,
-                mimeType: file.type,
-                hasValidExtension: hasValidExtension,
-                hasValidMimeType: hasValidMimeType
-            });
-            
-            // More lenient validation - accept if either MIME type OR extension is valid
-            if (!hasValidMimeType && !hasValidExtension) {
-                showAlert('error', `Format file tidak didukung.<br>File: <strong>${file.name}</strong><br>Tipe: <strong>${file.type || 'Tidak terdeteksi'}</strong><br><br>Format yang didukung: JPG, JPEG, PNG, GIF, WEBP`);
-                this.value = '';
-                return;
-            }
-            
-            // Show warning if MIME type is not detected but extension is valid
-            if (!hasValidMimeType && hasValidExtension) {
-                showAlert('warning', `Tipe file tidak terdeteksi oleh browser, tapi ekstensi valid. Melanjutkan upload...`);
-            }
-            
-            // Show preview
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                previewImg.src = e.target.result;
-                imagePreview.style.display = 'block';
-                uploadText.style.display = 'none';
-                updatePreview();
-                showAlert('success', 'Gambar berhasil dipilih!');
-            };
-            reader.readAsDataURL(file);
-        } else {
-            removeImage();
-        }
-    });
-    
-    // Drag and drop functionality
-    uploadArea.addEventListener('dragover', function(e) {
+
+    fileUpload.addEventListener('dragleave', function(e) {
         e.preventDefault();
-        e.stopPropagation();
-        this.classList.add('dragover');
+        fileUpload.classList.remove('dragover');
     });
-    
-    uploadArea.addEventListener('dragleave', function(e) {
+
+    fileUpload.addEventListener('drop', function(e) {
         e.preventDefault();
-        e.stopPropagation();
-        this.classList.remove('dragover');
-    });
-    
-    uploadArea.addEventListener('drop', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        this.classList.remove('dragover');
+        fileUpload.classList.remove('dragover');
         
         const files = e.dataTransfer.files;
         if (files.length > 0) {
-            imageInput.files = files;
-            // Trigger change event manually
-            const event = new Event('change', { bubbles: true });
-            imageInput.dispatchEvent(event);
+            fileInput.files = files;
+            previewImage(fileInput);
         }
     });
-
-    // Form change listeners for preview
-    $('#name, #description, #category, #status').on('input change', updatePreview);
-
-    // Initial preview update
-    updatePreview();
 });
 
-
-
-function updatePreview() {
-    const name = $('#name').val() || 'Nama Fasilitas';
-    const description = $('#description').val() || 'Deskripsi fasilitas akan muncul di sini...';
-    const category = $('#category option:selected').text() || 'Kategori';
-    const status = $('#status option:selected').text() || 'Status';
-    const imageSrc = $('#previewImg').attr('src');
-
-    let preview = `
-        <div class="facility-preview-card">
-            ${imageSrc ? `<img src="${imageSrc}" class="img-fluid rounded mb-3" style="max-height: 150px; width: 100%; object-fit: cover;">` : ''}
-            <h6 class="fw-bold">${name}</h6>
-            <p class="text-muted small">${description.substring(0, 100)}${description.length > 100 ? '...' : ''}</p>
-            <div class="d-flex flex-wrap gap-1 mb-2">
-                <span class="badge bg-secondary">${category}</span>
-                <span class="badge bg-${status === 'Aktif' ? 'success' : status === 'Maintenance' ? 'warning' : 'danger'}">${status}</span>
-            </div>
-        </div>
-    `;
-
-    $('#facility-preview').html(preview);
-}
-
-// Form validation
-$('#facilityForm').submit(function(e) {
-    let isValid = true;
+function previewImage(input) {
+    const preview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
     
-    // Check required fields
-    const requiredFields = ['name', 'description', 'category', 'status'];
-    requiredFields.forEach(function(field) {
-        const value = $(`#${field}`).val();
-        if (!value || value.trim() === '') {
-            isValid = false;
-            $(`#${field}`).addClass('is-invalid');
-        } else {
-            $(`#${field}`).removeClass('is-invalid');
-        }
-    });
-
-    if (!isValid) {
-        e.preventDefault();
-        showAlert('error', 'Mohon lengkapi semua field yang wajib diisi.');
-        return false;
-    }
-    
-    // Show loading message based on action
-    const action = $(document.activeElement).val();
-    if (action === 'save_and_new') {
-        showAlert('info', 'Menambahkan fasilitas dan menyiapkan form baru...');
-    } else {
-        showAlert('info', 'Menambahkan fasilitas ke halaman publik...');
-    }
-});
-
-function showAlert(type, message) {
-    // Use the enhanced notification system
-    if (window.AdminFormsEnhanced) {
-        const instance = new window.AdminFormsEnhanced();
-        instance.showNotification(type, message);
-    } else {
-        // Fallback notification
-        const alertClass = type === 'success' ? 'alert-success' : 
-                          type === 'error' ? 'alert-danger' : 
-                          type === 'warning' ? 'alert-warning' : 'alert-info';
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
         
-        const alert = document.createElement('div');
-        alert.className = `alert ${alertClass} alert-dismissible fade show position-fixed`;
-        alert.style.cssText = 'top: 20px; right: 20px; z-index: 10000; min-width: 300px; max-width: 400px;';
-        alert.innerHTML = `
-            ${message}
-            <button type="button" class="btn-close" onclick="this.parentNode.remove()"></button>
-        `;
+        reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            preview.style.display = 'block';
+        };
         
-        document.body.appendChild(alert);
-        
-        // Auto remove after 5 seconds
-        setTimeout(() => {
-            if (alert.parentNode) {
-                alert.remove();
-            }
-        }, 5000);
+        reader.readAsDataURL(input.files[0]);
     }
 }
 
-// Reset form function
-// Remove image function
 function removeImage() {
-    document.getElementById('image').value = '';
-    document.getElementById('imagePreview').style.display = 'none';
-    document.getElementById('uploadText').style.display = 'block';
-    document.getElementById('previewImg').src = '';
-    updatePreview();
-    showAlert('info', 'Gambar dihapus.');
+    const fileInput = document.getElementById('imageInput');
+    const preview = document.getElementById('imagePreview');
+    
+    fileInput.value = '';
+    preview.style.display = 'none';
 }
 
-// Test file input function
-function testFileInput() {
-    const fileInput = document.getElementById('image');
-    const uploadArea = document.getElementById('uploadArea');
-    
-    console.log('=== FILE INPUT TEST ===');
-    console.log('File input element:', fileInput);
-    console.log('Upload area element:', uploadArea);
-    console.log('Accept attribute:', fileInput.accept);
-    console.log('Multiple attribute:', fileInput.multiple);
-    console.log('Current files:', fileInput.files);
-    console.log('Event listeners attached:', {
-        uploadAreaClick: uploadArea.onclick !== null,
-        fileInputChange: fileInput.onchange !== null
-    });
-    
-    // Test if file input is accessible
-    try {
-        fileInput.click();
-        showAlert('info', 'File dialog opened successfully. Check console for debug info.');
-    } catch (error) {
-        console.error('Error clicking file input:', error);
-        showAlert('error', 'Error opening file dialog: ' + error.message);
+function addFeature() {
+    const featuresList = document.getElementById('featuresList');
+    const featureItem = document.createElement('div');
+    featureItem.className = 'feature-item';
+    featureItem.innerHTML = `
+        <input type="text" name="features[]" class="form-input feature-input" placeholder="Enter a feature">
+        <button type="button" class="remove-feature" onclick="removeFeature(this)">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+    `;
+    featuresList.appendChild(featureItem);
+}
+
+function removeFeature(button) {
+    const featuresList = document.getElementById('featuresList');
+    if (featuresList.children.length > 1) {
+        button.parentElement.remove();
     }
 }
 
-function resetForm() {
-    if (confirm('Apakah Anda yakin ingin mereset form? Semua data yang telah diisi akan hilang.')) {
-        document.getElementById('facilityForm').reset();
-        removeImage();
-        document.querySelectorAll('.is-valid, .is-invalid').forEach(field => {
-            field.classList.remove('is-valid', 'is-invalid');
-        });
-        document.querySelectorAll('.invalid-feedback-enhanced, .valid-feedback-enhanced').forEach(feedback => {
-            feedback.remove();
-        });
+// Form submission handling
+document.getElementById('facilityForm').addEventListener('submit', function(e) {
+    const submitButtons = document.querySelectorAll('button[type="submit"]');
+    submitButtons.forEach(button => {
+        button.disabled = true;
+        const originalText = button.innerHTML;
+        button.innerHTML = '<span class="spinner"></span> Saving...';
         
-        showAlert('success', 'Form berhasil direset!');
-    }
-}
+        // Re-enable after 10 seconds as fallback
+        setTimeout(() => {
+            button.disabled = false;
+            button.innerHTML = originalText;
+        }, 10000);
+    });
 });
 </script>
-@endpush
+@endsection

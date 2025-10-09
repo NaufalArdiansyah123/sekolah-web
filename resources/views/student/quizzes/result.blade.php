@@ -42,7 +42,7 @@
                         <div class="text-4xl font-bold mb-2 {{ $attempt->score >= 80 ? 'text-green-600 dark:text-green-400' : ($attempt->score >= 60 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-600 dark:text-red-400') }}">
                             {{ $attempt->grade_letter ?? 'N/A' }}
                         </div>
-                        <div class="text-sm text-gray-600 dark:text-gray-400">Grade</div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400">Nilai</div>
                     </div>
                     
                     <!-- Duration -->

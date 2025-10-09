@@ -667,12 +667,12 @@
                 
                 <div class="info-grid">
                     <div class="info-item">
-                        <div class="info-label">Full Name</div>
+                        <div class="info-label">Nama Lengkap</div>
                         <div class="info-value">{{ $user->name }}</div>
                     </div>
                     
                     <div class="info-item">
-                        <div class="info-label">Email Address</div>
+                        <div class="info-label">Alamat Email</div>
                         <div class="info-value">{{ $user->email }}</div>
                     </div>
                     
@@ -707,7 +707,7 @@
                     </div>
                     
                     <div class="info-item">
-                        <div class="info-label">Last Updated</div>
+                        <div class="info-label">Terakhir Diperbarui</div>
                         <div class="info-value">{{ $user->updated_at->format('M d, Y') }}</div>
                         <div class="info-meta">{{ $user->updated_at->format('H:i') }} • {{ $user->updated_at->diffForHumans() }}</div>
                     </div>
@@ -876,7 +876,7 @@
                     @if($user->updated_at != $user->created_at)
                         <div class="timeline-item">
                             <div class="timeline-marker info"></div>
-                            <div class="timeline-title">Last Updated</div>
+                            <div class="timeline-title">Terakhir Diperbarui</div>
                             <div class="timeline-time">{{ $user->updated_at->format('M d, Y \a\t H:i') }}</div>
                         </div>
                     @endif

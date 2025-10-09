@@ -759,7 +759,7 @@
                     
                     <div class="user-info">
                         <div class="user-name">{{ auth()->user()->name }}</div>
-                        <div class="user-role">Teacher</div>
+                        <div class="user-role">Guru</div>
                     </div>
                     
                     <svg class="user-chevron icon" width="16" height="16" viewBox="0 0 24 24">
@@ -808,7 +808,7 @@
                                 <polyline points="16,17 21,12 16,7"/>
                                 <line x1="21" y1="12" x2="9" y2="12"/>
                             </svg>
-                            <span>Sign Out</span>
+                            <span>Keluar</span>
                         </button>
                     </form>
                 </div>

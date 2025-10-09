@@ -907,7 +907,7 @@
                             </label>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem;">
                                 <div>
-                                    <label for="student_count" class="form-label" style="font-size: 0.75rem; margin-bottom: 0.25rem;">Students</label>
+                                    <label for="student_count" class="form-label" style="font-size: 0.75rem; margin-bottom: 0.25rem;">Siswa</label>
                                     <input type="number" class="form-input @error('student_count') is-invalid @enderror" 
                                            id="student_count" name="student_count" value="{{ old('student_count', 0) }}" min="0">
                                     @error('student_count')
@@ -915,7 +915,7 @@
                                     @enderror
                                 </div>
                                 <div>
-                                    <label for="teacher_count" class="form-label" style="font-size: 0.75rem; margin-bottom: 0.25rem;">Teachers</label>
+                                    <label for="teacher_count" class="form-label" style="font-size: 0.75rem; margin-bottom: 0.25rem;">Guru</label>
                                     <input type="number" class="form-input @error('teacher_count') is-invalid @enderror" 
                                            id="teacher_count" name="teacher_count" value="{{ old('teacher_count', 0) }}" min="0">
                                     @error('teacher_count')
@@ -923,7 +923,7 @@
                                     @enderror
                                 </div>
                                 <div>
-                                    <label for="staff_count" class="form-label" style="font-size: 0.75rem; margin-bottom: 0.25rem;">Staff</label>
+                                    <label for="staff_count" class="form-label" style="font-size: 0.75rem; margin-bottom: 0.25rem;">Staf</label>
                                     <input type="number" class="form-input @error('staff_count') is-invalid @enderror" 
                                            id="staff_count" name="staff_count" value="{{ old('staff_count', 0) }}" min="0">
                                     @error('staff_count')
@@ -1137,7 +1137,7 @@ function addFacilityToDOM(facility) {
                        placeholder="Library, Laboratory, etc.">
             </div>
             <div class="form-group">
-                <label class="form-label">Description</label>
+                <label class="form-label">Deskripsi</label>
                 <textarea class="form-input" rows="2" 
                           onchange="updateFacilityData(${facility.id || facilityCounter}, 'description', this.value)" 
                           placeholder="Brief description of the facility...">${facility.description || ''}</textarea>
@@ -1261,7 +1261,7 @@ function addHistoryToDOM(history) {
                        placeholder="School establishment, New building, etc.">
             </div>
             <div class="form-group">
-                <label class="form-label">Description</label>
+                <label class="form-label">Deskripsi</label>
                 <textarea class="form-input" rows="3" 
                           onchange="updateHistoryData(${history.id || historyCounter}, 'description', this.value)" 
                           placeholder="Detailed description of the historical event...">${history.description || ''}</textarea>

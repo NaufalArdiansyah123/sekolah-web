@@ -994,7 +994,7 @@
         <div class="modal-content">
             <div class="modal-body text-center py-4">
                 <div class="spinner-border text-primary mb-3" role="status">
-                    <span class="visually-hidden">Loading...</span>
+                    <span class="visually-hidden">Memuat...</span>
                 </div>
                 <div id="loadingText">Memproses QR Code...</div>
             </div>

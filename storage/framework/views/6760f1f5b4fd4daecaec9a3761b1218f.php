@@ -1275,7 +1275,7 @@
                                 data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-user-circle me-2"></i>
                                 <span class="d-none d-md-inline"><?php echo e(auth()->user()->name); ?></span>
-                                <span class="d-inline d-md-none">Profile</span>
+                                <span class="d-inline d-md-none">Profil</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li><a class="dropdown-item" href="<?php echo e(route('dashboard')); ?>">

@@ -395,14 +395,14 @@
             
             <div class="form-row">
                 <div class="form-group">
-                    <label for="name" class="form-label required">Full Name</label>
+                    <label for="name" class="form-label required">Nama Lengkap</label>
                     <input type="text" 
                            class="form-control @error('name') is-invalid @enderror" 
                            id="name" 
                            name="name" 
                            value="{{ old('name') }}" 
                            required 
-                           placeholder="Enter full name">
+                           placeholder="Masukkan nama lengkap">
                     @error('name')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -415,7 +415,7 @@
                            id="nip" 
                            name="nip" 
                            value="{{ old('nip') }}" 
-                           placeholder="Enter NIP">
+                           placeholder="Masukkan NIP">
                     @error('nip')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -424,27 +424,27 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="email" class="form-label required">Email Address</label>
+                    <label for="email" class="form-label required">Alamat Email</label>
                     <input type="email" 
                            class="form-control @error('email') is-invalid @enderror" 
                            id="email" 
                            name="email" 
                            value="{{ old('email') }}" 
                            required 
-                           placeholder="Enter email address">
+                           placeholder="Masukkan alamat email">
                     @error('email')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label for="phone" class="form-label">Phone Number</label>
+                    <label for="phone" class="form-label">Nomor Telepon</label>
                     <input type="text" 
                            class="form-control @error('phone') is-invalid @enderror" 
                            id="phone" 
                            name="phone" 
                            value="{{ old('phone') }}" 
-                           placeholder="Enter phone number">
+                           placeholder="Masukkan nomor telepon">
                     @error('phone')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -452,7 +452,7 @@
             </div>
 
             <div class="form-group">
-                <label for="address" class="form-label">Address</label>
+                <label for="address" class="form-label">Alamat</label>
                 <textarea class="form-control textarea @error('address') is-invalid @enderror" 
                           id="address" 
                           name="address" 
@@ -530,8 +530,8 @@
                             name="status" 
                             required>
                         <option value="">Select Status</option>
-                        <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
-                        <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                        <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Aktif</option>
+                        <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
                     </select>
                     @error('status')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -547,7 +547,7 @@
                        name="subject" 
                        value="{{ old('subject') }}" 
                        required 
-                       placeholder="e.g., Mathematics, Physics, Chemistry (separate with commas)">
+                       placeholder="contoh: Matematika, Fisika, Kimia (pisahkan dengan koma)">
                 <small style="color: var(--text-tertiary); font-size: 0.8rem; margin-top: 0.25rem; display: block;">
                     Separate multiple subjects with commas
                 </small>
@@ -563,7 +563,7 @@
                        id="education" 
                        name="education" 
                        value="{{ old('education') }}" 
-                       placeholder="e.g., S1 Pendidikan Matematika, Universitas ABC">
+                       placeholder="contoh: S1 Pendidikan Matematika, Universitas ABC">
                 @error('education')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror

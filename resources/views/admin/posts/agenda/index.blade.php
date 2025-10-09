@@ -435,7 +435,7 @@
                         <label class="form-label">Status</label>
                         <select name="status" class="form-input">
                             <option value="">Semua Status</option>
-                            <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draft</option>
+                            <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draf</option>
                             <option value="published" {{ request('status') == 'published' ? 'selected' : '' }}>Dipublikasi</option>
                             <option value="archived" {{ request('status') == 'archived' ? 'selected' : '' }}>Diarsipkan</option>
                         </select>

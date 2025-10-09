@@ -211,7 +211,7 @@
                 <span class="info-value">{{ number_format($video->views) }}</span>
             </div>
             <div class="info-item">
-                <span class="info-label">Downloads</span>
+                <span class="info-label">Unduhan</span>
                 <span class="info-value">{{ number_format($video->downloads) }}</span>
             </div>
             <div class="info-item">

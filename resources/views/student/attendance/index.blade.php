@@ -324,7 +324,7 @@
         <div class="p-6">
             <div id="myQrCodeContent" class="text-center">
                 <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-                <p class="text-gray-600 dark:text-gray-400 mt-3">Loading...</p>
+                <p class="text-gray-600 dark:text-gray-400 mt-3">Memuat...</p>
             </div>
         </div>
         <div class="px-6 pb-6 flex gap-3">

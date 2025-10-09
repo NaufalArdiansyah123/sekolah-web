@@ -35,7 +35,7 @@
                     </svg>
                 </div>
                 <div class="btn-content">
-                    <div class="btn-title">Export</div>
+                    <div class="btn-title">Ekspor</div>
                     <div class="btn-subtitle">Member List</div>
                 </div>
             </button>
@@ -1166,7 +1166,7 @@ function sendBroadcast(extracurricularId) {
                                 </div>
                                 <div class="info-content">
                                     <div class="info-title">Recipients</div>
-                                    <div class="info-value" id="recipientCount">Loading...</div>
+                                    <div class="info-value" id="recipientCount">Memuat...</div>
                                 </div>
                             </div>
                             <div class="info-card">
@@ -1315,11 +1315,11 @@ function sendBroadcast(extracurricularId) {
                                 <div class="schedule-datetime" id="scheduleDateTime" style="display: none;">
                                     <div class="datetime-inputs">
                                         <div class="input-group">
-                                            <label for="scheduleDate">Date</label>
+                                            <label for="scheduleDate">Tanggal</label>
                                             <input type="date" class="form-control" id="scheduleDate">
                                         </div>
                                         <div class="input-group">
-                                            <label for="scheduleTime">Time</label>
+                                            <label for="scheduleTime">Waktu</label>
                                             <input type="time" class="form-control" id="scheduleTime">
                                         </div>
                                     </div>
@@ -1584,7 +1584,7 @@ function generateCertificate(extracurricularId) {
                                 <input type="text" class="form-control" id="certificateTitle" value="Certificate of Participation" required>
                             </div>
                             <div class="mb-3">
-                                <label for="certificateDescription" class="form-label">Description</label>
+                                <label for="certificateDescription" class="form-label">Deskripsi</label>
                                 <textarea class="form-control" id="certificateDescription" rows="3" placeholder="This is to certify that the above named student has successfully participated in..."></textarea>
                             </div>
                             <div class="mb-3">
@@ -1608,7 +1608,7 @@ function generateCertificate(extracurricularId) {
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                         <button type="button" class="btn btn-warning" onclick="generateCertificates(${extracurricularId})">
                             <svg class="w-4 h-4 me-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>

@@ -576,7 +576,7 @@
                 </div>
             </div>
             <h3 class="stat-value">{{ $contacts->where('is_active', true)->count() }}</h3>
-            <p class="stat-label">Active</p>
+            <p class="stat-label">Aktif</p>
         </div>
 
         <div class="stat-card">
@@ -588,7 +588,7 @@
                 </div>
             </div>
             <h3 class="stat-value">{{ $contacts->where('is_active', false)->count() }}</h3>
-            <p class="stat-label">Inactive</p>
+            <p class="stat-label">Tidak Aktif</p>
         </div>
 
         <div class="stat-card">
@@ -630,15 +630,15 @@
         <form method="GET" action="{{ route('admin.contacts.index') }}">
             <div class="filters-grid">
                 <div class="form-group">
-                    <label class="form-label">Search</label>
+                    <label class="form-label">Cari</label>
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Search contacts..." class="form-input">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Status</label>
                     <select name="status" class="form-input">
                         <option value="">All Status</option>
-                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
-                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Aktif</option>
+                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -663,8 +663,8 @@
                             <th style="width: 30%">Contact Info</th>
                             <th style="width: 25%">Contact Details</th>
                             <th style="width: 10%">Status</th>
-                            <th style="width: 15%">Last Updated</th>
-                            <th style="width: 15%">Actions</th>
+                            <th style="width: 15%">Terakhir Diperbarui</th>
+                            <th style="width: 15%">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>

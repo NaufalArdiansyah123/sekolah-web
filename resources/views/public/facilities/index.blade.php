@@ -122,6 +122,7 @@
         border: 1px solid rgba(0,0,0,0.05);
         margin-bottom: 30px;
         height: 100%;
+        position: relative;
     }
     
     .facility-card:hover {
@@ -163,6 +164,24 @@
         opacity: 1;
     }
     
+    .no-image {
+        width: 100%;
+        height: 200px;
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #9ca3af;
+        border: 2px dashed #e5e7eb;
+    }
+    
+    .no-image svg {
+        width: 3rem;
+        height: 3rem;
+        margin-bottom: 0.5rem;
+    }
+    
     .facility-content {
         padding: 25px;
     }
@@ -179,6 +198,10 @@
         color: var(--dark-gray);
         line-height: 1.6;
         margin-bottom: 20px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
     
     .facility-features {
@@ -206,16 +229,80 @@
         font-size: 0.8rem;
         font-weight: 600;
         text-transform: uppercase;
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        z-index: 2;
     }
     
-    .status-available {
-        background: rgba(40, 167, 69, 0.1);
-        color: #28a745;
+    .status-active {
+        background: rgba(40, 167, 69, 0.9);
+        color: white;
     }
     
     .status-maintenance {
-        background: rgba(255, 193, 7, 0.1);
-        color: #ffc107;
+        background: rgba(255, 193, 7, 0.9);
+        color: white;
+    }
+    
+    .status-inactive {
+        background: rgba(220, 53, 69, 0.9);
+        color: white;
+    }
+    
+    .featured-badge {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: rgba(255, 193, 7, 0.9);
+        color: white;
+        padding: 8px;
+        border-radius: 50%;
+        z-index: 2;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    
+    .featured-badge svg {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .facility-meta {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 15px;
+        font-size: 0.85rem;
+        color: var(--dark-gray);
+        flex-wrap: wrap;
+    }
+    
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .meta-item svg {
+        width: 14px;
+        height: 14px;
+        color: var(--secondary-color);
+    }
+    
+    .feature-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 15px;
+    }
+    
+    .feature-tag {
+        background: rgba(49, 130, 206, 0.1);
+        color: var(--primary-color);
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
     }
     
     /* Facilities Gallery Section */
@@ -364,6 +451,34 @@
         background: #f8f9fa;
     }
     
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--dark-gray);
+    }
+    
+    .empty-state svg {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 20px;
+        color: #cbd5e0;
+    }
+    
+    .empty-state h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: var(--primary-color);
+    }
+    
+    .empty-state p {
+        font-size: 1rem;
+        line-height: 1.6;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
     /* Responsive Design */
     @media (max-width: 768px) {
         .facilities-hero-section {
@@ -385,6 +500,12 @@
             margin-bottom: 10px;
             flex: 1 0 auto;
             text-align: center;
+        }
+        
+        .facility-meta {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
         }
     }
     
@@ -440,183 +561,114 @@
                 <h5 class="mb-3">Filter Berdasarkan Kategori:</h5>
                 <div class="btn-group" role="group" aria-label="Facility categories">
                     <button type="button" class="facility-category-btn active" data-filter="all">Semua</button>
-                    <button type="button" class="facility-category-btn" data-filter="academic">Akademik</button>
-                    <button type="button" class="facility-category-btn" data-filter="sport">Olahraga</button>
-                    <button type="button" class="facility-category-btn" data-filter="technology">Teknologi</button>
-                    <button type="button" class="facility-category-btn" data-filter="arts">Seni & Budaya</button>
-                    <button type="button" class="facility-category-btn" data-filter="other">Lainnya</button>
+                    @if(isset($categories) && count($categories) > 0)
+                        @foreach($categories as $key => $label)
+                            <button type="button" class="facility-category-btn" data-filter="{{ $key }}">{{ $label }}</button>
+                        @endforeach
+                    @else
+                        <button type="button" class="facility-category-btn" data-filter="academic">Akademik</button>
+                        <button type="button" class="facility-category-btn" data-filter="sport">Olahraga</button>
+                        <button type="button" class="facility-category-btn" data-filter="technology">Teknologi</button>
+                        <button type="button" class="facility-category-btn" data-filter="arts">Seni & Budaya</button>
+                        <button type="button" class="facility-category-btn" data-filter="other">Lainnya</button>
+                    @endif
                 </div>
             </div>
         </div>
         
         <div class="row">
-            <!-- Facility Item 1 -->
-            <div class="col-lg-4 col-md-6 mb-4 fade-in-up" data-category="technology">
-                <div class="facility-card">
-                    <div class="facility-image">
-                        <img src="https://images.unsplash.com/photo-1592424002053-21f369ad7fdb?ixlib=rb-4.0.3&auto=format&fit=crop&w=2074&q=80" alt="Laboratorium Komputer">
-                        <span class="facility-status status-available">Tersedia</span>
-                    </div>
-                    <div class="facility-content">
-                        <h3 class="facility-title">Laboratorium Komputer</h3>
-                        <p class="facility-desc">Lab komputer modern dengan 40 unit PC terkini, jaringan internet cepat, dan software pendidikan lengkap.</p>
-                        <div class="facility-features">
-                            <div class="facility-feature">
-                                <i class="fas fa-desktop"></i> 40 Unit PC Terbaru
+            @forelse($facilities as $facility)
+                <!-- Dynamic Facility Item -->
+                <div class="col-lg-4 col-md-6 mb-4 fade-in-up" data-category="{{ $facility->category }}">
+                    <div class="facility-card">
+                        @if($facility->is_featured)
+                            <div class="featured-badge">
+                                <svg fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                </svg>
                             </div>
-                            <div class="facility-feature">
-                                <i class="fas fa-wifi"></i> Internet High-Speed
-                            </div>
-                            <div class="facility-feature">
-                                <i class="fas fa-projector"></i> LCD Projector
-                            </div>
+                        @endif
+                        
+                        <div class="facility-image">
+                            @if($facility->image)
+                                <img src="{{ $facility->image_url }}" alt="{{ $facility->name }}">
+                            @else
+                                <div class="no-image">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span>Tidak ada gambar</span>
+                                </div>
+                            @endif
+                            <span class="facility-status status-{{ $facility->status }}">
+                                @if($facility->status == 'active')
+                                    Tersedia
+                                @elseif($facility->status == 'maintenance')
+                                    Maintenance
+                                @else
+                                    Tidak Aktif
+                                @endif
+                            </span>
                         </div>
-                        <button type="button" class="btn btn-primary-enhanced btn-enhanced w-100" data-bs-toggle="modal" data-bs-target="#facilityModal1">
-                            <i class="fas fa-info-circle me-2"></i>Detail Fasilitas
-                        </button>
+                        
+                        <div class="facility-content">
+                            <h3 class="facility-title">{{ $facility->name }}</h3>
+                            <p class="facility-desc">{{ Str::limit($facility->description, 120) }}</p>
+                            
+                            @if($facility->location || $facility->capacity)
+                                <div class="facility-meta">
+                                    @if($facility->location)
+                                        <div class="meta-item">
+                                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                            </svg>
+                                            {{ $facility->location }}
+                                        </div>
+                                    @endif
+                                    @if($facility->capacity)
+                                        <div class="meta-item">
+                                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                            </svg>
+                                            {{ number_format($facility->capacity) }} orang
+                                        </div>
+                                    @endif
+                                </div>
+                            @endif
+                            
+                            @if($facility->features && count($facility->features) > 0)
+                                <div class="feature-tags">
+                                    @foreach(array_slice($facility->features, 0, 3) as $feature)
+                                        @if(!empty(trim($feature)))
+                                            <span class="feature-tag">{{ $feature }}</span>
+                                        @endif
+                                    @endforeach
+                                    @if(count($facility->features) > 3)
+                                        <span class="feature-tag">+{{ count($facility->features) - 3 }} lainnya</span>
+                                    @endif
+                                </div>
+                            @endif
+                            
+                            <button type="button" class="btn btn-primary-enhanced btn-enhanced w-100" 
+                                    data-bs-toggle="modal" data-bs-target="#facilityModal{{ $facility->id }}">
+                                <i class="fas fa-info-circle me-2"></i>Detail Fasilitas
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Facility Item 2 -->
-            <div class="col-lg-4 col-md-6 mb-4 fade-in-up" data-category="academic">
-                <div class="facility-card">
-                    <div class="facility-image">
-                        <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&auto=format&fit=crop&w=2028&q=80" alt="Perpustakaan">
-                        <span class="facility-status status-available">Tersedia</span>
-                    </div>
-                    <div class="facility-content">
-                        <h3 class="facility-title">Perpustakaan Digital</h3>
-                        <p class="facility-desc">Perpustakaan dengan koleksi lebih dari 10.000 buku, area baca nyaman, dan sistem peminjaman digital.</p>
-                        <div class="facility-features">
-                            <div class="facility-feature">
-                                <i class="fas fa-book"></i> 10.000+ Koleksi Buku
-                            </div>
-                            <div class="facility-feature">
-                                <i class="fas fa-laptop"></i> Komputer Pencarian
-                            </div>
-                            <div class="facility-feature">
-                                <i class="fas fa-couch"></i> Area Baca Nyaman
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-primary-enhanced btn-enhanced w-100" data-bs-toggle="modal" data-bs-target="#facilityModal2">
-                            <i class="fas fa-info-circle me-2"></i>Detail Fasilitas
-                        </button>
+            @empty
+                <!-- Empty State -->
+                <div class="col-12">
+                    <div class="empty-state">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h2M7 7h3m3 0h3M7 11h3m3 0h3m-6 4h3"/>
+                        </svg>
+                        <h3>Belum Ada Fasilitas</h3>
+                        <p>Saat ini belum ada fasilitas yang tersedia. Silakan kembali lagi nanti untuk melihat update terbaru.</p>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Facility Item 3 -->
-            <div class="col-lg-4 col-md-6 mb-4 fade-in-up" data-category="sport">
-                <div class="facility-card">
-                    <div class="facility-image">
-                        <img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Lapangan Olahraga">
-                        <span class="facility-status status-available">Tersedia</span>
-                    </div>
-                    <div class="facility-content">
-                        <h3 class="facility-title">Lapangan Olahraga</h3>
-                        <p class="facility-desc">Lapangan multifungsi untuk basket, voli, futsal, dan atletik dengan permukaan berkualitas standar nasional.</p>
-                        <div class="facility-features">
-                            <div class="facility-feature">
-                                <i class="fas fa-basketball-ball"></i> Lapangan Basket
-                            </div>
-                            <div class="facility-feature">
-                                <i class="fas fa-volleyball-ball"></i> Lapangan Voli
-                            </div>
-                            <div class="facility-feature">
-                                <i class="fas fa-running"></i> Trek Lari
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-primary-enhanced btn-enhanced w-100" data-bs-toggle="modal" data-bs-target="#facilityModal3">
-                            <i class="fas fa-info-circle me-2"></i>Detail Fasilitas
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Facility Item 4 -->
-            <div class="col-lg-4 col-md-6 mb-4 fade-in-up" data-category="academic">
-                <div class="facility-card">
-                    <div class="facility-image">
-                        <img src="https://images.unsplash.com/photo-1581093458799-108156e8197b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2074&q=80" alt="Laboratorium Sains">
-                        <span class="facility-status status-available">Tersedia</span>
-                    </div>
-                    <div class="facility-content">
-                        <h3 class="facility-title">Laboratorium Sains</h3>
-                        <p class="facility-desc">Lab fisika, kimia, dan biologi lengkap dengan peralatan praktikum modern dan alat keselamatan standar.</p>
-                        <div class="facility-features">
-                            <div class="facility-feature">
-                                <i class="fas fa-flask"></i> Peralatan Lengkap
-                            </div>
-                            <div class="facility-feature">
-                                <i class="fas fa-microscope"></i> Mikroskop Digital
-                            </div>
-                            <div class="facility-feature">
-                                <i class="fas fa-first-aid"></i> Perlengkapan Keselamatan
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-primary-enhanced btn-enhanced w-100" data-bs-toggle="modal" data-bs-target="#facilityModal4">
-                            <i class="fas fa-info-circle me-2"></i>Detail Fasilitas
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Facility Item 5 -->
-            <div class="col-lg-4 col-md-6 mb-4 fade-in-up" data-category="arts">
-                <div class="facility-card">
-                    <div class="facility-image">
-                        <img src="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?ixlib=rb-4.0.3&auto=format&fit=crop&w=2120&q=80" alt="Aula Serba Guna">
-                        <span class="facility-status status-available">Tersedia</span>
-                    </div>
-                    <div class="facility-content">
-                        <h3 class="facility-title">Aula Serba Guna</h3>
-                        <p class="facility-desc">Aula modern kapasitas 500 orang dengan sound system profesional, lighting, dan panggung permanen.</p>
-                        <div class="facility-features">
-                            <div class="facility-feature">
-                                <i class="fas fa-users"></i> Kapasitas 500 Orang
-                            </div>
-                            <div class="facility-feature">
-                                <i class="fas fa-microphone"></i> Sound System Profesional
-                            </div>
-                            <div class="facility-feature">
-                                <i class="fas fa-lightbulb"></i> Lighting Modern
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-primary-enhanced btn-enhanced w-100" data-bs-toggle="modal" data-bs-target="#facilityModal5">
-                            <i class="fas fa-info-circle me-2"></i>Detail Fasilitas
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Facility Item 6 -->
-            <div class="col-lg-4 col-md-6 mb-4 fade-in-up" data-category="other">
-                <div class="facility-card">
-                    <div class="facility-image">
-                        <img src="https://images.unsplash.com/photo-1614854262318-831574f15f1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2060&q=80" alt="Kantin Sehat">
-                        <span class="facility-status status-available">Tersedia</span>
-                    </div>
-                    <div class="facility-content">
-                        <h3 class="facility-title">Kantin Sehat</h3>
-                        <p class="facility-desc">Kantin dengan konsep sehat, menyajikan makanan bergizi, higienis, dan harga terjangkau untuk siswa.</p>
-                        <div class="facility-features">
-                            <div class="facility-feature">
-                                <i class="fas fa-utensils"></i> Makanan Sehat
-                            </div>
-                            <div class="facility-feature">
-                                <i class="fas fa-hand-holding-water"></i> Higienis Terjamin
-                            </div>
-                            <div class="facility-feature">
-                                <i class="fas fa-tags"></i> Harga Terjangkau
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-primary-enhanced btn-enhanced w-100" data-bs-toggle="modal" data-bs-target="#facilityModal6">
-                            <i class="fas fa-info-circle me-2"></i>Detail Fasilitas
-                        </button>
-                    </div>
-                </div>
-            </div>
+            @endforelse
         </div>
     </div>
 </section>
@@ -635,8 +687,8 @@
                     <div class="stat-icon">
                         <i class="fas fa-building"></i>
                     </div>
-                    <div class="stat-number">24</div>
-                    <div class="stat-label">Ruang Kelas</div>
+                    <div class="stat-number">{{ $stats['total_facilities'] ?? 0 }}</div>
+                    <div class="stat-label">Total Fasilitas</div>
                 </div>
             </div>
             
@@ -645,214 +697,95 @@
                     <div class="stat-icon">
                         <i class="fas fa-desktop"></i>
                     </div>
-                    <div class="stat-number">5</div>
-                    <div class="stat-label">Laboratorium</div>
+                    <div class="stat-number">{{ $stats['academic_facilities'] ?? 0 }}</div>
+                    <div class="stat-label">Fasilitas Akademik</div>
                 </div>
             </div>
             
             <div class="col-md-3 col-sm-6 mb-4 fade-in-up">
                 <div class="stat-card">
                     <div class="stat-icon">
-                        <i class="fas fa-book"></i>
+                        <i class="fas fa-running"></i>
                     </div>
-                    <div class="stat-number">10.000+</div>
-                    <div class="stat-label">Koleksi Buku</div>
+                    <div class="stat-number">{{ $stats['sport_facilities'] ?? 0 }}</div>
+                    <div class="stat-label">Fasilitas Olahraga</div>
                 </div>
             </div>
             
             <div class="col-md-3 col-sm-6 mb-4 fade-in-up">
                 <div class="stat-card">
                     <div class="stat-icon">
-                        <i class="fas fa-wifi"></i>
+                        <i class="fas fa-laptop"></i>
                     </div>
-                    <div class="stat-number">100%</div>
-                    <div class="stat-label">Area WiFi</div>
+                    <div class="stat-number">{{ $stats['technology_facilities'] ?? 0 }}</div>
+                    <div class="stat-label">Fasilitas Teknologi</div>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Facilities Gallery Section -->
-<section class="gallery-section">
-    <div class="container">
-        <div class="section-title text-center mb-5">
-            <h2>Galeri Fasilitas</h2>
-            <p>Dokumentasi visual berbagai fasilitas yang tersedia</p>
-        </div>
-        
-        <div class="row">
-            <div class="col-lg-3 col-md-4 col-sm-6 fade-in-up">
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Ruang Kelas">
-                    <div class="gallery-overlay">
-                        <h5 class="gallery-title">Ruang Kelas Modern</h5>
-                        <p class="gallery-desc">Dilengkapi AC dan LCD projector</p>
+<!-- Dynamic Facility Modals -->
+@if(isset($facilities) && $facilities->count() > 0)
+    @foreach($facilities as $facility)
+        <div class="modal fade facility-modal" id="facilityModal{{ $facility->id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{ $facility->name }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                </div>
-            </div>
-            
-            <div class="col-lg-3 col-md-4 col-sm-6 fade-in-up">
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1591123120675-6f7f1aae0e5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2069&q=80" alt="Lab Bahasa">
-                    <div class="gallery-overlay">
-                        <h5 class="gallery-title">Laboratorium Bahasa</h5>
-                        <p class="gallery-desc">Peralatan audio modern</p>
+                    <div class="modal-body">
+                        @if($facility->image)
+                            <img src="{{ $facility->image_url }}" alt="{{ $facility->name }}" class="img-fluid rounded mb-4">
+                        @endif
+                        
+                        <h5>Deskripsi Fasilitas</h5>
+                        <p>{{ $facility->description }}</p>
+                        
+                        @if($facility->location || $facility->capacity)
+                            <h5>Informasi Fasilitas</h5>
+                            <ul>
+                                @if($facility->location)
+                                    <li><strong>Lokasi:</strong> {{ $facility->location }}</li>
+                                @endif
+                                @if($facility->capacity)
+                                    <li><strong>Kapasitas:</strong> {{ number_format($facility->capacity) }} orang</li>
+                                @endif
+                                <li><strong>Status:</strong> 
+                                    @if($facility->status == 'active')
+                                        <span class="badge bg-success">Tersedia</span>
+                                    @elseif($facility->status == 'maintenance')
+                                        <span class="badge bg-warning">Pemeliharaan</span>
+                                    @else
+                                        <span class="badge bg-danger">Tidak Aktif</span>
+                                    @endif
+                                </li>
+                            </ul>
+                        @endif
+                        
+                        @if($facility->features && count($facility->features) > 0)
+                            <h5>Fasilitas Pendukung</h5>
+                            <ul>
+                                @foreach($facility->features as $feature)
+                                    @if(!empty(trim($feature)))
+                                        <li>{{ $feature }}</li>
+                                    @endif
+                                @endforeach
+                            </ul>
+                        @endif
                     </div>
-                </div>
-            </div>
-            
-            <div class="col-lg-3 col-md-4 col-sm-6 fade-in-up">
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Perpustakaan">
-                    <div class="gallery-overlay">
-                        <h5 class="gallery-title">Perpustakaan</h5>
-                        <p class="gallery-desc">Koleksi buku terlengkap</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-lg-3 col-md-4 col-sm-6 fade-in-up">
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1596466596120-2a8e4b5d1a51?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Lapangan Basket">
-                    <div class="gallery-overlay">
-                        <h5 class="gallery-title">Lapangan Basket</h5>
-                        <p class="gallery-desc">Standar kompetisi</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-lg-3 col-md-4 col-sm-6 fade-in-up">
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=2094&q=80" alt="Mushola">
-                    <div class="gallery-overlay">
-                        <h5 class="gallery-title">Mushola</h5>
-                        <p class="gallery-desc">Tempat ibadah yang nyaman</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-lg-3 col-md-4 col-sm-6 fade-in-up">
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1599458254073-8b34c03ba924?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Lab Kimia">
-                    <div class="gallery-overlay">
-                        <h5 class="gallery-title">Lab Kimia</h5>
-                        <p class="gallery-desc">Peralatan praktikum lengkap</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-lg-3 col-md-4 col-sm-6 fade-in-up">
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=2069&q=80" alt="Ruang Guru">
-                    <div class="gallery-overlay">
-                        <h5 class="gallery-title">Ruang Guru</h5>
-                        <p class="gallery-desc">Tempat kerja yang nyaman</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-lg-3 col-md-4 col-sm-6 fade-in-up">
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Studio Musik">
-                    <div class="gallery-overlay">
-                        <h5 class="gallery-title">Studio Musik</h5>
-                        <p class="gallery-desc">Alat musik lengkap</p>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                        @if(isset($facility) && $facility->status == 'active')
+                            <button type="button" class="btn btn-primary-enhanced">Ajukan Penggunaan</button>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
-        
-        <div class="text-center mt-5">
-            <a href="{{ route('gallery.index') }}" class="btn btn-primary-enhanced btn-enhanced">
-                <i class="fas fa-images me-2"></i>Lihat Galeri Lengkap
-            </a>
-        </div>
-    </div>
-</section>
-
-<!-- Facility Modals -->
-<div class="modal fade facility-modal" id="facilityModal1" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Laboratorium Komputer</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <img src="https://images.unsplash.com/photo-1592424002053-21f369ad7fdb?ixlib=rb-4.0.3&auto=format&fit=crop&w=2074&q=80" alt="Laboratorium Komputer" class="img-fluid rounded mb-4">
-                <h5>Deskripsi Fasilitas</h5>
-                <p>Laboratorium komputer kami dilengkapi dengan 40 unit PC terkini dengan spesifikasi tinggi yang mampu mendukung berbagai software pendidikan dan programming. Setiap komputer terhubung dengan jaringan internet high-speed dengan kecepatan 100 Mbps.</p>
-                
-                <h5>Fasilitas Pendukung</h5>
-                <ul>
-                    <li>40 Unit PC Core i5, 8GB RAM, SSD 256GB</li>
-                    <li>Jaringan internet 100 Mbps dedicated</li>
-                    <li>LCD projector dan layar besar</li>
-                    <li>Software
-                                            <li>Software pendidikan lengkap (Office, Programming, Design)</li>
-                    <li>AC dan sistem ventilasi yang nyaman</li>
-                    <li>Furniture ergonomis untuk kenyamanan belajar</li>
-                </ul>
-                
-                <h5>Kegiatan yang Didukung</h5>
-                <ul>
-                    <li>Pelajaran TIK dan Komputer</li>
-                    <li>Ekstrakurikuler Programming</li>
-                    <li>Pelatihan Desain Grafis</li>
-                    <li>Ujian Berbasis Komputer</li>
-                </ul>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                <button type="button" class="btn btn-primary-enhanced">Ajukan Penggunaan</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade facility-modal" id="facilityModal2" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Perpustakaan Digital</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&auto=format&fit=crop&w=2028&q=80" alt="Perpustakaan" class="img-fluid rounded mb-4">
-                <h5>Deskripsi Fasilitas</h5>
-                <p>Perpustakaan digital kami memiliki koleksi lebih dari 10.000 buku dari berbagai disiplin ilmu. Dilengkapi dengan sistem pencarian digital, area baca yang nyaman, dan ruang diskusi kelompok.</p>
-                
-                <h5>Fasilitas Pendukung</h5>
-                <ul>
-                    <li>Koleksi 10.000+ buku cetak dan digital</li>
-                    <li>Komputer dengan akses katalog digital</li>
-                    <li>Area baca dengan pencahayaan optimal</li>
-                    <li>Ruang diskusi kelompok</li>
-                    <li>Sistem peminjaman elektronik</li>
-                    <li>Koneksi WiFi khusus</li>
-                </ul>
-                
-                <h5>Koleksi Khusus</h5>
-                <ul>
-                    <li>Buku pelajaran semua mata pelajaran</li>
-                    <li>Buku referensi ujian dan perguruan tinggi</li>
-                    <li>Karya sastra Indonesia dan dunia</li>
-                    <li>Buku pengembangan diri</li>
-                    <li>Majalah dan jurnal pendidikan</li>
-                </ul>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                <button type="button" class="btn btn-primary-enhanced">Ajukan Penggunaan</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal lainnya akan mengikuti struktur yang sama -->
-
-</div>
+    @endforeach
+@endif
 
 <!-- JavaScript untuk Filter dan Animasi -->
 <script src="{{ asset('js/public-template.js') }}"></script>

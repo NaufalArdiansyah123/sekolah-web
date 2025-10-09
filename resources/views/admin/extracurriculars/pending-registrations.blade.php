@@ -590,9 +590,9 @@
                 <div class="filter-group">
                     <label class="filter-label">Status</label>
                     <select name="status" class="filter-input">
-                        <option value="pending" {{ request('status', 'pending') == 'pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Approved</option>
-                        <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                        <option value="pending" {{ request('status', 'pending') == 'pending' ? 'selected' : '' }}>Menunggu</option>
+                        <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Disetujui</option>
+                        <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Ditolak</option>
                         <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>Semua Status</option>
                     </select>
                 </div>
@@ -848,7 +848,7 @@ function viewRegistration(registrationId) {
     content.innerHTML = `
         <div class="text-center py-4">
             <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+                <span class="visually-hidden">Memuat...</span>
             </div>
             <p class="mt-2">Memuat detail pendaftaran...</p>
         </div>

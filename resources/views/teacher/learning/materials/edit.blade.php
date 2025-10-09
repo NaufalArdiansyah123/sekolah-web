@@ -575,7 +575,7 @@
                 <div class="breadcrumb">
                     <a href="{{ route('teacher.dashboard') }}">Dashboard</a>
                     <span>/</span>
-                    <a href="{{ route('teacher.learning.materials.index') }}">Learning Materials</a>
+                    <a href="{{ route('teacher.learning.materials.index') }}">Materi Pembelajaran</a>
                     <span>/</span>
                     <span>Edit Material</span>
                 </div>
@@ -619,7 +619,7 @@
                         <input type="text" 
                                name="title" 
                                class="form-input" 
-                               placeholder="Enter material title..."
+                               placeholder="Masukkan judul materi..."
                                value="{{ old('title', $material->title) }}"
                                required>
                         @error('title')
@@ -633,7 +633,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label required">Subject</label>
+                        <label class="form-label required">Mata Pelajaran</label>
                         <select name="subject" class="form-select" required>
                             <option value="">Select Subject</option>
                             <option value="Matematika" {{ old('subject', $material->subject) == 'Matematika' ? 'selected' : '' }}>Matematika</option>
@@ -698,8 +698,8 @@
                     <div class="form-group">
                         <label class="form-label required">Status</label>
                         <select name="status" class="form-select" required>
-                            <option value="draft" {{ old('status', $material->status) == 'draft' ? 'selected' : '' }}>Draft</option>
-                            <option value="published" {{ old('status', $material->status) == 'published' ? 'selected' : '' }}>Published</option>
+                            <option value="draft" {{ old('status', $material->status) == 'draft' ? 'selected' : '' }}>Draf</option>
+                            <option value="published" {{ old('status', $material->status) == 'published' ? 'selected' : '' }}>Dipublikasikan</option>
                         </select>
                         @error('status')
                             <div class="error-message">
@@ -712,10 +712,10 @@
                     </div>
 
                     <div class="form-group full-width">
-                        <label class="form-label">Description</label>
+                        <label class="form-label">Deskripsi</label>
                         <textarea name="description" 
                                   class="form-input form-textarea" 
-                                  placeholder="Enter material description..."
+                                  placeholder="Masukkan deskripsi materi..."
                                   rows="4">{{ old('description', $material->description) }}</textarea>
                         @error('description')
                             <div class="error-message">

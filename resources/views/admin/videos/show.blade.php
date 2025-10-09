@@ -307,7 +307,7 @@
             </div>
 
             <div class="info-card">
-                <h3>File Size</h3>
+                <h3>Ukuran File</h3>
                 <div class="value">{{ $video->formatted_file_size }}</div>
             </div>
             @if($video->formatted_duration)

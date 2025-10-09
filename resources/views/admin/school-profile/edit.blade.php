@@ -642,7 +642,7 @@
                     </div>
                     <div class="section-body">
                         <div class="form-group">
-                            <label for="address" class="form-label">Address</label>
+                            <label for="address" class="form-label">Alamat</label>
                             <textarea class="form-input @error('address') is-invalid @enderror" 
                                       id="address" name="address" rows="3" 
                                       placeholder="School address...">{{ old('address', $schoolProfile->address) }}</textarea>
@@ -653,7 +653,7 @@
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="phone" class="form-label">Phone</label>
+                                <label for="phone" class="form-label">Telepon</label>
                                 <input type="text" class="form-input @error('phone') is-invalid @enderror" 
                                        id="phone" name="phone" value="{{ old('phone', $schoolProfile->phone) }}" 
                                        placeholder="(021) 1234567">
@@ -720,7 +720,7 @@
             <div>
                 <!-- Settings -->
                 <div class="sidebar-section">
-                    <div class="sidebar-header">Settings</div>
+                    <div class="sidebar-header">Pengaturan</div>
                     <div class="sidebar-body">
                         <div class="checkbox-group">
                             <input type="checkbox" class="checkbox-input" id="is_active" name="is_active" value="1" 
@@ -801,7 +801,7 @@
                     <div class="sidebar-body">
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="student_count" class="form-label">Students</label>
+                                <label for="student_count" class="form-label">Siswa</label>
                                 <input type="number" class="form-input @error('student_count') is-invalid @enderror" 
                                        id="student_count" name="student_count" value="{{ old('student_count', $schoolProfile->student_count ?? 0) }}" min="0">
                                 @error('student_count')
@@ -809,7 +809,7 @@
                                 @enderror
                             </div>
                             <div class="form-group">
-                                <label for="teacher_count" class="form-label">Teachers</label>
+                                <label for="teacher_count" class="form-label">Guru</label>
                                 <input type="number" class="form-input @error('teacher_count') is-invalid @enderror" 
                                        id="teacher_count" name="teacher_count" value="{{ old('teacher_count', $schoolProfile->teacher_count ?? 0) }}" min="0">
                                 @error('teacher_count')
@@ -819,7 +819,7 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="staff_count" class="form-label">Staff</label>
+                                <label for="staff_count" class="form-label">Staf</label>
                                 <input type="number" class="form-input @error('staff_count') is-invalid @enderror" 
                                        id="staff_count" name="staff_count" value="{{ old('staff_count', $schoolProfile->staff_count ?? 0) }}" min="0">
                                 @error('staff_count')
@@ -987,7 +987,7 @@ function addFacilityToDOM(facility) {
                        placeholder="Library, Laboratory, etc.">
             </div>
             <div class="form-group">
-                <label class="form-label">Description</label>
+                <label class="form-label">Deskripsi</label>
                 <textarea class="form-input" rows="2" 
                           onchange="updateFacilityData(${facility.id}, 'description', this.value)" 
                           placeholder="Brief description of the facility...">${facility.description || ''}</textarea>

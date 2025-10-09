@@ -4,7 +4,7 @@
 
 <?php if(session('success')): ?>
     <div class="mb-4 bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-600 text-green-700 dark:text-green-200 px-4 py-3 rounded relative" role="alert">
-        <strong class="font-bold">Success!</strong>
+        <strong class="font-bold">Berhasil!</strong>
         <span class="block sm:inline"><?php echo e(session('success')); ?></span>
         <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
             <svg class="fill-current h-6 w-6 text-green-500 cursor-pointer" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" onclick="this.parentElement.parentElement.style.display='none'">
@@ -44,7 +44,7 @@
 
 <?php if(session('warning')): ?>
     <div class="mb-4 bg-yellow-100 dark:bg-yellow-900 border border-yellow-400 dark:border-yellow-600 text-yellow-700 dark:text-yellow-200 px-4 py-3 rounded relative" role="alert">
-        <strong class="font-bold">Warning!</strong>
+        <strong class="font-bold">Peringatan!</strong>
         <span class="block sm:inline"><?php echo e(session('warning')); ?></span>
         <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
             <svg class="fill-current h-6 w-6 text-yellow-500 cursor-pointer" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" onclick="this.parentElement.parentElement.style.display='none'">

@@ -66,7 +66,7 @@
                         </svg>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium" style="color: var(--text-secondary, #6b7280);">Draft</p>
+                        <p class="text-sm font-medium" style="color: var(--text-secondary, #6b7280);">Draf</p>
                         <p class="text-2xl font-semibold" style="color: var(--text-primary, #111827);">{{ $stats['draft'] }}</p>
                     </div>
                 </div>
@@ -106,10 +106,10 @@
                     <label class="block text-sm font-medium mb-2" style="color: var(--text-primary, #374151);">Status</label>
                     <select name="status" class="w-full rounded-lg border" style="border-color: var(--border-color, #d1d5db); background: var(--bg-primary, #ffffff); color: var(--text-primary, #111827);">
                         <option value="">Semua Status</option>
-                        <option value="draft" {{ $currentFilters['status'] == 'draft' ? 'selected' : '' }}>Draft</option>
-                        <option value="published" {{ $currentFilters['status'] == 'published' ? 'selected' : '' }}>Published</option>
-                        <option value="active" {{ $currentFilters['status'] == 'active' ? 'selected' : '' }}>Active</option>
-                        <option value="completed" {{ $currentFilters['status'] == 'completed' ? 'selected' : '' }}>Completed</option>
+                        <option value="draft" {{ $currentFilters['status'] == 'draft' ? 'selected' : '' }}>Draf</option>
+                        <option value="published" {{ $currentFilters['status'] == 'published' ? 'selected' : '' }}>Dipublikasikan</option>
+                        <option value="active" {{ $currentFilters['status'] == 'active' ? 'selected' : '' }}>Aktif</option>
+                        <option value="completed" {{ $currentFilters['status'] == 'completed' ? 'selected' : '' }}>Selesai</option>
                     </select>
                 </div>
                 
@@ -224,7 +224,7 @@
                             </div>
                             <div class="rounded-lg p-2" style="background: rgba(245, 158, 11, 0.1);">
                                 <div class="text-lg font-bold" style="color: #d97706;">{{ $totalSubmissions - $gradedSubmissions }}</div>
-                                <div class="text-xs" style="color: var(--text-secondary, #6b7280);">Pending</div>
+                                <div class="text-xs" style="color: var(--text-secondary, #6b7280);">Menunggu</div>
                             </div>
                         </div>
                     </div>

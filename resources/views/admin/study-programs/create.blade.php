@@ -559,7 +559,7 @@
                                    id="program_code" 
                                    class="form-input @error('program_code') is-invalid @enderror" 
                                    value="{{ old('program_code') }}" 
-                                   placeholder="e.g., TI, SI, MI">
+                                   placeholder="contoh: TI, SI, MI">
                             @error('program_code')
                                 <div class="invalid-feedback">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -580,7 +580,7 @@
                             <textarea name="description" 
                                       id="description" 
                                       class="form-input form-textarea @error('description') is-invalid @enderror" 
-                                      placeholder="Brief description about the program...">{{ old('description') }}</textarea>
+                                      placeholder="Deskripsi singkat tentang program...">{{ old('description') }}</textarea>
                             @error('description')
                                 <div class="invalid-feedback">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1166,7 +1166,7 @@ function addSubjectToDOM(subject) {
                 </div>
             </div>
             <div class="form-group">
-                <label class="form-label">Description</label>
+                <label class="form-label">Deskripsi</label>
                 <textarea class="form-input" rows="2" 
                           onchange="updateSubjectData(${subject.id || subjectCounter}, 'description', this.value)" 
                           placeholder="Brief description of the subject...">${subject.description || ''}</textarea>
@@ -1237,7 +1237,7 @@ function addSpecializationToDOM(specialization) {
                        placeholder="Web Development, Mobile Development, etc.">
             </div>
             <div class="form-group">
-                <label class="form-label">Description</label>
+                <label class="form-label">Deskripsi</label>
                 <textarea class="form-input" rows="2" 
                           onchange="updateSpecializationData(${specialization.id || specializationCounter}, 'description', this.value)" 
                           placeholder="Brief description of the specialization...">${specialization.description || ''}</textarea>
@@ -1315,7 +1315,7 @@ function addFacilityToDOM(facility) {
                        placeholder="Computer Lab, Library, etc.">
             </div>
             <div class="form-group">
-                <label class="form-label">Description</label>
+                <label class="form-label">Deskripsi</label>
                 <textarea class="form-input" rows="2" 
                           onchange="updateFacilityData(${facility.id || facilityCounter}, 'description', this.value)" 
                           placeholder="Brief description of the facility...">${facility.description || ''}</textarea>

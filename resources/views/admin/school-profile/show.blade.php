@@ -687,7 +687,7 @@
                             </svg>
                         </div>
                         <div class="info-content">
-                            <div class="info-label">Address</div>
+                            <div class="info-label">Alamat</div>
                             <p class="info-value">{{ $schoolProfile->address }}</p>
                         </div>
                     </div>
@@ -701,7 +701,7 @@
                             </svg>
                         </div>
                         <div class="info-content">
-                            <div class="info-label">Phone</div>
+                            <div class="info-label">Telepon</div>
                             <p class="info-value">{{ $schoolProfile->phone }}</p>
                         </div>
                     </div>
@@ -747,7 +747,7 @@
                             </svg>
                         </div>
                         <div class="info-content">
-                            <div class="info-label">Principal</div>
+                            <div class="info-label">Kepala Sekolah</div>
                             <p class="info-value">{{ $schoolProfile->principal_name }}</p>
                         </div>
                     </div>
@@ -801,15 +801,15 @@
                     <div class="stats-grid">
                         <div class="stat-item">
                             <div class="stat-value">{{ number_format($schoolProfile->student_count ?? 0) }}</div>
-                            <div class="stat-label">Students</div>
+                            <div class="stat-label">Siswa</div>
                         </div>
                         <div class="stat-item">
                             <div class="stat-value">{{ number_format($schoolProfile->teacher_count ?? 0) }}</div>
-                            <div class="stat-label">Teachers</div>
+                            <div class="stat-label">Guru</div>
                         </div>
                         <div class="stat-item">
                             <div class="stat-value">{{ number_format($schoolProfile->staff_count ?? 0) }}</div>
-                            <div class="stat-label">Staff</div>
+                            <div class="stat-label">Staf</div>
                         </div>
                         <div class="stat-item">
                             <div class="stat-value">{{ number_format($schoolProfile->industry_partnerships ?? 0) }}</div>
@@ -907,7 +907,7 @@
                             </svg>
                         </div>
                         <div class="info-content">
-                            <div class="info-label">Last Updated</div>
+                            <div class="info-label">Terakhir Diperbarui</div>
                             <p class="info-value">{{ $schoolProfile->updated_at->format('M d, Y H:i') }}</p>
                         </div>
                     </div>

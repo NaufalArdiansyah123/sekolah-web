@@ -32,8 +32,8 @@
                         <div class="col-md-3">
                             <select name="status" class="form-control">
                                 <option value="">Semua Status</option>
-                                <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draft</option>
-                                <option value="published" {{ request('status') == 'published' ? 'selected' : '' }}>Published</option>
+                                <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draf</option>
+                                <option value="published" {{ request('status') == 'published' ? 'selected' : '' }}>Dipublikasikan</option>
                                 <option value="archived" {{ request('status') == 'archived' ? 'selected' : '' }}>Archived</option>
                             </select>
                         </div>
@@ -92,10 +92,10 @@
                                     <td>
                                         @switch($post->status)
                                             @case('published')
-                                                <span class="badge badge-success">Published</span>
+                                                <span class="badge badge-success">Dipublikasikan</span>
                                                 @break
                                             @case('draft')
-                                                <span class="badge badge-warning">Draft</span>
+                                                <span class="badge badge-warning">Draf</span>
                                                 @break
                                             @case('archived')
                                                 <span class="badge badge-dark">Archived</span>

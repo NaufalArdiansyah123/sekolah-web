@@ -754,7 +754,7 @@
                         <span class="info-value">{{ $vision->created_at->format('M d, Y') }}</span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">Last Updated</span>
+                        <span class="info-label">Terakhir Diperbarui</span>
                         <span class="info-value">{{ $vision->updated_at->format('M d, Y H:i') }}</span>
                     </div>
                     <div class="info-item">

@@ -707,7 +707,7 @@
                             </svg>
                         </div>
                         <div class="info-content">
-                            <div class="info-label">Description</div>
+                            <div class="info-label">Deskripsi</div>
                             <p class="info-value">{{ $studyProgram->description }}</p>
                         </div>
                     </div>
@@ -1033,7 +1033,7 @@
                             </svg>
                         </div>
                         <div class="info-content">
-                            <div class="info-label">Last Updated</div>
+                            <div class="info-label">Terakhir Diperbarui</div>
                             <p class="info-value">{{ $studyProgram->updated_at->format('M d, Y H:i') }}</p>
                         </div>
                     </div>

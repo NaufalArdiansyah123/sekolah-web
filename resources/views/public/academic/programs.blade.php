@@ -893,7 +893,7 @@
                         <i class="fas fa-search me-2"></i>Search Programs
                     </label>
                     <input type="text" name="search" value="{{ request('search') }}" 
-                           placeholder="Enter program name, field of study, or keywords..." 
+                           placeholder="Masukkan nama program, bidang studi, atau kata kunci..." 
                            class="search-input">
                 </div>
                 
@@ -1307,7 +1307,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const originalContent = submitButton.innerHTML;
                 submitButton.innerHTML = `
                     <div class="spinner-border spinner-border-sm me-2" role="status">
-                        <span class="visually-hidden">Loading...</span>
+                        <span class="visually-hidden">Memuat...</span>
                     </div>
                     Searching...
                 `;

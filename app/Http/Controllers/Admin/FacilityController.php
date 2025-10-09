@@ -95,10 +95,24 @@ class FacilityController extends Controller
 
         $facilities = $query->paginate(10)->withQueryString();
 
+        // Get accurate statistics (not from paginated data)
+        $totalFacilities = Facility::count();
+        $activeFacilities = Facility::where('status', 'active')->count();
+        $maintenanceFacilities = Facility::where('status', 'maintenance')->count();
+        $inactiveFacilities = Facility::where('status', 'inactive')->count();
+
         $categories = Facility::getCategories();
         $statuses = Facility::getStatuses();
 
-        return view('admin.facilities.index', compact('facilities', 'categories', 'statuses'));
+        return view('admin.facilities.index', compact(
+            'facilities', 
+            'categories', 
+            'statuses',
+            'totalFacilities',
+            'activeFacilities', 
+            'maintenanceFacilities', 
+            'inactiveFacilities'
+        ));
     }
 
     /**

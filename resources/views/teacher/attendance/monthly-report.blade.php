@@ -415,7 +415,7 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>Student</th>
+                    <th>Siswa</th>
                     <th>Total Days</th>
                     <th>Present</th>
                     <th>Absent</th>

@@ -746,7 +746,7 @@
 
                     <!-- Description -->
                     <div class="form-group">
-                        <label for="description" class="form-label">Description</label>
+                        <label for="description" class="form-label">Deskripsi</label>
                         <textarea name="description" 
                                   id="description" 
                                   class="form-input form-textarea @error('description') error @enderror"
@@ -766,7 +766,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                             </svg>
                             <div class="upload-text">
-                                <label for="image" class="upload-link">Choose file</label>
+                                <label for="image" class="upload-link">Pilih file</label>
                                 or drag and drop
                             </div>
                             <div class="upload-hint">PNG, JPG, JPEG, GIF up to 10MB</div>
@@ -885,9 +885,9 @@
                                 id="status" 
                                 class="form-input @error('status') error @enderror"
                                 required>
-                            <option value="">Select status</option>
-                            <option value="active" {{ old('status', 'active') === 'active' ? 'selected' : '' }}>Active</option>
-                            <option value="inactive" {{ old('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
+                            <option value="">Pilih status</option>
+                            <option value="active" {{ old('status', 'active') === 'active' ? 'selected' : '' }}>Aktif</option>
+                            <option value="inactive" {{ old('status') === 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
                         </select>
                         <div class="form-help">Active slideshows will be displayed on the homepage</div>
                         @error('status')

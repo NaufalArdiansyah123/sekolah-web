@@ -494,19 +494,19 @@
             </h2>
             <div class="info-grid">
                 <div class="info-item">
-                    <div class="info-label">Full Name</div>
+                    <div class="info-label">Nama Lengkap</div>
                     <div class="info-value">{{ $student->name }}</div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label">Gender</div>
+                    <div class="info-label">Jenis Kelamin</div>
                     <div class="info-value">{{ $student->gender == 'L' ? 'Male' : 'Female' }}</div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label">Birth Date</div>
+                    <div class="info-label">Tanggal Lahir</div>
                     <div class="info-value">{{ \Carbon\Carbon::parse($student->birth_date)->format('d F Y') }}</div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label">Birth Place</div>
+                    <div class="info-label">Tempat Lahir</div>
                     <div class="info-value">{{ $student->birth_place }}</div>
                 </div>
                 <div class="info-item">
@@ -538,11 +538,11 @@
             </h2>
             <div class="info-grid">
                 <div class="info-item">
-                    <div class="info-label">Phone Number</div>
+                    <div class="info-label">Nomor Telepon</div>
                     <div class="info-value">{{ $student->phone }}</div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label">Email Address</div>
+                    <div class="info-label">Alamat Email</div>
                     <div class="info-value">{{ $student->email }}</div>
                 </div>
                 <div class="info-item">
@@ -614,7 +614,7 @@
                     <div class="info-value">{{ $student->hobbies ?? 'Not specified' }}</div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label">Achievements</div>
+                    <div class="info-label">Prestasi</div>
                     <div class="info-value">{{ $student->achievements ?? 'None recorded' }}</div>
                 </div>
             </div>
@@ -646,7 +646,7 @@
             </div>
             <div class="stat-card">
                 <div class="stat-value">{{ $academicData['attendance_percentage'] }}%</div>
-                <div class="stat-label">Attendance</div>
+                <div class="stat-label">Kehadiran</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value">{{ $academicData['total_subjects'] }}</div>
@@ -674,9 +674,9 @@
         <table class="grades-table">
             <thead>
                 <tr>
-                    <th>Subject</th>
-                    <th>Score</th>
-                    <th>Grade</th>
+                    <th>Mata Pelajaran</th>
+                    <th>Skor</th>
+                    <th>Nilai</th>
                 </tr>
             </thead>
             <tbody>

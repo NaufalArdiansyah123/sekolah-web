@@ -162,11 +162,11 @@
                 <input type="file" name="video_file" accept="video/*" class="form-input" required>
             </div>
             <div>
-                <label class="block text-sm font-medium mb-2">Title</label>
+                <label class="block text-sm font-medium mb-2">Judul</label>
                 <input type="text" name="title" value="Test Upload" class="form-input" required>
             </div>
             <div>
-                <label class="block text-sm font-medium mb-2">Category</label>
+                <label class="block text-sm font-medium mb-2">Kategori</label>
                 <select name="category" class="form-input" required>
                     <option value="lainnya">Lainnya</option>
                 </select>

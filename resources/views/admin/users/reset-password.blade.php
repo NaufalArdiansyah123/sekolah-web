@@ -513,7 +513,7 @@
                            class="form-control" 
                            id="custom_password" 
                            name="custom_password" 
-                           placeholder="Enter custom password"
+                           placeholder="Masukkan kata sandi khusus"
                            minlength="8">
                     <div class="form-text">Password must be at least 8 characters long</div>
                 </div>

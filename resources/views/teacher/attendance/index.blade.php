@@ -794,12 +794,12 @@
                         <th class="checkbox-column">
                             <input type="checkbox" id="selectAllTable" class="student-checkbox" onchange="toggleSelectAll()">
                         </th>
-                        <th>Student</th>
-                        <th>Class</th>
+                        <th>Siswa</th>
+                        <th>Kelas</th>
                         <th>Current Status</th>
                         <th>Mark Attendance</th>
-                        <th>Time</th>
-                        <th>Notes</th>
+                        <th>Waktu</th>
+                        <th>Catatan</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -882,7 +882,7 @@
                             </td>
                             <td>
                                 <textarea class="notes-input" 
-                                          placeholder="Add notes..."
+                                          placeholder="Tambahkan catatan..."
                                           id="notes-{{ $student->id }}"
                                           onchange="updateAttendanceNotes({{ $student->id }}, this.value)"
                                           data-original-value="{{ $notes }}">{{ $notes }}</textarea>

@@ -679,7 +679,7 @@
                 </svg>
             </div>
             <div class="stat-value">{{ $slideshows->where('status', 'active')->count() }}</div>
-            <div class="stat-title">Active</div>
+            <div class="stat-title">Aktif</div>
         </div>
 
         <div class="stat-item">
@@ -689,7 +689,7 @@
                 </svg>
             </div>
             <div class="stat-value">{{ $slideshows->where('status', 'inactive')->count() }}</div>
-            <div class="stat-title">Inactive</div>
+            <div class="stat-title">Tidak Aktif</div>
         </div>
 
         <div class="stat-item">
@@ -708,7 +708,7 @@
         <form method="GET" action="{{ route('admin.posts.slideshow') }}">
             <div class="filters-row">
                 <div class="filter-group">
-                    <label class="filter-label">Search</label>
+                    <label class="filter-label">Cari</label>
                     <input type="text" 
                            name="search" 
                            value="{{ request('search') }}" 
@@ -719,8 +719,8 @@
                     <label class="filter-label">Status</label>
                     <select name="status" class="filter-input">
                         <option value="">All Status</option>
-                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
-                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Aktif</option>
+                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
                     </select>
                 </div>
                 <div class="filter-group">
@@ -774,7 +774,7 @@
                         <th style="width: 15%">Status</th>
                         <th style="width: 10%">Order</th>
                         <th style="width: 15%">Created</th>
-                        <th style="width: 20%">Actions</th>
+                        <th style="width: 20%">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -830,7 +830,7 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                         </svg>
-                                        <span class="hidden sm:inline">View</span>
+                                        <span class="hidden sm:inline">Lihat</span>
                                     </button>
                                 @endif
                                 <a href="{{ route('admin.posts.slideshow.edit', $slideshow->id) }}" class="btn-action btn-edit" title="Edit Slideshow">
@@ -846,7 +846,7 @@
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H8a1 1 0 00-1 1v3M4 7h16"/>
                                         </svg>
-                                        <span class="hidden sm:inline">Delete</span>
+                                        <span class="hidden sm:inline">Hapus</span>
                                     </button>
                                 </form>
                             </div>

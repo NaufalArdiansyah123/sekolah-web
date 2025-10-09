@@ -531,7 +531,7 @@
                 </svg>
             </div>
             <div class="stat-value">{{ $blogs->where('status', 'published')->count() }}</div>
-            <div class="stat-title">Published</div>
+            <div class="stat-title">Dipublikasikan</div>
         </div>
 
         <div class="stat-item">
@@ -560,11 +560,11 @@
         <form method="GET" action="{{ route('teacher.posts.blog.index') }}">
             <div class="filters-row">
                 <div class="filter-group">
-                    <label class="filter-label">Search</label>
+                    <label class="filter-label">Cari</label>
                     <input type="text" 
                            name="search" 
                            value="{{ request('search') }}" 
-                           placeholder="Search title or content..." 
+                           placeholder="Cari judul atau konten..." 
                            class="filter-input">
                 </div>
                 <div class="filter-group">
@@ -577,7 +577,7 @@
                     </select>
                 </div>
                 <div class="filter-group">
-                    <label class="filter-label">Category</label>
+                    <label class="filter-label">Kategori</label>
                     <select name="category" class="filter-input">
                         <option value="">All Categories</option>
                         <option value="berita" {{ request('category') == 'berita' ? 'selected' : '' }}>📰 News</option>

@@ -595,7 +595,7 @@
                 </div>
             </div>
             <h3 class="stat-value">{{ $programs->where('is_active', true)->count() ?? 0 }}</h3>
-            <p class="stat-label">Active</p>
+            <p class="stat-label">Aktif</p>
         </div>
 
         <div class="stat-card">
@@ -649,8 +649,8 @@
         <form method="GET" action="{{ route('admin.study-programs.index') }}">
             <div class="filters-grid">
                 <div class="form-group">
-                    <label class="form-label">Search</label>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search programs..." class="form-input">
+                    <label class="form-label">Cari</label>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari program..." class="form-input">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Degree Level</label>
@@ -666,8 +666,8 @@
                     <label class="form-label">Status</label>
                     <select name="status" class="form-input">
                         <option value="">All Status</option>
-                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
-                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Aktif</option>
+                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
                         <option value="featured" {{ request('status') == 'featured' ? 'selected' : '' }}>Featured</option>
                     </select>
                 </div>
@@ -693,11 +693,11 @@
                             <th style="width: 25%">Program & Code</th>
                             <th style="width: 15%">Degree & Faculty</th>
                             <th style="width: 10%">Duration</th>
-                            <th style="width: 10%">Capacity</th>
+                            <th style="width: 10%">Kapasitas</th>
                             <th style="width: 10%">Accreditation</th>
                             <th style="width: 8%">Status</th>
-                            <th style="width: 12%">Last Updated</th>
-                            <th style="width: 15%">Actions</th>
+                            <th style="width: 12%">Terakhir Diperbarui</th>
+                            <th style="width: 15%">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>

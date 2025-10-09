@@ -846,7 +846,7 @@
 
                     <!-- Description -->
                     <div class="form-group">
-                        <label for="description" class="form-label">Description</label>
+                        <label for="description" class="form-label">Deskripsi</label>
                         <textarea name="description" 
                                   id="description" 
                                   class="form-input form-textarea @error('description') error @enderror"
@@ -1015,9 +1015,9 @@
                                 id="status" 
                                 class="form-input @error('status') error @enderror"
                                 required>
-                            <option value="">Select status</option>
-                            <option value="active" {{ old('status', $slideshow->status) === 'active' ? 'selected' : '' }}>Active</option>
-                            <option value="inactive" {{ old('status', $slideshow->status) === 'inactive' ? 'selected' : '' }}>Inactive</option>
+                            <option value="">Pilih status</option>
+                            <option value="active" {{ old('status', $slideshow->status) === 'active' ? 'selected' : '' }}>Aktif</option>
+                            <option value="inactive" {{ old('status', $slideshow->status) === 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
                         </select>
                         <div class="form-help">Active slideshows will be displayed on the homepage</div>
                         @error('status')
@@ -1050,7 +1050,7 @@
                                 <div class="metadata-value">{{ $slideshow->created_at->format('M d, Y H:i') }}</div>
                             </div>
                             <div class="metadata-item">
-                                <div class="metadata-label">Last Updated</div>
+                                <div class="metadata-label">Terakhir Diperbarui</div>
                                 <div class="metadata-value">{{ $slideshow->updated_at->format('M d, Y H:i') }}</div>
                             </div>
                             @if($slideshow->user_id)

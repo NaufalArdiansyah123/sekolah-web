@@ -767,12 +767,12 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="form-label">Title</label>
+                                            <label class="form-label">Judul</label>
                                             <input type="text" class="form-input card-title-input" name="" placeholder="Card title">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="form-label">Description</label>
+                                        <label class="form-label">Deskripsi</label>
                                         <textarea class="form-input card-description-input" name="" rows="2" placeholder="Card description..."></textarea>
                                     </div>
                                 </div>

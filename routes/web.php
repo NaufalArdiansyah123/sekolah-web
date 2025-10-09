@@ -256,7 +256,16 @@ Route::get('/gallery', [PublicController::class, 'gallery'])->name('gallery');
 Route::get('/announcements', [PublicController::class, 'announcements'])->name('announcements.index');
 Route::get('/announcements/{id}', [PublicController::class, 'announcementDetail'])->name('announcements.show');
 
-Route::get('/facilities', [PublicController::class, 'facilities'])->name('facilities.index');
+// Public Facility Routes
+Route::prefix('facilities')->name('public.facilities.')->group(function () {
+    Route::get('/search', [App\Http\Controllers\Public\FacilityController::class, 'search'])->name('search');
+    Route::get('/category/{category}', [App\Http\Controllers\Public\FacilityController::class, 'getByCategory'])->name('category');
+    Route::get('/{facility}', [App\Http\Controllers\Public\FacilityController::class, 'show'])->name('show');
+    Route::get('/', [App\Http\Controllers\Public\FacilityController::class, 'index'])->name('index');
+});
+
+// Legacy route for backward compatibility
+Route::get('/facilities', [App\Http\Controllers\Public\FacilityController::class, 'index'])->name('facilities.index');
 
 // Public Achievement Routes
 Route::prefix('achievements')->name('public.achievements.')->group(function () {
@@ -722,6 +731,21 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::post('/{studyProgram}/deactivate', [App\Http\Controllers\Admin\StudyProgramController::class, 'deactivate'])->name('deactivate');
         Route::post('/{studyProgram}/feature', [App\Http\Controllers\Admin\StudyProgramController::class, 'feature'])->name('feature');
         Route::post('/{studyProgram}/unfeature', [App\Http\Controllers\Admin\StudyProgramController::class, 'unfeature'])->name('unfeature');
+    });
+    
+    // Facilities Management Routes
+    Route::prefix('facilities')->name('facilities.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\FacilityController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\Admin\FacilityController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\Admin\FacilityController::class, 'store'])->name('store');
+        Route::get('/{facility}', [App\Http\Controllers\Admin\FacilityController::class, 'show'])->name('show');
+        Route::get('/{facility}/edit', [App\Http\Controllers\Admin\FacilityController::class, 'edit'])->name('edit');
+        Route::put('/{facility}', [App\Http\Controllers\Admin\FacilityController::class, 'update'])->name('update');
+        Route::delete('/{facility}', [App\Http\Controllers\Admin\FacilityController::class, 'destroy'])->name('destroy');
+        Route::post('/{facility}/toggle-status', [App\Http\Controllers\Admin\FacilityController::class, 'toggleStatus'])->name('toggle-status');
+        Route::post('/{facility}/toggle-featured', [App\Http\Controllers\Admin\FacilityController::class, 'toggleFeatured'])->name('toggle-featured');
+        Route::post('/bulk-action', [App\Http\Controllers\Admin\FacilityController::class, 'bulkAction'])->name('bulk-action');
+        Route::post('/update-sort-order', [App\Http\Controllers\Admin\FacilityController::class, 'updateSortOrder'])->name('update-sort-order');
     });
 });
 

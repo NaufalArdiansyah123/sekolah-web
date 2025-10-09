@@ -59,7 +59,7 @@
                     <div class="d-flex justify-content-between">
                         <div>
                             <h4 class="mb-0">{{ $stats['by_status']['pending'] ?? 0 }}</h4>
-                            <p class="mb-0">Pending</p>
+                            <p class="mb-0">Menunggu</p>
                         </div>
                         <div class="align-self-center">
                             <i class="fas fa-clock fa-2x"></i>
@@ -164,11 +164,11 @@
                                 <thead>
                                     <tr>
                                         <th>Rank</th>
-                                        <th>Student</th>
+                                        <th>Siswa</th>
                                         <th>NIS</th>
-                                        <th>Class</th>
+                                        <th>Kelas</th>
                                         <th>Violations</th>
-                                        <th>Actions</th>
+                                        <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>

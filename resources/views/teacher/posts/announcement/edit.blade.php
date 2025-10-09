@@ -342,7 +342,7 @@
                                class="form-control @error('title') is-invalid @enderror" 
                                value="{{ old('title', $announcement->title) }}" 
                                required
-                               placeholder="Enter announcement title">
+                               placeholder="Masukkan judul pengumuman">
                         @error('title')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -357,7 +357,7 @@
                                   id="content" 
                                   class="form-control textarea-large @error('content') is-invalid @enderror" 
                                   required
-                                  placeholder="Write your announcement content here...">{{ old('content', $announcement->content) }}</textarea>
+                                  placeholder="Tulis konten pengumuman Anda di sini...">{{ old('content', $announcement->content) }}</textarea>
                         @error('content')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -453,8 +453,8 @@
                                 id="status" 
                                 class="form-select @error('status') is-invalid @enderror" 
                                 required>
-                            <option value="draft" {{ old('status', $announcement->status) === 'draft' ? 'selected' : '' }}>Draft</option>
-                            <option value="published" {{ old('status', $announcement->status) === 'published' ? 'selected' : '' }}>Published</option>
+                            <option value="draft" {{ old('status', $announcement->status) === 'draft' ? 'selected' : '' }}>Draf</option>
+                            <option value="published" {{ old('status', $announcement->status) === 'published' ? 'selected' : '' }}>Dipublikasikan</option>
                             <option value="archived" {{ old('status', $announcement->status) === 'archived' ? 'selected' : '' }}>Archived</option>
                         </select>
                         @error('status')

@@ -259,7 +259,7 @@
                 </label>
                 <select name="status" id="status" class="form-input form-select @error('status') border-red-500 @enderror" required>
                     <option value="">Pilih Status</option>
-                    <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
+                    <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draf</option>
                     <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>Dipublikasi</option>
                     <option value="archived" {{ old('status') == 'archived' ? 'selected' : '' }}>Diarsipkan</option>
                 </select>

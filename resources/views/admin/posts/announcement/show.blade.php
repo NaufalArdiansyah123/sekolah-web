@@ -568,7 +568,7 @@
             <!-- Info Grid -->
             <div class="info-grid">
                 <div class="info-item">
-                    <div class="info-label">Category</div>
+                    <div class="info-label">Kategori</div>
                     <div class="info-value">
                         <span class="badge badge-{{ $announcement->category }}">
                             {{ ucfirst($announcement->category) }}

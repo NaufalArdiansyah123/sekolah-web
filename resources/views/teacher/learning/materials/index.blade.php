@@ -542,7 +542,7 @@
                 </svg>
             </div>
             <div class="stat-value">{{ $materials->where('status', 'published')->count() }}</div>
-            <div class="stat-title">Published</div>
+            <div class="stat-title">Dipublikasikan</div>
         </div>
     </div>
 
@@ -555,11 +555,11 @@
                     <input type="text" 
                            name="search" 
                            value="{{ request('search') }}" 
-                           placeholder="Search by title or description..." 
+                           placeholder="Cari berdasarkan judul atau deskripsi..." 
                            class="filter-input">
                 </div>
                 <div class="filter-group">
-                    <label class="filter-label">Subject</label>
+                    <label class="filter-label">Mata Pelajaran</label>
                     <select name="subject" class="filter-input">
                         <option value="">All Subjects</option>
                         <option value="Matematika" {{ request('subject') == 'Matematika' ? 'selected' : '' }}>Matematika</option>
@@ -570,7 +570,7 @@
                 </div>
 
                 <div class="filter-group">
-                    <label class="filter-label">Type</label>
+                    <label class="filter-label">Jenis</label>
                     <select name="type" class="filter-input">
                         <option value="">All Types</option>
                         <option value="document" {{ request('type') == 'document' ? 'selected' : '' }}>Document</option>
@@ -627,15 +627,15 @@
                         <div class="detail-value">{{ $material->file_name }}</div>
                     </div>
                     <div class="detail-item">
-                        <div class="detail-label">File Size</div>
+                        <div class="detail-label">Ukuran File</div>
                         <div class="detail-value">{{ $material->formatted_file_size }}</div>
                     </div>
                     <div class="detail-item">
-                        <div class="detail-label">Downloads</div>
+                        <div class="detail-label">Unduhan</div>
                         <div class="detail-value">{{ $material->downloads }} times</div>
                     </div>
                     <div class="detail-item">
-                        <div class="detail-label">Last Updated</div>
+                        <div class="detail-label">Terakhir Diperbarui</div>
                         <div class="detail-value">{{ \Carbon\Carbon::parse($material->updated_at)->format('d M Y') }}</div>
                     </div>
                 </div>

@@ -29,7 +29,7 @@
                     </div>
                     <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
                         <div class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{{ $stats['pending'] ?? 0 }}</div>
-                        <div class="text-sm text-gray-600 dark:text-gray-400">Pending</div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400">Menunggu</div>
                     </div>
                     <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
                         <div class="text-2xl font-bold text-red-600 dark:text-red-400">{{ $stats['overdue'] ?? 0 }}</div>

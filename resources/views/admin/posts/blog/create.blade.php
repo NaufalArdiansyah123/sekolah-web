@@ -119,7 +119,7 @@
 
                     <div class="form-group">
                         <label class="form-label"><i class="fas fa-hashtag me-2"></i>Keywords</label>
-                        <input type="text" class="form-control" name="keywords" placeholder="keyword1, keyword2, keyword3" value="{{ old('keywords') }}">
+                        <input type="text" class="form-control" name="keywords" placeholder="kata kunci1, kata kunci2, kata kunci3" value="{{ old('keywords') }}">
                         @error('keywords')
                             <div class="text-danger">{{ $message }}</div>
                         @enderror

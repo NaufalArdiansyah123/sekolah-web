@@ -142,11 +142,11 @@
                         <div class="settings-grid">
                             <div class="setting-card">
                                 <div class="card-header">
-                                    <h3>Academic Year</h3>
+                                    <h3>Tahun Akademik</h3>
                                 </div>
                                 <div class="card-content">
                                     <div class="form-group">
-                                        <label for="academic_year">Academic Year</label>
+                                        <label for="academic_year">Tahun Akademik</label>
                                         <input type="text" class="form-control @error('academic_year') error @enderror"
                                             id="academic_year" name="academic_year"
                                             value="{{ old('academic_year', $settings['academic_year']->value ?? '2024/2025') }}">
@@ -369,7 +369,7 @@
                                 </div>
                                 <div class="card-content">
                                     <div class="form-group">
-                                        <label for="footer_address">Address</label>
+                                        <label for="footer_address">Alamat</label>
                                         <textarea class="form-control @error('footer_address') error @enderror"
                                             id="footer_address" name="footer_address" rows="3">{{ old('footer_address', $settings['footer_address']->value ?? 'Jl. Pendidikan No. 123, Ponorogo, Jawa Timur 63411') }}</textarea>
                                         @error('footer_address')
@@ -378,7 +378,7 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="footer_phone">Phone Number</label>
+                                        <label for="footer_phone">Nomor Telepon</label>
                                         <input type="text" class="form-control @error('footer_phone') error @enderror"
                                             id="footer_phone" name="footer_phone"
                                             value="{{ old('footer_phone', $settings['footer_phone']->value ?? '(0352) 123-4567') }}">
@@ -388,7 +388,7 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="footer_email">Email Address</label>
+                                        <label for="footer_email">Alamat Email</label>
                                         <input type="email" class="form-control @error('footer_email') error @enderror"
                                             id="footer_email" name="footer_email"
                                             value="{{ old('footer_email', $settings['footer_email']->value ?? 'info@smkpgri2ponorogo.sch.id') }}">
@@ -501,7 +501,7 @@
                     <i class="fas fa-check-circle"></i>
                 </div>
                 <div class="modal-content">
-                    <h3 id="alertModalTitle">Success!</h3>
+                    <h3 id="alertModalTitle">Berhasil!</h3>
                     <p id="alertModalMessage">Settings have been saved successfully.</p>
                 </div>
                 <button type="button" class="modal-close" onclick="closeModal()">
@@ -520,7 +520,7 @@
             <div class="loading-content">
                 <div class="spinner"></div>
                 <h3>Saving Settings...</h3>
-                <p>Please wait...</p>
+                <p>Mohon tunggu...</p>
             </div>
         </div>
     </div>

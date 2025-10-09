@@ -152,7 +152,7 @@
                                             <i class="fas fa-hashtag me-2"></i>Keywords
                                         </label>
                                         <input type="text" name="keywords" class="form-input-modern" 
-                                               placeholder="keyword1, keyword2, keyword3" value="{{ old('keywords', $blog->keywords) }}">
+                                               placeholder="kata kunci1, kata kunci2, kata kunci3" value="{{ old('keywords', $blog->keywords) }}">
                                         <div class="input-helper">Pisahkan kata kunci dengan koma</div>
                                     </div>
                                 </div>

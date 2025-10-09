@@ -602,7 +602,7 @@
                 </svg>
             </div>
             <div class="stat-value">{{ $announcements->where('status', 'published')->count() }}</div>
-            <div class="stat-title">Published</div>
+            <div class="stat-title">Dipublikasikan</div>
         </div>
 
         <div class="stat-item">
@@ -632,15 +632,15 @@
         <form method="GET" action="{{ route('teacher.posts.announcement') }}">
             <div class="filters-row">
                 <div class="filter-group">
-                    <label class="filter-label">Search</label>
+                    <label class="filter-label">Cari</label>
                     <input type="text" 
                            name="search" 
                            value="{{ request('search') }}" 
-                           placeholder="Search announcements..." 
+                           placeholder="Cari pengumuman..." 
                            class="filter-input">
                 </div>
                 <div class="filter-group">
-                    <label class="filter-label">Category</label>
+                    <label class="filter-label">Kategori</label>
                     <select name="category" class="filter-input">
                         <option value="">All Categories</option>
                         <option value="akademik" {{ request('category') == 'akademik' ? 'selected' : '' }}>Academic</option>
@@ -652,8 +652,8 @@
                     <label class="filter-label">Status</label>
                     <select name="status" class="filter-input">
                         <option value="">All Status</option>
-                        <option value="published" {{ request('status') == 'published' ? 'selected' : '' }}>Published</option>
-                        <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draft</option>
+                        <option value="published" {{ request('status') == 'published' ? 'selected' : '' }}>Dipublikasikan</option>
+                        <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draf</option>
                         <option value="archived" {{ request('status') == 'archived' ? 'selected' : '' }}>Archived</option>
                     </select>
                 </div>
@@ -706,13 +706,13 @@
                     <tr>
                         <th style="width: 5%">#</th>
                         <th style="width: 30%">Title & Content</th>
-                        <th style="width: 12%">Category</th>
+                        <th style="width: 12%">Kategori</th>
                         <th style="width: 10%">Priority</th>
                         <th style="width: 12%">Author</th>
                         <th style="width: 8%">Status</th>
                         <th style="width: 8%">Views</th>
-                        <th style="width: 10%">Date</th>
-                        <th style="width: 5%">Actions</th>
+                        <th style="width: 10%">Tanggal</th>
+                        <th style="width: 5%">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>

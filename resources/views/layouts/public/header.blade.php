@@ -15,10 +15,10 @@
                         <a href="{{ route('dashboard') }}" class="hover:text-primary-200">Dashboard</a>
                         <form method="POST" action="{{ route('logout') }}" class="inline">
                             @csrf
-                            <button type="submit" class="hover:text-primary-200">Logout</button>
+                            <button type="submit" class="hover:text-primary-200">Keluar</button>
                         </form>
                     @else
-                        <a href="{{ route('login') }}" class="hover:text-primary-200">Login</a>
+                        <a href="{{ route('login') }}" class="hover:text-primary-200">Masuk</a>
                     @endauth
                 </div>
             </div>

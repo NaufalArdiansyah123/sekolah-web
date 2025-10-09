@@ -414,7 +414,7 @@
                 </svg>
             </div>
             <div class="stat-value">{{ $announcement->published_at->format('M d') }}</div>
-            <div class="stat-label">Published</div>
+            <div class="stat-label">Dipublikasikan</div>
         </div>
         @endif
     </div>
@@ -424,7 +424,7 @@
         <!-- Meta Information -->
         <div class="announcement-meta">
             <div class="meta-item">
-                <div class="meta-label">Category</div>
+                <div class="meta-label">Kategori</div>
                 <div class="meta-value">
                     <span class="badge badge-{{ $announcement->category }}">
                         {{ ucfirst($announcement->category) }}

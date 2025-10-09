@@ -9,188 +9,188 @@ use App\Models\Facility;
 class FacilitySeeder extends Seeder
 {
     /**
-     * Run the database seeder.
+     * Run the database seeds.
      */
     public function run(): void
     {
         $facilities = [
             [
-                'name' => 'Laboratorium Komputer',
-                'description' => 'Lab komputer modern dengan 40 unit PC terkini, jaringan internet cepat, dan software pendidikan lengkap untuk mendukung pembelajaran teknologi informasi.',
-                'category' => 'technology',
+                'name' => 'Perpustakaan Digital',
+                'description' => 'Perpustakaan modern dengan koleksi buku digital dan fisik yang lengkap. Dilengkapi dengan ruang baca yang nyaman, akses internet gratis, dan sistem pencarian buku yang canggih.',
+                'category' => 'academic',
                 'features' => [
-                    '40 Unit PC Core i5, 8GB RAM, SSD 256GB',
-                    'Jaringan internet 100 Mbps dedicated',
-                    'LCD projector dan layar besar',
-                    'Software pendidikan lengkap (Office, Programming, Design)',
-                    'AC dan sistem ventilasi yang nyaman',
-                    'Furniture ergonomis untuk kenyamanan belajar'
+                    'Koleksi buku digital 10,000+ judul',
+                    'Ruang baca ber-AC',
+                    'WiFi gratis',
+                    'Sistem pencarian online',
+                    'Area diskusi kelompok',
+                    'Komputer akses publik'
                 ],
                 'status' => 'active',
-                'capacity' => 40,
-                'location' => 'Lantai 2, Gedung A',
+                'capacity' => 150,
+                'location' => 'Gedung A, Lantai 2',
                 'is_featured' => true,
                 'sort_order' => 1
             ],
             [
-                'name' => 'Perpustakaan Digital',
-                'description' => 'Perpustakaan dengan koleksi lebih dari 10.000 buku dari berbagai disiplin ilmu, dilengkapi dengan sistem pencarian digital dan area baca yang nyaman.',
-                'category' => 'academic',
+                'name' => 'Laboratorium Komputer',
+                'description' => 'Laboratorium komputer dengan perangkat terbaru untuk mendukung pembelajaran teknologi informasi dan komunikasi. Dilengkapi dengan software pembelajaran terkini.',
+                'category' => 'technology',
                 'features' => [
-                    'Koleksi 10.000+ buku cetak dan digital',
-                    'Komputer dengan akses katalog digital',
-                    'Area baca dengan pencahayaan optimal',
-                    'Ruang diskusi kelompok',
-                    'Sistem peminjaman elektronik',
-                    'Koneksi WiFi khusus'
+                    '40 unit komputer terbaru',
+                    'Software pembelajaran lengkap',
+                    'Proyektor dan layar besar',
+                    'AC dan pencahayaan optimal',
+                    'Koneksi internet high-speed',
+                    'Printer dan scanner'
                 ],
                 'status' => 'active',
-                'capacity' => 100,
-                'location' => 'Lantai 1, Gedung B',
+                'capacity' => 40,
+                'location' => 'Gedung B, Lantai 1',
                 'is_featured' => true,
                 'sort_order' => 2
             ],
             [
-                'name' => 'Lapangan Olahraga',
-                'description' => 'Lapangan multifungsi untuk basket, voli, futsal, dan atletik dengan permukaan berkualitas standar nasional.',
+                'name' => 'Lapangan Basket',
+                'description' => 'Lapangan basket outdoor dengan standar internasional. Dilengkapi dengan ring basket yang dapat disesuaikan tingginya dan tribun penonton.',
                 'category' => 'sport',
                 'features' => [
-                    'Lapangan basket standar FIBA',
-                    'Lapangan voli indoor',
-                    'Area futsal dengan rumput sintetis',
-                    'Trek lari 400 meter',
-                    'Tribun penonton kapasitas 200 orang',
-                    'Sistem pencahayaan LED'
+                    'Lapangan standar FIBA',
+                    'Ring basket adjustable',
+                    'Tribun penonton 200 orang',
+                    'Lampu penerangan malam',
+                    'Lantai anti-slip',
+                    'Ruang ganti pemain'
                 ],
                 'status' => 'active',
                 'capacity' => 200,
-                'location' => 'Area Outdoor, Belakang Gedung C',
+                'location' => 'Area Olahraga',
                 'is_featured' => true,
                 'sort_order' => 3
             ],
             [
-                'name' => 'Laboratorium Sains',
-                'description' => 'Lab fisika, kimia, dan biologi lengkap dengan peralatan praktikum modern dan alat keselamatan standar untuk mendukung pembelajaran sains.',
-                'category' => 'academic',
-                'features' => [
-                    'Peralatan praktikum fisika lengkap',
-                    'Lab kimia dengan fume hood',
-                    'Mikroskop digital untuk biologi',
-                    'Perlengkapan keselamatan standar',
-                    'Sistem ventilasi khusus',
-                    'Lemari asam dan bahan kimia'
-                ],
-                'status' => 'active',
-                'capacity' => 30,
-                'location' => 'Lantai 3, Gedung A',
-                'is_featured' => false,
-                'sort_order' => 4
-            ],
-            [
-                'name' => 'Aula Serba Guna',
-                'description' => 'Aula modern kapasitas 500 orang dengan sound system profesional, lighting, dan panggung permanen untuk berbagai acara sekolah.',
-                'category' => 'arts',
-                'features' => [
-                    'Kapasitas 500 orang',
-                    'Sound system profesional',
-                    'Lighting modern dengan kontrol DMX',
-                    'Panggung permanen 12x8 meter',
-                    'AC central',
-                    'Ruang ganti dan backstage'
-                ],
-                'status' => 'active',
-                'capacity' => 500,
-                'location' => 'Gedung D',
-                'is_featured' => true,
-                'sort_order' => 5
-            ],
-            [
-                'name' => 'Kantin Sehat',
-                'description' => 'Kantin dengan konsep sehat, menyajikan makanan bergizi, higienis, dan harga terjangkau untuk siswa dan staff sekolah.',
-                'category' => 'other',
-                'features' => [
-                    'Menu makanan sehat dan bergizi',
-                    'Standar kebersihan tinggi',
-                    'Harga terjangkau untuk siswa',
-                    'Area makan indoor dan outdoor',
-                    'Sistem pembayaran cashless',
-                    'Menu vegetarian tersedia'
-                ],
-                'status' => 'active',
-                'capacity' => 150,
-                'location' => 'Lantai 1, Gedung C',
-                'is_featured' => false,
-                'sort_order' => 6
-            ],
-            [
                 'name' => 'Studio Musik',
-                'description' => 'Studio musik lengkap dengan berbagai alat musik dan sistem recording untuk mendukung pembelajaran seni musik dan ekstrakurikuler band.',
+                'description' => 'Studio musik dengan peralatan lengkap untuk pembelajaran dan latihan musik. Dilengkapi dengan berbagai alat musik dan sistem recording profesional.',
                 'category' => 'arts',
                 'features' => [
                     'Piano akustik dan digital',
                     'Drum set lengkap',
                     'Gitar akustik dan elektrik',
-                    'Bass elektrik',
-                    'Sistem recording digital',
+                    'Sistem sound profesional',
+                    'Recording equipment',
                     'Kedap suara'
                 ],
                 'status' => 'active',
-                'capacity' => 20,
-                'location' => 'Lantai 2, Gedung D',
+                'capacity' => 25,
+                'location' => 'Gedung C, Lantai 1',
+                'is_featured' => false,
+                'sort_order' => 4
+            ],
+            [
+                'name' => 'Laboratorium Sains',
+                'description' => 'Laboratorium sains lengkap untuk praktikum fisika, kimia, dan biologi. Dilengkapi dengan peralatan eksperimen modern dan sistem keamanan yang baik.',
+                'category' => 'academic',
+                'features' => [
+                    'Peralatan eksperimen lengkap',
+                    'Mikroskop digital',
+                    'Lemari asam dan safety shower',
+                    'Meja praktikum anti-korosi',
+                    'Sistem ventilasi khusus',
+                    'Alat pemadam kebakaran'
+                ],
+                'status' => 'active',
+                'capacity' => 30,
+                'location' => 'Gedung A, Lantai 3',
+                'is_featured' => false,
+                'sort_order' => 5
+            ],
+            [
+                'name' => 'Aula Serbaguna',
+                'description' => 'Aula besar yang dapat digunakan untuk berbagai acara seperti seminar, pertunjukan, upacara, dan kegiatan sekolah lainnya.',
+                'category' => 'other',
+                'features' => [
+                    'Kapasitas 500 orang',
+                    'Panggung dengan backdrop',
+                    'Sistem sound dan lighting',
+                    'AC central',
+                    'Proyektor dan layar besar',
+                    'Ruang backstage'
+                ],
+                'status' => 'active',
+                'capacity' => 500,
+                'location' => 'Gedung Utama',
+                'is_featured' => true,
+                'sort_order' => 6
+            ],
+            [
+                'name' => 'Kantin Sekolah',
+                'description' => 'Kantin sekolah yang bersih dan nyaman dengan berbagai pilihan makanan sehat dan bergizi untuk siswa dan staff.',
+                'category' => 'other',
+                'features' => [
+                    'Menu makanan sehat',
+                    'Area makan ber-AC',
+                    'Dapur bersih dan higienis',
+                    'Harga terjangkau',
+                    'Cashless payment',
+                    'Area cuci tangan'
+                ],
+                'status' => 'active',
+                'capacity' => 100,
+                'location' => 'Gedung D',
                 'is_featured' => false,
                 'sort_order' => 7
             ],
             [
-                'name' => 'Laboratorium Bahasa',
-                'description' => 'Lab bahasa modern dengan sistem audio digital untuk pembelajaran bahasa Indonesia, Inggris, dan bahasa asing lainnya.',
-                'category' => 'academic',
+                'name' => 'Lapangan Futsal',
+                'description' => 'Lapangan futsal indoor dengan rumput sintetis berkualitas tinggi. Dilengkapi dengan sistem pencahayaan dan ventilasi yang baik.',
+                'category' => 'sport',
                 'features' => [
-                    'Sistem audio digital 32 channel',
-                    'Headset individual untuk setiap siswa',
-                    'Software pembelajaran bahasa',
-                    'Proyektor dan layar besar',
-                    'Booth recording untuk speaking practice',
-                    'AC dan pencahayaan optimal'
+                    'Rumput sintetis premium',
+                    'Gawang standar FIFA',
+                    'Lampu LED terang',
+                    'Sistem ventilasi optimal',
+                    'Tribun penonton',
+                    'Ruang ganti dan shower'
                 ],
-                'status' => 'active',
-                'capacity' => 32,
-                'location' => 'Lantai 2, Gedung B',
+                'status' => 'maintenance',
+                'capacity' => 150,
+                'location' => 'Gedung Olahraga',
                 'is_featured' => false,
                 'sort_order' => 8
             ],
             [
-                'name' => 'Mushola',
-                'description' => 'Tempat ibadah yang nyaman dan bersih untuk seluruh warga sekolah dengan fasilitas wudhu yang memadai.',
-                'category' => 'other',
+                'name' => 'Ruang Multimedia',
+                'description' => 'Ruang multimedia untuk pembelajaran audio visual dengan peralatan presentasi modern dan koneksi internet high-speed.',
+                'category' => 'technology',
                 'features' => [
-                    'Ruang sholat pria dan wanita terpisah',
-                    'Tempat wudhu dengan air bersih',
-                    'Sajadah dan mukena tersedia',
-                    'AC dan ventilasi yang baik',
-                    'Perpustakaan mini islami',
-                    'Jadwal sholat digital'
+                    'Proyektor 4K',
+                    'Layar motorized',
+                    'Sistem audio surround',
+                    'Komputer presentasi',
+                    'WiFi dedicated',
+                    'Kursi ergonomis'
                 ],
                 'status' => 'active',
-                'capacity' => 80,
-                'location' => 'Lantai 1, Gedung E',
+                'capacity' => 50,
+                'location' => 'Gedung B, Lantai 2',
                 'is_featured' => false,
                 'sort_order' => 9
             ],
             [
-                'name' => 'Ruang UKS',
-                'description' => 'Unit Kesehatan Sekolah dengan fasilitas medis dasar dan tenaga kesehatan untuk memberikan pertolongan pertama kepada siswa.',
+                'name' => 'Taman Sekolah',
+                'description' => 'Taman hijau yang asri di tengah sekolah untuk area istirahat dan pembelajaran outdoor. Dilengkapi dengan gazebo dan bangku taman.',
                 'category' => 'other',
                 'features' => [
-                    'Tempat tidur untuk istirahat',
-                    'Kotak P3K lengkap',
-                    'Timbangan dan pengukur tinggi',
-                    'Tensimeter dan termometer',
-                    'Obat-obatan dasar',
-                    'Tenaga kesehatan berpengalaman'
+                    'Tanaman hias beragam',
+                    'Gazebo untuk istirahat',
+                    'Bangku taman',
+                    'Jalur jogging mini',
+                    'Area bermain',
+                    'Sistem irigasi otomatis'
                 ],
                 'status' => 'active',
-                'capacity' => 10,
-                'location' => 'Lantai 1, Gedung A',
+                'capacity' => 80,
+                'location' => 'Area Tengah Sekolah',
                 'is_featured' => false,
                 'sort_order' => 10
             ]

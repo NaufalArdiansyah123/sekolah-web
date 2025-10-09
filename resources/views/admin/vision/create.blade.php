@@ -1094,7 +1094,7 @@ function addMissionToDOM(mission) {
                        placeholder="Example: Provide quality education">
             </div>
             <div class="form-group">
-                <label class="form-label">Description</label>
+                <label class="form-label">Deskripsi</label>
                 <textarea class="form-input" rows="3" 
                           onchange="updateMissionData(${mission.id || missionCounter}, 'description', this.value)" 
                           placeholder="Detailed mission description...">${mission.description || ''}</textarea>
@@ -1103,7 +1103,7 @@ function addMissionToDOM(mission) {
                 <label class="form-label">Icon</label>
                 <select class="form-input" onchange="updateMissionData(${mission.id || missionCounter}, 'icon', this.value)">
                     <option value="fas fa-bullseye" ${(mission.icon || 'fas fa-bullseye') === 'fas fa-bullseye' ? 'selected' : ''}>Target</option>
-                    <option value="fas fa-graduation-cap" ${mission.icon === 'fas fa-graduation-cap' ? 'selected' : ''}>Education</option>
+                    <option value="fas fa-graduation-cap" ${mission.icon === 'fas fa-graduation-cap' ? 'selected' : ''}>Pendidikan</option>
                     <option value="fas fa-users" ${mission.icon === 'fas fa-users' ? 'selected' : ''}>Community</option>
                     <option value="fas fa-star" ${mission.icon === 'fas fa-star' ? 'selected' : ''}>Excellence</option>
                     <option value="fas fa-heart" ${mission.icon === 'fas fa-heart' ? 'selected' : ''}>Character</option>
@@ -1177,7 +1177,7 @@ function addGoalToDOM(goal) {
                        placeholder="Example: Academic Quality">
             </div>
             <div class="form-group">
-                <label class="form-label">Description</label>
+                <label class="form-label">Deskripsi</label>
                 <textarea class="form-input" rows="3" 
                           onchange="updateGoalData(${goal.id || goalsCounter}, 'description', this.value)" 
                           placeholder="Detailed goal description...">${goal.description || ''}</textarea>
@@ -1272,7 +1272,7 @@ function addValueToDOM(value) {
                        placeholder="Example: Integrity">
             </div>
             <div class="form-group">
-                <label class="form-label">Description</label>
+                <label class="form-label">Deskripsi</label>
                 <textarea class="form-input" rows="3" 
                           onchange="updateValueData(${value.id || valuesCounter}, 'description', this.value)" 
                           placeholder="Detailed value description...">${value.description || ''}</textarea>
@@ -1382,7 +1382,7 @@ function addFocusAreaToDOM(focusArea) {
                        placeholder="Example: Learning Quality Improvement">
             </div>
             <div class="form-group">
-                <label class="form-label">Description</label>
+                <label class="form-label">Deskripsi</label>
                 <textarea class="form-input" rows="3" 
                           onchange="updateFocusAreaData(${focusArea.id || focusAreasCounter}, 'description', this.value)" 
                           placeholder="Detailed focus area description...">${focusArea.description || ''}</textarea>
@@ -1535,8 +1535,8 @@ function addRoadmapPhaseToDOM(phase) {
                     <label class="form-label">Status</label>
                     <select class="form-input" onchange="updateRoadmapData(${phase.id || roadmapCounter}, 'status', this.value)">
                         <option value="planned" ${(phase.status || 'planned') === 'planned' ? 'selected' : ''}>Planned</option>
-                        <option value="in_progress" ${phase.status === 'in_progress' ? 'selected' : ''}>In Progress</option>
-                        <option value="completed" ${phase.status === 'completed' ? 'selected' : ''}>Completed</option>
+                        <option value="in_progress" ${phase.status === 'in_progress' ? 'selected' : ''}>Sedang Berlangsung</option>
+                        <option value="completed" ${phase.status === 'completed' ? 'selected' : ''}>Selesai</option>
                         <option value="delayed" ${phase.status === 'delayed' ? 'selected' : ''}>Delayed</option>
                     </select>
                 </div>
@@ -1548,7 +1548,7 @@ function addRoadmapPhaseToDOM(phase) {
                        placeholder="Example: Consolidation Phase">
             </div>
             <div class="form-group">
-                <label class="form-label">Description</label>
+                <label class="form-label">Deskripsi</label>
                 <textarea class="form-input" rows="3" 
                           onchange="updateRoadmapData(${phase.id || roadmapCounter}, 'description', this.value)" 
                           placeholder="Detailed phase description...">${phase.description || ''}</textarea>

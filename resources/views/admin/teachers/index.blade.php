@@ -625,23 +625,23 @@
         <form method="GET" action="{{ route('admin.teachers.index') }}">
             <div class="filters-row">
                 <div class="filter-group">
-                    <label class="filter-label">Search</label>
+                    <label class="filter-label">Cari</label>
                     <input type="text" 
                            name="search" 
                            value="{{ request('search') }}" 
-                           placeholder="Search name, NIP, or subject..." 
+                           placeholder="Cari nama, NIP, atau mata pelajaran..." 
                            class="filter-input">
                 </div>
                 <div class="filter-group">
                     <label class="filter-label">Status</label>
                     <select name="status" class="filter-input">
                         <option value="">All Status</option>
-                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
-                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Aktif</option>
+                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
                     </select>
                 </div>
                 <div class="filter-group">
-                    <label class="filter-label">Subject</label>
+                    <label class="filter-label">Mata Pelajaran</label>
                     <select name="subject" class="filter-input">
                         <option value="">All Subjects</option>
                         @foreach($teachers->pluck('subject')->unique()->sort() as $subject)

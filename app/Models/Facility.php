@@ -100,10 +100,13 @@ class Facility extends Model
             if (filter_var($this->image, FILTER_VALIDATE_URL)) {
                 return $this->image;
             }
+            
+            // Return the storage path even if file doesn't exist (for new uploads)
+            return asset('storage/facilities/' . $this->image);
         }
         
-        // Return placeholder image (SVG for better quality)
-        return asset('images/default-facility.svg');
+        // Return placeholder image with better fallback
+        return 'data:image/svg+xml;base64,' . base64_encode('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300" fill="#f3f4f6"><rect width="400" height="300" fill="#e5e7eb"/><text x="200" y="150" text-anchor="middle" fill="#9ca3af" font-family="Arial" font-size="16">No Image</text></svg>');
     }
 
     // Accessor untuk status badge
