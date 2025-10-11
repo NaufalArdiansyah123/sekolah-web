@@ -1,18 +1,19 @@
 <?php
 
-namespace Database\Seeders;
-
-use Illuminate\Database\Seeder;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 use App\Models\Setting;
 
-class SchoolSettingsSeeder extends Seeder
+return new class extends Migration
 {
     /**
-     * Run the database seeds.
+     * Run the migrations.
      */
-    public function run(): void
+    public function up(): void
     {
-        $schoolSettings = [
+        // Add default school settings if they don't exist
+        $defaultSettings = [
             [
                 'key' => 'school_name',
                 'value' => 'SMK PGRI 2 PONOROGO',
@@ -57,11 +58,30 @@ class SchoolSettingsSeeder extends Seeder
             ]
         ];
 
-        foreach ($schoolSettings as $setting) {
+        foreach ($defaultSettings as $setting) {
             Setting::updateOrCreate(
                 ['key' => $setting['key']],
                 $setting
             );
         }
     }
-}
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        // Remove the default settings
+        $keys = [
+            'school_name',
+            'school_subtitle', 
+            'school_description',
+            'school_address',
+            'school_phone',
+            'school_email',
+            'school_website'
+        ];
+
+        Setting::whereIn('key', $keys)->delete();
+    }
+};

@@ -319,12 +319,22 @@
         background: linear-gradient(90deg, var(--gold-color), #fcd34d, #f59e0b);
         z-index: 20;
         transform-origin: left;
-        animation: slideProgress 5s linear infinite;
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
     }
 
     @keyframes slideProgress {
         0% { transform: scaleX(0); }
         100% { transform: scaleX(1); }
+    }
+    
+    /* Progress bar states */
+    .slide-progress.running {
+        animation: slideProgress 6s linear;
+    }
+    
+    .slide-progress.paused {
+        animation-play-state: paused;
     }
 
     .slide-nav {
@@ -520,7 +530,9 @@
         font-weight: 900 !important;
         letter-spacing: -2px;
         line-height: 1;
-        transition: all 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        display: inline-block;
     }
     
     .stats-label {
@@ -562,12 +574,33 @@
     
     @keyframes numberPulse {
         0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
+        50% { transform: scale(1.1); }
         100% { transform: scale(1); }
     }
     
+    @keyframes numberGlow {
+        0% { 
+            text-shadow: 0 0 5px rgba(251, 191, 36, 0.3);
+        }
+        50% { 
+            text-shadow: 0 0 20px rgba(251, 191, 36, 0.6), 0 0 30px rgba(251, 191, 36, 0.4);
+        }
+        100% { 
+            text-shadow: 0 0 5px rgba(251, 191, 36, 0.3);
+        }
+    }
+    
     .stats-number.counting {
-        animation: countUp 0.8s ease-out;
+        animation: countUp 0.8s ease-out, numberGlow 2s ease-in-out;
+    }
+    
+    .stats-number {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .stats-card:hover .stats-number {
+        animation: numberPulse 0.6s ease-in-out;
     }
     
     .stats-number {
@@ -1063,7 +1096,7 @@
 <section class="stats-section">
     <div class="container">
         <div class="section-title">
-            <h2 class="fade-in-up">SMK PGRI 2 PONOROGO</h2>
+            <h2 class="fade-in-up">{{ school_name() }}</h2>
             <p class="fade-in-up">Pencapaian dan prestasi yang membanggakan</p>
         </div>
         <div class="row text-center g-4">
@@ -1390,725 +1423,535 @@
 </section>
 
 <script>
-// Namespace isolation to prevent conflicts
+// Simplified and Reliable Stats Counter Animation
 (function() {
     'use strict';
     
-    // Wait for both DOM and navbar to be ready
-    function initHomePage() {
-        console.log('Home page initialization started');
-        
-        try {
-            const totalSlides = {{ $slideshows->count() }};
+    console.log('🚀 Initializing Home Page with Enhanced Stats Animation');
     
-    // Enhanced Slideshow functionality - only initialize if there are multiple slides
+    // Global variables
+    let animationTriggered = false;
+    const totalSlides = {{ $slideshows->count() }};
+    
+    // 🎬 FIXED SLIDESHOW FUNCTIONALITY - Consistent 6 Second Intervals
     if (totalSlides > 1) {
         let slideIndex = 1;
         let slideInterval;
+        let progressInterval;
+        let isHovered = false;
+        let isTransitioning = false;
+        
+        console.log(`🎞️ Initializing slideshow with ${totalSlides} slides`);
 
-        // Initialize slideshow
-        function initEnhancedSlideshow() {
-            showSlideEnhanced(slideIndex);
+        function showSlideEnhanced(index) {
+            if (isTransitioning) return; // Prevent overlapping transitions
+            
+            isTransitioning = true;
+            console.log(`🔄 Switching to slide ${index}`);
+            
+            const slides = document.querySelectorAll('#enhanced-slideshow .slide');
+            const dots = document.querySelectorAll('#enhanced-slideshow .dot');
+
+            // Clear active states
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+
+            // Set new active states
+            if (slides[index - 1]) slides[index - 1].classList.add('active');
+            if (dots[index - 1]) dots[index - 1].classList.add('active');
+
+            // Reset and restart progress bar
+            resetProgressBar();
+            
+            // Allow next transition after slide transition completes
+            setTimeout(() => {
+                isTransitioning = false;
+            }, 1500); // Match CSS transition duration
+        }
+        
+        function resetProgressBar() {
+            const progressBar = document.querySelector('#enhanced-slideshow .slide-progress');
+            if (progressBar) {
+                // Force reset animation
+                progressBar.style.animation = 'none';
+                progressBar.style.transform = 'scaleX(0)';
+                
+                // Restart animation after a brief delay
+                requestAnimationFrame(() => {
+                    progressBar.style.animation = 'slideProgress 6s linear';
+                });
+            }
+        }
+
+        function startAutoSlideEnhanced() {
+            // Clear any existing intervals
+            clearInterval(slideInterval);
+            clearInterval(progressInterval);
+            
+            console.log('▶️ Starting auto slideshow');
+            
+            // Start progress bar for current slide
+            resetProgressBar();
+            
+            // Set main slideshow interval - exactly 6 seconds
+            slideInterval = setInterval(function() {
+                if (!isHovered && !isTransitioning) {
+                    slideIndex++;
+                    if (slideIndex > totalSlides) slideIndex = 1;
+                    showSlideEnhanced(slideIndex);
+                }
+            }, 6000); // Consistent 6 second interval
+        }
+        
+        function stopAutoSlideEnhanced() {
+            console.log('⏸️ Stopping auto slideshow');
+            clearInterval(slideInterval);
+            clearInterval(progressInterval);
+            
+            // Pause progress bar
+            const progressBar = document.querySelector('#enhanced-slideshow .slide-progress');
+            if (progressBar) {
+                progressBar.style.animationPlayState = 'paused';
+            }
+        }
+        
+        function resumeAutoSlideEnhanced() {
+            console.log('▶️ Resuming auto slideshow');
+            
+            // Resume progress bar
+            const progressBar = document.querySelector('#enhanced-slideshow .slide-progress');
+            if (progressBar) {
+                progressBar.style.animationPlayState = 'running';
+            }
+            
+            // Restart the interval
             startAutoSlideEnhanced();
         }
 
-        // Change slide function
         window.changeSlideEnhanced = function(direction) {
-            clearInterval(slideInterval);
-            slideIndex += direction;
+            if (isTransitioning) return; // Prevent rapid clicking
             
+            console.log(`👆 Manual slide change: ${direction > 0 ? 'next' : 'prev'}`);
+            
+            stopAutoSlideEnhanced();
+            
+            slideIndex += direction;
             if (slideIndex > totalSlides) slideIndex = 1;
             if (slideIndex < 1) slideIndex = totalSlides;
             
             showSlideEnhanced(slideIndex);
-            startAutoSlideEnhanced();
+            
+            // Restart auto slideshow after manual change
+            setTimeout(() => {
+                if (!isHovered) {
+                    startAutoSlideEnhanced();
+                }
+            }, 1500);
         }
 
-        // Go to specific slide
         window.currentSlideEnhanced = function(index) {
-            clearInterval(slideInterval);
+            if (isTransitioning) return; // Prevent rapid clicking
+            
+            console.log(`🎯 Direct slide selection: ${index}`);
+            
+            stopAutoSlideEnhanced();
             slideIndex = index;
             showSlideEnhanced(slideIndex);
-            startAutoSlideEnhanced();
+            
+            // Restart auto slideshow after manual change
+            setTimeout(() => {
+                if (!isHovered) {
+                    startAutoSlideEnhanced();
+                }
+            }, 1500);
         }
 
-        // Show slide function
-        function showSlideEnhanced(index) {
-            const slides = document.querySelectorAll('#enhanced-slideshow .slide');
-            const dots = document.querySelectorAll('#enhanced-slideshow .dot');
+        // Initialize slideshow
+        showSlideEnhanced(slideIndex);
+        startAutoSlideEnhanced();
 
-            // Remove active class from all slides and dots
-            slides.forEach(slide => slide.classList.remove('active'));
-            dots.forEach(dot => dot.classList.remove('active'));
-
-            // Add active class to current slide and dot
-            if (slides[index - 1]) {
-                slides[index - 1].classList.add('active');
-            }
-            if (dots[index - 1]) {
-                dots[index - 1].classList.add('active');
-            }
-
-            // Reset progress bar animation
-            const progressBar = document.querySelector('#enhanced-slideshow .slide-progress');
-            if (progressBar) {
-                progressBar.style.animation = 'none';
-                setTimeout(() => {
-                    progressBar.style.animation = 'slideProgress 5s linear infinite';
-                }, 10);
-            }
-        }
-
-        // Auto slide function
-        function startAutoSlideEnhanced() {
-            slideInterval = setInterval(function() {
-                slideIndex++;
-                if (slideIndex > totalSlides) slideIndex = 1;
-                showSlideEnhanced(slideIndex);
-            }, 6000); // Increased to 6 seconds for better readability
-        }
-
-        // Pause on hover
+        // Enhanced pause/resume on hover
         const slideshowContainer = document.getElementById('enhanced-slideshow');
         if (slideshowContainer) {
             slideshowContainer.addEventListener('mouseenter', function() {
-                clearInterval(slideInterval);
-                const progressBar = document.querySelector('#enhanced-slideshow .slide-progress');
-                if (progressBar) {
-                    progressBar.style.animationPlayState = 'paused';
-                }
+                console.log('🖱️ Mouse entered - pausing slideshow');
+                isHovered = true;
+                stopAutoSlideEnhanced();
             });
-
-            // Resume on mouse leave
+            
             slideshowContainer.addEventListener('mouseleave', function() {
-                startAutoSlideEnhanced();
-                const progressBar = document.querySelector('#enhanced-slideshow .slide-progress');
-                if (progressBar) {
-                    progressBar.style.animationPlayState = 'running';
-                }
+                console.log('🖱️ Mouse left - resuming slideshow');
+                isHovered = false;
+                resumeAutoSlideEnhanced();
             });
 
-            // Touch/Swipe support for mobile
+            // Enhanced touch support
             let startX = 0;
-            let endX = 0;
-
+            let startY = 0;
+            let startTime = 0;
+            
             slideshowContainer.addEventListener('touchstart', function(e) {
                 startX = e.touches[0].clientX;
-            });
-
+                startY = e.touches[0].clientY;
+                startTime = Date.now();
+                isHovered = true; // Treat touch as hover
+                stopAutoSlideEnhanced();
+            }, { passive: true });
+            
             slideshowContainer.addEventListener('touchend', function(e) {
-                endX = e.changedTouches[0].clientX;
-                handleSwipeEnhanced();
-            });
-
-            function handleSwipeEnhanced() {
-                const threshold = 50;
-                const diff = startX - endX;
-
-                if (Math.abs(diff) > threshold) {
-                    if (diff > 0) {
-                        // Swipe left - next slide
-                        changeSlideEnhanced(1);
-                    } else {
-                        // Swipe right - previous slide
-                        changeSlideEnhanced(-1);
-                    }
+                const endX = e.changedTouches[0].clientX;
+                const endY = e.changedTouches[0].clientY;
+                const endTime = Date.now();
+                
+                const diffX = startX - endX;
+                const diffY = startY - endY;
+                const diffTime = endTime - startTime;
+                
+                // Only trigger if it's a horizontal swipe (not vertical scroll)
+                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50 && diffTime < 500) {
+                    changeSlideEnhanced(diffX > 0 ? 1 : -1);
                 }
-            }
+                
+                // Resume auto slideshow after touch
+                setTimeout(() => {
+                    isHovered = false;
+                    if (!isTransitioning) {
+                        startAutoSlideEnhanced();
+                    }
+                }, 2000);
+            }, { passive: true });
         }
 
-        // Keyboard navigation
+        // Keyboard navigation with debouncing
+        let keyboardTimeout;
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'ArrowLeft') {
-                changeSlideEnhanced(-1);
-            } else if (e.key === 'ArrowRight') {
-                changeSlideEnhanced(1);
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                clearTimeout(keyboardTimeout);
+                keyboardTimeout = setTimeout(() => {
+                    if (e.key === 'ArrowLeft') changeSlideEnhanced(-1);
+                    if (e.key === 'ArrowRight') changeSlideEnhanced(1);
+                }, 100);
             }
         });
-
-        // Initialize the slideshow
-        initEnhancedSlideshow();
+        
+        // Page visibility API - pause when tab is not active
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                console.log('📱 Page hidden - pausing slideshow');
+                stopAutoSlideEnhanced();
+            } else {
+                console.log('📱 Page visible - resuming slideshow');
+                if (!isHovered) {
+                    setTimeout(startAutoSlideEnhanced, 500);
+                }
+            }
+        });
+        
+        // Debug functions
+        window.debugSlideshow = function() {
+            console.log('🔍 Slideshow Debug Info:');
+            console.log('Current slide:', slideIndex);
+            console.log('Total slides:', totalSlides);
+            console.log('Is hovered:', isHovered);
+            console.log('Is transitioning:', isTransitioning);
+            console.log('Interval active:', !!slideInterval);
+        };
+        
+        console.log('✅ Slideshow initialized successfully!');
     }
-
-    // Enhanced Mobile Detection
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
-    const isTouch = 'ontouchstart' in window;
     
-    console.log('=== HOME PAGE INITIALIZATION ===');
-    console.log('Device detection:', { isMobile, isTouch, width: window.innerWidth });
-    console.log('Document ready state:', document.readyState);
-    console.log('Current URL:', window.location.href);
-    console.log('===================================');
-    
-    // Enhanced Counter Animation Function
-    function animateCounter(element, target, duration = 2000) {
-        // Prevent multiple animations on same element
-        if (element.dataset.animated === 'true') {
-            console.log('Counter already animated:', element);
-            return;
-        }
+    // ✨ ENHANCED STATS COUNTER ANIMATION ✨
+    function animateCounter(element, target, duration = 2500) {
+        if (element.dataset.animated === 'true') return;
         
         element.dataset.animated = 'true';
-        const start = 0;
-        const steps = 60; // Number of animation steps
-        const increment = target / steps;
-        let current = start;
-        let step = 0;
-        
         element.classList.add('counting');
-        console.log('Starting counter animation:', { element, target, duration });
         
-        // Reset to 0 first
-        element.textContent = '0';
+        console.log(`🎯 Animating counter: ${target}`);
         
-        const timer = setInterval(() => {
-            step++;
-            current = Math.min(target, Math.floor(increment * step));
+        const startTime = performance.now();
+        const startValue = 0;
+        
+        function updateCounter(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
             
-            // Add easing effect (ease-out)
-            const progress = step / steps;
+            // Easing function (ease-out cubic)
             const easedProgress = 1 - Math.pow(1 - progress, 3);
-            const easedValue = Math.floor(target * easedProgress);
+            const currentValue = Math.floor(startValue + (target - startValue) * easedProgress);
             
-            element.textContent = easedValue;
+            element.textContent = currentValue;
             
-            if (step >= steps || easedValue >= target) {
+            if (progress < 1) {
+                requestAnimationFrame(updateCounter);
+            } else {
                 element.textContent = target;
-                clearInterval(timer);
-                console.log('Counter animation completed:', target);
+                console.log(`✅ Counter animation completed: ${target}`);
                 
-                // Add completion effect
+                // Completion effect
                 element.style.transform = 'scale(1.1)';
                 setTimeout(() => {
                     element.style.transform = 'scale(1)';
-                }, 200);
+                }, 300);
             }
-        }, duration / steps);
-    }
-    
-    // Enhanced Stats Animation with Multiple Triggers
-    function triggerStatsAnimation() {
-        try {
-            console.log('Triggering stats animation...');
-            const statsNumbers = document.querySelectorAll('.stats-number');
-            
-            if (statsNumbers.length === 0) {
-                console.warn('No stats numbers found!');
-                return;
-            }
-            
-            // Reset all counters first
-            statsNumbers.forEach(numberElement => {
-                numberElement.textContent = '0';
-                numberElement.style.transform = 'scale(1)';
-                numberElement.classList.remove('counting');
-            });
-            
-            // Start animations with staggered delay
-            statsNumbers.forEach((numberElement, index) => {
-                const target = parseInt(numberElement.dataset.target);
-                if (target && !isNaN(target)) {
-                    setTimeout(() => {
-                        animateCounter(numberElement, target, 2000);
-                    }, index * 300); // Staggered animation
-                }
-            });
-        } catch (error) {
-            console.error('Error in triggerStatsAnimation:', error);
         }
+        
+        requestAnimationFrame(updateCounter);
     }
     
-    // Mobile-Optimized Intersection Observer
-    const statsObserverOptions = {
-        threshold: isMobile ? 0.1 : 0.3,
-        rootMargin: isMobile ? '0px 0px -30px 0px' : '0px 0px -50px 0px'
-    };
-    
-    console.log('Observer options:', statsObserverOptions);
-    
-    let animationTriggered = false;
-    
-    const statsObserver = new IntersectionObserver(function(entries) {
-        console.log('Intersection observer triggered:', entries.length, 'entries');
-        entries.forEach(entry => {
-            console.log('Entry intersecting:', entry.isIntersecting, 'ratio:', entry.intersectionRatio);
-            if (entry.isIntersecting && !animationTriggered) {
-                console.log('Stats section is visible, triggering animation');
-                animationTriggered = true;
-                
-                // Small delay to ensure smooth animation
+    function triggerStatsAnimation() {
+        if (animationTriggered) return;
+        
+        console.log('🎬 Triggering stats animation!');
+        animationTriggered = true;
+        
+        const statsNumbers = document.querySelectorAll('.stats-number');
+        
+        if (statsNumbers.length === 0) {
+            console.warn('⚠️ No stats numbers found!');
+            return;
+        }
+        
+        // Reset all counters
+        statsNumbers.forEach(element => {
+            element.textContent = '0';
+            element.style.transform = 'scale(1)';
+            element.classList.remove('counting');
+            element.dataset.animated = 'false';
+        });
+        
+        // Start animations with staggered delay
+        statsNumbers.forEach((element, index) => {
+            const target = parseInt(element.dataset.target);
+            if (target && !isNaN(target)) {
                 setTimeout(() => {
-                    triggerStatsAnimation();
-                }, 100);
-                
-                statsObserver.unobserve(entry.target);
+                    animateCounter(element, target, 2500);
+                }, index * 200); // Staggered animation
             }
         });
-    }, statsObserverOptions);
+    }
     
-    // Initialize Stats Animation with Multiple Methods
+    // 🎯 MULTIPLE TRIGGER METHODS FOR MAXIMUM RELIABILITY
     function initStatsAnimation() {
-        try {
-            const statsSection = document.querySelector('.stats-section');
-            const statsNumbers = document.querySelectorAll('.stats-number');
-            
-            console.log('Stats elements found:', {
-                statsSection: !!statsSection,
-                statsNumbers: statsNumbers.length,
-                animationTriggered: animationTriggered
-            });
-            
-            if (!statsSection) {
-                console.warn('Stats section not found! Retrying in 500ms...');
-                setTimeout(initStatsAnimation, 500);
-                return;
-            }
-            
-            if (statsNumbers.length === 0) {
-                console.warn('No stats numbers found! Retrying in 500ms...');
-                setTimeout(initStatsAnimation, 500);
-                return;
-            }
-            
-            console.log('Initializing stats animation for:', isMobile ? 'mobile' : 'desktop');
-            
-            // Method 1: Immediate visibility check (Primary for page load)
+        const statsSection = document.querySelector('.stats-section');
+        const statsNumbers = document.querySelectorAll('.stats-number');
+        
+        if (!statsSection || statsNumbers.length === 0) {
+            console.warn('⚠️ Stats elements not found, retrying...');
+            setTimeout(initStatsAnimation, 500);
+            return;
+        }
+        
+        console.log(`📊 Found ${statsNumbers.length} stats counters`);
+        
+        // Initialize all counters to 0
+        statsNumbers.forEach(element => {
+            element.textContent = '0';
+            element.dataset.animated = 'false';
+        });
+        
+        // Method 1: Immediate visibility check
+        function checkVisibility() {
             const rect = statsSection.getBoundingClientRect();
             const windowHeight = window.innerHeight;
-            const isImmediatelyVisible = rect.top < windowHeight * 0.9 && rect.bottom > 0;
+            const isVisible = rect.top < windowHeight * 0.8 && rect.bottom > 0;
             
-            console.log('Immediate visibility check:', {
-                rectTop: rect.top,
-                rectBottom: rect.bottom,
-                windowHeight: windowHeight,
-                threshold: windowHeight * 0.9,
-                isVisible: isImmediatelyVisible
+            if (isVisible && !animationTriggered) {
+                console.log('👁️ Stats section is visible, triggering animation!');
+                setTimeout(triggerStatsAnimation, 200);
+                return true;
+            }
+            return false;
+        }
+        
+        // Check immediately
+        if (checkVisibility()) return;
+        
+        // Method 2: Intersection Observer
+        if (typeof IntersectionObserver !== 'undefined') {
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !animationTriggered) {
+                        console.log('🔍 Intersection Observer triggered!');
+                        setTimeout(triggerStatsAnimation, 100);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.2,
+                rootMargin: '0px 0px -50px 0px'
             });
             
-            if (isImmediatelyVisible && !animationTriggered) {
-                console.log('Stats section is immediately visible, triggering animation now!');
-                animationTriggered = true;
-                setTimeout(() => {
-                    triggerStatsAnimation();
-                }, 300); // Small delay for smooth loading
-                return; // Exit early since we're triggering immediately
-            }
-            
-            // Method 2: Intersection Observer (For scroll-triggered animation)
-            if (typeof IntersectionObserver !== 'undefined') {
-                console.log('Setting up Intersection Observer...');
-                statsObserver.observe(statsSection);
-            } else {
-                console.warn('IntersectionObserver not supported, using fallback');
+            observer.observe(statsSection);
+        }
+        
+        // Method 3: Scroll listener
+        let scrollTimeout;
+        function onScroll() {
+            if (scrollTimeout) return;
+            scrollTimeout = setTimeout(() => {
                 if (!animationTriggered) {
-                    animationTriggered = true;
-                    triggerStatsAnimation();
+                    checkVisibility();
                 }
+                scrollTimeout = null;
+            }, 100);
+        }
+        
+        window.addEventListener('scroll', onScroll, { passive: true });
+        
+        // Method 4: Click trigger for testing
+        statsSection.addEventListener('click', function() {
+            if (!animationTriggered) {
+                console.log('🖱️ Stats section clicked, triggering animation!');
+                triggerStatsAnimation();
             }
-            
-            // Method 2: Scroll-based fallback
-            let scrollTriggered = false;
-            
-            function checkScrollPosition() {
-                try {
-                    if (scrollTriggered || animationTriggered) return;
-                    
-                    const rect = statsSection.getBoundingClientRect();
-                    const windowHeight = window.innerHeight;
-                    const threshold = isMobile ? 0.7 : 0.8;
-                    const isVisible = rect.top < windowHeight * threshold && rect.bottom > 0;
-                    
-                    console.log('Scroll check:', { 
-                        rectTop: rect.top, 
-                        windowHeight, 
-                        threshold: windowHeight * threshold,
-                        isVisible 
-                    });
-                    
-                    if (isVisible) {
-                        console.log('Stats visible via scroll detection');
-                        scrollTriggered = true;
-                        animationTriggered = true;
-                        
-                        setTimeout(() => {
-                            triggerStatsAnimation();
-                        }, 100);
-                        
-                        window.removeEventListener('scroll', checkScrollPosition);
-                    }
-                } catch (error) {
-                    console.error('Error in scroll check:', error);
-                }
+        });
+        
+        // Method 5: Fallback timer
+        setTimeout(() => {
+            if (!animationTriggered) {
+                console.log('⏰ Fallback timer triggered!');
+                triggerStatsAnimation();
             }
-            
-            // Throttled scroll listener for better performance
-            let scrollTimeout;
-            function throttledScrollCheck() {
-                if (scrollTimeout) return;
-                scrollTimeout = setTimeout(() => {
-                    checkScrollPosition();
-                    scrollTimeout = null;
-                }, 100);
-            }
-            
-            window.addEventListener('scroll', throttledScrollCheck, { passive: true });
-            
-            // Check immediately in case already in view
-            setTimeout(checkScrollPosition, 200);
-            
-            // Method 3: Aggressive fallback timer (Ultimate fallback)
+        }, 3000);
+        
+        // Method 6: Force trigger for mobile
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
             setTimeout(() => {
-                try {
-                    if (!animationTriggered) {
-                        console.log('No animation detected after 2s, triggering manually (fallback)');
-                        animationTriggered = true;
-                        triggerStatsAnimation();
-                    }
-                } catch (error) {
-                    console.error('Error in manual trigger:', error);
+                if (!animationTriggered) {
+                    console.log('📱 Mobile fallback triggered!');
+                    triggerStatsAnimation();
                 }
             }, 2000);
-            
-            // Method 4: Super aggressive fallback for slow connections
-            setTimeout(() => {
-                try {
-                    const statsNumbers = document.querySelectorAll('.stats-number');
-                    const hasAnimated = Array.from(statsNumbers).some(el => el.dataset.animated === 'true');
-                    
-                    if (!hasAnimated) {
-                        console.log('No animation detected after 4s, forcing animation (super fallback)');
-                        animationTriggered = false; // Reset flag
-                        triggerStatsAnimation();
-                    }
-                } catch (error) {
-                    console.error('Error in super fallback:', error);
-                }
-            }, 4000);
-            
-            // Method 5: Secondary visibility check
-            setTimeout(() => {
-                try {
-                    if (!animationTriggered && statsSection) {
-                        const rect = statsSection.getBoundingClientRect();
-                        const windowHeight = window.innerHeight;
-                        const isVisible = rect.top < windowHeight * 0.8 && rect.bottom > 0;
-                        
-                        console.log('Secondary visibility check:', {
-                            rectTop: rect.top,
-                            windowHeight: windowHeight,
-                            threshold: windowHeight * 0.8,
-                            isVisible: isVisible,
-                            animationTriggered: animationTriggered
-                        });
-                        
-                        if (isVisible) {
-                            console.log('Stats section visible in secondary check, triggering animation');
-                            animationTriggered = true;
-                            setTimeout(() => {
-                                triggerStatsAnimation();
-                            }, 100);
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error in secondary visibility check:', error);
-                }
-            }, 800);
-            
-            // Method 6: Touch/Click trigger for mobile debugging
-            if (isMobile) {
-                statsSection.addEventListener('touchstart', function() {
-                    if (!animationTriggered) {
-                        console.log('Stats section touched, triggering animation');
-                        animationTriggered = true;
-                        triggerStatsAnimation();
-                    }
-                }, { once: true });
-            }
-            
-            // Method 7: Click trigger for desktop debugging
-            statsSection.addEventListener('click', function() {
-                console.log('Stats section clicked - Current state:', {
-                    animationTriggered: animationTriggered,
-                    hasAnimated: Array.from(document.querySelectorAll('.stats-number')).some(el => el.dataset.animated === 'true')
-                });
-            });
-            
-            // Method 8: Reset animation capability
-            window.resetStatsAnimation = function() {
-                console.log('Resetting stats animation...');
-                animationTriggered = false;
-                const statsNumbers = document.querySelectorAll('.stats-number');
-                statsNumbers.forEach(numberElement => {
-                    numberElement.textContent = '0';
-                    numberElement.dataset.animated = 'false';
-                    numberElement.classList.remove('counting');
-                    numberElement.style.transform = 'scale(1)';
-                });
-                console.log('Stats animation reset complete');
-            };
-            
-            // Method 9: Force trigger function for debugging
-            window.forceStatsAnimation = function() {
-                console.log('Force triggering stats animation...');
-                animationTriggered = false; // Reset flag
-                triggerStatsAnimation();
-            };
-        } catch (error) {
-            console.error('Error initializing stats animation:', error);
         }
     }
     
-    // Initialize stats animation with multiple attempts
-    console.log('Starting stats animation initialization...');
-    
-    // Try immediate initialization
-    initStatsAnimation();
-    
-    // Backup initialization attempts
-    setTimeout(() => {
-        if (!animationTriggered) {
-            console.log('Backup initialization attempt 1...');
-            initStatsAnimation();
-        }
-    }, 1000);
-    
-    setTimeout(() => {
-        if (!animationTriggered) {
-            console.log('Backup initialization attempt 2...');
-            initStatsAnimation();
-        }
-    }, 2000);
-    
-    // Add mobile debug indicator with error handling
-    if (isMobile) {
-        try {
-            const debugDiv = document.createElement('div');
-            debugDiv.className = 'mobile-debug';
-            debugDiv.innerHTML = 'Mobile Mode: Stats Ready';
-            document.body.appendChild(debugDiv);
-            
-            // Update debug info when animation triggers
-            const originalTrigger = triggerStatsAnimation;
-            triggerStatsAnimation = function() {
-                try {
-                    debugDiv.innerHTML = 'Mobile Mode: Animating!';
-                    debugDiv.style.background = 'rgba(0,128,0,0.8)';
-                    originalTrigger();
-                    
-                    setTimeout(() => {
-                        debugDiv.innerHTML = 'Mobile Mode: Complete!';
-                    }, 3000);
-                } catch (error) {
-                    console.error('Error in mobile debug trigger:', error);
-                    debugDiv.innerHTML = 'Mobile Mode: Error!';
-                    debugDiv.style.background = 'rgba(255,0,0,0.8)';
-                }
-            };
-            
-            // Add tap to trigger on mobile debug
-            debugDiv.addEventListener('touchstart', () => {
-                console.log('Mobile debug tapped, forcing animation');
-                window.forceStatsAnimation();
-            });
-        } catch (error) {
-            console.error('Error setting up mobile debug:', error);
-        }
-    }
-    
-    // Intersection Observer for fade-in animations
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
+    // 🎮 DEBUG FUNCTIONS (Available in console)
+    window.resetStatsAnimation = function() {
+        console.log('🔄 Resetting stats animation...');
+        animationTriggered = false;
+        const statsNumbers = document.querySelectorAll('.stats-number');
+        statsNumbers.forEach(element => {
+            element.textContent = '0';
+            element.dataset.animated = 'false';
+            element.classList.remove('counting');
+            element.style.transform = 'scale(1)';
+        });
+        console.log('✅ Stats animation reset complete!');
     };
     
-    const observer = new IntersectionObserver(function(entries) {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.animationDelay = entry.target.dataset.delay || '0s';
-                entry.target.classList.add('fade-in-up');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, observerOptions);
+    window.forceStatsAnimation = function() {
+        console.log('🚀 Force triggering stats animation...');
+        animationTriggered = false;
+        triggerStatsAnimation();
+    };
     
-    document.querySelectorAll('.feature-card').forEach((el, index) => {
-        el.dataset.delay = (index * 0.2) + 's';
-        observer.observe(el);
-    });
-    
-    // Smooth scroll for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'start',
-                    inline: 'nearest'
-                });
-            }
-        });
-    });
-    
-    // Enhanced button loading animation
-    document.querySelectorAll('.btn').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            if (this.href && !this.href.includes('#')) {
-                const originalContent = this.innerHTML;
-                this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
-                
-                // Reset button after 2 seconds if navigation fails
-                setTimeout(() => {
-                    this.innerHTML = originalContent;
-                }, 2000);
-            }
-        });
-    });
-    
-    // Enhanced hover effects for stats cards (Desktop only)
-    if (!isMobile) {
+    // 🎨 ENHANCED VISUAL EFFECTS
+    function initVisualEffects() {
+        // Enhanced hover effects for stats cards
         const statsCards = document.querySelectorAll('.stats-card');
         statsCards.forEach(card => {
             card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-15px) scale(1.02)';
+                this.style.transform = 'translateY(-10px) scale(1.02)';
                 this.style.zIndex = '10';
             });
+            
             card.addEventListener('mouseleave', function() {
                 this.style.transform = 'translateY(0) scale(1)';
                 this.style.zIndex = '1';
             });
         });
-    }
-    
-    // Mobile-specific stats card interactions
-    if (isMobile) {
-        const statsCards = document.querySelectorAll('.stats-card');
-        statsCards.forEach(card => {
-            card.addEventListener('touchstart', function() {
-                this.style.transform = 'translateY(-5px) scale(1.01)';
-                setTimeout(() => {
-                    this.style.transform = 'translateY(0) scale(1)';
-                }, 200);
-            });
-        });
-    }
-    
-    // Parallax effect for decorative elements
-    window.addEventListener('scroll', function() {
-        const scrolled = window.pageYOffset;
-        const parallaxElements = document.querySelectorAll('.floating-element');
         
-        parallaxElements.forEach((element, index) => {
-            const speed = 0.5 + (index * 0.2);
-            const yPos = -(scrolled * speed);
-            element.style.transform = `translateY(${yPos}px)`;
-        });
-    });
-    
-    // Reset animations on page visibility change
-    document.addEventListener('visibilitychange', function() {
-        if (document.hidden) {
-            // Pause animations when tab is not visible
-            const animatedElements = document.querySelectorAll('.slide-progress, .floating-element');
-            animatedElements.forEach(el => {
-                el.style.animationPlayState = 'paused';
+        // Parallax effect for floating elements
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const parallaxElements = document.querySelectorAll('.floating-element');
+            
+            parallaxElements.forEach((element, index) => {
+                const speed = 0.5 + (index * 0.2);
+                const yPos = -(scrolled * speed);
+                element.style.transform = `translateY(${yPos}px)`;
             });
-        } else {
-            // Resume animations when tab becomes visible
-            const animatedElements = document.querySelectorAll('.slide-progress, .floating-element');
-            animatedElements.forEach(el => {
-                el.style.animationPlayState = 'running';
-            });
-        }
-    });
-    
-    // Reset animation on page reload
-    window.addEventListener('beforeunload', function() {
-        const statsNumbers = document.querySelectorAll('.stats-number');
-        statsNumbers.forEach(numberElement => {
-            numberElement.textContent = '0';
-            numberElement.classList.remove('counting');
-            numberElement.dataset.animated = 'false';
         });
-    });
-    
-    // Initialize stats numbers to 0 on page load
-    const statsNumbers = document.querySelectorAll('.stats-number');
-    statsNumbers.forEach(numberElement => {
-        numberElement.textContent = '0';
-        numberElement.dataset.animated = 'false';
-        numberElement.style.transition = 'transform 0.2s ease';
-    });
-    
-    // Debug functions remain available in console for development
-    // Use: window.resetStatsAnimation() or window.forceStatsAnimation() in browser console if needed
-
-    // Add lazy loading for better performance
-    try {
-        const lazyImages = document.querySelectorAll('.news-image, .slide');
-        const imageObserver = new IntersectionObserver((entries) => {
+        
+        // Fade-in animations for other elements
+        const observer = new IntersectionObserver(function(entries) {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('loaded');
-                    imageObserver.unobserve(entry.target);
+                    entry.target.classList.add('fade-in-up');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        document.querySelectorAll('.feature-card, .news-card, .sidebar-card').forEach(el => {
+            observer.observe(el);
+        });
+    }
+    
+    // 🚀 INITIALIZATION
+    function init() {
+        console.log('🎉 Home page initialization complete!');
+        
+        // Initialize stats animation
+        initStatsAnimation();
+        
+        // Initialize visual effects
+        initVisualEffects();
+        
+        // Enhanced button loading animation
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                if (this.href && !this.href.includes('#')) {
+                    const originalContent = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
+                    setTimeout(() => {
+                        this.innerHTML = originalContent;
+                    }, 2000);
                 }
             });
         });
-
-        lazyImages.forEach(img => imageObserver.observe(img));
-    } catch (error) {
-        console.error('Error setting up lazy loading:', error);
-    }
-    
-        } catch (error) {
-            console.error('Error in home page initialization:', error);
-            // Even if there's an error, try to trigger stats animation as fallback
-            setTimeout(() => {
-                try {
-                    console.log('Error fallback: attempting to trigger stats animation');
-                    const statsNumbers = document.querySelectorAll('.stats-number');
-                    if (statsNumbers.length > 0) {
-                        triggerStatsAnimation();
-                    }
-                } catch (fallbackError) {
-                    console.error('Error in fallback trigger:', fallbackError);
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start'
+                    });
                 }
-            }, 1000);
-        }
+            });
+        });
     }
     
-    // Initialize when DOM is ready with multiple attempts
-    console.log('Document ready state:', document.readyState);
-    
+    // 🎬 START EVERYTHING
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('DOMContentLoaded event fired');
-            initHomePage();
-        });
+        document.addEventListener('DOMContentLoaded', init);
     } else {
-        // DOM already loaded
-        console.log('DOM already loaded, initializing immediately');
-        setTimeout(initHomePage, 100);
+        setTimeout(init, 100);
     }
     
     // Additional safety net
     window.addEventListener('load', () => {
-        console.log('Window load event fired');
         setTimeout(() => {
             if (!animationTriggered) {
-                console.log('Window load fallback: triggering stats animation');
+                console.log('🔄 Window load fallback triggered!');
                 const statsSection = document.querySelector('.stats-section');
                 if (statsSection) {
                     const rect = statsSection.getBoundingClientRect();
-                    const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
-                    if (isVisible) {
+                    if (rect.top < window.innerHeight && rect.bottom > 0) {
                         triggerStatsAnimation();
                     }
                 }
             }
         }, 500);
     });
+    
+    console.log('✨ Stats animation system ready! Use window.forceStatsAnimation() to test.');
+    console.log('🎬 Slideshow debug: Use window.debugSlideshow() to check status.');
 })();
 </script>
 @endsection

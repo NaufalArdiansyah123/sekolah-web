@@ -731,12 +731,6 @@
                 <div class="sidebar-section">
                     <div class="sidebar-header">Media Upload</div>
                     <div class="sidebar-body">
-                        
-
-                       
-
-                        
-
                         @if($schoolProfile->hero_image)
                             <div class="image-preview">
                                 <label class="form-label">Current Hero Image:</label>

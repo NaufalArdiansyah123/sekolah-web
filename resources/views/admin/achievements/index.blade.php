@@ -775,7 +775,7 @@
                     </svg>
                     Tambah Prestasi
                 </a>
-                <a href="{{ route('public.achievements.index') }}" target="_blank" class="btn btn-success">
+                <a href="{{ route('public.achievements') }}" target="_blank" class="btn btn-success">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
@@ -827,6 +827,18 @@
         <div class="stat-card">
             <div class="stat-header">
                 <div class="stat-icon red">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"/>
+                    </svg>
+                </div>
+            </div>
+            <h3 class="stat-value">{{ $statistics['inactive'] ?? 0 }}</h3>
+            <p class="stat-label">Tidak Aktif</p>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
@@ -916,7 +928,7 @@
         @if($achievements->count() > 0)
             <div class="achievements-grid">
                 @foreach($achievements as $achievement)
-                <div class="achievement-card">
+                <div class="achievement-card" data-achievement-id="{{ $achievement->id }}">
                     <div class="achievement-image">
                         @if($achievement->image)
                             <img src="{{ asset($achievement->image) }}" alt="{{ $achievement->title }}" loading="lazy">
@@ -1026,38 +1038,103 @@
 function toggleStatus(id) {
     if (confirm('Ubah status prestasi ini?')) {
         const card = document.querySelector(`[data-achievement-id="${id}"]`);
+        const toggleBtn = card ? card.querySelector('.btn-toggle') : null;
+        
+        // Add loading state
         if (card) card.classList.add('loading');
+        if (toggleBtn) {
+            toggleBtn.disabled = true;
+            toggleBtn.innerHTML = '<svg class="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Loading...';
+        }
+        
+        // Check CSRF token
+        const csrfToken = document.querySelector('meta[name="csrf-token"]');
+        if (!csrfToken) {
+            showNotification('CSRF token tidak ditemukan. Silakan refresh halaman.', 'error');
+            if (card) card.classList.remove('loading');
+            if (toggleBtn) {
+                toggleBtn.disabled = false;
+                toggleBtn.innerHTML = '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"/></svg> Toggle';
+            }
+            return;
+        }
         
         fetch(`/admin/achievements/${id}/toggle-status`, {
             method: 'POST',
             headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'X-CSRF-TOKEN': csrfToken.getAttribute('content'),
                 'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            credentials: 'same-origin'
         })
         .then(response => {
+            // Handle different response types
+            if (response.status === 419) {
+                throw new Error('Session expired. Silakan login ulang.');
+            }
+            if (response.status === 403) {
+                throw new Error('Anda tidak memiliki izin untuk melakukan aksi ini.');
+            }
+            if (response.status === 404) {
+                throw new Error('Prestasi tidak ditemukan.');
+            }
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            return response.json();
+            
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                return response.json();
+            } else {
+                throw new Error('Response bukan JSON. Mungkin terjadi redirect atau error server.');
+            }
         })
         .then(data => {
             if (data.success) {
-                // Show success message
-                showNotification('Status prestasi berhasil diubah!', 'success');
-                setTimeout(() => location.reload(), 1000);
+                // Update UI immediately without reload
+                updateAchievementStatus(id, data.is_active);
+                showNotification(data.message || 'Status prestasi berhasil diubah!', 'success');
             } else {
                 throw new Error(data.message || 'Gagal mengubah status');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            showNotification('Terjadi kesalahan saat mengubah status', 'error');
+            
+            // Handle specific errors
+            if (error.message.includes('Session expired') || error.message.includes('419')) {
+                showNotification('Session expired. Halaman akan di-refresh...', 'error');
+                setTimeout(() => location.reload(), 2000);
+            } else if (error.message.includes('403')) {
+                showNotification('Anda tidak memiliki izin untuk melakukan aksi ini.', 'error');
+            } else if (error.message.includes('404')) {
+                showNotification('Prestasi tidak ditemukan.', 'error');
+            } else {
+                showNotification('Terjadi kesalahan: ' + error.message, 'error');
+            }
         })
         .finally(() => {
+            // Remove loading state
             if (card) card.classList.remove('loading');
+            if (toggleBtn) {
+                toggleBtn.disabled = false;
+                toggleBtn.innerHTML = '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"/></svg> Toggle';
+            }
         });
+    }
+}
+
+// Function to update achievement status in UI
+function updateAchievementStatus(id, isActive) {
+    const card = document.querySelector(`[data-achievement-id="${id}"]`);
+    if (!card) return;
+    
+    const badge = card.querySelector('.badge-active, .badge-inactive');
+    if (badge) {
+        badge.className = `achievement-badge ${isActive ? 'badge-active' : 'badge-inactive'}`;
+        badge.textContent = isActive ? 'Aktif' : 'Tidak Aktif';
     }
 }
 

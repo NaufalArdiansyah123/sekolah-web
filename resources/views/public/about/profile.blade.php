@@ -731,13 +731,13 @@
                                     </div>
                                 @endif
                             @endif
-                            <div class="timeline-item fade-in-up" style="animation-delay: 0.7s;">
+                            <!-- <div class="timeline-item fade-in-up" style="animation-delay: 0.7s;">
                                 <div class="timeline-marker bg-info"></div>
                                 <div class="timeline-content">
                                     <h6 class="fw-bold text-info">{{ date('Y') }} - Sekarang</h6>
                                     <p class="mb-0">Era pembelajaran modern dan inovasi teknologi pendidikan</p>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>

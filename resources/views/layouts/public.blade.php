@@ -6,7 +6,21 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <meta name="description" content="Website resmi sekolah">
-    <title>@yield('title', \App\Models\Setting::get('school_name', 'SMK PGRI 2 PONOROGO'))</title>
+    <title>@yield('title', school_name())</title>
+    
+    <!-- Dynamic Favicon -->
+    @php
+        $schoolFavicon = school_setting('school_favicon');
+    @endphp
+    @if($schoolFavicon && !str_contains($schoolFavicon, 'tmp'))
+        <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . $schoolFavicon) }}">
+        <link rel="shortcut icon" type="image/x-icon" href="{{ asset('storage/' . $schoolFavicon) }}">
+        <link rel="apple-touch-icon" href="{{ asset('storage/' . $schoolFavicon) }}">
+    @else
+        <!-- Default favicon fallback -->
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+        <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    @endif
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -1103,7 +1117,7 @@
             <div class="loader-logo">
                 <i class="fas fa-graduation-cap"></i>
             </div>
-            <div class="loader-text">{{ \App\Models\Setting::get('school_name', 'SMK PGRI 2 PONOROGO') }}</div>
+            <div class="loader-text">{{ school_name() }}</div>
             <div class="loader-progress">
                 <div class="loader-progress-bar"></div>
             </div>
@@ -1123,10 +1137,10 @@
             <a class="navbar-brand" href="{{ route('home') }}">
                 <div class="brand-icon">
                     @php
-                        // Force fresh data dari database
-                        $schoolLogo = \App\Models\Setting::where('key', 'school_logo')->value('value');
-                        $schoolName = \App\Models\Setting::where('key', 'school_name')->value('value') ?: 'SMK PGRI 2 PONOROGO';
-                        $schoolSubtitle = \App\Models\Setting::where('key', 'school_subtitle')->value('value') ?: 'Terbukti Lebih Maju';
+                        // Use helper functions for better performance
+                        $schoolLogo = school_setting('school_logo');
+                        $schoolName = school_name();
+                        $schoolSubtitle = school_subtitle();
                     @endphp
                     @if($schoolLogo && !str_contains($schoolLogo, 'tmp'))
                         <img src="{{ asset('storage/' . $schoolLogo) }}" alt="Logo {{ $schoolName }}" onerror="this.src='{{ asset('images/logo-sterida.png') }}'; console.log('Logo fallback used');">
@@ -1300,7 +1314,7 @@
                     @else
                         <!-- Student Account Registration Button -->
                         @php
-                            $allowRegistration = \App\Models\Setting::get('allow_registration', '1');
+                            $allowRegistration = school_setting('allow_registration', '1');
                         @endphp
                         @if($allowRegistration === '1')
                         <li class="nav-item me-2">
@@ -1349,14 +1363,14 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
-                    <h5><i class="fas fa-graduation-cap me-2"></i>{{ \App\Models\Setting::get('school_name', 'SMK PGRI 2 PONOROGO') }}</h5>
-                    <p class="mb-3">{{ \App\Models\Setting::get('footer_description', 'Excellence in Education - Membentuk generasi yang berkarakter dan berprestasi untuk masa depan Indonesia yang gemilang.') }}</p>
+                    <h5><i class="fas fa-graduation-cap me-2"></i>{{ school_name() }}</h5>
+                    <p class="mb-3">{{ school_setting('footer_description', 'Excellence in Education - Membentuk generasi yang berkarakter dan berprestasi untuk masa depan Indonesia yang gemilang.') }}</p>
                     <div class="social-links">
                         @php
-                            $facebookUrl = \App\Models\Setting::get('footer_facebook');
-                            $instagramUrl = \App\Models\Setting::get('footer_instagram');
-                            $youtubeUrl = \App\Models\Setting::get('footer_youtube');
-                            $twitterUrl = \App\Models\Setting::get('footer_twitter');
+                            $facebookUrl = school_setting('footer_facebook');
+                            $instagramUrl = school_setting('footer_instagram');
+                            $youtubeUrl = school_setting('footer_youtube');
+                            $twitterUrl = school_setting('footer_twitter');
                         @endphp
                         
                         @if($facebookUrl)
@@ -1427,9 +1441,9 @@
                 <div class="col-lg-3 col-md-6">
                     <h6 class="fw-bold mb-3">Kontak Kami</h6>
                     @php
-                        $footerAddress = \App\Models\Setting::get('footer_address', 'Jl. Pendidikan No. 123, Ponorogo, Jawa Timur 63411');
-                        $footerPhone = \App\Models\Setting::get('footer_phone', '(0352) 123-4567');
-                        $footerEmail = \App\Models\Setting::get('footer_email', 'info@smkpgri2ponorogo.sch.id');
+                        $footerAddress = school_setting('footer_address', 'Jl. Pendidikan No. 123, Ponorogo, Jawa Timur 63411');
+                        $footerPhone = school_setting('footer_phone', '(0352) 123-4567');
+                        $footerEmail = school_setting('footer_email', 'info@smkpgri2ponorogo.sch.id');
                     @endphp
                     
                     @if($footerAddress)
@@ -1457,7 +1471,7 @@
             <hr style="border-color: rgba(255,255,255,0.2); margin: 2rem 0 1rem 0;">
             <div class="row align-items-center">
                 <div class="col-md-6">
-                    <p class="mb-0">&copy; 2024 {{ \App\Models\Setting::get('school_name', 'SMK PGRI 2 PONOROGO') }}. All rights reserved.</p>
+                    <p class="mb-0">&copy; 2024 {{ school_name() }}. All rights reserved.</p>
                 </div>
                 <div class="col-md-6 text-md-end">
                     <p class="mb-0">

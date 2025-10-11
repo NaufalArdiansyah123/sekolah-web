@@ -714,7 +714,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::get('/{achievement}/edit', [AchievementController::class, 'edit'])->name('edit');
         Route::put('/{achievement}', [AchievementController::class, 'update'])->name('update');
         Route::delete('/{achievement}', [AchievementController::class, 'destroy'])->name('destroy');
-        Route::post('/{achievement}/toggle-status', [AchievementController::class, 'toggleStatus'])->name('toggle-status');
+        Route::post('/{achievement}/toggle-status', [AchievementController::class, 'toggleStatus'])->name('achievements.toggle-status');
         Route::post('/{achievement}/toggle-featured', [AchievementController::class, 'toggleFeatured'])->name('toggle-featured');
         Route::post('/bulk-action', [AchievementController::class, 'bulkAction'])->name('bulk-action');
     });

@@ -13,6 +13,14 @@ use Illuminate\Validation\ValidationException;
 class AchievementController extends Controller
 {
     /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('role:admin');
+    }
+    /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
@@ -303,19 +311,49 @@ class AchievementController extends Controller
      */
     public function toggleStatus(Achievement $achievement)
     {
-        $achievement->update(['is_active' => !$achievement->is_active]);
-        
-        $status = $achievement->is_active ? 'activated' : 'deactivated';
-        NotificationService::success(
-            'Achievement ' . ucfirst($status), 
-            $achievement->title . ' has been ' . $status . ' successfully!'
-        );
-        
-        return response()->json([
-            'success' => true,
-            'message' => 'Achievement ' . $status . ' successfully!',
-            'is_active' => $achievement->is_active
-        ]);
+        try {
+            \Log::info('🔄 Toggle Status Request', [
+                'achievement_id' => $achievement->id,
+                'current_status' => $achievement->is_active,
+                'user_id' => auth()->id(),
+                'user_email' => auth()->user()->email ?? 'unknown'
+            ]);
+            
+            $oldStatus = $achievement->is_active;
+            $achievement->update(['is_active' => !$achievement->is_active]);
+            
+            $status = $achievement->is_active ? 'activated' : 'deactivated';
+            
+            \Log::info('✅ Toggle Status Success', [
+                'achievement_id' => $achievement->id,
+                'old_status' => $oldStatus,
+                'new_status' => $achievement->is_active,
+                'status_text' => $status
+            ]);
+            
+            NotificationService::success(
+                'Achievement ' . ucfirst($status), 
+                $achievement->title . ' has been ' . $status . ' successfully!'
+            );
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Achievement ' . $status . ' successfully!',
+                'is_active' => $achievement->is_active
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('❌ Toggle Status Error', [
+                'achievement_id' => $achievement->id ?? 'unknown',
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

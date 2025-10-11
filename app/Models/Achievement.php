@@ -53,12 +53,43 @@ class Achievement extends Model
 
     /**
      * Retrieve the model for a bound value.
+     * For admin routes, allow access to both active and inactive achievements
+     * For public routes, only allow active achievements
      */
     public function resolveRouteBinding($value, $field = null)
     {
-        return $this->where('id', $value)
+        // Check if this is an admin route
+        $currentRoute = request()->route();
+        $routeName = $currentRoute ? $currentRoute->getName() : '';
+        
+        \Log::info('🔍 Achievement Route Binding', [
+            'achievement_id' => $value,
+            'route_name' => $routeName,
+            'is_admin_route' => str_starts_with($routeName, 'admin.'),
+            'request_method' => request()->method(),
+            'request_url' => request()->url()
+        ]);
+        
+        // Allow admin to access both active and inactive achievements
+        if (str_starts_with($routeName, 'admin.')) {
+            $achievement = $this->where('id', $value)->first();
+            \Log::info('✅ Admin Route - Achievement Found', [
+                'achievement_id' => $value,
+                'found' => $achievement ? true : false,
+                'is_active' => $achievement ? $achievement->is_active : null
+            ]);
+            return $achievement;
+        }
+        
+        // For public routes, only show active achievements
+        $achievement = $this->where('id', $value)
                     ->where('is_active', true)
                     ->first();
+        \Log::info('🌐 Public Route - Achievement Found', [
+            'achievement_id' => $value,
+            'found' => $achievement ? true : false
+        ]);
+        return $achievement;
     }
 
     // Scope untuk achievement yang aktif
@@ -259,22 +290,48 @@ class Achievement extends Model
     // Method untuk mendapatkan statistik achievements
     public static function getStatistics()
     {
-        return [
-            'total' => static::active()->count(),
-            'featured' => static::active()->featured()->count(),
-            'by_level' => static::active()
-                               ->selectRaw('level, COUNT(*) as count')
-                               ->groupBy('level')
-                               ->pluck('count', 'level')
-                               ->toArray(),
-            'by_category' => static::active()
-                                  ->selectRaw('category, COUNT(*) as count')
-                                  ->groupBy('category')
-                                  ->pluck('count', 'category')
-                                  ->toArray(),
-            'recent' => static::active()
-                             ->where('created_at', '>=', now()->subDays(30))
-                             ->count()
-        ];
+        // Check if this is being called from admin context
+        $currentRoute = request()->route();
+        $routeName = $currentRoute ? $currentRoute->getName() : '';
+        $isAdmin = str_starts_with($routeName, 'admin.');
+        
+        if ($isAdmin) {
+            // For admin, show all achievements (active and inactive)
+            return [
+                'total' => static::count(),
+                'active' => static::where('is_active', true)->count(),
+                'inactive' => static::where('is_active', false)->count(),
+                'featured' => static::where('is_featured', true)->count(),
+                'by_level' => static::selectRaw('level, COUNT(*) as count')
+                                   ->groupBy('level')
+                                   ->pluck('count', 'level')
+                                   ->toArray(),
+                'by_category' => static::selectRaw('category, COUNT(*) as count')
+                                      ->groupBy('category')
+                                      ->pluck('count', 'category')
+                                      ->toArray(),
+                'recent' => static::where('created_at', '>=', now()->subDays(30))
+                                 ->count()
+            ];
+        } else {
+            // For public, show only active achievements
+            return [
+                'total' => static::active()->count(),
+                'featured' => static::active()->featured()->count(),
+                'by_level' => static::active()
+                                   ->selectRaw('level, COUNT(*) as count')
+                                   ->groupBy('level')
+                                   ->pluck('count', 'level')
+                                   ->toArray(),
+                'by_category' => static::active()
+                                      ->selectRaw('category, COUNT(*) as count')
+                                      ->groupBy('category')
+                                      ->pluck('count', 'category')
+                                      ->toArray(),
+                'recent' => static::active()
+                                 ->where('created_at', '>=', now()->subDays(30))
+                                 ->count()
+            ];
+        }
     }
 }

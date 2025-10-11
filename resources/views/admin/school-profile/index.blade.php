@@ -685,7 +685,7 @@
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th style="width: 5%">#</th>
+                            <th style="width: 5%">Id</th>
                             <th style="width: 30%">School & Details</th>
                             <th style="width: 10%">Established</th>
                             <th style="width: 10%">Accreditation</th>

@@ -23,10 +23,26 @@ class AppServiceProvider extends ServiceProvider
     {
         // Load helper files
         require_once app_path('Helpers/RegistrationHelper.php');
+        require_once app_path('Helpers/SettingsHelper.php');
+        
+        // Register view composers
+        $this->registerViewComposers();
+        
+        // Share school settings to all views
+        $this->shareSchoolSettings();
     }
     
     /**
-     * Share school settings to all views
+     * Register view composers
+     */
+    private function registerViewComposers()
+    {
+        // Register school settings composer for all views
+        View::composer('*', \App\View\Composers\SchoolSettingsComposer::class);
+    }
+    
+    /**
+     * Share school settings to all views (fallback method)
      */
     private function shareSchoolSettings()
     {
@@ -37,6 +53,7 @@ class AppServiceProvider extends ServiceProvider
                 // Add default values if not set
                 $schoolSettings = array_merge([
                     'school_name' => 'SMK PGRI 2 PONOROGO',
+                    'school_subtitle' => 'Terbukti Lebih Maju',
                     'school_logo' => '',
                     'school_address' => '',
                     'school_phone' => '',
@@ -57,6 +74,7 @@ class AppServiceProvider extends ServiceProvider
             // Silently fail if settings table doesn't exist yet
             View::share('schoolSettings', [
                 'school_name' => 'SMK PGRI 2 PONOROGO',
+                'school_subtitle' => 'Terbukti Lebih Maju',
                 'school_logo' => '',
                 'school_address' => '',
                 'school_phone' => '',

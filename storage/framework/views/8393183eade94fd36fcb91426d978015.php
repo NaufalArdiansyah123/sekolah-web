@@ -8,7 +8,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
 
-    <title><?php echo e($title ?? 'Admin'); ?> - <?php echo e(config('app.name')); ?></title>
+    <title><?php echo e($title ?? 'Admin'); ?> - <?php echo e(school_name()); ?></title>
+    
+    <!-- Dynamic Favicon -->
+    <?php
+        $schoolFavicon = school_setting('school_favicon');
+    ?>
+    <?php if($schoolFavicon && !str_contains($schoolFavicon, 'tmp')): ?>
+        <link rel="icon" type="image/x-icon" href="<?php echo e(asset('storage/' . $schoolFavicon)); ?>">
+        <link rel="shortcut icon" type="image/x-icon" href="<?php echo e(asset('storage/' . $schoolFavicon)); ?>">
+        <link rel="apple-touch-icon" href="<?php echo e(asset('storage/' . $schoolFavicon)); ?>">
+    <?php else: ?>
+        <!-- Default favicon fallback -->
+        <link rel="icon" type="image/x-icon" href="<?php echo e(asset('favicon.ico')); ?>">
+        <link rel="shortcut icon" type="image/x-icon" href="<?php echo e(asset('favicon.ico')); ?>">
+    <?php endif; ?>
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">

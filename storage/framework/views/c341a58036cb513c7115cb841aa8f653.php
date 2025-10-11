@@ -529,7 +529,7 @@
             </div>
             <div class="flex-1">
                 <div class="logo-text">Admin Panel</div>
-                <div class="logo-subtitle">SMA Negeri 1</div>
+                <div class="logo-subtitle"><?php echo e(school_name()); ?></div>
             </div>
         </div>
         

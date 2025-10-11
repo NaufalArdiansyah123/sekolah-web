@@ -8,7 +8,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $title ?? 'Admin' }} - {{ config('app.name') }}</title>
+    <title>{{ $title ?? 'Admin' }} - {{ school_name() }}</title>
+    
+    <!-- Dynamic Favicon -->
+    @php
+        $schoolFavicon = school_setting('school_favicon');
+    @endphp
+    @if($schoolFavicon && !str_contains($schoolFavicon, 'tmp'))
+        <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . $schoolFavicon) }}">
+        <link rel="shortcut icon" type="image/x-icon" href="{{ asset('storage/' . $schoolFavicon) }}">
+        <link rel="apple-touch-icon" href="{{ asset('storage/' . $schoolFavicon) }}">
+    @else
+        <!-- Default favicon fallback -->
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+        <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    @endif
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
