@@ -34,10 +34,7 @@ use App\Http\Controllers\Admin\{
 use App\Http\Controllers\Public\AchievementController as PublicAchievementController;
 
 // Import Student Controllers
-use App\Http\Controllers\Student\MaterialController;
-use App\Http\Controllers\Student\AssignmentController;
 use App\Http\Controllers\Student\GradeController;
-use App\Http\Controllers\Student\QuizController;
 use App\Http\Controllers\Student\AttendanceController;
 // use App\Http\Controllers\Admin\StudyProgramController;
 
@@ -373,16 +370,20 @@ Route::middleware('auth')->group(function () {
             'roles' => $user->roles->pluck('name')->toArray(),
             'has_admin' => $user->hasRole('admin'),
             'has_teacher' => $user->hasRole('teacher'),
+            'has_guru_piket' => $user->hasRole('guru_piket'),
             'has_student' => $user->hasRole('student')
         ]);
         
-        // Prioritas: admin > teacher > student
+        // Prioritas: admin > teacher > guru_piket > student
         if ($user->hasRole('admin')) {
             \Illuminate\Support\Facades\Log::info('Redirecting to admin dashboard');
             return redirect()->route('admin.dashboard');
         } elseif ($user->hasRole('teacher')) {
             \Illuminate\Support\Facades\Log::info('Redirecting to teacher dashboard');
             return redirect()->route('teacher.dashboard');
+        } elseif ($user->hasRole('guru_piket')) {
+            \Illuminate\Support\Facades\Log::info('Redirecting to guru piket dashboard');
+            return redirect()->route('guru-piket.dashboard');
         } elseif ($user->hasRole('student')) {
             \Illuminate\Support\Facades\Log::info('Redirecting to student dashboard');
             return redirect()->route('student.dashboard');
@@ -864,6 +865,8 @@ Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')
     // Teacher Attendance Management Routes
     Route::prefix('attendance')->name('attendance.')->group(function () {
         Route::get('/', [App\Http\Controllers\Teacher\AttendanceController::class, 'index'])->name('index');
+        Route::get('/qr-scanner', [App\Http\Controllers\Teacher\AttendanceController::class, 'qrScanner'])->name('qr-scanner');
+        Route::post('/scan-qr', [App\Http\Controllers\Teacher\AttendanceController::class, 'scanQr'])->name('scan-qr');
         Route::post('/mark', [App\Http\Controllers\Teacher\AttendanceController::class, 'markAttendance'])->name('mark');
         Route::post('/bulk-mark', [App\Http\Controllers\Teacher\AttendanceController::class, 'bulkMarkAttendance'])->name('bulk-mark');
         Route::post('/update-notes', [App\Http\Controllers\Teacher\AttendanceController::class, 'updateAttendanceNotes'])->name('update-notes');
@@ -872,6 +875,11 @@ Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')
         Route::get('/export', [App\Http\Controllers\Teacher\AttendanceController::class, 'exportAttendance'])->name('export');
         Route::get('/monthly-report', [App\Http\Controllers\Teacher\AttendanceController::class, 'monthlyReport'])->name('monthly-report');
         Route::get('/statistics', [App\Http\Controllers\Teacher\AttendanceController::class, 'attendanceStatistics'])->name('statistics');
+        
+        // Submit to Guru Piket
+        Route::post('/submit-to-guru-piket', [App\Http\Controllers\Teacher\AttendanceController::class, 'submitToGuruPiket'])->name('submit-to-guru-piket');
+        Route::get('/submissions', [App\Http\Controllers\Teacher\AttendanceController::class, 'getSubmissions'])->name('submissions');
+        Route::get('/submissions/{id}', [App\Http\Controllers\Teacher\AttendanceController::class, 'getSubmissionDetail'])->name('submissions.detail');
     });
 
     // Teacher Quiz Management Routes
@@ -910,6 +918,53 @@ Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')
 
 /*
 |--------------------------------------------------------------------------
+| Guru Piket Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'role:guru_piket'])->prefix('guru-piket')->name('guru-piket.')->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\GuruPiket\DashboardController::class, 'index'])->name('dashboard');
+    
+    // Guru Piket Profile Management Routes
+    Route::get('/profile', [App\Http\Controllers\GuruPiket\ProfileController::class, 'index'])->name('profile');
+    Route::put('/profile/update', [App\Http\Controllers\GuruPiket\ProfileController::class, 'update'])->name('profile.update')->middleware('throttle:5,1');
+    Route::put('/profile/password', [App\Http\Controllers\GuruPiket\ProfileController::class, 'updatePassword'])->name('profile.password')->middleware('throttle:3,1');
+    Route::post('/profile/avatar', [App\Http\Controllers\GuruPiket\ProfileController::class, 'updateAvatar'])->name('profile.avatar')->middleware('throttle:5,1');
+    
+    // Attendance Management Routes
+    Route::prefix('attendance')->name('attendance.')->group(function () {
+        // QR Scanner
+        Route::get('/qr-scanner', [App\Http\Controllers\GuruPiket\AttendanceController::class, 'qrScanner'])->name('qr-scanner');
+        Route::post('/scan-qr', [App\Http\Controllers\GuruPiket\AttendanceController::class, 'scanQr'])->name('scan-qr');
+        
+        // Student Attendance Management
+        Route::get('/students', [App\Http\Controllers\GuruPiket\AttendanceController::class, 'students'])->name('students');
+        Route::post('/students/mark', [App\Http\Controllers\GuruPiket\AttendanceController::class, 'markStudentAttendance'])->name('students.mark');
+        Route::post('/students/bulk-mark', [App\Http\Controllers\GuruPiket\AttendanceController::class, 'bulkMarkStudentAttendance'])->name('students.bulk-mark');
+        
+        // Teacher Attendance Management
+        Route::get('/teachers', [App\Http\Controllers\GuruPiket\AttendanceController::class, 'teachers'])->name('teachers');
+        Route::post('/teachers/mark', [App\Http\Controllers\GuruPiket\AttendanceController::class, 'markTeacherAttendance'])->name('teachers.mark');
+        Route::post('/teachers/bulk-mark', [App\Http\Controllers\GuruPiket\AttendanceController::class, 'bulkMarkTeacherAttendance'])->name('teachers.bulk-mark');
+        
+        // Teacher Submissions Management
+        Route::get('/submissions', [App\Http\Controllers\GuruPiket\AttendanceController::class, 'submissions'])->name('submissions');
+        Route::get('/submissions/api', [App\Http\Controllers\GuruPiket\AttendanceController::class, 'getPendingSubmissions'])->name('submissions.api');
+        Route::get('/submissions/{id}/detail', [App\Http\Controllers\GuruPiket\AttendanceController::class, 'getSubmissionDetail'])->name('submissions.detail');
+        Route::post('/submissions/{id}/confirm', [App\Http\Controllers\GuruPiket\AttendanceController::class, 'confirmSubmission'])->name('submissions.confirm');
+    });
+    
+    // Reports Routes
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/daily', [App\Http\Controllers\GuruPiket\ReportController::class, 'daily'])->name('daily');
+        Route::get('/monthly', [App\Http\Controllers\GuruPiket\ReportController::class, 'monthly'])->name('monthly');
+        Route::get('/export', [App\Http\Controllers\GuruPiket\ReportController::class, 'export'])->name('export');
+        Route::post('/export/generate', [App\Http\Controllers\GuruPiket\ReportController::class, 'generateExport'])->name('export.generate');
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
 | Student Routes - FIXED
 |--------------------------------------------------------------------------
 */
@@ -934,28 +989,9 @@ Route::group([
     Route::get('/profile/security', [App\Http\Controllers\Student\ProfileController::class, 'getSecuritySettings'])->name('profile.security');
     Route::get('/profile/download-data', [App\Http\Controllers\Student\ProfileController::class, 'downloadData'])->name('profile.download-data')->middleware('throttle:2,1');
     
-    // Student Materials Routes - EXPLICIT DEFINITION
-    Route::get('/materials', [MaterialController::class, 'index'])->name('materials.index');
-    Route::get('/materials/{id}', [MaterialController::class, 'show'])->name('materials.show');
-    Route::get('/materials/{id}/download', [MaterialController::class, 'download'])->name('materials.download');
-    
-    // Student Assignments Routes
-    Route::get('/assignments', [AssignmentController::class, 'index'])->name('assignments.index');
-    Route::get('/assignments/{id}', [AssignmentController::class, 'show'])->name('assignments.show');
-    Route::post('/assignments/{id}/submit', [AssignmentController::class, 'submit'])->name('assignments.submit');
-    Route::get('/assignments/{id}/status', [AssignmentController::class, 'checkStatus'])->name('assignments.status');
-    
     // Student Notifications Routes
     Route::get('/notifications', [\App\Http\Controllers\Student\NotificationController::class, 'getNotifications'])->name('notifications.get');
     Route::get('/notifications/count', [\App\Http\Controllers\Student\NotificationController::class, 'getNotificationCount'])->name('notifications.count');
-    
-    // Student Quiz Routes
-    Route::get('/quizzes', [QuizController::class, 'index'])->name('quizzes.index');
-    Route::get('/quizzes/{id}', [QuizController::class, 'show'])->name('quizzes.show');
-    Route::post('/quizzes/{id}/start', [QuizController::class, 'start'])->name('quizzes.start');
-    Route::get('/quiz-attempts/{attemptId}/take', [QuizController::class, 'take'])->name('quizzes.take');
-    Route::post('/quiz-attempts/{attemptId}/submit', [QuizController::class, 'submit'])->name('quizzes.submit');
-    Route::get('/quiz-attempts/{attemptId}/result', [QuizController::class, 'result'])->name('quizzes.result');
     
 
     
@@ -969,10 +1005,11 @@ Route::group([
     Route::get('/grades/subject/{subject}', [GradeController::class, 'subject'])->name('grades.subject');
     Route::get('/grades/{id}', [GradeController::class, 'show'])->name('grades.show');
     
-    // Student QR Attendance Routes
+    // Student QR Attendance Routes (Display Only - No Scanner)
     Route::prefix('attendance')->name('attendance.')->group(function () {
-        Route::get('/qr-scanner', [App\Http\Controllers\Student\AttendanceController::class, 'index'])->name('qr-scanner');
-        Route::post('/scan', [App\Http\Controllers\Student\AttendanceController::class, 'scanQr'])->name('scan');
+        Route::get('/', [App\Http\Controllers\Student\AttendanceController::class, 'index'])->name('index');
+        Route::get('/qr-display', [App\Http\Controllers\Student\AttendanceController::class, 'index'])->name('qr-display');
+        Route::post('/scan', [App\Http\Controllers\Student\AttendanceController::class, 'scanQr'])->name('scan'); // Deprecated - returns error
         Route::post('/process-qr-file', [App\Http\Controllers\Student\AttendanceController::class, 'processQrFile'])->name('process-qr-file');
         Route::get('/my-qr', [App\Http\Controllers\Student\AttendanceController::class, 'getMyQrCode'])->name('my-qr');
         Route::get('/download-qr', [App\Http\Controllers\Student\AttendanceController::class, 'downloadMyQrCode'])->name('download-qr');
@@ -981,8 +1018,7 @@ Route::group([
         Route::get('/export', [App\Http\Controllers\Student\AttendanceHistoryController::class, 'export'])->name('export');
     });
     
-    // Legacy route for backward compatibility
-    Route::get('/materials-legacy', [MaterialController::class, 'index'])->name('materials');
+
 });
 
 /*

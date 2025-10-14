@@ -170,11 +170,7 @@
                         </div>
                         
                         <!-- Footer -->
-                        <div class="px-4 py-3 border-t border-gray-200 dark:border-gray-700">
-                            <a href="{{ route('student.assignments.index') }}" class="text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-medium">
-                                Lihat Semua Tugas →
-                            </a>
-                        </div>
+                       
                     </div>
                 </div>
 
@@ -208,15 +204,7 @@
                         </div>
                         
                         <!-- Quick Access Items -->
-                        <div class="p-4 space-y-2">
-                            <a href="{{ route('student.materials.index') }}" 
-                               class="flex items-center p-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-colors duration-200">
-                                <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                </svg>
-                                <span class="text-emerald-700 dark:text-emerald-300 font-medium">Semua Materi</span>
-                            </a>
-                        </div>
+                        
                     </div>
                 </div>
 

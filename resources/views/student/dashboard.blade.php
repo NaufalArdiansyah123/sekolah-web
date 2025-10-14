@@ -23,80 +23,7 @@
 
     <!-- Statistics Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- Total Materials -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md dark:hover:shadow-lg transition-shadow duration-200">
-            <div class="flex items-center">
-                <div class="p-3 rounded-lg bg-blue-100 dark:bg-blue-900/50">
-                    <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                    </svg>
-                </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Materi</p>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $stats['total_materials'] }}</p>
-                </div>
-            </div>
-        </div>
 
-        <!-- Recent Materials -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md dark:hover:shadow-lg transition-shadow duration-200">
-            <div class="flex items-center">
-                <div class="p-3 rounded-lg bg-emerald-100 dark:bg-emerald-900/50">
-                    <svg class="w-6 h-6 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Materi Terbaru</p>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $stats['recent_materials'] }}</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Categories -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md dark:hover:shadow-lg transition-shadow duration-200">
-            <div class="flex items-center">
-                <div class="p-3 rounded-lg bg-purple-100 dark:bg-purple-900/50">
-                    <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                    </svg>
-                </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Kategori</p>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $stats['categories'] }}</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Total Downloads -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md dark:hover:shadow-lg transition-shadow duration-200">
-            <div class="flex items-center">
-                <div class="p-3 rounded-lg bg-orange-100 dark:bg-orange-900/50">
-                    <svg class="w-6 h-6 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Download</p>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ number_format($stats['total_downloads']) }}</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Pending Assignments -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md dark:hover:shadow-lg transition-shadow duration-200">
-            <div class="flex items-center">
-                <div class="p-3 rounded-lg bg-red-100 dark:bg-red-900/50">
-                    <svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
-                    </svg>
-                </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Tugas Pending</p>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $stats['pending_assignments'] }}</p>
-                </div>
-            </div>
-        </div>
 
         <!-- Attendance Percentage -->
         <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md dark:hover:shadow-lg transition-shadow duration-200">
@@ -113,32 +40,32 @@
             </div>
         </div>
 
-        <!-- Available Quizzes -->
+        <!-- Total Notifications -->
         <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md dark:hover:shadow-lg transition-shadow duration-200">
             <div class="flex items-center">
                 <div class="p-3 rounded-lg bg-indigo-100 dark:bg-indigo-900/50">
                     <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4 19h6v-6H4v6zM16 3h5v5h-5V3zM4 3h6v6H4V3z"></path>
                     </svg>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Kuis Tersedia</p>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $stats['available_quizzes'] }}</p>
+                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Notifikasi</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $stats['total_notifications'] ?? 0 }}</p>
                 </div>
             </div>
         </div>
 
-        <!-- Completed Quizzes -->
+        <!-- Profile Completion -->
         <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md dark:hover:shadow-lg transition-shadow duration-200">
             <div class="flex items-center">
                 <div class="p-3 rounded-lg bg-teal-100 dark:bg-teal-900/50">
                     <svg class="w-6 h-6 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                     </svg>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Kuis Selesai</p>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $stats['completed_quizzes'] }}</p>
+                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Profil Lengkap</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $stats['profile_completion'] ?? 85 }}%</p>
                 </div>
             </div>
         </div>
@@ -150,21 +77,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md dark:hover:shadow-lg transition-shadow duration-200">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Akses Cepat</h3>
             <div class="space-y-3">
-                <a href="{{ route('student.materials.index') }}" 
-                   class="flex items-center p-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-all duration-200 hover:scale-105">
-                    <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                    </svg>
-                    <span class="text-emerald-700 dark:text-emerald-300 font-medium">Semua Materi</span>
-                </a>
-                
-                <a href="{{ route('student.assignments.index') }}" 
-                   class="flex items-center p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-all duration-200 hover:scale-105">
-                    <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
-                    </svg>
-                    <span class="text-blue-700 dark:text-blue-300 font-medium">Tugas Saya</span>
-                </a>
+
                 
                 <a href="{{ route('student.attendance.index') }}" 
                    class="flex items-center p-3 rounded-lg bg-purple-50 dark:bg-purple-900/20 hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-all duration-200 hover:scale-105">
@@ -174,149 +87,68 @@
                     <span class="text-purple-700 dark:text-purple-300 font-medium">Absensi</span>
                 </a>
                 
-                <a href="{{ route('student.quizzes.index') }}" 
-                   class="flex items-center p-3 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 transition-all duration-200 hover:scale-105">
-                    <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
-                    </svg>
-                    <span class="text-indigo-700 dark:text-indigo-300 font-medium">Kuis & Ujian</span>
-                </a>
+
             </div>
         </div>
 
-        <!-- Recent Materials -->
+        <!-- Attendance Summary -->
         <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md dark:hover:shadow-lg transition-shadow duration-200">
             <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Materi Terbaru</h3>
-                <a href="{{ route('student.materials.index') }}" class="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 text-sm font-medium transition-colors duration-200">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Ringkasan Kehadiran</h3>
+                <a href="{{ route('student.attendance.index') }}" class="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 text-sm font-medium transition-colors duration-200">
+                    Lihat Detail
+                </a>
+            </div>
+            
+            <div class="text-center py-8">
+                <div class="p-4 rounded-lg bg-purple-100 dark:bg-purple-900/50 inline-block mb-4">
+                    <svg class="w-8 h-8 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <p class="text-lg font-semibold text-gray-900 dark:text-white mb-2">{{ $stats['attendance_percentage'] }}%</p>
+                <p class="text-gray-500 dark:text-gray-400">Tingkat Kehadiran Anda</p>
+            </div>
+        </div>
+
+        <!-- Grades Summary -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md dark:hover:shadow-lg transition-shadow duration-200">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Ringkasan Nilai</h3>
+                <a href="{{ route('student.grades.index') }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium transition-colors duration-200">
                     Lihat Semua
                 </a>
             </div>
             
-            @if($recentMaterials->count() > 0)
-                <div class="space-y-3">
-                    @foreach($recentMaterials as $material)
-                        <div class="flex items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-105">
-                            <div class="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 mr-3">
-                                <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ $material->title }}</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ $material->subject }} • {{ $material->formatted_file_size }}</p>
-                            </div>
-                            <a href="{{ route('student.materials.show', $material->id) }}" 
-                               class="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors duration-200">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                </svg>
-                            </a>
-                        </div>
-                    @endforeach
-                </div>
-            @else
-                <div class="text-center py-8">
-                    <svg class="w-12 h-12 text-gray-400 dark:text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            <div class="text-center py-8">
+                <div class="p-4 rounded-lg bg-blue-100 dark:bg-blue-900/50 inline-block mb-4">
+                    <svg class="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
-                    <p class="text-gray-500 dark:text-gray-400">Belum ada materi tersedia</p>
                 </div>
-            @endif
+                <p class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Lihat nilai terbaru Anda</p>
+                <p class="text-gray-500 dark:text-gray-400">Pantau perkembangan akademik</p>
+            </div>
         </div>
 
-        <!-- Recent Assignments -->
+        <!-- Profile Summary -->
         <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md dark:hover:shadow-lg transition-shadow duration-200">
             <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Tugas Terbaru</h3>
-                <a href="{{ route('student.assignments.index') }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium transition-colors duration-200">
-                    Lihat Semua
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Profil Saya</h3>
+                <a href="{{ route('student.profile') }}" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 text-sm font-medium transition-colors duration-200">
+                    Edit Profil
                 </a>
             </div>
             
-            @if($recentAssignments->count() > 0)
-                <div class="space-y-3">
-                    @foreach($recentAssignments as $assignment)
-                        <div class="flex items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-105">
-                            <div class="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/50 mr-3">
-                                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
-                                </svg>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ $assignment->title }}</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">
-                                    Deadline: {{ $assignment->formatted_due_date }} 
-                                    @if($assignment->days_left >= 0)
-                                        <span class="text-orange-600 dark:text-orange-400">({{ $assignment->days_left }} hari lagi)</span>
-                                    @else
-                                        <span class="text-red-600 dark:text-red-400">(Terlambat)</span>
-                                    @endif
-                                </p>
-                            </div>
-                            <a href="{{ route('student.assignments.show', $assignment->id) }}" 
-                               class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                </svg>
-                            </a>
-                        </div>
-                    @endforeach
-                </div>
-            @else
-                <div class="text-center py-8">
-                    <svg class="w-12 h-12 text-gray-400 dark:text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+            <div class="text-center py-8">
+                <div class="p-4 rounded-lg bg-indigo-100 dark:bg-indigo-900/50 inline-block mb-4">
+                    <svg class="w-8 h-8 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                     </svg>
-                    <p class="text-gray-500 dark:text-gray-400">Tidak ada tugas baru</p>
                 </div>
-            @endif
-        </div>
-
-        <!-- Recent Quizzes -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md dark:hover:shadow-lg transition-shadow duration-200">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Kuis Tersedia</h3>
-                <a href="{{ route('student.quizzes.index') }}" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 text-sm font-medium transition-colors duration-200">
-                    Lihat Semua
-                </a>
+                <p class="text-lg font-semibold text-gray-900 dark:text-white mb-2">{{ auth()->user()->name }}</p>
+                <p class="text-gray-500 dark:text-gray-400">Kelola informasi profil Anda</p>
             </div>
-            
-            @if($recentQuizzes->count() > 0)
-                <div class="space-y-3">
-                    @foreach($recentQuizzes as $quiz)
-                        <div class="flex items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-105">
-                            <div class="p-2 rounded-lg bg-indigo-100 dark:bg-indigo-900/50 mr-3">
-                                <svg class="w-4 h-4 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
-                                </svg>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ $quiz->title }}</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">
-                                    {{ $quiz->subject }} • Berakhir: {{ $quiz->formatted_end_time }}
-                                    @if($quiz->hours_left > 0)
-                                        <span class="text-orange-600 dark:text-orange-400">({{ $quiz->hours_left }} jam lagi)</span>
-                                    @endif
-                                </p>
-                            </div>
-                            <a href="{{ route('student.quizzes.show', $quiz->id) }}" 
-                               class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors duration-200">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                </svg>
-                            </a>
-                        </div>
-                    @endforeach
-                </div>
-            @else
-                <div class="text-center py-8">
-                    <svg class="w-12 h-12 text-gray-400 dark:text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
-                    </svg>
-                    <p class="text-gray-500 dark:text-gray-400">Tidak ada kuis tersedia</p>
-                </div>
-            @endif
         </div>
     </div>
 
@@ -331,10 +163,10 @@
             <div>
                 <h3 class="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">Cara Menggunakan Dashboard</h3>
                 <ul class="text-blue-800 dark:text-blue-200 space-y-1 text-sm">
-                    <li>• Gunakan menu "Materi Pembelajaran" untuk melihat semua materi yang tersedia</li>
-                    <li>• Klik "Download Materi" untuk mengunduh file yang Anda butuhkan</li>
-                    <li>• Gunakan fitur pencarian untuk menemukan materi tertentu</li>
-                    <li>• Filter berdasarkan kategori untuk mempermudah pencarian</li>
+                    <li>• Gunakan menu "Absensi" untuk melihat riwayat kehadiran Anda</li>
+                    <li>• Klik "Nilai" untuk melihat perkembangan akademik</li>
+                    <li>• Periksa notifikasi secara berkala untuk informasi terbaru</li>
+                    <li>• Lengkapi profil Anda untuk mendapatkan layanan yang optimal</li>
                 </ul>
             </div>
         </div>

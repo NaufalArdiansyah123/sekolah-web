@@ -44,4 +44,30 @@ class Teacher extends Model
         
         return strtoupper(substr($initials, 0, 2));
     }
+
+    /**
+     * Relasi ke QR Teacher Attendance
+     */
+    public function qrTeacherAttendance()
+    {
+        return $this->hasOne(QrTeacherAttendance::class);
+    }
+
+    /**
+     * Relasi ke Teacher Attendance Logs
+     */
+    public function teacherAttendanceLogs()
+    {
+        return $this->hasMany(TeacherAttendanceLog::class);
+    }
+
+    /**
+     * Get today's attendance log
+     */
+    public function todayAttendance()
+    {
+        return $this->teacherAttendanceLogs()
+                   ->whereDate('attendance_date', today())
+                   ->first();
+    }
 }

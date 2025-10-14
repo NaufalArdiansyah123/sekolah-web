@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $title ?? 'Teacher' }} - {{ config('app.name') }}</title>
+    <title>{{ $title ?? 'Guru Piket' }} - {{ config('app.name') }}</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -29,27 +29,27 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
-    <!-- Teacher Layout CSS -->
-    <link rel="stylesheet" href="{{ asset('css/teacher-layout.css') }}">
+    <!-- Guru Piket Layout CSS -->
+    <link rel="stylesheet" href="{{ asset('css/guru-piket-layout.css') }}">
     
     <!-- Avatar Helper Script -->
     <script src="{{ asset('js/avatar-helper.js') }}"></script>
-    
+
     @stack('styles')
 </head>
-<body class="teacher-body">
-    <div class="teacher-layout">
+<body class="guru-piket-body">
+    <div class="guru-piket-layout">
         <!-- Mobile Sidebar Overlay -->
         <div id="mobile-overlay" class="mobile-sidebar-overlay" onclick="closeSidebar()"></div>
 
         <!-- Sidebar -->
-        @include('layouts.teacher.sidebar')
+        @include('layouts.guru-piket.sidebar')
 
         <!-- Main Content Wrapper -->
         <div class="main-content-wrapper">
             <!-- Top Navigation -->
-            @include('layouts.teacher.navbar', [
-                'pageTitle' => $pageTitle ?? $title ?? 'Teacher Dashboard',
+            @include('layouts.guru-piket.navbar', [
+                'pageTitle' => $pageTitle ?? $title ?? 'Guru Piket Dashboard',
                 'breadcrumb' => $breadcrumb ?? 'Dashboard'
             ])
 
@@ -215,7 +215,7 @@
         }
         
         function updateSidebarVisibility() {
-            const sidebar = document.getElementById('teacher-sidebar');
+            const sidebar = document.getElementById('guru-piket-sidebar');
             const overlay = document.getElementById('mobile-overlay');
             
             if (sidebar) {

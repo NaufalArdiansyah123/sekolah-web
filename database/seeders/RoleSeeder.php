@@ -16,7 +16,7 @@ class RoleSeeder extends Seeder
     {
         Log::info('Starting RoleSeeder...');
         
-        // Simple 3 roles system
+        // Enhanced 4 roles system
         $roles = [
             [
                 'name' => 'admin',
@@ -29,6 +29,12 @@ class RoleSeeder extends Seeder
                 'guard_name' => 'web',
                 'display_name' => 'Teacher',
                 'description' => 'Guru dengan akses ke fitur pembelajaran dan penilaian',
+            ],
+            [
+                'name' => 'guru_piket',
+                'guard_name' => 'web',
+                'display_name' => 'Guru Piket',
+                'description' => 'Guru piket dengan akses khusus untuk mengelola absensi siswa dan guru',
             ],
             [
                 'name' => 'student',
@@ -59,10 +65,11 @@ class RoleSeeder extends Seeder
             }
             
             $this->command->info("🎭 RoleSeeder completed successfully!");
-            $this->command->info("📋 Available roles (Simple 3 roles system):");
+            $this->command->info("📋 Available roles (Enhanced 4 roles system):");
             $this->command->info("   1. admin (Administrator) - Full system access");
             $this->command->info("   2. teacher (Teacher) - Teaching and assessment");
-            $this->command->info("   3. student (Student) - Learning and attendance");
+            $this->command->info("   3. guru_piket (Guru Piket) - Attendance management");
+            $this->command->info("   4. student (Student) - Learning and attendance");
             
             Log::info("RoleSeeder completed successfully");
             

@@ -116,7 +116,7 @@ class AttendanceController extends Controller
     }
 
     /**
-     * Show attendance scanner page
+     * Show attendance QR code display page (no scanner)
      */
     public function index()
     {
@@ -145,10 +145,11 @@ class AttendanceController extends Controller
                                      ->whereDate('attendance_date', today())
                                      ->first();
 
-            // Get recent attendance (last 7 days)
+            // Get recent attendance (last 10 days)
             $recentAttendance = $student->attendanceLogs()
-                                      ->where('attendance_date', '>=', now()->subDays(7))
+                                      ->where('attendance_date', '>=', now()->subDays(10))
                                       ->orderBy('attendance_date', 'desc')
+                                      ->take(10)
                                       ->get();
 
             // Get monthly statistics
@@ -167,13 +168,17 @@ class AttendanceController extends Controller
                 'monthly_stats' => $monthlyStats
             ]);
 
+            // Get student's QR code
+            $qrAttendance = $student->qrAttendance;
+
             // Return view with cache busting headers
             return response()
-                ->view('student.attendance.index', compact(
+                ->view('student.attendance.qr-display', compact(
                     'student', 
                     'todayAttendance', 
                     'recentAttendance', 
-                    'monthlyStats'
+                    'monthlyStats',
+                    'qrAttendance'
                 ))
                 ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
                 ->header('Pragma', 'no-cache')
@@ -198,271 +203,16 @@ class AttendanceController extends Controller
     }
 
     /**
-     * Process QR code scan
+     * QR scanning is now handled by teachers only
+     * This method is deprecated and will return an error
      */
     public function scanQr(Request $request)
     {
-        // Log untuk debugging
-        \Log::info('QR Scan Request:', [
-            'qr_code' => $request->qr_code,
-            'location' => $request->location,
-            'user_id' => auth()->id(),
-            'timestamp' => now()
-        ]);
-
-        $request->validate([
-            'qr_code' => 'required|string',
-            'location' => 'nullable|string|max:255',
-        ]);
-
-        try {
-            // Get student data
-            $currentStudent = $this->getStudentData();
-            
-            if (!$currentStudent) {
-                \Log::error('Student not found during QR scan', [
-                    'user_id' => auth()->id(),
-                    'qr_code' => $request->qr_code
-                ]);
-                
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Data siswa tidak ditemukan. Silakan login ulang atau hubungi administrator.',
-                    'debug' => [
-                        'error_type' => 'student_not_found',
-                        'user_id' => auth()->id()
-                    ]
-                ], 400);
-            }
-
-            // Validate QR code
-            $qrAttendance = $this->qrCodeService->validateQrCode($request->qr_code);
-            
-            \Log::info('QR Validation Result:', [
-                'qr_attendance_found' => $qrAttendance ? true : false,
-                'qr_attendance_id' => $qrAttendance ? $qrAttendance->id : null,
-                'student_id' => $qrAttendance ? $qrAttendance->student_id : null,
-                'current_student_id' => $currentStudent->id
-            ]);
-            
-            if (!$qrAttendance) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'QR Code tidak valid atau tidak ditemukan. Pastikan Anda menggunakan QR Code yang benar.',
-                    'debug' => [
-                        'qr_code' => $request->qr_code,
-                        'validation_result' => 'not_found'
-                    ]
-                ], 400);
-            }
-
-            $student = $qrAttendance->student;
-            
-            if (!$student) {
-                \Log::error('Student not found for QR attendance', [
-                    'qr_attendance_id' => $qrAttendance->id,
-                    'student_id' => $qrAttendance->student_id
-                ]);
-                
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Data siswa untuk QR Code ini tidak ditemukan.',
-                ], 400);
-            }
-
-            // Check if the QR code belongs to the current student
-            if ($student->id !== $currentStudent->id) {
-                $violationTime = now();
-                
-                // Log security violation
-                \Log::warning('QR Code mismatch - Attempted to use another student QR code', [
-                    'qr_student_id' => $student->id,
-                    'qr_student_name' => $student->name,
-                    'qr_student_nis' => $student->nis,
-                    'current_student_id' => $currentStudent->id,
-                    'current_student_name' => $currentStudent->name,
-                    'current_student_nis' => $currentStudent->nis,
-                    'qr_code' => $request->qr_code,
-                    'timestamp' => $violationTime,
-                    'ip_address' => $request->ip(),
-                    'user_agent' => $request->userAgent()
-                ]);
-                
-                // Create security violation record
-                $violation = SecurityViolation::create([
-                    'violator_student_id' => $currentStudent->id,
-                    'qr_owner_student_id' => $student->id,
-                    'qr_code' => $request->qr_code,
-                    'violation_type' => 'wrong_qr_owner',
-                    'violation_time' => $violationTime,
-                    'violation_date' => $violationTime->toDateString(),
-                    'location' => $request->location,
-                    'ip_address' => $request->ip(),
-                    'user_agent' => $request->userAgent(),
-                    'violation_details' => [
-                        'qr_owner' => [
-                            'id' => $student->id,
-                            'name' => $student->name,
-                            'nis' => $student->nis,
-                            'class' => $student->class ? $student->class->name : 'Kelas tidak ditemukan'
-                        ],
-                        'violator' => [
-                            'id' => $currentStudent->id,
-                            'name' => $currentStudent->name,
-                            'nis' => $currentStudent->nis,
-                            'class' => $currentStudent->class ? $currentStudent->class->name : 'Kelas tidak ditemukan'
-                        ],
-                        'attempt_details' => [
-                            'scan_time' => $violationTime->format('H:i:s'),
-                            'scan_date' => $violationTime->format('Y-m-d'),
-                            'location' => $request->location,
-                            'ip_address' => $request->ip(),
-                            'user_agent' => $request->userAgent()
-                        ]
-                    ],
-                    'severity' => 'medium',
-                    'status' => 'pending'
-                ]);
-                
-                \Log::info('Security violation recorded', [
-                    'violation_id' => $violation->id,
-                    'violator_student_id' => $currentStudent->id,
-                    'qr_owner_student_id' => $student->id
-                ]);
-                
-                // Create a warning attendance log entry for admin visibility
-                $warningLog = AttendanceLog::create([
-                    'student_id' => $currentStudent->id,
-                    'qr_code' => $request->qr_code,
-                    'status' => 'alpha', // Mark as alpha due to violation
-                    'scan_time' => $violationTime,
-                    'attendance_date' => $violationTime->toDateString(),
-                    'location' => $request->location,
-                    'notes' => "PERINGATAN: Siswa mencoba menggunakan QR Code milik {$student->name} (NIS: {$student->nis}). Violation ID: {$violation->id}"
-                ]);
-                
-                \Log::info('Warning attendance log created', [
-                    'attendance_log_id' => $warningLog->id,
-                    'violation_id' => $violation->id
-                ]);
-                
-                return response()->json([
-                    'success' => false,
-                    'error_type' => 'wrong_qr_owner_warning',
-                    'message' => '⚠️ PERINGATAN: QR Code Salah!',
-                    'detailed_message' => 'QR Code yang Anda scan adalah milik siswa lain. Pelanggaran ini telah dicatat dan akan direview oleh admin.',
-                    'warning_data' => [
-                        'qr_owner' => [
-                            'name' => $student->name,
-                            'nis' => $student->nis,
-                            'class' => $student->class ? $student->class->name : 'Kelas tidak ditemukan'
-                        ],
-                        'current_user' => [
-                            'name' => $currentStudent->name,
-                            'nis' => $currentStudent->nis,
-                            'class' => $currentStudent->class ? $currentStudent->class->name : 'Kelas tidak ditemukan'
-                        ],
-                        'violation_id' => $violation->id,
-                        'violation_time' => $violationTime->format('H:i:s')
-                    ],
-                    'instructions' => [
-                        'Gunakan QR Code Anda sendiri untuk absensi',
-                        'Jika tidak memiliki QR Code, hubungi guru atau admin',
-                        'Download QR Code Anda melalui tombol "QR Code Saya"',
-                        'Pelanggaran berulang dapat mengakibatkan sanksi'
-                    ],
-                    'admin_notice' => 'Pelanggaran ini telah dicatat dan akan muncul di sistem admin untuk ditindaklanjuti.'
-                ], 200); // Changed to 200 to show as warning, not error
-            }
-            
-            $scanTime = now();
-            $attendanceDate = $scanTime->toDateString();
-
-            // Check if already scanned today
-            $existingAttendance = AttendanceLog::where('student_id', $student->id)
-                                             ->whereDate('attendance_date', $attendanceDate)
-                                             ->first();
-
-            \Log::info('Existing Attendance Check:', [
-                'student_id' => $student->id,
-                'attendance_date' => $attendanceDate,
-                'existing_found' => $existingAttendance ? true : false
-            ]);
-
-            if ($existingAttendance) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Anda sudah melakukan absensi hari ini pada ' . 
-                               $existingAttendance->scan_time->format('H:i:s'),
-                    'existing_attendance' => [
-                        'status' => $existingAttendance->status_text,
-                        'scan_time' => $existingAttendance->scan_time->format('H:i:s'),
-                        'badge_color' => $existingAttendance->status_badge,
-                    ]
-                ], 400);
-            }
-
-            // Determine status based on scan time
-            $status = AttendanceLog::determineStatus($scanTime);
-            
-            \Log::info('Attendance Status Determined:', [
-                'scan_time' => $scanTime,
-                'status' => $status
-            ]);
-
-            // Create attendance log
-            $attendanceLog = AttendanceLog::create([
-                'student_id' => $student->id,
-                'qr_code' => $request->qr_code,
-                'status' => $status,
-                'scan_time' => $scanTime,
-                'attendance_date' => $attendanceDate,
-                'location' => $request->location,
-            ]);
-            
-            \Log::info('Attendance Log Created:', [
-                'attendance_log_id' => $attendanceLog->id,
-                'student_id' => $student->id,
-                'status' => $status
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Absensi berhasil dicatat!',
-                'attendance' => [
-                    'student_name' => $student->name,
-                    'nis' => $student->nis,
-                    'class' => $student->class ? $student->class->name : 'Kelas tidak ditemukan',
-                    'status' => $attendanceLog->status_text,
-                    'scan_time' => $attendanceLog->scan_time->format('H:i:s'),
-                    'attendance_date' => $attendanceLog->attendance_date->format('d/m/Y'),
-                    'badge_color' => $attendanceLog->status_badge,
-                ],
-                'debug' => [
-                    'attendance_log_id' => $attendanceLog->id,
-                    'raw_status' => $status,
-                    'scan_time_raw' => $scanTime->toISOString()
-                ]
-            ]);
-
-        } catch (\Exception $e) {
-            \Log::error('QR Scan Error:', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'qr_code' => $request->qr_code,
-                'user_id' => auth()->id()
-            ]);
-            
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage(),
-                'debug' => [
-                    'error_type' => get_class($e),
-                    'error_line' => $e->getLine(),
-                    'error_file' => $e->getFile()
-                ]
-            ], 500);
-        }
+        return response()->json([
+            'success' => false,
+            'message' => 'QR scanning sekarang hanya dapat dilakukan oleh guru. Silakan tunjukkan QR Code Anda kepada guru untuk diabsen.',
+            'redirect_message' => 'Sistem absensi telah diperbarui. Guru yang akan melakukan scan QR Code siswa.'
+        ], 403);
     }
 
     /**

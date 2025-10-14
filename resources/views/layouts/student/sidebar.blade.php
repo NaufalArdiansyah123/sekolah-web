@@ -497,49 +497,7 @@
             <span>Dashboard</span>
         </a>
 
-        <!-- Section Divider -->
-        <div class="student-nav-section-divider"></div>
-        <div class="student-nav-section-title">
-            <span>Materi Pembelajaran</span>
-        </div>
 
-        <!-- Semua Materi -->
-        <a href="{{ route('student.materials.index') }}" 
-           class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('student.materials.index') && !request()->has('filter') ? 'active' : '' }}"
-           @click="isMobile && (sidebarOpen = false)">
-            <svg class="student-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253" />
-            </svg>
-            <span>Semua Materi</span>
-        </a>
-
-
-
-        <!-- Section Divider -->
-        <div class="student-nav-section-divider"></div>
-        <div class="student-nav-section-title">
-            <span>Assignments & Quizzes</span>
-        </div>
-
-        <!-- Tugas & Assignment -->
-        <a href="{{ route('student.assignments.index') }}" 
-           class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('student.assignments*') ? 'active' : '' }}"
-           @click="isMobile && (sidebarOpen = false)">
-            <svg class="student-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <span>Tugas & Assignment</span>
-        </a>
-
-        <!-- Kuis & Ujian -->
-        <a href="{{ route('student.quizzes.index') }}" 
-           class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('student.quizzes*') ? 'active' : '' }}"
-           @click="isMobile && (sidebarOpen = false)">
-            <svg class="student-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-            </svg>
-            <span>Kuis & Ujian</span>
-        </a>
 
 
 
@@ -549,24 +507,33 @@
             <span>Academic Records</span>
         </div>
 
-        <!-- QR Scanner -->
-        <a href="{{ route('student.attendance.qr-scanner') }}" 
-           class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('student.attendance.qr-scanner') ? 'active' : '' }}"
+        <!-- QR Code Saya -->
+        <a href="{{ route('student.attendance.index') }}" 
+           class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('student.attendance.index') || request()->routeIs('student.attendance.qr-display') ? 'active' : '' }}"
            @click="isMobile && (sidebarOpen = false)">
             <svg class="student-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h2M4 4h5m0 0v5m0 0h5m0 0v5m0 0H9m0 0v5" />
             </svg>
-            <span>QR Scanner</span>
+            <span>QR Code Saya</span>
             @php
-                $student = auth()->user()->student ?? \App\Models\Student::where('user_id', auth()->id())->first();
-                $todayAttendance = $student ? \App\Models\AttendanceLog::where('student_id', $student->id)->whereDate('attendance_date', today())->first() : null;
+                $todayAttendance = auth()->user()->student && auth()->user()->student->attendanceLogs ? 
+                                 auth()->user()->student->attendanceLogs()->whereDate('attendance_date', today())->first() : null;
             @endphp
             @if($todayAttendance)
-                <span class="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                @php
+                    $statusColor = match($todayAttendance->status) {
+                        'hadir' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+                        'terlambat' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+                        'izin' => 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+                        'sakit' => 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
+                        default => 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                    };
+                @endphp
+                <span class="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium {{ $statusColor }}">
                     ✓
                 </span>
             @else
-                <span class="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                <span class="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200">
                     !
                 </span>
             @endif
@@ -581,6 +548,7 @@
             </svg>
             <span>Riwayat Absensi</span>
             @php
+                $student = auth()->user()->student ?? \App\Models\Student::where('user_id', auth()->id())->first();
                 $monthlyCount = $student ? \App\Models\AttendanceLog::where('student_id', $student->id)
                     ->whereMonth('attendance_date', date('m'))
                     ->whereYear('attendance_date', date('Y'))
@@ -601,6 +569,39 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
             <span>Nilai Akademik</span>
+        </a>
+
+        <!-- Section Divider -->
+        <div class="student-nav-section-divider"></div>
+        <div class="student-nav-section-title">
+            <span>Account Settings</span>
+        </div>
+
+        <!-- Profil Siswa -->
+        <a href="{{ route('student.profile') }}" 
+           class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('student.profile') ? 'active' : '' }}"
+           @click="isMobile && (sidebarOpen = false)">
+            <svg class="student-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            <span>Profil Saya</span>
+            @php
+                $user = auth()->user();
+                $profileCompletion = 0;
+                if ($user->name) $profileCompletion += 25;
+                if ($user->email) $profileCompletion += 25;
+                if ($user->student && $user->student->phone) $profileCompletion += 25;
+                if ($user->avatar) $profileCompletion += 25;
+            @endphp
+            @if($profileCompletion < 100)
+                <span class="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200">
+                    {{ $profileCompletion }}%
+                </span>
+            @else
+                <span class="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                    ✓
+                </span>
+            @endif
         </a>
 
 

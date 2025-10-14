@@ -844,13 +844,22 @@
             <span>Kehadiran</span>
         </div>
 
+        <!-- QR Scanner Absensi -->
+        <a href="{{ route('teacher.attendance.qr-scanner') }}" 
+           class="sidebar-nav-item {{ request()->routeIs('teacher.attendance.qr-scanner') ? 'active' : '' }}">
+            <svg class="nav-icon" viewBox="0 0 24 24">
+                <path d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h2M4 4h5m0 0v5m0 0h5m0 0v5m0 0H9m0 0v5" />
+            </svg>
+            <span>QR Scanner Absensi</span>
+        </a>
+
         <!-- Attendance -->
         <a href="{{ route('teacher.attendance.index') }}" 
-           class="sidebar-nav-item {{ request()->routeIs('teacher.attendance.*') ? 'active' : '' }}">
+           class="sidebar-nav-item {{ request()->routeIs('teacher.attendance.index') || request()->routeIs('teacher.attendance.monthly-report') || request()->routeIs('teacher.attendance.export') ? 'active' : '' }}">
             <svg class="nav-icon" viewBox="0 0 24 24">
                 <path d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
             </svg>
-            <span>Absen Siswa</span>
+            <span>Kelola Absensi</span>
         </a>
 
         <!-- Quick Actions Section -->
