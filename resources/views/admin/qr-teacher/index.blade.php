@@ -1,479 +1,186 @@
 @extends('layouts.admin')
 
-@section('title', 'Manajemen QR Code Guru')
+@section('title', 'QR Guru')
+
+@push('styles')
+<style>
+    .toolbar { display:flex; gap:.5rem; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+    .search-input { padding:.5rem .75rem; border:1px solid #e5e7eb; border-radius:8px; min-width:240px; }
+    .btn { padding:.5rem .75rem; border-radius:8px; font-weight:600; border:1px solid transparent; cursor:pointer; }
+    .btn-primary { background:#3b82f6; color:#fff; }
+    .btn-secondary { background:#fff; color:#374151; border-color:#e5e7eb; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:1rem; }
+    .card { border:1px solid #e5e7eb; border-radius:12px; background:#fff; }
+    .card-header { padding:1rem; border-bottom:1px solid #e5e7eb; font-weight:700; display:flex; align-items:center; justify-content:space-between; }
+    .card-body { padding:1rem; }
+    .row { display:flex; align-items:center; gap:.5rem; justify-content:space-between; }
+    .avatar { width:40px; height:40px; border-radius:10px; background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 100%); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; }
+    .muted { color:#6b7280; font-size:.85rem; }
+    .actions { display:flex; gap:.5rem; flex-wrap:wrap; }
+</style>
+@endpush
 
 @section('content')
-<div class="container-fluid px-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Manajemen QR Code Guru</h1>
-        <div class="d-flex gap-2">
-            <button type="button" class="btn btn-success" onclick="generateBulkQr()">
-                <i class="fas fa-qrcode"></i> Generate QR Massal
-            </button>
-            <a href="{{ route('admin.qr-teacher.logs') }}" class="btn btn-info">
-                <i class="fas fa-list"></i> Log Absensi
-            </a>
-        </div>
-    </div>
-
-    <!-- Statistics Cards -->
-    <div class="row mb-4">
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Total Guru
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['total_teachers'] }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-users fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Guru dengan QR Code
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['teachers_with_qr'] }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-qrcode fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                Absensi Hari Ini
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['today_attendance'] }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-calendar-check fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                Hadir Hari Ini
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['present_today'] }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-user-check fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Filters -->
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Filter & Pencarian</h6>
-        </div>
+<div class="container-fluid py-3">
+    <div class="card mb-3">
+        <div class="card-header">Generate QR Code Guru</div>
         <div class="card-body">
-            <form method="GET" action="{{ route('admin.qr-teacher.index') }}">
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="search">Pencarian</label>
-                            <input type="text" class="form-control" id="search" name="search" 
-                                   value="{{ request('search') }}" 
-                                   placeholder="Nama, NIP, atau Email">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="status">Status</label>
-                            <select class="form-control" id="status" name="status">
-                                <option value="">Semua Status</option>
-                                <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Aktif</option>
-                                <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label>&nbsp;</label>
-                            <div class="d-flex gap-2">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-search"></i> Cari
-                                </button>
-                                <a href="{{ route('admin.qr-teacher.index') }}" class="btn btn-secondary">
-                                    <i class="fas fa-undo"></i> Reset
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+            <form method="GET" class="toolbar">
+                <input type="text" name="q" class="search-input" value="{{ request('q') }}" placeholder="Cari nama/NIP/email guru...">
+                <div class="actions">
+                    <button class="btn btn-secondary" type="submit"><i class="fas fa-search"></i> Cari</button>
+                    <button class="btn btn-primary" type="button" onclick="bulkGenerate()"><i class="fas fa-qrcode"></i> Generate QR Terpilih</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Teachers Table -->
-    <div class="card shadow mb-4">
-        <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h6 class="m-0 font-weight-bold text-primary">Daftar Guru</h6>
-            <div class="d-flex gap-2">
-                <button type="button" class="btn btn-sm btn-primary" onclick="selectAll()">
-                    <i class="fas fa-check-square"></i> Pilih Semua
-                </button>
-                <button type="button" class="btn btn-sm btn-secondary" onclick="deselectAll()">
-                    <i class="fas fa-square"></i> Batal Pilih
-                </button>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="teachersTable">
-                    <thead>
-                        <tr>
-                            <th width="50">
-                                <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll()">
-                            </th>
-                            <th>Nama</th>
-                            <th>NIP</th>
-                            <th>Email</th>
-                            <th>Jabatan</th>
-                            <th>Status QR</th>
-                            <th>Absensi Hari Ini</th>
-                            <th width="200">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($teachers as $teacher)
-                        <tr>
-                            <td>
-                                <input type="checkbox" class="teacher-checkbox" value="{{ $teacher->id }}">
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2">
-                                        {{ $teacher->initials }}
-                                    </div>
-                                    <div>
-                                        <div class="font-weight-bold">{{ $teacher->name }}</div>
-                                        <small class="text-muted">{{ $teacher->subject }}</small>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>{{ $teacher->nip }}</td>
-                            <td>{{ $teacher->email }}</td>
-                            <td>{{ $teacher->position }}</td>
-                            <td>
-                                @if($teacher->qrTeacherAttendance)
-                                    <span class="badge badge-success">
-                                        <i class="fas fa-qrcode"></i> Ada QR
-                                    </span>
-                                @else
-                                    <span class="badge badge-warning">
-                                        <i class="fas fa-exclamation-triangle"></i> Belum Ada QR
-                                    </span>
-                                @endif
-                            </td>
-                            <td>
-                                @php
-                                    $todayAttendance = $teacher->todayAttendance();
-                                @endphp
-                                @if($todayAttendance)
-                                    <span class="badge {{ $todayAttendance->status_badge_class }}">
-                                        {{ $todayAttendance->status_label }}
-                                    </span>
-                                    <br>
-                                    <small class="text-muted">{{ $todayAttendance->formatted_scan_time }}</small>
-                                @else
-                                    <span class="badge badge-secondary">Belum Absen</span>
-                                @endif
-                            </td>
-                            <td>
-                                <div class="btn-group" role="group">
-                                    @if($teacher->qrTeacherAttendance)
-                                        <button type="button" class="btn btn-sm btn-info" 
-                                                onclick="viewQr({{ $teacher->id }})" 
-                                                title="Lihat QR Code">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-warning" 
-                                                onclick="regenerateQr({{ $teacher->id }})" 
-                                                title="Generate Ulang QR">
-                                            <i class="fas fa-redo"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-danger" 
-                                                onclick="deleteQr({{ $teacher->id }})" 
-                                                title="Hapus QR Code">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    @else
-                                        <button type="button" class="btn btn-sm btn-success" 
-                                                onclick="generateQr({{ $teacher->id }})" 
-                                                title="Generate QR Code">
-                                            <i class="fas fa-qrcode"></i> Generate QR
-                                        </button>
-                                    @endif
-                                </div>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="8" class="text-center">Tidak ada data guru</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Pagination -->
-            <div class="d-flex justify-content-center">
-                {{ $teachers->links() }}
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- QR Code Modal -->
-<div class="modal fade" id="qrModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">QR Code Guru</h5>
-                <button type="button" class="close" data-dismiss="modal">
-                    <span>&times;</span>
-                </button>
-            </div>
-            <div class="modal-body text-center">
-                <div id="qrContent">
-                    <!-- QR content will be loaded here -->
+    <form id="bulkForm">
+    <div class="grid">
+        @foreach($teachers as $t)
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div style="display:flex; align-items:center; gap:.75rem;">
+                        <div class="avatar">{{ mb_substr($t->name,0,1) }}</div>
+                        <div>
+                            <div style="font-weight:700">{{ $t->name }}</div>
+                            <div class="muted">NIP: {{ $t->nip ?? '-' }}</div>
+                            <div class="muted">{{ $t->email ?? '' }}</div>
+                        </div>
+                    </div>
+                    <div>
+                        <input type="checkbox" name="ids[]" value="{{ $t->id }}">
+                    </div>
+                </div>
+                <div class="actions" style="margin-top:.75rem;">
+                    <button type="button" class="btn btn-secondary" onclick="previewQr({{ $t->id }})"><i class="fas fa-eye"></i> Lihat</button>
+                    <button type="button" class="btn btn-primary" onclick="generateQr({{ $t->id }})"><i class="fas fa-qrcode"></i> Generate</button>
+                    <a class="btn btn-secondary" href="{{ route('admin.qr-teacher.download', $t) }}"><i class="fas fa-download"></i> Unduh</a>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                <a href="#" id="downloadQrBtn" class="btn btn-primary" target="_blank">
-                    <i class="fas fa-download"></i> Download
-                </a>
-            </div>
         </div>
+        @endforeach
+    </div>
+    </form>
+
+    <div class="mt-3">
+        {{ $teachers->links() }}
     </div>
 </div>
 
+<!-- QR Code Modal (styled to match student QR UI) -->
+<div id="qrTeacherModal" class="fixed inset-0 bg-black bg-opacity-50 dark:bg-black dark:bg-opacity-70 hidden items-center justify-center z-50" onclick="closeTeacherModal()">
+  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full mx-4 border border-gray-200 dark:border-gray-700" onclick="event.stopPropagation()">
+      <div class="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-4 rounded-t-2xl">
+          <div class="flex justify-between items-center">
+              <h3 class="text-xl font-semibold text-white flex items-center"><i class="fas fa-qrcode mr-2"></i>QR Code Guru</h3>
+              <button onclick="closeTeacherModal()" class="text-white hover:text-gray-200 transition-colors p-1 rounded-lg hover:bg-white/10">
+                  <i class="fas fa-times text-xl"></i>
+              </button>
+          </div>
+      </div>
+      <div class="p-6">
+          <div id="qrTeacherContent" class="text-center">
+              <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-blue-400 mx-auto"></div>
+              <p class="text-gray-600 dark:text-gray-400 mt-3">Memuat...</p>
+          </div>
+      </div>
+      <div class="px-6 pb-6 flex gap-3">
+          <button onclick="closeTeacherModal()" class="flex-1 bg-gray-600 hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">Tutup</button>
+          <button type="button" id="downloadTeacherQrBtn" class="flex-1 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+              <i class="fas fa-download mr-2"></i>Download
+          </button>
+      </div>
+  </div>
+</div>
 @endsection
 
 @push('scripts')
 <script>
-function generateQr(teacherId) {
-    if (!confirm('Generate QR Code untuk guru ini?')) return;
-    
-    $.ajax({
-        url: `/admin/qr-teacher/${teacherId}/generate`,
+function generateQr(id) {
+    fetch("{{ url('/admin/qr-teacher/generate') }}/"+id, {
         method: 'POST',
-        data: {
-            _token: '{{ csrf_token() }}'
-        },
-        success: function(response) {
-            if (response.success) {
-                showAlert('success', response.message);
-                location.reload();
-            } else {
-                showAlert('error', response.message);
-            }
-        },
-        error: function(xhr) {
-            showAlert('error', 'Terjadi kesalahan saat generate QR Code');
+        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.success) {
+            showQr(res.url);
+        } else { alert(res.message || 'Gagal generate QR'); }
+    })
+    .catch(err => alert('Error: '+err));
+}
+
+function previewQr(id) {
+    fetch("{{ url('/admin/qr-teacher/view') }}/"+id)
+      .then(r => r.text())
+      .then(html => {
+        const temp = document.createElement('div');
+        temp.innerHTML = html;
+        const img = temp.querySelector('#qrImageSrc');
+        if (img && img.dataset.src) {
+            showQr(img.dataset.src);
+        } else {
+            // Jika belum ada, coba generate
+            generateQr(id);
         }
-    });
+      });
 }
 
-function regenerateQr(teacherId) {
-    if (!confirm('Generate ulang QR Code untuk guru ini? QR Code lama akan dihapus.')) return;
-    
-    $.ajax({
-        url: `/admin/qr-teacher/${teacherId}/regenerate`,
-        method: 'POST',
-        data: {
-            _token: '{{ csrf_token() }}'
-        },
-        success: function(response) {
-            if (response.success) {
-                showAlert('success', response.message);
-                location.reload();
-            } else {
-                showAlert('error', response.message);
-            }
-        },
-        error: function(xhr) {
-            showAlert('error', 'Terjadi kesalahan saat regenerate QR Code');
-        }
-    });
-}
+function showQr(url, meta = null) {
+    // Open modal
+    const modal = document.getElementById('qrTeacherModal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
 
-function deleteQr(teacherId) {
-    if (!confirm('Hapus QR Code untuk guru ini?')) return;
-    
-    $.ajax({
-        url: `/admin/qr-teacher/${teacherId}/delete`,
-        method: 'DELETE',
-        data: {
-            _token: '{{ csrf_token() }}'
-        },
-        success: function(response) {
-            if (response.success) {
-                showAlert('success', response.message);
-                location.reload();
-            } else {
-                showAlert('error', response.message);
-            }
-        },
-        error: function(xhr) {
-            showAlert('error', 'Terjadi kesalahan saat menghapus QR Code');
-        }
-    });
-}
-
-function viewQr(teacherId) {
-    $.ajax({
-        url: `/admin/qr-teacher/${teacherId}/view`,
-        method: 'GET',
-        success: function(response) {
-            if (response.success) {
-                const qrContent = `
-                    <div class="mb-3">
-                        <h6>${response.teacher.name}</h6>
-                        <p class="text-muted mb-2">NIP: ${response.teacher.nip}</p>
-                        <p class="text-muted mb-3">Jabatan: ${response.teacher.position}</p>
-                    </div>
-                    <div class="mb-3">
-                        <img src="${response.qr_image_url}" alt="QR Code" class="img-fluid" style="max-width: 300px;">
-                    </div>
-                    <div class="text-muted">
-                        <small>QR Code: ${response.qr_code}</small>
-                    </div>
-                `;
-                
-                $('#qrContent').html(qrContent);
-                $('#downloadQrBtn').attr('href', response.download_url);
-                $('#qrModal').modal('show');
-            } else {
-                showAlert('error', response.message);
-            }
-        },
-        error: function(xhr) {
-            showAlert('error', 'Terjadi kesalahan saat memuat QR Code');
-        }
-    });
-}
-
-function generateBulkQr() {
-    const selectedTeachers = $('.teacher-checkbox:checked').map(function() {
-        return this.value;
-    }).get();
-    
-    if (selectedTeachers.length === 0) {
-        showAlert('warning', 'Pilih minimal satu guru untuk generate QR Code');
-        return;
-    }
-    
-    if (!confirm(`Generate QR Code untuk ${selectedTeachers.length} guru yang dipilih?`)) return;
-    
-    $.ajax({
-        url: '/admin/qr-teacher/generate-bulk',
-        method: 'POST',
-        data: {
-            _token: '{{ csrf_token() }}',
-            teacher_ids: selectedTeachers
-        },
-        success: function(response) {
-            if (response.success) {
-                showAlert('success', response.message);
-                location.reload();
-            } else {
-                showAlert('error', response.message);
-            }
-        },
-        error: function(xhr) {
-            showAlert('error', 'Terjadi kesalahan saat generate QR Code massal');
-        }
-    });
-}
-
-function selectAll() {
-    $('.teacher-checkbox').prop('checked', true);
-    $('#selectAllCheckbox').prop('checked', true);
-}
-
-function deselectAll() {
-    $('.teacher-checkbox').prop('checked', false);
-    $('#selectAllCheckbox').prop('checked', false);
-}
-
-function toggleSelectAll() {
-    const isChecked = $('#selectAllCheckbox').is(':checked');
-    $('.teacher-checkbox').prop('checked', isChecked);
-}
-
-function showAlert(type, message) {
-    const alertClass = type === 'success' ? 'alert-success' : 
-                      type === 'warning' ? 'alert-warning' : 'alert-danger';
-    
-    const alertHtml = `
-        <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
-            ${message}
-            <button type="button" class="close" data-dismiss="alert">
-                <span>&times;</span>
-            </button>
+    const content = document.getElementById('qrTeacherContent');
+    content.innerHTML = `
+        <div class="text-center">
+            <img src="${url}" alt="QR Code" class="max-w-xs mx-auto mb-4 rounded-lg shadow-lg">
+            ${meta ? `<h4 class=\"text-xl font-bold text-gray-900 dark:text-white mb-1\">${meta.name}</h4>
+                      <p class=\"text-gray-600 dark:text-gray-400 mb-4\">NIP: ${meta.nip ?? '-'} | ${meta.email ?? ''}</p>` : ''}
+            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                <p class="text-sm text-blue-700 dark:text-blue-300">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    QR Code untuk absensi guru
+                </p>
+            </div>
         </div>
     `;
-    
-    $('.container-fluid').prepend(alertHtml);
-    
-    setTimeout(() => {
-        $('.alert').fadeOut();
-    }, 5000);
+
+    // Setup download button
+    const dlBtn = document.getElementById('downloadTeacherQrBtn');
+    dlBtn.onclick = () => { window.open(url, '_blank'); };
+}
+
+function closeTeacherModal() {
+    const modal = document.getElementById('qrTeacherModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+
+function bulkGenerate() {
+    const form = document.getElementById('bulkForm');
+    const data = new FormData(form);
+    const ids = data.getAll('ids[]');
+    if (!ids.length) { alert('Pilih minimal satu guru.'); return; }
+
+    fetch("{{ route('admin.qr-teacher.generate-bulk') }}", {
+        method: 'POST',
+        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept':'application/json' },
+        body: new URLSearchParams(ids.map(id => ['ids[]', id]))
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.success && res.results && res.results.length) {
+            // Tampilkan QR pertama sebagai preview
+            showQr(res.results[0].url);
+        } else {
+            alert('Proses selesai namun tidak ada hasil dikembalikan.');
+        }
+    })
+    .catch(err => alert('Error: '+err));
 }
 </script>
-@endpush
-
-@push('styles')
-<style>
-.avatar-sm {
-    width: 40px;
-    height: 40px;
-    font-size: 14px;
-}
-
-.badge {
-    font-size: 0.75em;
-}
-
-.btn-group .btn {
-    margin-right: 2px;
-}
-
-.btn-group .btn:last-child {
-    margin-right: 0;
-}
-</style>
 @endpush

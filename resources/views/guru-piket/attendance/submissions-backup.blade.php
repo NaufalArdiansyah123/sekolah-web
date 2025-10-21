@@ -1,4 +1,4 @@
-@extends('layouts.guru-piket')
+@extends('layouts.admin')
 
 @section('title', 'Kelola Submission Absensi')
 
@@ -35,7 +35,13 @@
     .container-modern {
         max-width: 1200px;
         margin: 0 auto;
-        padding: 0;
+        padding: 1rem;
+    }
+
+    @media (min-width: 768px) {
+        .container-modern {
+            padding: 1.5rem;
+        }
     }
 
     /* Modern Cards */
@@ -235,22 +241,6 @@
         color: #991b1b;
     }
 
-    /* Additional status badges for students */
-    .bg-blue-100 {
-        background: #dbeafe;
-        color: #1e40af;
-    }
-
-    .bg-purple-100 {
-        background: #e9d5ff;
-        color: #7c3aed;
-    }
-
-    .bg-gray-100 {
-        background: #f3f4f6;
-        color: #374151;
-    }
-
     /* Responsive Grid */
     .submission-content {
         display: grid;
@@ -346,32 +336,21 @@
         color: var(--gray-400);
     }
 
-    /* Modal Styles - Improved positioning */
+    /* Modal Styles */
     .modal-overlay {
         background: rgba(0, 0, 0, 0.5);
         /* Remove backdrop-filter to prevent blur */
-    }
-
-    .modal-container {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        min-height: 100vh !important;
-        padding: 2rem 1rem !important;
-        padding-top: 80px !important;
-        padding-bottom: 2rem !important;
     }
 
     .modal-content {
         background: white;
         border-radius: var(--radius-lg);
         box-shadow: var(--shadow-lg);
-        max-height: calc(100vh - 120px) !important;
+        max-height: 90vh;
         overflow-y: auto;
         width: 100%;
-        max-width: 56rem !important;
-        margin: 0 auto !important;
-        position: relative !important;
+        max-width: 24rem;
+        margin: 1rem;
         /* Ensure no blur effects */
         backdrop-filter: none;
         filter: none;
@@ -388,13 +367,9 @@
         -webkit-filter: none;
     }
 
-    @media (min-width: 1024px) {
+    @media (min-width: 768px) {
         .modal-content {
-            max-width: 64rem !important;
-        }
-        
-        .modal-container {
-            padding-top: 100px !important;
+            max-width: 48rem;
         }
     }
 
@@ -561,80 +536,6 @@
         transform: translateZ(0);
         -webkit-transform: translateZ(0);
     }
-
-    /* Edit form styles */
-    .edit-form {
-        background: var(--gray-50);
-        border-top: 1px solid var(--gray-200);
-        padding: 1rem;
-        border-radius: 0 0 var(--radius) var(--radius);
-    }
-
-    .form-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-        margin-bottom: 1rem;
-    }
-
-    @media (max-width: 640px) {
-        .form-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    .form-group {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .form-label {
-        display: block;
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: var(--gray-700);
-        margin-bottom: 0.5rem;
-    }
-
-    .form-input {
-        width: 100%;
-        padding: 0.5rem;
-        border: 1px solid var(--gray-300);
-        border-radius: var(--radius);
-        font-size: 0.875rem;
-        transition: border-color 0.15s ease;
-    }
-
-    .form-input:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    }
-
-    .file-upload-area {
-        border: 2px dashed var(--gray-300);
-        border-radius: var(--radius);
-        padding: 1rem;
-        text-align: center;
-        background: white;
-        transition: border-color 0.15s ease;
-    }
-
-    .file-upload-area:hover {
-        border-color: var(--primary);
-    }
-
-    .file-preview {
-        margin-bottom: 0.5rem;
-    }
-
-    .file-preview img {
-        max-width: 200px;
-        max-height: 150px;
-        border-radius: var(--radius);
-        margin-bottom: 0.5rem;
-        box-shadow: var(--shadow);
-    }
 </style>
 @endpush
 
@@ -793,7 +694,7 @@
                     </div>
                     <h3 class="empty-title">Belum Ada Submission</h3>
                     <p class="empty-description">Submission absensi dari guru akan muncul di sini</p>
-                    <button onclick="refreshSubmissions(this)" class="btn btn-primary">
+                    <button onclick="refreshSubmissions()" class="btn btn-primary">
                         <i class="fas fa-sync-alt"></i>Refresh
                     </button>
                 </div>
@@ -806,7 +707,7 @@
 <!-- Submission Detail Modal -->
 <div id="submissionModal" class="fixed inset-0 z-50 hidden" style="backdrop-filter: none; filter: none;">
     <div class="modal-overlay fixed inset-0" onclick="closeSubmissionModal()" style="backdrop-filter: none;"></div>
-    <div class="modal-container" style="backdrop-filter: none; filter: none;">
+    <div class="flex items-center justify-center min-h-screen p-4" style="backdrop-filter: none; filter: none;">
         <div class="modal-content" style="backdrop-filter: none; filter: none;">
             <div style="padding: 1.5rem; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center;">
                 <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--gray-900); margin: 0;">
@@ -831,6 +732,8 @@
 
 @push('scripts')
 <script>
+// Copy all the existing JavaScript functions here
+// (keeping the same functionality but with modern styling)
 let currentFilter = 'all';
 let currentSubmissionData = null;
 
@@ -941,16 +844,15 @@ function applyDateFilter() {
 }
 
 // Refresh submissions
-function refreshSubmissions(triggerEl) {
-    const refreshBtn = triggerEl || (typeof event !== 'undefined' && event.target ? event.target.closest('button') : null);
-    const originalContent = refreshBtn ? refreshBtn.innerHTML : null;
-    if (refreshBtn) {
-        refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat...';
-        refreshBtn.disabled = true;
-    }
+function refreshSubmissions() {
+    const refreshBtn = event.target.closest('button');
+    const originalContent = refreshBtn.innerHTML;
+    refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat...';
+    refreshBtn.disabled = true;
+    
     setTimeout(() => {
         location.reload();
-    }, 300);
+    }, 1000);
 }
 
 // View submission detail
@@ -1066,258 +968,24 @@ function removeBlurEffects() {
     console.log('✅ Removed blur effects from', allElements.length + 1, 'elements');
 }
 
-// Get status badge for student
-function getStatusBadge(status) {
-    const badges = {
-        'hadir': { class: 'status-confirmed', text: 'Hadir' },
-        'terlambat': { class: 'status-pending', text: 'Terlambat' },
-        'izin': { class: 'bg-blue-100', text: 'Izin' },
-        'sakit': { class: 'bg-purple-100', text: 'Sakit' },
-        'alpha': { class: 'status-rejected', text: 'Alpha' }
-    };
-    
-    return badges[status] || { class: 'bg-gray-100', text: status };
-}
-
-// Student edit functions
-function toggleEditStudent(studentId) {
-    const editForm = document.getElementById(`edit-form-${studentId}`);
-    if (editForm.style.display === 'none' || editForm.style.display === '') {
-        editForm.style.display = 'block';
-    } else {
-        editForm.style.display = 'none';
-    }
-}
-
-function cancelEditStudent(studentId) {
-    const editForm = document.getElementById(`edit-form-${studentId}`);
-    editForm.style.display = 'none';
-}
-
-function handleStatusChange(studentId) {
-    const statusSelect = document.getElementById(`status-${studentId}`);
-    const fileUpload = document.getElementById(`file-upload-${studentId}`);
-    const status = statusSelect.value;
-    
-    if (status === 'sakit' || status === 'izin') {
-        fileUpload.style.display = 'block';
-        const label = fileUpload.querySelector('label');
-        label.innerHTML = `<i class="fas fa-paperclip"></i> Lampiran Surat ${status === 'sakit' ? 'Sakit' : 'Izin'}`;
-    } else {
-        fileUpload.style.display = 'none';
-    }
-}
-
-function handleFileUpload(studentId) {
-    const fileInput = document.getElementById(`file-${studentId}`);
-    const preview = document.getElementById(`file-preview-${studentId}`);
-    const file = fileInput.files[0];
-    
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            preview.innerHTML = `
-                <img src="${e.target.result}" alt="Preview" style="max-width: 200px; max-height: 150px; border-radius: var(--radius); margin-bottom: 0.5rem;">
-                <div style="font-size: 0.75rem; color: var(--gray-600);">${file.name}</div>
-            `;
-        };
-        reader.readAsDataURL(file);
-    }
-}
-
-function saveStudentEdit(studentId, btnEl) {
-    const status = document.getElementById(`status-${studentId}`).value;
-    const time = document.getElementById(`time-${studentId}`).value;
-    const notes = document.getElementById(`notes-${studentId}`).value;
-    const fileInput = document.getElementById(`file-${studentId}`);
-    
-    // Prepare form data
-    const formData = new FormData();
-    formData.append('student_id', studentId);
-    formData.append('status', status);
-    formData.append('time', time);
-    formData.append('notes', notes);
-    
-    if (fileInput.files[0]) {
-        formData.append('attachment', fileInput.files[0]);
-    }
-    
-    // Show loading
-    const saveBtn = btnEl || (typeof event !== 'undefined' ? event.target : null);
-    const originalContent = saveBtn ? saveBtn.innerHTML : null;
-    if (saveBtn) {
-        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
-        saveBtn.disabled = true;
-    }
-    
-    // Send update request
-    const baseUrl = '{{ url("/guru-piket/attendance/submissions") }}';
-    const updateUrl = `${baseUrl}/${currentSubmissionData.id}/update-student`;
-    
-    fetch(updateUrl, {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: formData
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            alert('✅ Data siswa berhasil diperbarui!');
-            // Refresh the modal content
-            fetchSubmissionDetail(currentSubmissionData.id);
-        } else {
-            alert('❌ Gagal memperbarui data: ' + (data.message || 'Unknown error'));
-        }
-    })
-    .catch(error => {
-        console.error('💥 Error updating student:', error);
-        alert('⚠️ Terjadi kesalahan saat memperbarui data: ' + error.message);
-    })
-    .finally(() => {
-        if (saveBtn) {
-            saveBtn.innerHTML = originalContent;
-            saveBtn.disabled = false;
-        }
-    });
-}
-
-// Create submission detail HTML with student list and edit functionality
+// Create submission detail HTML (simplified version)
 function createSubmissionDetailHtml(submission) {
     const attendanceData = submission.attendance_data || [];
     const statusClass = submission.status.toLowerCase();
     const canEdit = submission.status === 'pending';
     
-    // Generate student list HTML with edit functionality
-    let studentsHtml = '';
-    if (attendanceData.length > 0) {
-        attendanceData.forEach((student, index) => {
-            const statusBadge = getStatusBadge(student.status);
-            const studentId = student.student_id || student.id || index;
-            
-            studentsHtml += `
-                <div id="student-${studentId}" style="background: white; border: 1px solid var(--gray-200); border-radius: var(--radius); margin-bottom: 0.75rem; overflow: hidden;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem;">
-                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <div style="width: 2.5rem; height: 2.5rem; background: linear-gradient(135deg, var(--primary) 0%, #6366f1 100%); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.875rem;">
-                                ${student.student_name ? student.student_name.charAt(0).toUpperCase() : 'S'}
-                            </div>
-                            <div>
-                                <div style="font-weight: 600; color: var(--gray-900); font-size: 0.875rem;">${student.student_name || 'Nama tidak tersedia'}</div>
-                                <div style="font-size: 0.75rem; color: var(--gray-600);">NIS: ${student.nis || student.student_id || '-'}</div>
-                            </div>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <span class="status-badge ${statusBadge.class}" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">${statusBadge.text}</span>
-                            ${student.scan_time ? `<span style="font-size: 0.75rem; color: var(--gray-500);">${student.scan_time}</span>` : ''}
-                            ${canEdit ? `
-                                <button onclick="toggleEditStudent('${studentId}')" style="padding: 0.25rem 0.5rem; background: var(--primary); color: white; border: none; border-radius: var(--radius); font-size: 0.75rem; cursor: pointer; transition: all 0.15s ease;" onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='var(--primary)'">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                            ` : ''}
-                        </div>
-                    </div>
-                    
-                    ${canEdit ? `
-                        <div id="edit-form-${studentId}" class="edit-form" style="display: none;">
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label class="form-label">Status Kehadiran</label>
-                                    <select id="status-${studentId}" onchange="handleStatusChange('${studentId}')" class="form-input">
-                                        <option value="hadir" ${student.status === 'hadir' ? 'selected' : ''}>Hadir</option>
-                                        <option value="terlambat" ${student.status === 'terlambat' ? 'selected' : ''}>Terlambat</option>
-                                        <option value="sakit" ${student.status === 'sakit' ? 'selected' : ''}>Sakit</option>
-                                        <option value="izin" ${student.status === 'izin' ? 'selected' : ''}>Izin</option>
-                                        <option value="alpha" ${student.status === 'alpha' ? 'selected' : ''}>Alpha</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Waktu</label>
-                                    <input type="time" id="time-${studentId}" value="${student.scan_time || ''}" class="form-input">
-                                </div>
-                            </div>
-                            
-                            <div class="form-group" style="margin-bottom: 1rem;">
-                                <label class="form-label">Catatan</label>
-                                <textarea id="notes-${studentId}" placeholder="Tambahkan catatan..." class="form-input" style="resize: vertical; min-height: 60px;">${student.notes || ''}</textarea>
-                            </div>
-                            
-                            <div id="file-upload-${studentId}" style="display: ${student.status === 'sakit' || student.status === 'izin' ? 'block' : 'none'}; margin-bottom: 1rem;">
-                                <label class="form-label">
-                                    <i class="fas fa-paperclip"></i> Lampiran Surat ${student.status === 'sakit' ? 'Sakit' : 'Izin'}
-                                </label>
-                                <div class="file-upload-area">
-                                    <input type="file" id="file-${studentId}" accept="image/*" onchange="handleFileUpload('${studentId}')" style="display: none;">
-                                    <div id="file-preview-${studentId}" class="file-preview">
-                                        ${student.attachment ? `
-                                            <img src="${student.attachment}" alt="Surat">
-                                            <div style="font-size: 0.75rem; color: var(--gray-600);">File sudah dilampirkan</div>
-                                        ` : `
-                                            <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: var(--gray-400); margin-bottom: 0.5rem;"></i>
-                                            <div style="font-size: 0.875rem; color: var(--gray-600);">Klik untuk upload foto surat</div>
-                                        `}
-                                    </div>
-                                    <button type="button" onclick="document.getElementById('file-${studentId}').click()" class="btn btn-primary" style="font-size: 0.875rem;">
-                                        <i class="fas fa-upload"></i> Pilih File
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
-                                <button onclick="cancelEditStudent('${studentId}')" class="btn btn-secondary" style="font-size: 0.875rem;">
-                                    <i class="fas fa-times"></i> Batal
-                                </button>
-                                <button onclick="saveStudentEdit('${studentId}', this)" class="btn btn-success" style="font-size: 0.875rem;">
-                                    <i class="fas fa-save"></i> Simpan
-                                </button>
-                            </div>
-                        </div>
-                    ` : ''}
-                    
-                    ${student.notes ? `<div style="padding: 0.75rem; padding-top: 0; font-size: 0.75rem; color: var(--gray-600); font-style: italic;">${student.notes}</div>` : ''}
-                </div>
-            `;
-        });
-    } else {
-        studentsHtml = `
-            <div style="text-align: center; padding: 2rem; color: var(--gray-500);">
-                <i class="fas fa-users" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
-                <p>Tidak ada data siswa</p>
-            </div>
-        `;
-    }
-    
     return `
         <div style="space-y: 1.5rem;">
-            <!-- Submission Info -->
             <div style="background: var(--gray-50); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem;">
-                <h3 style="font-weight: 600; margin-bottom: 1rem; color: var(--gray-900);">Informasi Submission</h3>
+                <h3 style="font-weight: 600; margin-bottom: 1rem;">Informasi Submission</h3>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
                     <div>
                         <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.25rem;">Guru</div>
-                        <div style="font-weight: 600; color: var(--gray-900);">${submission.teacher.name}</div>
-                    </div>
-                    <div>
-                        <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.25rem;">Kelas</div>
-                        <div style="font-weight: 600; color: var(--gray-900);">${submission.class ? submission.class.name : 'Kelas tidak ditemukan'}</div>
+                        <div style="font-weight: 600;">${submission.teacher.name}</div>
                     </div>
                     <div>
                         <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.25rem;">Mata Pelajaran</div>
-                        <div style="font-weight: 600; color: var(--gray-900);">${submission.subject}</div>
-                    </div>
-                    <div>
-                        <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.25rem;">Waktu</div>
-                        <div style="font-weight: 600; color: var(--gray-900);">${submission.session_time}</div>
-                    </div>
-                    <div>
-                        <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.25rem;">Tanggal</div>
-                        <div style="font-weight: 600; color: var(--gray-900);">${new Date(submission.submission_date).toLocaleDateString('id-ID')}</div>
+                        <div style="font-weight: 600;">${submission.subject}</div>
                     </div>
                     <div>
                         <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.25rem;">Status</div>
@@ -1326,7 +994,6 @@ function createSubmissionDetailHtml(submission) {
                 </div>
             </div>
             
-            <!-- Statistics -->
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
                 <div style="text-align: center; padding: 1rem; background: white; border-radius: var(--radius); border: 1px solid var(--gray-200);">
                     <div style="font-size: 1.5rem; font-weight: 700; color: var(--gray-900);">${submission.total_students}</div>
@@ -1346,38 +1013,13 @@ function createSubmissionDetailHtml(submission) {
                 </div>
             </div>
             
-            <!-- Student List -->
-            <div style="margin-bottom: 1.5rem;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <h3 style="font-weight: 600; color: var(--gray-900); margin: 0;">Daftar Kehadiran Siswa</h3>
-                    <div style="background: var(--gray-100); color: var(--gray-600); padding: 0.375rem 0.75rem; border-radius: var(--radius); font-size: 0.75rem; font-weight: 500;">
-                        <i class="fas fa-users" style="margin-right: 0.25rem;"></i>${attendanceData.length} Siswa
-                        ${canEdit ? ' • <i class="fas fa-edit" style="margin-left: 0.5rem; margin-right: 0.25rem;"></i>Dapat diedit' : ''}
-                    </div>
-                </div>
-                <div style="max-height: 400px; overflow-y: auto; border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 1rem; background: var(--gray-50);">
-                    ${studentsHtml}
-                </div>
-            </div>
-            
-            <!-- Notes -->
-            ${submission.notes ? `
-                <div style="background: #fef3c7; border: 1px solid #fbbf24; border-radius: var(--radius); padding: 1rem; margin-bottom: 1.5rem;">
-                    <h4 style="font-weight: 600; color: #92400e; margin-bottom: 0.5rem; font-size: 0.875rem;">
-                        <i class="fas fa-sticky-note" style="margin-right: 0.5rem;"></i>Catatan Guru
-                    </h4>
-                    <p style="color: #92400e; margin: 0; font-size: 0.875rem;">${submission.notes}</p>
-                </div>
-            ` : ''}
-            
-            <!-- Action Buttons -->
             ${submission.status === 'pending' ? `
                 <div style="display: flex; gap: 0.75rem; justify-content: flex-end; padding-top: 1rem; border-top: 1px solid var(--gray-200);">
                     <button onclick="confirmSubmission(${submission.id}, 'confirm')" class="btn btn-success">
-                        <i class="fas fa-check" style="margin-right: 0.5rem;"></i>Konfirmasi
+                        <i class="fas fa-check"></i>Konfirmasi
                     </button>
                     <button onclick="confirmSubmission(${submission.id}, 'reject')" class="btn btn-danger">
-                        <i class="fas fa-times" style="margin-right: 0.5rem;"></i>Tolak
+                        <i class="fas fa-times"></i>Tolak
                     </button>
                 </div>
             ` : ''}
@@ -1432,8 +1074,7 @@ function confirmSubmission(submissionId, action) {
             const actionText = isConfirm ? 'dikonfirmasi' : 'ditolak';
             alert(`✅ Submission berhasil ${actionText}!`);
             closeSubmissionModal();
-            // reload list safely without relying on event.target
-            refreshSubmissions(null);
+            refreshSubmissions();
         } else {
             alert('❌ Gagal memproses: ' + (data.message || 'Unknown error'));
         }
@@ -1456,7 +1097,20 @@ document.head.appendChild(style);
 
 // Initialize page
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Modern submissions page loaded with student edit functionality');
+    console.log('Modern submissions page loaded');
 });
+
+// Get status badge for student
+function getStatusBadge(status) {
+    const badges = {
+        'hadir': { class: 'status-confirmed', text: 'Hadir' },
+        'terlambat': { class: 'status-pending', text: 'Terlambat' },
+        'izin': { class: 'bg-blue-100 text-blue-800', text: 'Izin' },
+        'sakit': { class: 'bg-purple-100 text-purple-800', text: 'Sakit' },
+        'alpha': { class: 'status-rejected', text: 'Alpha' }
+    };
+    
+    return badges[status] || { class: 'bg-gray-100 text-gray-800', text: status };
+}
 </script>
 @endpush

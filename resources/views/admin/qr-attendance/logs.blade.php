@@ -1,19 +1,35 @@
 @extends('layouts.admin')
 
-@section('title', 'Log Absensi QR Code')
+@section('title', 'Log Absensi Siswa')
 
 @section('content')
 <style>
-/* Optimized Dark Mode Styling for QR Attendance Logs */
+/* Minimal Monochrome Styling */
+:root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f7f7f7;
+    --bg-tertiary: #efefef;
+    --text-primary: #111111;
+    --text-secondary: #555555;
+    --border-color: #dddddd;
+    --accent-color: #222222;
+}
 
-/* Main container styling */
+.dark {
+    --bg-primary: #1e293b;
+    --bg-secondary: #0f172a;
+    --bg-tertiary: #334155;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --border-color: #334155;
+}
+
 .attendance-log-container {
     background-color: var(--bg-secondary);
     color: var(--text-primary);
     transition: all 0.3s ease;
 }
 
-/* Card and container backgrounds */
 .attendance-card {
     background-color: var(--bg-primary);
     border: 1px solid var(--border-color);
@@ -21,80 +37,38 @@
     transition: all 0.3s ease;
 }
 
-/* Table styling */
-.attendance-table {
+.class-card {
     background-color: var(--bg-primary);
-    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-.attendance-table thead {
-    background-color: var(--bg-tertiary);
-}
+.class-card:hover { background-color: var(--bg-primary); }
 
-.attendance-table tbody tr {
+.student-card {
     background-color: var(--bg-primary);
-    transition: background-color 0.2s ease;
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    transition: all 0.2s ease;
 }
 
-.attendance-table tbody tr:hover {
-    background-color: var(--bg-tertiary);
-}
+.student-card:hover { background-color: var(--bg-tertiary); }
 
-.attendance-table th,
-.attendance-table td {
-    border-color: var(--border-color);
-    color: var(--text-primary);
-}
+.student-card.confirmed { border-color: var(--border-color); background-color: var(--bg-primary); }
+.student-card.unconfirmed { border-color: var(--border-color); background-color: var(--bg-primary); }
 
-/* Form elements */
 .attendance-form-input {
     background-color: var(--bg-primary);
     border-color: var(--border-color);
     color: var(--text-primary);
 }
 
-.attendance-form-input:focus {
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
+.attendance-form-input:focus { border-color: #bbbbbb; box-shadow: none; outline: none; }
 
-/* Button styling */
-.btn-secondary-custom {
-    background-color: var(--bg-tertiary);
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
-    transition: all 0.2s ease;
-}
-
-.btn-secondary-custom:hover {
-    background-color: var(--bg-secondary);
-    transform: translateY(-1px);
-}
-
-/* Pagination styling */
-.pagination-wrapper nav {
-    color: var(--text-primary);
-}
-
-.pagination-wrapper nav span,
-.pagination-wrapper nav a {
-    color: var(--text-primary);
-    background-color: var(--bg-primary);
-    border-color: var(--border-color);
-}
-
-.pagination-wrapper nav a:hover {
-    background-color: var(--bg-tertiary);
-    color: var(--text-primary);
-}
-
-.pagination-wrapper nav span[aria-current="page"] {
-    background-color: var(--accent-color);
-    color: white;
-    border-color: var(--accent-color);
-}
-
-/* Status badges - keep their colors but ensure readability */
 .status-badge {
     font-weight: 500;
     font-size: 0.75rem;
@@ -102,494 +76,941 @@
     border-radius: 9999px;
 }
 
-/* Empty state styling */
-.empty-state {
-    color: var(--text-secondary);
-    text-align: center;
-    padding: 3rem 1rem;
+.confirmed-indicator { display:inline-flex; align-items:center; gap:.5rem; padding:.35rem .75rem; background: var(--bg-tertiary); color: var(--text-primary); border-radius:9999px; font-size:.8rem; font-weight:600; }
+.confirmed-indicator i { opacity:.8; }
+
+.class-header { background: var(--bg-tertiary); padding: 1rem; color: var(--text-primary); }
+
+.class-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
 }
 
-/* Responsive improvements */
+.class-stats {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.confirm-button { background: var(--bg-tertiary); color: var(--text-primary); border:1px solid var(--border-color); padding:.45rem .9rem; border-radius:6px; font-size:.875rem; font-weight:600; cursor:pointer; }
+.confirm-button:hover { filter: brightness(0.97); }
+
+.confirm-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.bulk-confirm-section { background: var(--bg-tertiary); color: var(--text-primary); padding:.8rem; border-radius:8px; margin-bottom:1rem; border:1px solid var(--border-color); }
+
+.bulk-confirm-section h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.bulk-confirm-section .btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+.bulk-confirm-section .btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.unconfirmed-indicator { display:inline-flex; align-items:center; gap:.5rem; padding:.35rem .75rem; background: var(--bg-tertiary); color: var(--text-primary); border-radius:9999px; font-size:.8rem; font-weight:600; }
+.unconfirmed-indicator i { opacity:.8; }
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.checkbox-container input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+    accent-color: var(--accent-color);
+}
+
+.checkbox-container label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.confirmation-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.confirmation-modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    border-radius: 0.75rem;
+    padding: 2rem;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+
+.modal-body {
+    margin-bottom: 1.5rem;
+}
+
+.modal-footer {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+}
+
+.btn-secondary {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+    background: var(--border-color);
+}
+
+.btn-primary {
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    background: #2563eb;
+}
+
+.btn-success {
+    background: #10b981;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-success:hover {
+    background: #059669;
+}
+
+.btn-danger {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+}
+
+.toast {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    max-width: 400px;
+}
+
+.toast.show {
+    transform: translateX(0);
+}
+
+.toast.success {
+    border-color: #10b981;
+}
+
+.toast.error {
+    border-color: #ef4444;
+}
+
+.toast .toast-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.toast .toast-header strong {
+    font-weight: 600;
+}
+
+.toast .toast-body {
+    font-size: 0.875rem;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
 @media (max-width: 768px) {
     .attendance-log-container {
         padding: 1rem;
     }
-    
-    .attendance-table {
-        font-size: 0.875rem;
-    }
-}
-
-/* Smooth transitions for all elements */
-.attendance-log-container *,
-.attendance-card,
-.attendance-table,
-.attendance-form-input,
-.btn-secondary-custom {
-    transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
-}
-
-/* Enhanced shadows for dark mode */
-.dark .shadow-xl {
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
-}
-
-.dark .shadow-lg {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
-}
-
-/* Ensure proper contrast for icons */
-.icon-primary {
-    color: var(--text-primary);
-}
-
-.icon-secondary {
-    color: var(--text-secondary);
-}
-
-/* Calendar icon styling */
-.icon-calendar {
-    color: var(--text-primary);
-    transition: color 0.3s ease, transform 0.2s ease;
-}
-
-.icon-calendar:hover {
-    color: var(--accent-color);
-    transform: scale(1.1);
-}
-
-/* Filter section calendar icon specific styling */
-.filter-calendar-icon {
-    color: var(--text-primary);
-    transition: all 0.3s ease;
-    opacity: 0.8;
-}
-
-.filter-calendar-icon:hover {
-    color: var(--accent-color);
-    opacity: 1;
-    transform: scale(1.05);
-}
-
-/* Calendar icon animation when date input is focused */
-.attendance-form-input:focus + .filter-calendar-icon,
-input[type="date"]:focus ~ label .filter-calendar-icon {
-    color: var(--accent-color);
-    opacity: 1;
-    animation: pulse-calendar 1s ease-in-out;
-}
-
-@keyframes pulse-calendar {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-}
-
-/* Enhanced empty state calendar icon */
-.empty-state .icon-secondary {
-    opacity: 0.6;
-    transition: opacity 0.3s ease;
-}
-
-.empty-state:hover .icon-secondary {
-    opacity: 0.8;
 }
 </style>
-<div class="container mx-auto px-6 py-8 attendance-log-container">
-    <!-- Page Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
-        <div class="mb-4 sm:mb-0">
-            <h1 class="text-3xl font-bold flex items-center" style="color: var(--text-primary);">
-                <div class="bg-gradient-to-r from-emerald-500 to-teal-600 p-3 rounded-xl mr-4">
-                    <i class="fas fa-list text-white text-xl"></i>
-                </div>
-                Log Absensi QR Code
-            </h1>
-            <p class="mt-2" style="color: var(--text-secondary);">Monitor dan analisis log absensi siswa secara real-time</p>
-        </div>
-        <div class="flex flex-wrap gap-3">
-            <a href="{{ route('admin.qr-attendance.index') }}" 
-               class="btn-secondary-custom px-4 py-2 rounded-lg flex items-center shadow-lg hover:shadow-xl">
-                <i class="fas fa-arrow-left mr-2 icon-primary"></i>Kembali
-            </a>
-            <button type="button" onclick="exportLogs()" 
-                    class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition-all duration-200 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                <i class="fas fa-download mr-2"></i>Export CSV
-            </button>
-        </div>
-    </div>
 
-    <!-- Real-time Status -->
-    @if(request('date', date('Y-m-d')) == date('Y-m-d'))
-    <div class="live-monitoring-card attendance-card rounded-2xl p-6 mb-8 shadow-lg">
-        <div class="flex items-center justify-between">
-            <div class="flex items-center">
-                <div class="bg-blue-600 p-3 rounded-xl mr-4">
-                    <i class="fas fa-broadcast-tower text-white text-lg"></i>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold" style="color: var(--text-primary);">Live Monitoring</h3>
-                    <p class="text-sm" style="color: var(--text-secondary);">Data diperbarui otomatis setiap 30 detik</p>
-                </div>
+<div class="attendance-log-container min-h-screen p-6">
+    <!-- Header Section -->
+    <div class="mb-8">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                    Log Absensi Siswa
+                </h1>
+                <p class="text-gray-600 dark:text-gray-400">
+                    Kelola dan konfirmasi log absensi siswa per kelas
+                </p>
             </div>
-            <div class="flex items-center space-x-3">
-                <div class="flex items-center">
-                    <div class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse mr-2"></div>
-                    <span class="status-badge bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 px-4 py-2 rounded-full text-sm font-medium">Real-time</span>
-                </div>
-            </div>
-        </div>
-    </div>
-    @endif
 
-    <!-- Filters -->
-    <div class="attendance-card rounded-2xl shadow-xl mb-8 overflow-hidden">
-        <div class="bg-gradient-to-r from-purple-500 to-pink-600 px-6 py-4">
-            <h3 class="text-lg font-semibold text-white flex items-center">
-                <i class="fas fa-filter mr-2"></i>Filter Log Absensi
-            </h3>
-        </div>
-        <div class="p-6">
-            <form method="GET" action="{{ route('admin.qr-attendance.logs') }}">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div>
-                        <label for="date" class="block text-sm font-medium mb-2 flex items-center" style="color: var(--text-primary);">
-                            <i class="fas fa-calendar-alt mr-2 filter-calendar-icon"></i>Tanggal
-                        </label>
-                        <input type="date" name="date" id="date" 
-                               class="attendance-form-input w-full px-3 py-2 rounded-lg focus:ring-2 focus:ring-purple-500"
-                               value="{{ request('date', date('Y-m-d')) }}">
-                    </div>
-                    <div>
-                        <label for="status" class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Status</label>
-                        <select name="status" id="status" class="attendance-form-input w-full px-3 py-2 rounded-lg focus:ring-2 focus:ring-purple-500">
-                            <option value="">Semua Status</option>
-                            @foreach($statuses as $status)
-                                <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
-                                    {{ ucfirst($status) }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div>
-                        <label for="class" class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Kelas</label>
-                        <select name="class" id="class" class="attendance-form-input w-full px-3 py-2 rounded-lg focus:ring-2 focus:ring-purple-500">
-                            <option value="">Semua Kelas</option>
-                            @foreach($classes as $class)
-                                <option value="{{ $class->id }}" {{ request('class') == $class->id ? 'selected' : '' }}>
-                                    {{ $class->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-2" style="color: var(--text-primary);">&nbsp;</label>
-                        <div class="flex space-x-2">
-                            <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center">
-                                <i class="fas fa-search mr-2"></i>Filter
-                            </button>
-                            <a href="{{ route('admin.qr-attendance.logs') }}" class="btn-secondary-custom px-4 py-2 rounded-lg flex items-center">
-                                <i class="fas fa-undo mr-2 icon-primary"></i>Reset
-                            </a>
+            <!-- Statistics Cards -->
+            <div class="flex flex-wrap gap-4">
+                <div class="attendance-card rounded-lg p-4 border">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-gray-200 rounded-lg">
+                            <i class="fas fa-check-circle text-gray-800"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm" style="color: var(--text-secondary)">Dikonfirmasi</p>
+                            <p class="text-xl font-semibold" style="color: var(--text-primary)">{{ $totalConfirmed }}</p>
                         </div>
                     </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-gray-200 rounded-lg">
+                            <i class="fas fa-clock text-gray-800"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm" style="color: var(--text-secondary)">Belum Dikonfirmasi</p>
+                            <p class="text-xl font-semibold" style="color: var(--text-primary)">{{ $totalUnconfirmed }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-gray-200 rounded-lg">
+                            <i class="fas fa-users text-gray-800"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm" style="color: var(--text-secondary)">Total Hadir</p>
+                            <p class="text-xl font-semibold" style="color: var(--text-primary)">{{ $totalPresent }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="attendance-card rounded-lg p-6 border">
+            <form method="GET" action="{{ route('admin.qr-attendance.logs') }}" class="flex flex-col lg:flex-row gap-4">
+                <div class="flex-1">
+                    <label for="date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Tanggal
+                    </label>
+                    <input type="date" id="date" name="date" value="{{ $date }}"
+                           class="attendance-form-input w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <div class="flex-1">
+                    <label for="search" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Cari Kelas
+                    </label>
+                    <input type="text" id="search" name="search" value="{{ $search }}" placeholder="Nama kelas..."
+                           class="attendance-form-input w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <div class="flex items-end gap-2">
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                        <i class="fas fa-search mr-2"></i>Filter
+                    </button>
+
+                    <a href="{{ route('admin.qr-attendance.logs', ['export' => 'csv'] + request()->query()) }}"
+                       class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors">
+                        <i class="fas fa-download mr-2"></i>Export
+                    </a>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Summary Statistics -->
-    @if($logs->count() > 0)
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <!-- Hadir -->
-        <div class="attendance-card rounded-2xl shadow-xl overflow-hidden transform hover:scale-105 transition-transform duration-200">
-            <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 p-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-emerald-100 text-sm font-medium">Hadir</p>
-                        <p class="text-white text-2xl font-bold">{{ $logs->where('status', 'hadir')->count() }}</p>
-                    </div>
-                    <div class="bg-white/20 p-3 rounded-xl">
-                        <i class="fas fa-check text-white text-xl"></i>
-                    </div>
-                </div>
+    <!-- Bulk Confirmation Section -->
+    @if($totalUnconfirmed > 0)
+    <div class="bulk-confirm-section mb-6">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div>
+                <h4 class="flex items-center gap-2">
+                    <i class="fas fa-tasks"></i>
+                    Konfirmasi Massal
+                </h4>
+                <p class="text-sm opacity-90 mb-0">
+                    Pilih beberapa log absensi untuk dikonfirmasi sekaligus
+                </p>
             </div>
-            <div class="p-4">
-                <div class="flex items-center text-sm">
-                    <i class="fas fa-user-check text-emerald-500 mr-2"></i>
-                    <span style="color: var(--text-secondary);">Siswa tepat waktu</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Terlambat -->
-        <div class="attendance-card rounded-2xl shadow-xl overflow-hidden transform hover:scale-105 transition-transform duration-200">
-            <div class="bg-gradient-to-r from-yellow-500 to-orange-500 p-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-yellow-100 text-sm font-medium">Terlambat</p>
-                        <p class="text-white text-2xl font-bold">{{ $logs->where('status', 'terlambat')->count() }}</p>
-                    </div>
-                    <div class="bg-white/20 p-3 rounded-xl">
-                        <i class="fas fa-clock text-white text-xl"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="p-4">
-                <div class="flex items-center text-sm">
-                    <i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>
-                    <span style="color: var(--text-secondary);">Datang terlambat</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Izin/Sakit -->
-        <div class="attendance-card rounded-2xl shadow-xl overflow-hidden transform hover:scale-105 transition-transform duration-200">
-            <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-blue-100 text-sm font-medium">Izin/Sakit</p>
-                        <p class="text-white text-2xl font-bold">{{ $logs->whereIn('status', ['izin', 'sakit'])->count() }}</p>
-                    </div>
-                    <div class="bg-white/20 p-3 rounded-xl">
-                        <i class="fas fa-user-clock text-white text-xl"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="p-4">
-                <div class="flex items-center text-sm">
-                    <i class="fas fa-info-circle text-blue-500 mr-2"></i>
-                    <span style="color: var(--text-secondary);">Ada keterangan</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Alpha -->
-        <div class="attendance-card rounded-2xl shadow-xl overflow-hidden transform hover:scale-105 transition-transform duration-200">
-            <div class="bg-gradient-to-r from-red-500 to-red-600 p-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-red-100 text-sm font-medium">Alpha</p>
-                        <p class="text-white text-2xl font-bold">{{ $logs->where('status', 'alpha')->count() }}</p>
-                    </div>
-                    <div class="bg-white/20 p-3 rounded-xl">
-                        <i class="fas fa-times text-white text-xl"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="p-4">
-                <div class="flex items-center text-sm">
-                    <i class="fas fa-user-times text-red-500 mr-2"></i>
-                    <span style="color: var(--text-secondary);">Tanpa keterangan</span>
-                </div>
+            <div class="flex gap-2">
+                <button id="selectAllBtn" class="btn btn-secondary">
+                    <i class="fas fa-check-square mr-2"></i>Pilih Semua
+                </button>
+                <button id="bulkConfirmBtn" class="btn btn-success" disabled>
+                    <i class="fas fa-check-double mr-2"></i>Konfirmasi Terpilih
+                </button>
             </div>
         </div>
     </div>
     @endif
 
-    <!-- Attendance Logs Table -->
-    <div class="attendance-card rounded-2xl shadow-xl overflow-hidden">
-        <div class="bg-gradient-to-r from-teal-500 to-cyan-600 px-6 py-4">
-            <h3 class="text-lg font-semibold text-white flex items-center">
-                <i class="fas fa-calendar-alt mr-2"></i>Log Absensi - {{ \Carbon\Carbon::parse(request('date', date('Y-m-d')))->format('d/m/Y') }}
-            </h3>
-        </div>
-        <div class="p-6">
-            <div class="overflow-x-auto">
-                <table class="attendance-table min-w-full divide-y">
-                    <thead>
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: var(--text-secondary);">Waktu Scan</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: var(--text-secondary);">Siswa</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: var(--text-secondary);">Kelas</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: var(--text-secondary);">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: var(--text-secondary);">Lokasi</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: var(--text-secondary);">QR Code</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: var(--text-secondary);">Catatan</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y">
-                        @forelse($logs as $log)
-                            <tr class="transition-colors duration-200">
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium" style="color: var(--text-primary);">{{ $log->scan_time->format('H:i:s') }}</div>
-                                    <div class="text-sm" style="color: var(--text-secondary);">{{ $log->attendance_date->format('d/m/Y') }}</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        @if($log->student->photo_url)
-                                            <img src="{{ $log->student->photo_url }}" alt="{{ $log->student->name }}" 
-                                                 class="w-10 h-10 rounded-full border-2 border-gray-200 dark:border-gray-600">
-                                        @else
-                                            <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-xs">
-                                                {{ $log->student->initials }}
-                                            </div>
-                                        @endif
-                                        <div class="ml-3">
-                                            <div class="text-sm font-medium" style="color: var(--text-primary);">{{ $log->student->name }}</div>
-                                            <div class="text-sm" style="color: var(--text-secondary);">{{ $log->student->nis }}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                                        @if($log->student->class_id && $log->student->class)
-                                            {{ $log->student->class->name }}
-                                        @else
-                                            Kelas Belum Ditentukan
-                                        @endif
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    @php
-                                        $badgeColor = match($log->status) {
-                                            'hadir' => 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200',
-                                            'terlambat' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-                                            'izin' => 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-                                            'sakit' => 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
-                                            default => 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                                        };
-                                    @endphp
-                                    <span class="px-2 py-1 text-xs font-medium rounded-full {{ $badgeColor }}">
-                                        {{ $log->status_text }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm" style="color: var(--text-secondary);">
-                                    {{ $log->location ?? '-' }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <code class="text-xs px-2 py-1 rounded" style="background: var(--bg-tertiary); color: var(--text-primary);">
-                                        {{ Str::limit($log->qr_code, 20) }}
-                                    </code>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm" style="color: var(--text-secondary);">
-                                    {{ $log->notes ?? '-' }}
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="px-6 py-12">
-                                    <div class="empty-state">
-                                        <i class="fas fa-calendar-times text-4xl mb-4 icon-secondary"></i>
-                                        <p class="text-lg">Tidak ada log absensi</p>
-                                        <p class="text-sm">untuk filter yang dipilih</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-            
-            <!-- Pagination -->
-            @if($logs->hasPages())
-                <div class="mt-6 flex justify-center">
-                    <div class="pagination-wrapper" style="color: var(--text-primary);">
-                        {{ $logs->appends(request()->query())->links() }}
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <!-- Total Kelas -->
+        <div class="attendance-card rounded-lg overflow-hidden border">
+            <div class="p-4 border-b" style="border-color: var(--border-color)">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm" style="color: var(--text-secondary)">Total Kelas</p>
+                        <p class="text-2xl font-bold" style="color: var(--text-primary)">{{ $attendanceByClass->count() }}</p>
+                    </div>
+                    <div class="p-2 bg-gray-200 rounded">
+                        <i class="fas fa-school text-gray-800 text-xl"></i>
                     </div>
                 </div>
-            @endif
+            </div>
+        </div>
+
+        <!-- Total Siswa Hadir -->
+        <div class="attendance-card rounded-2xl shadow-xl overflow-hidden transform hover:scale-105 transition-transform duration-200">
+            <div class="p-4 border-b" style="border-color: var(--border-color)">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm" style="color: var(--text-secondary)">Total Hadir</p>
+                        <p class="text-2xl font-bold" style="color: var(--text-primary)">{{ $totalPresent }}</p>
+                    </div>
+                    <div class="p-2 bg-gray-200 rounded">
+                        <i class="fas fa-user-check text-gray-800 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Terkonfirmasi -->
+        <div class="attendance-card rounded-2xl shadow-xl overflow-hidden transform hover:scale-105 transition-transform duration-200">
+            <div class="p-4 border-b" style="border-color: var(--border-color)">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm" style="color: var(--text-secondary)">Terkonfirmasi</p>
+                        <p class="text-2xl font-bold" style="color: var(--text-primary)">{{ $totalConfirmed }}</p>
+                    </div>
+                    <div class="p-2 bg-gray-200 rounded">
+                        <i class="fas fa-check-double text-gray-800 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menunggu Konfirmasi -->
+        <div class="attendance-card rounded-2xl shadow-xl overflow-hidden transform hover:scale-105 transition-transform duration-200">
+            <div class="p-4 border-b" style="border-color: var(--border-color)">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm" style="color: var(--text-secondary)">Menunggu Konfirmasi</p>
+                        <p class="text-2xl font-bold" style="color: var(--text-primary)">{{ $totalUnconfirmed }}</p>
+                    </div>
+                    <div class="p-2 bg-gray-200 rounded">
+                        <i class="fas fa-clock text-gray-800 text-xl"></i>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+    <!-- Class Cards Grid -->
+    @if($attendanceByClass->count() > 0)
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            @foreach($attendanceByClass as $classData)
+                <div class="class-card">
+                    <!-- Class Header -->
+                    <div class="class-header">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <div class="p-3 bg-gray-200 rounded-xl mr-3">
+                                    <i class="fas fa-users text-gray-800 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold">{{ $classData['class']->name }}</h3>
+                                    <p class="text-sm" style="color: var(--text-secondary)">
+                                        {{ $classData['confirmed_count'] }} Terkonfirmasi • {{ $classData['unconfirmed_count'] }} Menunggu
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                @if($classData['unconfirmed_count'] > 0)
+                                    <div class="unconfirmed-indicator">
+                                        <i class="fas fa-clock"></i>
+                                        Pending
+                                    </div>
+                                @else
+                                    <div class="confirmed-indicator">
+                                        <i class="fas fa-check-circle"></i>
+                                        Verified
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="progress-bar" style="height: 6px; background: var(--bg-tertiary); border-radius: 9999px; overflow: hidden;">
+                            <div class="progress-fill" style="height: 100%; background: #bbb; width: {{ $classData['total_count'] > 0 ? round(($classData['confirmed_count'] / $classData['total_count']) * 100) : 0 }}%"></div>
+                        </div>
+                        <p class="text-xs mt-2" style="color: var(--text-secondary)">
+                            {{ $classData['confirmed_count'] }}/{{ $classData['total_count'] }} siswa terkonfirmasi
+                        </p>
+                    </div>
+
+                    <!-- Students List -->
+                    <div class="p-6 space-y-3 max-h-96 overflow-y-auto">
+                        <!-- Unconfirmed Students First -->
+                        @if($classData['unconfirmed_students']->count() > 0)
+                            <div class="mb-4">
+                                <h4 class="text-sm font-semibold mb-3 flex items-center gap-2" style="color: var(--text-secondary);">
+                                    <i class="fas fa-clock text-gray-700"></i>
+                                    Menunggu Konfirmasi ({{ $classData['unconfirmed_students']->count() }})
+                                </h4>
+                                @foreach($classData['unconfirmed_students'] as $student)
+                                    <div class="student-card unconfirmed" data-log-id="{{ $student->log_id }}">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center flex-1">
+                                                <!-- Checkbox for bulk selection -->
+                                                <input type="checkbox" class="attendance-checkbox mr-3" value="{{ $student->log_id }}">
+
+                                                <!-- Student Avatar -->
+                                                @if($student->photo_url)
+                                                    <img src="{{ $student->photo_url }}" alt="{{ $student->name }}"
+                                                         class="w-12 h-12 rounded-full border-2 border-yellow-200 dark:border-yellow-600 mr-3">
+                                                @else
+                                                    <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold text-sm mr-3">
+                                                        {{ strtoupper(substr($student->name, 0, 2)) }}
+                                                    </div>
+                                                @endif
+
+                                                <!-- Student Info -->
+                                                <div class="flex-1">
+                                                    <div class="flex items-center gap-2">
+                                                        <h4 class="font-semibold" style="color: var(--text-primary);">{{ $student->name }}</h4>
+                                                        <i class="fas fa-clock text-yellow-500 text-sm"></i>
+                                                    </div>
+                                                    <div class="flex items-center gap-3 mt-1">
+                                                        <p class="text-sm" style="color: var(--text-secondary);">{{ $student->nis }}</p>
+                                                        @if($student->scan_time)
+                                                            <span class="text-xs px-2 py-1 bg-gray-200 rounded" style="color: var(--text-secondary);">
+                                                                <i class="fas fa-clock mr-1"></i>
+                                                                {{ \Carbon\Carbon::parse($student->scan_time)->format('H:i') }}
+                                                            </span>
+                                                        @endif
+                                                    </div>
+
+                                                    <!-- Status Badge -->
+                                                    <div class="mt-2">
+                                                        @php
+                                                            $statusConfig = match($student->status) {
+                                                                'hadir' => ['class' => 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200', 'icon' => 'check', 'text' => 'Hadir'],
+                                                                'terlambat' => ['class' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200', 'icon' => 'clock', 'text' => 'Terlambat'],
+                                                                'izin' => ['class' => 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200', 'icon' => 'info-circle', 'text' => 'Izin'],
+                                                                'sakit' => ['class' => 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200', 'icon' => 'medkit', 'text' => 'Sakit'],
+                                                                default => ['class' => 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200', 'icon' => 'minus', 'text' => 'Alpha']
+                                                            };
+                                                        @endphp
+                                                        <span class="status-badge {{ $statusConfig['class'] }}">
+                                                            <i class="fas fa-{{ $statusConfig['icon'] }} mr-1"></i>
+                                                            {{ $statusConfig['text'] }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Action Buttons -->
+                                            <div class="ml-4 flex gap-2">
+                                                <button class="confirm-button confirm-single-btn"
+                                                        data-log-id="{{ $student->log_id }}"
+                                                        data-student-name="{{ $student->name }}">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Notes if any -->
+                                        @if($student->notes)
+                                            <div class="mt-3 pt-3 border-t" style="border-color: var(--border-color);">
+                                                <p class="text-sm flex items-start gap-2" style="color: var(--text-secondary);">
+                                                    <i class="fas fa-sticky-note mt-0.5 flex-shrink-0"></i>
+                                                    <span>{{ $student->notes }}</span>
+                                                </p>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+
+                        <!-- Confirmed Students -->
+                        @if($classData['confirmed_students']->count() > 0)
+                            <div class="mb-4">
+                                <h4 class="text-sm font-semibold mb-3 flex items-center gap-2" style="color: var(--text-secondary);">
+                                    <i class="fas fa-check-circle text-emerald-500"></i>
+                                    Sudah Dikonfirmasi ({{ $classData['confirmed_students']->count() }})
+                                </h4>
+                                @foreach($classData['confirmed_students'] as $student)
+                                    <div class="student-card confirmed">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center flex-1">
+                                                <!-- Student Avatar -->
+                                                @if($student->photo_url)
+                                                    <img src="{{ $student->photo_url }}" alt="{{ $student->name }}"
+                                                         class="w-12 h-12 rounded-full border-2 border-emerald-200 dark:border-emerald-600 mr-3">
+                                                @else
+                                                    <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold text-sm mr-3">
+                                                        {{ strtoupper(substr($student->name, 0, 2)) }}
+                                                    </div>
+                                                @endif
+
+                                                <!-- Student Info -->
+                                                <div class="flex-1">
+                                                    <div class="flex items-center gap-2">
+                                                        <h4 class="font-semibold" style="color: var(--text-primary);">{{ $student->name }}</h4>
+                                                        <i class="fas fa-check-circle text-gray-700 text-sm"></i>
+                                                    </div>
+                                                    <div class="flex items-center gap-3 mt-1">
+                                                        <p class="text-sm" style="color: var(--text-secondary);">{{ $student->nis }}</p>
+                                                        @if($student->scan_time)
+                                                            <span class="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded" style="color: var(--text-secondary);">
+                                                                <i class="fas fa-clock mr-1"></i>
+                                                                {{ \Carbon\Carbon::parse($student->scan_time)->format('H:i') }}
+                                                            </span>
+                                                        @endif
+                                                    </div>
+
+                                                    <!-- Status Badge -->
+                                                    <div class="mt-2">
+                                                        @php
+                                                            $statusConfig = match($student->status) {
+                                                                'hadir' => ['class' => 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200', 'icon' => 'check', 'text' => 'Hadir'],
+                                                                'terlambat' => ['class' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200', 'icon' => 'clock', 'text' => 'Terlambat'],
+                                                                'izin' => ['class' => 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200', 'icon' => 'info-circle', 'text' => 'Izin'],
+                                                                'sakit' => ['class' => 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200', 'icon' => 'medkit', 'text' => 'Sakit'],
+                                                                default => ['class' => 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200', 'icon' => 'minus', 'text' => 'Alpha']
+                                                            };
+                                                        @endphp
+                                                        <span class="status-badge {{ $statusConfig['class'] }}">
+                                                            <i class="fas fa-{{ $statusConfig['icon'] }} mr-1"></i>
+                                                            {{ $statusConfig['text'] }}
+                                                        </span>
+                                                    </div>
+
+                                                    <!-- Confirmed By Info -->
+                                                    @if($student->confirmedBy)
+                                                        <div class="mt-2 flex items-center gap-2">
+                                                            @if($student->confirmedBy->photo_url)
+                                                                <img src="{{ $student->confirmedBy->photo_url }}" alt="{{ $student->confirmedBy->name }}"
+                                                                     class="w-6 h-6 rounded-full border border-purple-300">
+                                                            @else
+                                                                <div class="w-6 h-6 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs font-bold">
+                                                                    {{ strtoupper(substr($student->confirmedBy->name, 0, 1)) }}
+                                                                </div>
+                                                            @endif
+                                                            <span class="text-xs" style="color: var(--text-secondary);">
+                                                                Dikonfirmasi oleh {{ $student->confirmedBy->name }}
+                                                                @if($student->confirmed_at)
+                                                                    • {{ \Carbon\Carbon::parse($student->confirmed_at)->format('H:i') }}
+                                                                @endif
+                                                            </span>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+
+                                            <!-- Status Icon -->
+                                            <div class="ml-4">
+                                                <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                                    <i class="fas fa-shield-check text-gray-700"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Notes if any -->
+                                        @if($student->notes)
+                                            <div class="mt-3 pt-3 border-t" style="border-color: var(--border-color);">
+                                                <p class="text-sm flex items-start gap-2" style="color: var(--text-secondary);">
+                                                    <i class="fas fa-sticky-note mt-0.5 flex-shrink-0"></i>
+                                                    <span>{{ $student->notes }}</span>
+                                                </p>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+
+                    <!-- Class Footer Info -->
+                    <div class="p-4 border-t" style="border-color: var(--border-color); background-color: var(--bg-secondary);">
+                        <div class="text-center py-2">
+                            @if($classData['unconfirmed_count'] > 0)
+                                <i class="fas fa-clock text-gray-700 text-2xl mb-2"></i>
+                                <p class="text-sm font-semibold" style="color: var(--text-primary);">
+                                    {{ $classData['unconfirmed_count'] }} siswa menunggu konfirmasi
+                                </p>
+                                <p class="text-xs mt-1" style="color: var(--text-secondary);">
+                                    Klik tombol konfirmasi untuk memverifikasi data
+                                </p>
+                            @else
+                                <i class="fas fa-shield-check text-gray-700 text-2xl mb-2"></i>
+                                <p class="text-sm font-semibold" style="color: var(--text-primary);">
+                                    Semua data absensi kelas ini telah diverifikasi
+                                </p>
+                                <p class="text-xs mt-1" style="color: var(--text-secondary);">
+                                    Data resmi dan dapat digunakan untuk laporan
+                                </p>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @else
+        <div class="attendance-card rounded-2xl shadow-xl p-12">
+            <div class="empty-state">
+                <i class="fas fa-calendar-times text-6xl mb-4" style="color: var(--text-secondary); opacity: 0.5;"></i>
+                <p class="text-xl font-semibold" style="color: var(--text-primary);">Tidak ada data absensi terkonfirmasi</p>
+                <p class="text-sm mt-2" style="color: var(--text-secondary);">untuk tanggal {{ \Carbon\Carbon::parse($date)->format('d F Y') }}</p>
+                <div class="mt-4">
+                    <a href="{{ route('admin.qr-attendance.logs', ['date' => date('Y-m-d')]) }}" class="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-all">
+                        <i class="fas fa-calendar-day mr-2"></i>
+                        Lihat Data Hari Ini
+                    </a>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>
 
 @endsection
 
 @push('scripts')
 <script>
-function exportLogs() {
-    // Get current filters from URL
+/**
+ * Export confirmed attendance data to CSV
+ */
+function exportConfirmed() {
     const params = new URLSearchParams(window.location.search);
-    params.set('export', 'excel');
-    
+    params.set('export', 'csv');
+
     // Show loading notification
-    if (typeof Swal !== 'undefined') {
-        Swal.fire({
-            title: 'Exporting...',
-            text: 'Sedang menyiapkan file CSV',
-            allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
-    }
-    
-    // Create download link
+    showNotification('Menyiapkan file CSV...', 'info');
+
     const downloadUrl = '{{ route("admin.qr-attendance.logs") }}?' + params.toString();
-    
-    // Create temporary link and trigger download
     const link = document.createElement('a');
     link.href = downloadUrl;
-    
-    // Generate filename based on current filters
-    let filename = 'log-absensi-qr';
+
+    let filename = 'log-absensi-qr-dikonfirmasi';
     const date = params.get('date') || new Date().toISOString().split('T')[0];
-    filename += '-' + date;
-    
-    const classFilter = params.get('class');
-    if (classFilter) {
-        filename += '-kelas-' + classFilter.toLowerCase().replace(/\s+/g, '-');
-    }
-    
-    const statusFilter = params.get('status');
-    if (statusFilter) {
-        filename += '-' + statusFilter;
-    }
-    
-    filename += '.csv';
+    filename += '-' + date + '.csv';
     link.download = filename;
-    
+
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
-    // Close loading and show success message
+
     setTimeout(() => {
-        if (typeof Swal !== 'undefined') {
-            Swal.close();
-            Swal.fire({
-                icon: 'success',
-                title: 'Export Berhasil!',
-                text: 'File CSV log absensi QR telah didownload',
-                timer: 2000,
-                showConfirmButton: false
-            });
-        } else {
-            // Fallback for when SweetAlert is not available
-            alert('File CSV log absensi QR berhasil didownload!');
-        }
+        showNotification('File CSV berhasil didownload!', 'success');
     }, 1000);
 }
 
-// Auto refresh every 30 seconds if viewing today's logs
-@if(request('date', date('Y-m-d')) == date('Y-m-d'))
+/**
+ * Show notification
+ */
+function showNotification(message, type = 'success') {
+    const bgColor = type === 'success' ? 'bg-emerald-600' : type === 'info' ? 'bg-blue-600' : 'bg-red-600';
+    const icon = type === 'success' ? 'fa-check-circle' : type === 'info' ? 'fa-info-circle' : 'fa-exclamation-circle';
+
+    const toast = document.createElement('div');
+    toast.className = `fixed bottom-4 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center gap-2 transition-all`;
+    toast.style.opacity = '0';
+    toast.innerHTML = `
+        <i class="fas ${icon}"></i>
+        <span>${message}</span>
+    `;
+
+    document.body.appendChild(toast);
+
+    // Fade in
+    setTimeout(() => {
+        toast.style.opacity = '1';
+    }, 10);
+
+    // Fade out and remove
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+            document.body.removeChild(toast);
+        }, 300);
+    }, 3000);
+}
+
+/**
+ * Confirm single attendance log
+ */
+function confirmSingleAttendance(logId, studentName) {
+    if (!confirm(`Apakah Anda yakin ingin mengkonfirmasi absensi ${studentName}?`)) {
+        return;
+    }
+
+    const button = document.querySelector(`[data-log-id="${logId}"] .confirm-single-btn`);
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    button.disabled = true;
+
+    fetch(`{{ route('admin.qr-attendance.logs.confirm', '') }}/${logId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({
+            notes: ''
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification(data.message, 'success');
+            setTimeout(() => {
+                location.reload();
+            }, 1500);
+        } else {
+            showNotification(data.message || 'Gagal mengkonfirmasi absensi', 'error');
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Terjadi kesalahan saat mengkonfirmasi absensi', 'error');
+        button.innerHTML = originalText;
+        button.disabled = false;
+    });
+}
+
+/**
+ * Bulk confirm selected attendance logs
+ */
+function bulkConfirmAttendance() {
+    const selectedCheckboxes = document.querySelectorAll('.attendance-checkbox:checked');
+    if (selectedCheckboxes.length === 0) {
+        showNotification('Pilih setidaknya satu log absensi untuk dikonfirmasi', 'error');
+        return;
+    }
+
+    const logIds = Array.from(selectedCheckboxes).map(cb => cb.value);
+    const studentNames = Array.from(selectedCheckboxes).map(cb => {
+        const card = cb.closest('.student-card');
+        return card.querySelector('h4').textContent.trim();
+    });
+
+    if (!confirm(`Apakah Anda yakin ingin mengkonfirmasi ${logIds.length} log absensi?\n\n${studentNames.join('\n')}`)) {
+        return;
+    }
+
+    const button = document.getElementById('bulkConfirmBtn');
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Mengkonfirmasi...';
+    button.disabled = true;
+
+    fetch('{{ route('admin.qr-attendance.logs.bulk-confirm') }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({
+            log_ids: logIds,
+            notes: ''
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification(data.message, 'success');
+            setTimeout(() => {
+                location.reload();
+            }, 1500);
+        } else {
+            showNotification(data.message || 'Gagal mengkonfirmasi absensi', 'error');
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Terjadi kesalahan saat mengkonfirmasi absensi', 'error');
+        button.innerHTML = originalText;
+        button.disabled = false;
+    });
+}
+
+/**
+ * Select/Deselect all checkboxes
+ */
+function toggleSelectAll() {
+    const selectAllBtn = document.getElementById('selectAllBtn');
+    const checkboxes = document.querySelectorAll('.attendance-checkbox');
+    const bulkConfirmBtn = document.getElementById('bulkConfirmBtn');
+
+    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+
+    if (allChecked) {
+        // Deselect all
+        checkboxes.forEach(cb => cb.checked = false);
+        selectAllBtn.innerHTML = '<i class="fas fa-check-square mr-2"></i>Pilih Semua';
+        bulkConfirmBtn.disabled = true;
+    } else {
+        // Select all
+        checkboxes.forEach(cb => cb.checked = true);
+        selectAllBtn.innerHTML = '<i class="fas fa-square mr-2"></i>Batal Pilih';
+        bulkConfirmBtn.disabled = false;
+    }
+}
+
+/**
+ * Update bulk confirm button state based on selections
+ */
+function updateBulkConfirmButton() {
+    const checkboxes = document.querySelectorAll('.attendance-checkbox');
+    const bulkConfirmBtn = document.getElementById('bulkConfirmBtn');
+    const selectAllBtn = document.getElementById('selectAllBtn');
+
+    const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+
+    bulkConfirmBtn.disabled = checkedCount === 0;
+
+    if (checkedCount > 0) {
+        bulkConfirmBtn.innerHTML = `<i class="fas fa-check-double mr-2"></i>Konfirmasi ${checkedCount} Terpilih`;
+    } else {
+        bulkConfirmBtn.innerHTML = '<i class="fas fa-check-double mr-2"></i>Konfirmasi Terpilih';
+    }
+
+    // Update select all button text
+    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+    const noneChecked = Array.from(checkboxes).every(cb => !cb.checked);
+
+    if (allChecked) {
+        selectAllBtn.innerHTML = '<i class="fas fa-square mr-2"></i>Batal Pilih';
+    } else if (noneChecked) {
+        selectAllBtn.innerHTML = '<i class="fas fa-check-square mr-2"></i>Pilih Semua';
+    } else {
+        selectAllBtn.innerHTML = '<i class="fas fa-minus-square mr-2"></i>Batal Pilih';
+    }
+}
+
+/**
+ * Auto refresh every 30 seconds if viewing today's logs
+ */
+@if($date == date('Y-m-d'))
     let refreshInterval;
-    
+
     function startAutoRefresh() {
         refreshInterval = setInterval(function() {
             if (!document.hidden) {
-                // Add subtle loading indicator
                 const refreshIndicator = document.createElement('div');
-                refreshIndicator.className = 'fixed top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 flex items-center';
-                refreshIndicator.innerHTML = '<i class="fas fa-sync-alt animate-spin mr-2"></i>Refreshing...';
+                refreshIndicator.className = 'fixed top-4 right-4 bg-emerald-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 flex items-center';
+                refreshIndicator.innerHTML = '<i class="fas fa-sync-alt animate-spin mr-2"></i>Memperbarui...';
                 document.body.appendChild(refreshIndicator);
-                
+
                 setTimeout(() => {
                     location.reload();
                 }, 1000);
             }
         }, 30000);
     }
-    
+
     function stopAutoRefresh() {
         if (refreshInterval) {
             clearInterval(refreshInterval);
         }
     }
-    
-    // Start auto refresh
+
     startAutoRefresh();
-    
-    // Stop auto refresh when page is hidden
+
     document.addEventListener('visibilitychange', function() {
         if (document.hidden) {
             stopAutoRefresh();
@@ -597,26 +1018,127 @@ function exportLogs() {
             startAutoRefresh();
         }
     });
-    
-    // Show auto refresh indicator
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('🔄 Auto refresh enabled for today\'s logs');
-    });
 @endif
 
-// Add real-time timestamp update
-function updateTimestamp() {
-    const now = new Date();
-    const timeString = now.toLocaleTimeString('id-ID');
-    
-    // Update any timestamp elements if they exist
-    const timestampElements = document.querySelectorAll('.live-timestamp');
-    timestampElements.forEach(element => {
-        element.textContent = timeString;
-    });
-}
+/**
+ * Smooth scroll behavior and animations
+ */
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Attendance logs page loaded');
 
-// Update timestamp every second
-setInterval(updateTimestamp, 1000);
+    // Add smooth hover animations to student cards
+    const studentCards = document.querySelectorAll('.student-card');
+    studentCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
+        });
+        card.addEventListener('mouseleave', function() {
+            this.style.boxShadow = '';
+        });
+    });
+
+    // Handle single confirmation buttons
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.confirm-single-btn')) {
+            e.preventDefault();
+            const button = e.target.closest('.confirm-single-btn');
+            const logId = button.getAttribute('data-log-id');
+            const studentName = button.getAttribute('data-student-name');
+            confirmSingleAttendance(logId, studentName);
+        }
+    });
+
+    // Handle bulk confirmation
+    const bulkConfirmBtn = document.getElementById('bulkConfirmBtn');
+    if (bulkConfirmBtn) {
+        bulkConfirmBtn.addEventListener('click', bulkConfirmAttendance);
+    }
+
+    // Handle select all button
+    const selectAllBtn = document.getElementById('selectAllBtn');
+    if (selectAllBtn) {
+        selectAllBtn.addEventListener('click', toggleSelectAll);
+    }
+
+    // Handle checkbox changes
+    document.addEventListener('change', function(e) {
+        if (e.target.classList.contains('attendance-checkbox')) {
+            updateBulkConfirmButton();
+        }
+    });
+
+    // Initialize bulk confirm button state
+    updateBulkConfirmButton();
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        // Ctrl/Cmd + R to reload
+        if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+            e.preventDefault();
+            location.reload();
+        }
+
+        // Ctrl/Cmd + E to export
+        if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+            e.preventDefault();
+            exportConfirmed();
+        }
+    });
+
+    // Add fade-in animation on load
+    const classCards = document.querySelectorAll('.class-card');
+    classCards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+            card.style.transition = 'all 0.5s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+});
+
+/**
+ * Custom scrollbar for student lists
+ */
+const style = document.createElement('style');
+style.textContent = `
+    .class-card .p-6::-webkit-scrollbar {
+        width: 8px;
+    }
+    .class-card .p-6::-webkit-scrollbar-track {
+        background: var(--bg-tertiary);
+        border-radius: 10px;
+    }
+    .class-card .p-6::-webkit-scrollbar-thumb {
+        background: var(--accent-color);
+        border-radius: 10px;
+    }
+    .class-card .p-6::-webkit-scrollbar-thumb:hover {
+        background: #3b82f6;
+    }
+
+    @media print {
+        .flex.flex-wrap.gap-3,
+        button[onclick*="export"] {
+            display: none !important;
+        }
+        .class-card {
+            page-break-inside: avoid;
+            margin-bottom: 20px;
+        }
+        .student-card {
+            page-break-inside: avoid;
+        }
+    }
+`;
+document.head.appendChild(style);
+
+/**
+ * Print functionality
+ */
+function printAttendance() {
+    window.print();
+}
 </script>
 @endpush

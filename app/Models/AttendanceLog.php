@@ -20,11 +20,14 @@ class AttendanceLog extends Model
         'attendance_date',
         'location',
         'notes',
+        'confirmed_by',
+        'confirmed_at',
     ];
 
     protected $casts = [
         'scan_time' => 'datetime',
         'attendance_date' => 'date',
+        'confirmed_at' => 'datetime',
     ];
 
     /**
@@ -41,6 +44,14 @@ class AttendanceLog extends Model
     public function qrAttendance(): BelongsTo
     {
         return $this->belongsTo(QrAttendance::class, 'qr_code', 'qr_code');
+    }
+
+    /**
+     * Relasi ke User yang mengkonfirmasi
+     */
+    public function confirmedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'confirmed_by');
     }
 
     /**

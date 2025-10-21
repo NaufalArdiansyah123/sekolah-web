@@ -236,10 +236,9 @@
 </div>
 
 <!-- Submit to Guru Piket Modal -->
-<div id="submitToGuruPiketModal" class="fixed inset-0 z-50 hidden">
-    <div class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm" onclick="closeSubmitModal()"></div>
+<div id="submitToGuruPiketModal" class="fixed inset-0 z-50 hidden" onclick="closeSubmitModal()">
     <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-6">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-6 border border-gray-200 dark:border-gray-700" onclick="event.stopPropagation()">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-xl font-bold text-gray-900 dark:text-white">Kirim Absensi ke Guru Piket</h2>
                 <button onclick="closeSubmitModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
@@ -932,15 +931,34 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Submit to Guru Piket functions
 function showSubmitToGuruPiketModal() {
-    document.getElementById('submitToGuruPiketModal').classList.remove('hidden');
+    console.log('Opening submit modal...');
+    const modal = document.getElementById('submitToGuruPiketModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        // Focus on first input
+        setTimeout(() => {
+            const firstInput = modal.querySelector('input, select');
+            if (firstInput) {
+                firstInput.focus();
+            }
+        }, 100);
+    } else {
+        console.error('Modal element not found');
+    }
 }
 
 function closeSubmitModal() {
-    document.getElementById('submitToGuruPiketModal').classList.add('hidden');
+    console.log('Closing submit modal...');
+    const modal = document.getElementById('submitToGuruPiketModal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
 }
 
 function submitToGuruPiket(event) {
     event.preventDefault();
+    
+    console.log('Submitting to guru piket...');
     
     const formData = new FormData(event.target);
     const data = {
@@ -950,6 +968,20 @@ function submitToGuruPiket(event) {
         session_time: formData.get('session_time'),
         notes: formData.get('notes')
     };
+    
+    console.log('Form data:', data);
+    
+    // Validate required fields
+    if (!data.date || !data.class_name || !data.subject || !data.session_time) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Data Tidak Lengkap',
+            text: 'Mohon lengkapi semua field yang wajib diisi',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#f59e0b'
+        });
+        return;
+    }
     
     // Show loading
     Swal.fire({
@@ -961,16 +993,56 @@ function submitToGuruPiket(event) {
         }
     });
     
-    fetch('{{ route("teacher.attendance.submit-to-guru-piket") }}', {
+    const submitUrl = '{{ route("teacher.attendance.submit-to-guru-piket") }}';
+    console.log('Submit URL:', submitUrl);
+    
+    const csrfToken = document.querySelector('meta[name="csrf-token"]');
+    if (!csrfToken) {
+        console.error('CSRF token not found!');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'CSRF token tidak ditemukan. Silakan refresh halaman.',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#ef4444'
+        });
+        return;
+    }
+    
+    console.log('CSRF Token:', csrfToken.getAttribute('content'));
+    
+    fetch(submitUrl, {
         method: 'POST',
         headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'X-CSRF-TOKEN': csrfToken.getAttribute('content'),
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(data)
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('Response status:', response.status);
+        console.log('Response headers:', response.headers);
+        
+        if (!response.ok) {
+            // Try to get error details from response
+            return response.text().then(text => {
+                console.error('Error response body:', text);
+                let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+                try {
+                    const errorData = JSON.parse(text);
+                    if (errorData.message) {
+                        errorMessage = errorData.message;
+                    }
+                } catch (e) {
+                    console.log('Could not parse error response as JSON');
+                }
+                throw new Error(errorMessage);
+            });
+        }
+        return response.json();
+    })
     .then(data => {
+        console.log('Response data:', data);
         Swal.close();
         
         if (data.success) {
@@ -1006,7 +1078,7 @@ function submitToGuruPiket(event) {
             Swal.fire({
                 icon: 'error',
                 title: 'Gagal Mengirim Absensi',
-                text: data.message,
+                text: data.message || 'Terjadi kesalahan saat mengirim absensi',
                 confirmButtonText: 'OK',
                 confirmButtonColor: '#ef4444'
             });
@@ -1016,10 +1088,17 @@ function submitToGuruPiket(event) {
         Swal.close();
         console.error('Error submitting to guru piket:', error);
         
+        let errorMessage = 'Gagal mengirim absensi ke guru piket. Silakan coba lagi.';
+        if (error.message.includes('Failed to fetch')) {
+            errorMessage = 'Koneksi ke server gagal. Periksa koneksi internet Anda.';
+        } else if (error.message.includes('HTTP')) {
+            errorMessage = 'Server error: ' + error.message;
+        }
+        
         Swal.fire({
             icon: 'error',
             title: 'Terjadi Kesalahan',
-            text: 'Gagal mengirim absensi ke guru piket. Silakan coba lagi.',
+            text: errorMessage,
             confirmButtonText: 'OK',
             confirmButtonColor: '#ef4444'
         });

@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Student;
 use App\Models\AttendanceLog;
 use App\Models\QrAttendance;
-use App\Models\SchoolClass;
+use App\Models\Classes;
 use App\Models\SecurityViolation;
 use App\Models\AttendanceSubmission;
+
+
 use App\Models\User;
 use App\Exports\AttendanceExport;
 use App\Services\QrCodeService;
@@ -35,7 +37,7 @@ class AttendanceController extends Controller
         $selectedClass = $request->get('class');
 
         // Get available classes from classes table
-        $classes = SchoolClass::where('is_active', true)
+        $classes = Classes::where('is_active', true)
                          ->pluck('name')
                          ->sort()
                          ->values();
@@ -347,7 +349,7 @@ class AttendanceController extends Controller
         $class = $request->get('class');
 
         if (!$class) {
-            $classes = SchoolClass::where('is_active', true)->pluck('name')->sort();
+            $classes = Classes::where('is_active', true)->pluck('name')->sort();
             $class = $classes->first();
         }
 
@@ -394,7 +396,7 @@ class AttendanceController extends Controller
             ];
         });
 
-        $classes = SchoolClass::where('is_active', true)->pluck('name')->sort();
+        $classes = Classes::where('is_active', true)->pluck('name')->sort();
 
         return view('teacher.attendance.monthly-report', compact('monthlyData', 'month', 'class', 'classes'));
     }
@@ -656,8 +658,8 @@ class AttendanceController extends Controller
     public function qrScanner()
     {
         try {
-            // Get available classes
-            $classes = SchoolClass::where('is_active', true)
+            // Get available classes from Classes model
+            $classes = Classes::where('is_active', true)
                              ->pluck('name')
                              ->sort()
                              ->values();
@@ -673,7 +675,8 @@ class AttendanceController extends Controller
         } catch (\Exception $e) {
             \Log::error('Error loading QR scanner page:', [
                 'error' => $e->getMessage(),
-                'teacher_id' => auth()->id()
+                'teacher_id' => auth()->id(),
+                'trace' => $e->getTraceAsString()
             ]);
 
             return view('teacher.attendance.error', [
@@ -681,7 +684,9 @@ class AttendanceController extends Controller
                 'error_message' => 'Terjadi kesalahan sistem. Silakan coba lagi atau hubungi administrator.',
                 'debug_info' => [
                     'error' => $e->getMessage(),
-                    'teacher_id' => auth()->id()
+                    'teacher_id' => auth()->id(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine()
                 ]
             ]);
         }
@@ -935,6 +940,12 @@ class AttendanceController extends Controller
      */
     public function submitToGuruPiket(Request $request)
     {
+        \Log::info('Submit to Guru Piket Request:', [
+            'request_data' => $request->all(),
+            'teacher_id' => auth()->id(),
+            'timestamp' => now()
+        ]);
+
         $request->validate([
             'date' => 'required|date',
             'class_name' => 'required|string',
@@ -944,24 +955,53 @@ class AttendanceController extends Controller
         ]);
 
         try {
+            // Validate AttendanceSubmission constants
+            if (!defined('App\Models\AttendanceSubmission::STATUS_PENDING')) {
+                \Log::error('AttendanceSubmission STATUS_PENDING constant not found');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Konfigurasi sistem tidak lengkap. Hubungi administrator.'
+                ], 500);
+            }
+            
             DB::beginTransaction();
 
             // Get class information
-            $class = SchoolClass::where('name', $request->class_name)->first();
+            \Log::info('Looking for class:', ['class_name' => $request->class_name]);
+            
+            $class = Classes::where('name', $request->class_name)->first();
+            
+            \Log::info('Class lookup result:', [
+                'class_found' => $class ? true : false,
+                'class_id' => $class ? $class->id : null,
+                'class_name' => $class ? $class->name : null
+            ]);
             
             if (!$class) {
+                \Log::warning('Class not found:', [
+                    'requested_class' => $request->class_name,
+                    'available_classes' => Classes::pluck('name')->toArray()
+                ]);
+                
                 return response()->json([
                     'success' => false,
-                    'message' => 'Kelas tidak ditemukan'
+                    'message' => 'Kelas "' . $request->class_name . '" tidak ditemukan. Kelas yang tersedia: ' . Classes::pluck('name')->implode(', ')
                 ], 400);
             }
             
             // Get students in the class
+            \Log::info('Getting students for class:', ['class_id' => $class->id]);
+            
             $students = Student::active()
                               ->where('class_id', $class->id)
                               ->get();
             
             $totalStudents = $students->count();
+            
+            \Log::info('Students found:', [
+                'total_students' => $totalStudents,
+                'student_ids' => $students->pluck('id')->toArray()
+            ]);
             
             // Get attendance data for the date and class
             $attendanceData = AttendanceLog::whereIn('student_id', $students->pluck('id'))
@@ -989,11 +1029,21 @@ class AttendanceController extends Controller
             });
             
             // Find available guru piket (for now, get first guru piket)
+            \Log::info('Looking for guru piket users...');
+            
             $guruPiket = User::whereHas('roles', function($query) {
                 $query->where('name', 'guru_piket');
             })->first();
             
+            \Log::info('Guru piket lookup result:', [
+                'guru_piket_found' => $guruPiket ? true : false,
+                'guru_piket_id' => $guruPiket ? $guruPiket->id : null,
+                'guru_piket_name' => $guruPiket ? $guruPiket->name : null
+            ]);
+            
             if (!$guruPiket) {
+                \Log::warning('No guru piket found');
+                
                 return response()->json([
                     'success' => false,
                     'message' => 'Tidak ada guru piket yang tersedia untuk menerima submission'
@@ -1015,7 +1065,7 @@ class AttendanceController extends Controller
             }
             
             // Create attendance submission
-            $submission = AttendanceSubmission::create([
+            $submissionData = [
                 'teacher_id' => auth()->id(),
                 'guru_piket_id' => $guruPiket->id,
                 'submission_date' => $request->date,
@@ -1030,6 +1080,15 @@ class AttendanceController extends Controller
                 'notes' => $request->notes,
                 'status' => AttendanceSubmission::STATUS_PENDING,
                 'submitted_at' => now()
+            ];
+            
+            \Log::info('Creating attendance submission:', $submissionData);
+            
+            $submission = AttendanceSubmission::create($submissionData);
+            
+            \Log::info('Attendance submission created:', [
+                'submission_id' => $submission->id,
+                'submission_status' => $submission->status
             ]);
             
             DB::commit();

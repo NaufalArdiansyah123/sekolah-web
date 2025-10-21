@@ -17,6 +17,8 @@ class TeacherAttendanceLog extends Model
         'status',
         'attendance_date',
         'scan_time',
+        'check_out_time',
+        'location',
         'scanned_by',
         'notes',
     ];
@@ -24,6 +26,7 @@ class TeacherAttendanceLog extends Model
     protected $casts = [
         'attendance_date' => 'date',
         'scan_time' => 'datetime:H:i:s',
+        'check_out_time' => 'datetime:H:i:s',
     ];
 
     /**
@@ -76,6 +79,14 @@ class TeacherAttendanceLog extends Model
     }
 
     /**
+     * Get formatted check out time
+     */
+    public function getFormattedCheckOutTimeAttribute()
+    {
+        return $this->check_out_time ? Carbon::parse($this->check_out_time)->format('H:i:s') : null;
+    }
+
+    /**
      * Get formatted attendance date
      */
     public function getFormattedAttendanceDateAttribute()
@@ -111,5 +122,29 @@ class TeacherAttendanceLog extends Model
             'alpha' => 'Alpha',
             default => 'Tidak Diketahui',
         };
+    }
+
+    /**
+     * Get duration between check out and check in time
+     */
+    public function getDurationAttribute()
+    {
+        if (!$this->check_out_time || !$this->scan_time) {
+            return '-';
+        }
+
+        $checkIn = Carbon::parse($this->scan_time);
+        $checkOut = Carbon::parse($this->check_out_time);
+
+        $diffInSeconds = $checkOut->diffInSeconds($checkIn);
+
+        $hours = floor($diffInSeconds / 3600);
+        $minutes = floor(($diffInSeconds % 3600) / 60);
+
+        if ($hours > 0) {
+            return sprintf('%dh %dm', $hours, $minutes);
+        } else {
+            return sprintf('%dm', $minutes);
+        }
     }
 }

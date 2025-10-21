@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
-use App\Models\SchoolClass;
+use App\Models\Classes;
 
 class AttendanceSubmission extends Model
 {
@@ -65,7 +65,7 @@ class AttendanceSubmission extends Model
      */
     public function class()
     {
-        return $this->belongsTo(SchoolClass::class, 'class_id');
+        return $this->belongsTo(Classes::class, 'class_id');
     }
 
     /**
@@ -105,7 +105,7 @@ class AttendanceSubmission extends Model
      */
     public function getFormattedSessionTimeAttribute()
     {
-        return $this->session_time ? Carbon::parse($this->session_time)->format('H:i') : '-';
+        return $this->session_time ?: '-';
     }
 
     /**

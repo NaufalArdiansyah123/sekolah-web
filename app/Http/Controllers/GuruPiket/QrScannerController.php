@@ -24,6 +24,7 @@ class QrScannerController extends Controller
             'present_today' => TeacherAttendanceLog::today()->where('status', 'hadir')->count(),
             'late_today' => TeacherAttendanceLog::today()->where('status', 'terlambat')->count(),
             'absent_today' => TeacherAttendanceLog::today()->whereIn('status', ['izin', 'sakit', 'alpha'])->count(),
+            'checked_out_today' => TeacherAttendanceLog::today()->whereNotNull('check_out_time')->count(),
         ];
 
         // Get recent scans (last 10)
@@ -43,6 +44,7 @@ class QrScannerController extends Controller
     {
         $request->validate([
             'qr_code' => 'required|string',
+            'location' => 'nullable|string',
         ]);
 
         try {
@@ -100,6 +102,7 @@ class QrScannerController extends Controller
                 'status' => $status,
                 'attendance_date' => today(),
                 'scan_time' => $attendanceTime,
+                'location' => $request->location ?? 'Sekolah',
                 'scanned_by' => Auth::user()->name ?? 'Guru Piket',
             ]);
 
@@ -151,6 +154,7 @@ class QrScannerController extends Controller
                     'status' => $log->status_label,
                     'status_class' => $log->status_badge_class,
                     'scan_time' => $log->formatted_scan_time,
+                    'check_out_time' => $log->formatted_check_out_time,
                     'scanned_by' => $log->scanned_by,
                 ];
             })
@@ -193,6 +197,7 @@ class QrScannerController extends Controller
                 'status' => $request->status,
                 'attendance_date' => today(),
                 'scan_time' => now()->format('H:i:s'),
+                'location' => 'Manual Entry',
                 'scanned_by' => Auth::user()->name ?? 'Guru Piket',
                 'notes' => $request->notes,
             ]);
@@ -227,18 +232,202 @@ class QrScannerController extends Controller
     /**
      * Get teachers for manual entry
      */
-    public function getTeachers()
+    public function getTeachers(Request $request)
     {
-        $teachers = Teacher::active()
-                          ->whereDoesntHave('teacherAttendanceLogs', function($query) {
-                              $query->whereDate('attendance_date', today());
-                          })
-                          ->orderBy('name')
-                          ->get(['id', 'name', 'nip', 'position']);
+        $mode = $request->get('mode', 'check-in');
+
+        if ($mode === 'manual') {
+            // For manual entry, show all active teachers
+            $teachers = Teacher::active()
+                              ->orderBy('name')
+                              ->get(['id', 'name', 'nip', 'position']);
+        } elseif ($mode === 'check-in') {
+            // Get teachers who haven't checked in today
+            $teachersWithAttendance = TeacherAttendanceLog::whereDate('attendance_date', today())
+                                                         ->pluck('teacher_id')
+                                                         ->toArray();
+
+            $teachers = Teacher::active()
+                              ->whereNotIn('id', $teachersWithAttendance)
+                              ->orderBy('name')
+                              ->get(['id', 'name', 'nip', 'position']);
+        } else {
+            // Get teachers who have checked in today but haven't checked out
+            $teachersWithCheckOut = TeacherAttendanceLog::whereDate('attendance_date', today())
+                                                        ->whereNotNull('check_out_time')
+                                                        ->pluck('teacher_id')
+                                                        ->toArray();
+
+            $teachers = Teacher::active()
+                              ->whereNotIn('id', $teachersWithCheckOut)
+                              ->whereHas('attendanceLogs', function($query) {
+                                  $query->whereDate('attendance_date', today());
+                              })
+                              ->orderBy('name')
+                              ->get(['id', 'name', 'nip', 'position']);
+        }
 
         return response()->json([
             'success' => true,
             'teachers' => $teachers
+        ]);
+    }
+
+    /**
+     * Process QR code scan for check-out
+     */
+    public function scanCheckOut(Request $request)
+    {
+        $request->validate([
+            'qr_code' => 'required|string',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            // Find QR code in teacher attendance system
+            $qrAttendance = QrTeacherAttendance::where('qr_code', $request->qr_code)
+                                             ->where('is_active', true)
+                                             ->first();
+
+            if (!$qrAttendance) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'QR Code tidak valid atau tidak ditemukan untuk guru.',
+                    'type' => 'error'
+                ], 404);
+            }
+
+            $teacher = $qrAttendance->teacher;
+
+            // Check if teacher has checked in today but not checked out
+            $existingLog = TeacherAttendanceLog::where('teacher_id', $teacher->id)
+                                             ->whereDate('attendance_date', today())
+                                             ->whereNull('check_out_time')
+                                             ->first();
+
+            if (!$existingLog) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Guru {$teacher->name} belum melakukan absensi masuk hari ini atau sudah check-out.",
+                    'type' => 'warning',
+                    'teacher' => [
+                        'name' => $teacher->name,
+                        'nip' => $teacher->nip,
+                        'position' => $teacher->position,
+                    ]
+                ]);
+            }
+
+            // Update check-out time
+            $checkOutTime = Carbon::now()->format('H:i:s');
+            $existingLog->update([
+                'check_out_time' => $checkOutTime,
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => "Check-out berhasil untuk guru {$teacher->name}",
+                'type' => 'success',
+                'teacher' => [
+                    'name' => $teacher->name,
+                    'nip' => $teacher->nip,
+                    'position' => $teacher->position,
+                    'check_in_time' => $existingLog->formatted_scan_time,
+                    'check_out_time' => Carbon::parse($checkOutTime)->format('H:i:s'),
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memproses check-out: ' . $e->getMessage(),
+                'type' => 'error'
+            ], 500);
+        }
+    }
+
+    /**
+     * Manual check-out entry
+     */
+    public function manualCheckOut(Request $request)
+    {
+        $request->validate([
+            'teacher_id' => 'required|exists:teachers,id',
+            'notes' => 'nullable|string|max:255',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $teacher = Teacher::find($request->teacher_id);
+
+            // Check if teacher has checked in today but not checked out
+            $existingLog = TeacherAttendanceLog::where('teacher_id', $teacher->id)
+                                             ->whereDate('attendance_date', today())
+                                             ->whereNull('check_out_time')
+                                             ->first();
+
+            if (!$existingLog) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Guru {$teacher->name} belum melakukan absensi masuk hari ini atau sudah check-out.",
+                    'type' => 'warning'
+                ]);
+            }
+
+            // Update check-out time
+            $existingLog->update([
+                'check_out_time' => now()->format('H:i:s'),
+                'notes' => $request->notes,
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => "Check-out manual berhasil dicatat untuk guru {$teacher->name}",
+                'type' => 'success',
+                'teacher' => [
+                    'name' => $teacher->name,
+                    'nip' => $teacher->nip,
+                    'position' => $teacher->position,
+                    'check_in_time' => $existingLog->formatted_scan_time,
+                    'check_out_time' => $existingLog->formatted_check_out_time,
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat mencatat check-out manual: ' . $e->getMessage(),
+                'type' => 'error'
+            ], 500);
+        }
+    }
+
+    /**
+     * Get updated statistics
+     */
+    public function getStats()
+    {
+        $stats = [
+            'total_teachers' => Teacher::active()->count(),
+            'present_today' => TeacherAttendanceLog::today()->where('status', 'hadir')->count(),
+            'late_today' => TeacherAttendanceLog::today()->where('status', 'terlambat')->count(),
+            'absent_today' => TeacherAttendanceLog::today()->whereIn('status', ['izin', 'sakit', 'alpha'])->count(),
+            'checked_out_today' => TeacherAttendanceLog::today()->whereNotNull('check_out_time')->count(),
+        ];
+
+        return response()->json([
+            'success' => true,
+            'stats' => $stats
         ]);
     }
 

@@ -762,7 +762,7 @@
 
         <!-- QR Attendance Management -->
         <div class="nav-dropdown" x-data="{ 
-            open: <?php echo e(request()->routeIs('admin.qr-attendance.*') ? 'true' : 'false'); ?>,
+            open: <?php echo e(request()->routeIs('admin.qr-attendance.*', 'admin.qr-teacher.*') ? 'true' : 'false'); ?>,
             init() {
                 const saved = localStorage.getItem('qr-attendance-dropdown-open');
                 if (saved !== null) {
@@ -798,18 +798,37 @@
                 <a href="<?php echo e(route('admin.qr-attendance.index')); ?>" 
                    class="nav-dropdown-item <?php echo e(request()->routeIs('admin.qr-attendance.index') ? 'active' : ''); ?>"
                    @click="sidebarOpen = false">
-                    🔲 Kelola QR Code
+                    🔲 QR Code Siswa
+                </a>
+                <a href="<?php echo e(route('admin.qr-teacher.index')); ?>" 
+                   class="nav-dropdown-item <?php echo e(request()->routeIs('admin.qr-teacher.index') ? 'active' : ''); ?>"
+                   @click="sidebarOpen = false">
+                    👨‍🏫 QR Code Guru
                 </a>
                 <a href="<?php echo e(route('admin.qr-attendance.logs')); ?>" 
                    class="nav-dropdown-item <?php echo e(request()->routeIs('admin.qr-attendance.logs') ? 'active' : ''); ?>"
                    @click="sidebarOpen = false">
-                    📋 Log Absensi
+                    📋 Log Absensi Siswa
                     <?php
                         $todayAttendanceCount = \App\Models\AttendanceLog::whereDate('attendance_date', today())->count();
                     ?>
                     <?php if($todayAttendanceCount > 0): ?>
                         <span class="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
                             <?php echo e($todayAttendanceCount); ?>
+
+                        </span>
+                    <?php endif; ?>
+                </a>
+                <a href="<?php echo e(route('admin.qr-teacher.logs')); ?>" 
+                   class="nav-dropdown-item <?php echo e(request()->routeIs('admin.qr-teacher.logs') ? 'active' : ''); ?>"
+                   @click="sidebarOpen = false">
+                    📋 Log Absensi Guru
+                    <?php
+                        $todayTeacherAttendanceCount = \App\Models\TeacherAttendanceLog::whereDate('attendance_date', today())->count();
+                    ?>
+                    <?php if($todayTeacherAttendanceCount > 0): ?>
+                        <span class="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                            <?php echo e($todayTeacherAttendanceCount); ?>
 
                         </span>
                     <?php endif; ?>

@@ -852,6 +852,14 @@
             </svg>
             <span>QR Scanner Absensi</span>
         </a>
+        <!-- QR Saya -->
+        <a href="{{ route('teacher.qr.my') }}" 
+           class="sidebar-nav-item {{ request()->routeIs('teacher.qr.my') ? 'active' : '' }}">
+            <svg class="nav-icon" viewBox="0 0 24 24">
+                <path d="M3 3h8v8H3V3zm2 2v4h4V5H5zm10-2h6v6h-6V3zm2 2v2h2V5h-2zM3 13h6v8H3v-8zm2 2v4h2v-4H5zm10 0h6v6h-6v-6zm2 2v2h2v-2h-2z" />
+            </svg>
+            <span>QR Saya</span>
+        </a>
 
         <!-- Attendance -->
         <a href="{{ route('teacher.attendance.index') }}" 

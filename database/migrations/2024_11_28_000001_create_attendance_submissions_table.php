@@ -11,14 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('attendance_submissions', function (Blueprint $table) {
+        if (!Schema::hasTable('attendance_submissions')) {
+            Schema::create('attendance_submissions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('teacher_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('guru_piket_id')->nullable()->constrained('users')->onDelete('set null');
             $table->date('submission_date');
             $table->foreignId('class_id')->nullable()->constrained('classes')->onDelete('set null');
             $table->string('subject')->nullable();
-            $table->time('session_time')->nullable();
+            $table->string('session_time')->nullable();
             $table->integer('total_students')->default(0);
             $table->integer('present_count')->default(0);
             $table->integer('late_count')->default(0);
@@ -35,7 +36,8 @@ return new class extends Migration
             $table->index(['teacher_id', 'submission_date']);
             $table->index(['guru_piket_id', 'status']);
             $table->index(['status', 'submission_date']);
-        });
+            });
+        }
     }
 
     /**
