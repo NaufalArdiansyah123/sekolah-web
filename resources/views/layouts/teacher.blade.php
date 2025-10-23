@@ -54,7 +54,7 @@
             ])
 
             <!-- Page Content -->
-            <main class="main-content">
+            <main class="main-content" style="padding-top: 4.5rem;">
                 <div class="content-container">
                     <!-- Flash Messages -->
                     @if(session('success'))

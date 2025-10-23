@@ -46,11 +46,19 @@
             <div class="nav-section-title">Tools</div>
 
             <a href="{{ route('guru-piket.qr-scanner.index') }}"
-               class="nav-item {{ request()->routeIs('guru-piket.qr-scanner.*') ? 'active' : '' }}">
+               class="nav-item {{ request()->routeIs('guru-piket.qr-scanner.index') ? 'active' : '' }}">
                 <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h2M4 4h5m0 0v5m0 0h5m0 0v5m0 0H9m0 0v5"></path>
                 </svg>
-                <span>QR Scanner</span>
+                <span>Absensi Masuk</span>
+            </a>
+
+            <a href="{{ route('guru-piket.qr-scanner.check-out') }}"
+               class="nav-item {{ request()->routeIs('guru-piket.qr-scanner.check-out') ? 'active' : '' }}">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                </svg>
+                <span>Absensi Pulang</span>
             </a>
 
             <a href="#" class="nav-item">

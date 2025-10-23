@@ -731,12 +731,17 @@
                         </span>
                     @endif
                 </a>
-                <a href="{{ route('admin.teachers.index') }}" 
+                <a href="{{ route('admin.teachers.index') }}"
                    class="nav-dropdown-item {{ request()->routeIs('admin.teachers.*') ? 'active' : '' }}"
                    @click="sidebarOpen = false">
                     👨‍🏫 Guru & Staff
                 </a>
-                <a href="{{ route('admin.students.index') }}" 
+                <!-- <a href="{{ route('admin.teacher-schedules.index') }}"
+                   class="nav-dropdown-item {{ request()->routeIs('admin.teacher-schedules.*') ? 'active' : '' }}"
+                   @click="sidebarOpen = false">
+                    📅 Jadwal Guru
+                </a> -->
+                <a href="{{ route('admin.students.index') }}"
                    class="nav-dropdown-item {{ request()->routeIs('admin.students.*') ? 'active' : '' }}"
                    @click="sidebarOpen = false">
                     👨‍🎓 Siswa

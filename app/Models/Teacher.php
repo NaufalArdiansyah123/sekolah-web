@@ -70,4 +70,37 @@ class Teacher extends Model
                    ->whereDate('attendance_date', today())
                    ->first();
     }
+
+    /**
+     * Get teacher schedules
+     */
+    public function schedules()
+    {
+        return $this->hasMany(TeacherSchedule::class);
+    }
+
+    /**
+     * Get active schedules for current academic year
+     */
+    public function activeSchedules()
+    {
+        return $this->schedules()->active()->currentAcademicYear();
+    }
+
+    /**
+     * Get today's schedule
+     */
+    public function todaySchedule()
+    {
+        $today = strtolower(now()->format('l')); // monday, tuesday, etc.
+        return $this->activeSchedules()->forDay($today)->orderBy('start_time')->get();
+    }
+
+    /**
+     * Get schedule for specific day
+     */
+    public function scheduleForDay($day)
+    {
+        return $this->activeSchedules()->forDay($day)->orderBy('start_time')->get();
+    }
 }

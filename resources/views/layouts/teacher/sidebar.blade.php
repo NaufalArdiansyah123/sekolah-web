@@ -782,39 +782,10 @@
         </div>
 
         <!-- Learning Management Dropdown -->
-        <div class="nav-dropdown">
-            <button onclick="toggleDropdown('learning')" 
-                    class="nav-dropdown-btn {{ request()->routeIs('teacher.learning.*') ? 'active' : '' }}"
-                    id="learning-btn">
-                <svg class="nav-icon" viewBox="0 0 24 24">
-                    <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                </svg>
-                <span>Learning Management</span>
-                <svg class="dropdown-icon" viewBox="0 0 24 24">
-                    <path d="M9 5l7 7-7 7"/>
-                </svg>
-            </button>
-            
-            <div id="learning-content" class="nav-dropdown-content {{ request()->routeIs('teacher.learning.*') ? 'show' : '' }}">
-                <a href="{{ route('teacher.learning.materials.index') }}" 
-                   class="nav-dropdown-item {{ request()->routeIs('teacher.learning.materials*') ? 'active' : '' }}">
-                    📚 Materi Pembelajaran
-                </a>
-                <a href="{{ route('teacher.learning.assignments.index') }}" 
-                   class="nav-dropdown-item {{ request()->routeIs('teacher.learning.assignments*') ? 'active' : '' }}">
-                    📝 Tugas & Latihan
-                </a>
-            </div>
-        </div>
+       
 
         <!-- Quizzes & Tests -->
-        <a href="{{ route('teacher.quizzes.index') }}" 
-           class="sidebar-nav-item {{ request()->routeIs('teacher.quizzes.*') ? 'active' : '' }}">
-            <svg class="nav-icon" viewBox="0 0 24 24">
-                <path d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
-            </svg>
-            <span>Kuis </span>
-        </a>
+       
 
         <!-- Grades -->
         <a href="{{ route('teacher.grades.index') }}" 
@@ -870,28 +841,8 @@
             <span>Kelola Absensi</span>
         </a>
 
-        <!-- Quick Actions Section -->
-        <div class="nav-section-title">
-            <span>Quick Actions</span>
-        </div>
-
-        <!-- Quick Create Assignment -->
-        <a href="{{ route('teacher.learning.assignments.create') }}" 
-           class="sidebar-nav-item">
-            <svg class="nav-icon" viewBox="0 0 24 24">
-                <path d="M12 5v14M5 12h14"/>
-            </svg>
-            <span>Buat Tugas Baru</span>
-        </a>
-
-        <!-- Quick Create Material -->
-        <a href="{{ route('teacher.learning.materials.create') }}" 
-           class="sidebar-nav-item">
-            <svg class="nav-icon" viewBox="0 0 24 24">
-                <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-            </svg>
-            <span>Tambah Materi</span>
-        </a>
+        
+        
     </div>
 
     <!-- Enhanced User Section -->

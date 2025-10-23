@@ -732,12 +732,17 @@
                         </span>
                     <?php endif; ?>
                 </a>
-                <a href="<?php echo e(route('admin.teachers.index')); ?>" 
+                <a href="<?php echo e(route('admin.teachers.index')); ?>"
                    class="nav-dropdown-item <?php echo e(request()->routeIs('admin.teachers.*') ? 'active' : ''); ?>"
                    @click="sidebarOpen = false">
                     👨‍🏫 Guru & Staff
                 </a>
-                <a href="<?php echo e(route('admin.students.index')); ?>" 
+                <!-- <a href="<?php echo e(route('admin.teacher-schedules.index')); ?>"
+                   class="nav-dropdown-item <?php echo e(request()->routeIs('admin.teacher-schedules.*') ? 'active' : ''); ?>"
+                   @click="sidebarOpen = false">
+                    📅 Jadwal Guru
+                </a> -->
+                <a href="<?php echo e(route('admin.students.index')); ?>"
                    class="nav-dropdown-item <?php echo e(request()->routeIs('admin.students.*') ? 'active' : ''); ?>"
                    @click="sidebarOpen = false">
                     👨‍🎓 Siswa

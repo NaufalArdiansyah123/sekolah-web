@@ -38,6 +38,30 @@ class QrScannerController extends Controller
     }
 
     /**
+     * Display QR scanner check-out page
+     */
+    public function checkOut()
+    {
+        // Get today's attendance statistics
+        $stats = [
+            'total_teachers' => Teacher::active()->count(),
+            'present_today' => TeacherAttendanceLog::today()->where('status', 'hadir')->count(),
+            'late_today' => TeacherAttendanceLog::today()->where('status', 'terlambat')->count(),
+            'absent_today' => TeacherAttendanceLog::today()->whereIn('status', ['izin', 'sakit', 'alpha'])->count(),
+            'checked_out_today' => TeacherAttendanceLog::today()->whereNotNull('check_out_time')->count(),
+        ];
+
+        // Get recent scans (last 10)
+        $recentScans = TeacherAttendanceLog::with('teacher')
+                                         ->today()
+                                         ->orderBy('scan_time', 'desc')
+                                         ->limit(10)
+                                         ->get();
+
+        return view('guru-piket.qr-scanner.check-out', compact('stats', 'recentScans'));
+    }
+
+    /**
      * Process QR code scan
      */
     public function scan(Request $request)
@@ -251,21 +275,21 @@ class QrScannerController extends Controller
                               ->whereNotIn('id', $teachersWithAttendance)
                               ->orderBy('name')
                               ->get(['id', 'name', 'nip', 'position']);
-        } else {
-            // Get teachers who have checked in today but haven't checked out
-            $teachersWithCheckOut = TeacherAttendanceLog::whereDate('attendance_date', today())
-                                                        ->whereNotNull('check_out_time')
-                                                        ->pluck('teacher_id')
-                                                        ->toArray();
+    } else {
+        // Get teachers who have checked in today but haven't checked out
+        $teachersWithCheckOut = TeacherAttendanceLog::whereDate('attendance_date', today())
+                                                    ->whereNotNull('check_out_time')
+                                                    ->pluck('teacher_id')
+                                                    ->toArray();
 
-            $teachers = Teacher::active()
-                              ->whereNotIn('id', $teachersWithCheckOut)
-                              ->whereHas('attendanceLogs', function($query) {
-                                  $query->whereDate('attendance_date', today());
-                              })
-                              ->orderBy('name')
-                              ->get(['id', 'name', 'nip', 'position']);
-        }
+        $teachers = Teacher::active()
+                          ->whereNotIn('id', $teachersWithCheckOut)
+                          ->whereHas('teacherAttendanceLogs', function($query) {
+                              $query->whereDate('attendance_date', today());
+                          })
+                          ->orderBy('name')
+                          ->get(['id', 'name', 'nip', 'position']);
+    }
 
         return response()->json([
             'success' => true,

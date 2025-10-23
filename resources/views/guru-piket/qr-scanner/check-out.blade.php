@@ -1,6 +1,6 @@
 @extends('layouts.guru-piket')
 
-@section('title', 'QR Scanner - Absensi Guru')
+@section('title', 'QR Scanner - Absensi Pulang')
 
 @push('styles')
     <style>
@@ -43,39 +43,17 @@
             color: #333;
         }
 
-        .mode-toggle {
-            display: flex;
-            background: #f8f9fa;
+        .mode-indicator {
+            background: #dc3545;
+            color: white;
+            padding: 10px 20px;
             border-radius: 8px;
-            padding: 4px;
             margin-bottom: 20px;
             width: fit-content;
-        }
-
-        .mode-btn {
-            flex: 1;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
             font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: transparent;
-            color: #6c757d;
-        }
-
-        .mode-btn.active {
-            background: white;
-            color: #007bff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .mode-btn.check-in.active {
-            color: #28a745;
-        }
-
-        .mode-btn.check-out.active {
-            color: #dc3545;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .camera-container {
@@ -123,15 +101,15 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #007bff, #0056b3);
+            background: linear-gradient(135deg, #dc3545, #c82333);
             color: white;
-            box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+            box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
         }
 
         .btn-primary:hover {
-            background: linear-gradient(135deg, #0056b3, #004085);
+            background: linear-gradient(135deg, #c82333, #bd2130);
             transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.4);
         }
 
         .btn-secondary {
@@ -314,19 +292,12 @@
         <!-- Scanner Section -->
         <div class="scanner-section">
             <div class="scanner-left">
-                <h2 class="scanner-title">QR Scanner Absensi Guru</h2>
+                <h2 class="scanner-title">QR Scanner Absensi Pulang</h2>
 
-                <!-- Mode Toggle -->
-                <div class="mode-toggle">
-                    <button id="mode-check-in" class="mode-btn check-in active">
-                        <i class="fas fa-sign-in-alt"></i>
-                        Absensi Masuk
-                    </button>
-                    <a href="{{ route('guru-piket.qr-scanner.check-out') }}" class="mode-btn check-out"
-                        style="text-decoration: none; color: inherit; display: inline-block;">
-                        <i class="fas fa-sign-out-alt"></i>
-                        Absensi Pulang
-                    </a>
+                <!-- Mode Indicator -->
+                <div class="mode-indicator">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Mode Absensi Pulang
                 </div>
 
                 <div class="camera-container">
@@ -354,7 +325,7 @@
             <div class="scanner-right">
                 <div class="status-message" id="scan-instruction">
                     <i class="fas fa-info-circle"></i>
-                    <span id="instruction-text">Arahkan kamera ke QR code guru untuk memindai absensi masuk. Pastikan QR
+                    <span id="instruction-text">Arahkan kamera ke QR code guru untuk memindai absensi pulang. Pastikan QR
                         code terlihat jelas dalam frame.</span>
                 </div>
 
@@ -377,7 +348,7 @@
 
             <!-- Manual Entry Section -->
             <div class="manual-section">
-                <h4 class="manual-title" id="manual-title">Input Manual Absensi Masuk</h4>
+                <h4 class="manual-title">Input Manual Absensi Pulang</h4>
 
                 <div class="form-group">
                     <label class="form-label" for="manual-teacher">Pilih Guru</label>
@@ -386,21 +357,10 @@
                     </select>
                 </div>
 
-                <div class="form-group" id="status-group">
-                    <label class="form-label" for="manual-status">Status Absensi</label>
-                    <select id="manual-status" class="select">
-                        <option value="hadir">Hadir</option>
-                        <option value="terlambat">Terlambat</option>
-                        <option value="izin">Izin</option>
-                        <option value="sakit">Sakit</option>
-                        <option value="alpha">Alpha</option>
-                    </select>
-                </div>
-
                 <div class="form-group">
                     <label class="form-label" for="manual-notes">Catatan (Opsional)</label>
                     <textarea id="manual-notes" class="textarea" rows="3"
-                        placeholder="Contoh: Guru tidak membawa QR code, sakit, dll."></textarea>
+                        placeholder="Contoh: Guru tidak membawa QR code, pulang lebih awal, dll."></textarea>
                 </div>
 
                 <div class="manual-controls">
@@ -410,7 +370,7 @@
                     </button>
                     <button id="btn-manual-submit" class="btn btn-primary">
                         <i class="fas fa-save"></i>
-                        <span id="manual-submit-text">Simpan Absensi Masuk</span>
+                        <span id="manual-submit-text">Simpan Absensi Pulang</span>
                     </button>
                 </div>
             </div>
@@ -434,13 +394,6 @@
         const btnManualLoad = document.getElementById('btn-manual-load');
         const btnManualSubmit = document.getElementById('btn-manual-submit');
 
-        // Mode toggle elements
-        const modeCheckIn = document.getElementById('mode-check-in');
-        // const modeCheckOut = document.getElementById('mode-check-out'); // Removed since it's now a link
-
-        const manualTitle = document.getElementById('manual-title');
-        const manualSubmitText = document.getElementById('manual-submit-text');
-
         // State variables
         let html5QrCode = null;
         let currentCameraId = null;
@@ -449,7 +402,7 @@
         let lastTime = 0;
         let lastText = '';
         let isScanning = false;
-        let currentMode = 'check-in'; // 'check-in' or 'check-out'
+        let currentMode = 'check-out'; // Fixed to check-out mode
         function showToast(message, type = 'info') {
             // Simple alert for now - can be enhanced later
             alert(message);
@@ -574,8 +527,6 @@
             cameraSelect.innerHTML = '<option value="">Klik Mulai Scan untuk memuat kamera</option>';
             loadTodayAttendance();
             loadTeachers();
-            // Set initial mode display - show status dropdown for check-in mode
-            switchMode('check-in');
         }
 
         // Handle scan errors
@@ -586,8 +537,8 @@
         // Process scan data
         async function processScan(qrCode) {
             try {
-                const endpoint = currentMode === 'check-out' ? '/guru-piket/qr-scanner/scan-check-out' : '/guru-piket/qr-scanner/scan';
-                const modeText = currentMode === 'check-out' ? 'pulang' : 'masuk';
+                const endpoint = '/guru-piket/qr-scanner/scan-check-out';
+                const modeText = 'pulang';
 
                 const response = await fetch(endpoint, {
                     method: 'POST',
@@ -677,7 +628,7 @@
             try {
                 manualTeacher.innerHTML = '<option value="">Memuat data guru...</option>';
 
-                const mode = currentMode === 'check-out' ? 'check-out' : 'manual';
+                const mode = 'check-out';
                 const response = await fetch(`/guru-piket/qr-scanner/teachers?mode=${mode}`);
                 const data = await response.json();
 
@@ -703,7 +654,6 @@
         async function submitManualEntry() {
             const teacherId = manualTeacher.value;
             const notes = manualNotes.value.trim();
-            const status = currentMode === 'check-in' ? document.getElementById('manual-status').value : null;
 
             if (!teacherId) {
                 showToast('Pilih guru terlebih dahulu');
@@ -711,18 +661,13 @@
             }
 
             try {
-                const endpoint = currentMode === 'check-out' ? '/guru-piket/qr-scanner/manual-check-out' : '/guru-piket/qr-scanner/manual-entry';
-                const modeText = currentMode === 'check-out' ? 'pulang' : 'masuk';
+                const endpoint = '/guru-piket/qr-scanner/manual-check-out';
+                const modeText = 'pulang';
 
                 const requestData = {
                     teacher_id: teacherId,
                     notes: notes
                 };
-
-                // Only add status for check-in mode
-                if (currentMode === 'check-in') {
-                    requestData.status = status;
-                }
 
                 const response = await fetch(endpoint, {
                     method: 'POST',
@@ -741,11 +686,6 @@
                     // Reset form
                     manualTeacher.value = '';
                     manualNotes.value = '';
-                    if (currentMode === 'check-in') {
-                        document.getElementById('manual-status').value = 'hadir'; // Reset to default
-                    } else {
-                        // For check-out mode, no status to reset
-                    }
 
                     // Refresh data
                     loadTodayAttendance();
@@ -761,44 +701,12 @@
             }
         }
 
-        // Mode toggle functions
-        function switchMode(mode) {
-            currentMode = mode;
-
-            // Update button states
-            modeCheckIn.classList.toggle('active', mode === 'check-in');
-            // modeCheckOut.classList.toggle('active', mode === 'check-out'); // Removed since it's now a link
-
-            // Update instruction text
-            if (mode === 'check-in') {
-                instructionText.textContent = 'Arahkan kamera ke QR code guru untuk memindai absensi masuk. Pastikan QR code terlihat jelas dalam frame.';
-                manualTitle.textContent = 'Input Manual Absensi Masuk';
-                manualSubmitText.textContent = 'Simpan Absensi Masuk';
-                // Show status dropdown for check-in
-                document.getElementById('status-group').style.display = 'block';
-            } else {
-                // Hide status dropdown for check-out mode
-                document.getElementById('status-group').style.display = 'none';
-            }
-
-            // Reset scan result
-            scanResult.textContent = 'Belum ada aktivitas pemindaian';
-            scanResult.className = 'status-message';
-
-            // Reload teachers for current mode
-            loadTeachers();
-        }
-
         // Event listeners
         btnStartScan.addEventListener('click', startScanner);
         btnStopScan.addEventListener('click', stopScanner);
         cameraSelect.addEventListener('change', function () {
             currentCameraId = this.value;
         });
-
-        // Mode toggle listeners
-        modeCheckIn.addEventListener('click', () => switchMode('check-in'));
-        // modeCheckOut.addEventListener('click', () => switchMode('check-out')); // Removed since it's now a link
 
         // Manual entry
         btnManualLoad.addEventListener('click', loadTeachers);

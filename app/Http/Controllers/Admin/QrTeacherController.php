@@ -20,12 +20,12 @@ class QrTeacherController extends Controller
 
     public function index(Request $request)
     {
-        $query = Teacher::query();
+        $query = Teacher::with('qrTeacherAttendance');
         if ($search = $request->get('q')) {
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('nip', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('nip', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
         $teachers = $query->orderBy('name')->paginate(12)->withQueryString();
@@ -38,9 +38,9 @@ class QrTeacherController extends Controller
         try {
             $payload = json_encode([
                 'type' => 'teacher',
-                'id'   => $teacher->id,
+                'id' => $teacher->id,
                 'name' => $teacher->name,
-                
+
             ]);
 
             // Generate QR image via Endroid service (PNG/SVG based on environment)
@@ -48,6 +48,19 @@ class QrTeacherController extends Controller
             $ext = function_exists('imagepng') ? 'png' : 'svg';
             $path = "qr/teachers/{$teacher->id}.{$ext}";
             Storage::disk('public')->put($path, $imageData);
+
+            // Generate unique QR code
+            $qrCode = \App\Models\QrTeacherAttendance::generateQrCode($teacher->id);
+
+            // Create or update QrTeacherAttendance record
+            \App\Models\QrTeacherAttendance::updateOrCreate(
+                ['teacher_id' => $teacher->id],
+                [
+                    'qr_code' => $qrCode,
+                    'qr_image_path' => $path,
+                    'is_active' => true,
+                ]
+            );
 
             return response()->json([
                 'success' => true,
@@ -57,7 +70,7 @@ class QrTeacherController extends Controller
             ]);
         } catch (\Throwable $e) {
             Log::error('Failed generating teacher QR', ['teacher_id' => $teacher->id, 'error' => $e->getMessage()]);
-            return response()->json(['success' => false, 'message' => 'Gagal membuat QR: '.$e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => 'Gagal membuat QR: ' . $e->getMessage()], 500);
         }
     }
 
@@ -78,14 +91,28 @@ class QrTeacherController extends Controller
             try {
                 $payload = json_encode([
                     'type' => 'teacher',
-                    'id'   => $teacher->id,
+                    'id' => $teacher->id,
                     'name' => $teacher->name,
-                    
+
                 ]);
                 $imageData = $this->qrCodeService->generateCustomQrCode(json_decode($payload, true));
                 $ext = function_exists('imagepng') ? 'png' : 'svg';
                 $path = "qr/teachers/{$teacher->id}.{$ext}";
                 Storage::disk('public')->put($path, $imageData);
+
+                // Generate unique QR code
+                $qrCode = \App\Models\QrTeacherAttendance::generateQrCode($teacher->id);
+
+                // Create or update QrTeacherAttendance record
+                \App\Models\QrTeacherAttendance::updateOrCreate(
+                    ['teacher_id' => $teacher->id],
+                    [
+                        'qr_code' => $qrCode,
+                        'qr_image_path' => $path,
+                        'is_active' => true,
+                    ]
+                );
+
                 $results[] = [
                     'id' => $teacher->id,
                     'name' => $teacher->name,
@@ -110,15 +137,15 @@ class QrTeacherController extends Controller
     public function download(Teacher $teacher)
     {
         $base = "qr/teachers/{$teacher->id}";
-        $pathPng = $base.'.png';
-        $pathSvg = $base.'.svg';
+        $pathPng = $base . '.png';
+        $pathSvg = $base . '.svg';
         $disk = Storage::disk('public');
         if (!$disk->exists($pathPng) && !$disk->exists($pathSvg)) {
             // Auto-generate if missing
             $this->generate(request(), $teacher);
         }
         $finalPath = $disk->exists($pathPng) ? $pathPng : $pathSvg;
-        $downloadName = 'qr-guru-'.$teacher->id.(str_ends_with($finalPath, '.svg') ? '.svg' : '.png');
+        $downloadName = 'qr-guru-' . $teacher->id . (str_ends_with($finalPath, '.svg') ? '.svg' : '.png');
         return $disk->download($finalPath, $downloadName);
     }
 }

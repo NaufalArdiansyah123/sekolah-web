@@ -497,6 +497,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('teachers', TeacherController::class);
     Route::post('teachers/bulk-action', [TeacherController::class, 'bulkAction'])->name('teachers.bulk-action');
     Route::post('teachers/{teacher}/toggle-status', [TeacherController::class, 'toggleStatus'])->name('teachers.toggle-status');
+
+    // Teacher Schedules management
+    Route::resource('teacher-schedules', App\Http\Controllers\Admin\TeacherScheduleController::class);
+    Route::post('teacher-schedules/{teacherSchedule}/toggle-status', [App\Http\Controllers\Admin\TeacherScheduleController::class, 'toggleStatus'])->name('teacher-schedules.toggle-status');
+    Route::get('teacher-schedules/ajax/get-teacher-schedule', [App\Http\Controllers\Admin\TeacherScheduleController::class, 'getTeacherSchedule'])->name('teacher-schedules.ajax.get-teacher-schedule');
     
     // Students management with additional routes
     // IMPORTANT: Specific routes must come BEFORE resource routes
@@ -1007,6 +1012,7 @@ Route::middleware(['auth', 'role:guru_piket'])->prefix('guru-piket')->name('guru
     // QR Scanner Routes for Teacher Attendance
     Route::prefix('qr-scanner')->name('qr-scanner.')->group(function () {
         Route::get('/', [App\Http\Controllers\GuruPiket\QrScannerController::class, 'index'])->name('index');
+        Route::get('/check-out', [App\Http\Controllers\GuruPiket\QrScannerController::class, 'checkOut'])->name('check-out');
         Route::post('/scan', [App\Http\Controllers\GuruPiket\QrScannerController::class, 'scan'])->name('scan');
         Route::post('/scan-check-out', [App\Http\Controllers\GuruPiket\QrScannerController::class, 'scanCheckOut'])->name('scan-check-out');
         Route::get('/today-attendance', [App\Http\Controllers\GuruPiket\QrScannerController::class, 'todayAttendance'])->name('today-attendance');
