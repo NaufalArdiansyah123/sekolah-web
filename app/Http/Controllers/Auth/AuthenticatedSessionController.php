@@ -32,7 +32,7 @@ class AuthenticatedSessionController extends Controller
 
         // Redirect based on user role
         $user = auth()->user();
-        
+
         // Log for debugging
         Log::info('Login redirect for user: ' . $user->email, [
             'user_id' => $user->id,
@@ -40,14 +40,16 @@ class AuthenticatedSessionController extends Controller
             'roles_count' => $user->roles->count(),
             'has_admin' => $user->hasRole('admin'),
             'has_teacher' => $user->hasRole('teacher'),
+            'has_guru_piket' => $user->hasRole('guru_piket'),
             'has_student' => $user->hasRole('student'),
             'all_role_checks' => [
                 'admin' => $user->hasRole('admin'),
                 'teacher' => $user->hasRole('teacher'),
+                'guru_piket' => $user->hasRole('guru_piket'),
                 'student' => $user->hasRole('student')
             ]
         ]);
-        
+
         // Check roles in priority order
         if ($user->hasRole('admin')) {
             Log::info('Login: Redirecting to admin dashboard (admin)');
@@ -55,11 +57,14 @@ class AuthenticatedSessionController extends Controller
         } elseif ($user->hasRole('teacher')) {
             Log::info('Login: Redirecting to teacher dashboard');
             return redirect()->route('teacher.dashboard');
+        } elseif ($user->hasRole('guru_piket')) {
+            Log::info('Login: Redirecting to guru piket dashboard');
+            return redirect()->route('guru-piket.dashboard');
         } elseif ($user->hasRole('student')) {
             Log::info('Login: Redirecting to student dashboard');
             return redirect()->route('student.dashboard');
         }
-        
+
         // Default redirect for users without specific roles
         Log::info('Login: Redirecting to default home - no matching roles found');
         return redirect()->route('home');

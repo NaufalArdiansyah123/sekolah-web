@@ -27,6 +27,8 @@ class Student extends Model
         'status',
         'user_id',
         'enrollment_date',
+        'pkl_status',
+        'active_pkl_registration_id',
     ];
 
     protected $casts = [
@@ -47,6 +49,14 @@ class Student extends Model
         return $this->belongsTo(Classes::class, 'class_id');
     }
 
+    /**
+     * Get the active PKL registration
+     */
+    public function activePklRegistration()
+    {
+        return $this->belongsTo(PklRegistration::class, 'active_pkl_registration_id');
+    }
+
     public function achievements()
     {
         return $this->hasMany(Achievement::class);
@@ -64,12 +74,12 @@ class Student extends Model
             'extracurricular_id' // Local key on extracurricular_registrations table
         )->where('extracurricular_registrations.status', 'approved');
     }
-    
+
     public function extracurricularRegistrations()
     {
         return $this->hasMany(ExtracurricularRegistration::class, 'student_nis', 'nis');
     }
-    
+
     public function approvedExtracurriculars()
     {
         return $this->extracurricularRegistrations()->where('status', 'approved')->with('extracurricular');
@@ -84,11 +94,11 @@ class Student extends Model
     {
         $names = explode(' ', $this->name);
         $initials = '';
-        
+
         foreach ($names as $name) {
             $initials .= substr($name, 0, 1);
         }
-        
+
         return strtoupper(substr($initials, 0, 2));
     }
 
@@ -141,8 +151,8 @@ class Student extends Model
     public function getTodayAttendanceAttribute()
     {
         return $this->attendanceLogs()
-                   ->whereDate('attendance_date', today())
-                   ->first();
+            ->whereDate('attendance_date', today())
+            ->first();
     }
 
     /**

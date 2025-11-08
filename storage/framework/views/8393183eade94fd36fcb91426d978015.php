@@ -5,8 +5,12 @@
 <html lang="<?php echo e(str_replace('_', '-', app()->getLocale())); ?>" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' || false }" :class="{ 'dark': darkMode }">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- CRITICAL: Enhanced mobile viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <title><?php echo e($title ?? 'Admin'); ?> - <?php echo e(school_name()); ?></title>
     
@@ -211,6 +215,8 @@
                 margin-left: 0 !important;
             }
         }
+
+        
     </style>
     
     <?php echo $__env->yieldPushContent('styles'); ?>

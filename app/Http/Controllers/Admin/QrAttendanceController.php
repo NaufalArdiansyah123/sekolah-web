@@ -15,6 +15,39 @@ use Illuminate\Support\Facades\Log;
 
 class QrAttendanceController extends Controller
 {
+    /**
+     * View document in browser
+     */
+    public function viewDocument($logId)
+    {
+        $log = AttendanceLog::findOrFail($logId);
+
+        if (!$log->document_path) {
+            abort(404, 'Dokumen tidak ditemukan');
+        }
+
+        $path = storage_path('app/public/' . $log->document_path);
+        if (!file_exists($path)) {
+            abort(404, 'File tidak ditemukan');
+        }
+
+        return response()->file($path);
+    }
+
+    /**
+     * Download document
+     */
+    public function downloadDocument($logId)
+    {
+        $log = AttendanceLog::findOrFail($logId);
+
+        if (!$log->document_path) {
+            abort(404, 'Dokumen tidak ditemukan');
+        }
+
+        return response()->download(storage_path('app/public/' . $log->document_path));
+    }
+
     protected $qrCodeService;
 
     public function __construct(QrCodeService $qrCodeService)
@@ -27,9 +60,13 @@ class QrAttendanceController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Student::with(['qrAttendance', 'class', 'attendanceLogs' => function($q) {
-            $q->whereDate('attendance_date', today());
-        }]);
+        $query = Student::with([
+            'qrAttendance',
+            'class',
+            'attendanceLogs' => function ($q) {
+                $q->whereDate('attendance_date', today());
+            }
+        ]);
 
         // Filter by class
         if ($request->filled('class')) {
@@ -39,30 +76,30 @@ class QrAttendanceController extends Controller
         // Filter by search
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('nis', 'like', "%{$search}%")
-                  ->orWhere('nisn', 'like', "%{$search}%");
+                    ->orWhere('nis', 'like', "%{$search}%")
+                    ->orWhere('nisn', 'like', "%{$search}%");
             });
         }
 
         $students = $query->paginate(20);
-        
+
         // Get available classes
         $classes = \App\Models\Classes::where('is_active', true)
             ->orderBy('level')
             ->orderBy('program')
             ->orderBy('name')
             ->get();
-        
+
         // Statistics
         $stats = [
             'total_students' => Student::count(),
             'students_with_qr' => QrAttendance::count(),
             'today_attendance' => AttendanceLog::whereDate('attendance_date', today())->count(),
             'present_today' => AttendanceLog::whereDate('attendance_date', today())
-                                          ->where('status', 'hadir')
-                                          ->count(),
+                ->where('status', 'hadir')
+                ->count(),
         ];
 
         return view('admin.qr-attendance.index', compact('students', 'classes', 'stats'));
@@ -97,7 +134,7 @@ class QrAttendanceController extends Controller
         if ($search) {
             $query->whereHas('student', function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('nis', 'like', "%{$search}%");
+                    ->orWhere('nis', 'like', "%{$search}%");
             });
         }
 
@@ -114,20 +151,20 @@ class QrAttendanceController extends Controller
         $summary = [
             'total' => $logs->total(),
             'hadir' => AttendanceLog::whereBetween('attendance_date', [$start, $end])
-                                   ->where('status', 'hadir')
-                                   ->count(),
+                ->where('status', 'hadir')
+                ->count(),
             'terlambat' => AttendanceLog::whereBetween('attendance_date', [$start, $end])
-                                       ->where('status', 'terlambat')
-                                       ->count(),
+                ->where('status', 'terlambat')
+                ->count(),
             'izin' => AttendanceLog::whereBetween('attendance_date', [$start, $end])
-                                  ->where('status', 'izin')
-                                  ->count(),
+                ->where('status', 'izin')
+                ->count(),
             'sakit' => AttendanceLog::whereBetween('attendance_date', [$start, $end])
-                                   ->where('status', 'sakit')
-                                   ->count(),
+                ->where('status', 'sakit')
+                ->count(),
             'alpha' => AttendanceLog::whereBetween('attendance_date', [$start, $end])
-                                   ->where('status', 'alpha')
-                                   ->count(),
+                ->where('status', 'alpha')
+                ->count(),
         ];
 
         return view('admin.qr-attendance.all-attendance', compact('logs', 'classes', 'summary'));
@@ -140,7 +177,7 @@ class QrAttendanceController extends Controller
     {
         try {
             $qrAttendance = $this->qrCodeService->generateQrCodeForStudent($student);
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'QR Code berhasil dibuat untuk ' . $student->name,
@@ -152,7 +189,7 @@ class QrAttendanceController extends Controller
                 'student_id' => $student->id,
                 'error' => $e->getMessage()
             ]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal membuat QR Code: ' . $e->getMessage(),
@@ -167,7 +204,7 @@ class QrAttendanceController extends Controller
     {
         try {
             $qrAttendance = $this->qrCodeService->regenerateQrCodeForStudent($student);
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'QR Code berhasil dibuat ulang untuk ' . $student->name,
@@ -179,7 +216,7 @@ class QrAttendanceController extends Controller
                 'student_id' => $student->id,
                 'error' => $e->getMessage()
             ]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal membuat ulang QR Code: ' . $e->getMessage(),
@@ -199,11 +236,11 @@ class QrAttendanceController extends Controller
 
         try {
             DB::beginTransaction();
-            
+
             $results = $this->qrCodeService->generateQrCodesForMultipleStudents($request->student_ids);
-            
+
             DB::commit();
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'QR Code berhasil dibuat untuk ' . count($results) . ' siswa',
@@ -211,11 +248,11 @@ class QrAttendanceController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             Log::error('Error generating bulk QR codes', [
                 'error' => $e->getMessage()
             ]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal membuat QR Code: ' . $e->getMessage(),
@@ -229,7 +266,7 @@ class QrAttendanceController extends Controller
     public function attendanceLogs(Request $request)
     {
         $date = $request->get('date', date('Y-m-d'));
-        $search = $request->get('search');
+        $classId = $request->get('class_id');
 
         // Handle CSV export request
         if ($request->get('export') === 'csv') {
@@ -238,30 +275,34 @@ class QrAttendanceController extends Controller
 
         // Get all classes with their students and ALL attendance data (confirmed and unconfirmed)
         $classes = \App\Models\Classes::where('is_active', true)
-            ->with(['students' => function($query) use ($date) {
-                $query->with(['attendanceLogs' => function($q) use ($date) {
-                    $q->whereDate('attendance_date', $date);
-                }])
-                ->orderBy('name');
-            }])
+            ->with([
+                'students' => function ($query) use ($date) {
+                    $query->with([
+                        'attendanceLogs' => function ($q) use ($date) {
+                            $q->whereDate('attendance_date', $date);
+                        }
+                    ])
+                        ->orderBy('name');
+                }
+            ])
             ->orderBy('level')
             ->orderBy('program')
             ->orderBy('name')
             ->get();
 
-        // Filter classes by search
-        if ($search) {
-            $classes = $classes->filter(function($class) use ($search) {
-                return stripos($class->name, $search) !== false;
+        // Filter classes by class_id
+        if ($classId) {
+            $classes = $classes->filter(function ($class) use ($classId) {
+                return $class->id == $classId;
             });
         }
 
         // Process attendance data - BOTH CONFIRMED AND UNCONFIRMED STUDENTS
-        $attendanceByClass = $classes->map(function($class) use ($date) {
+        $attendanceByClass = $classes->map(function ($class) use ($date) {
             $confirmedStudents = collect();
             $unconfirmedStudents = collect();
 
-            $class->students->each(function($student) use (&$confirmedStudents, &$unconfirmedStudents) {
+            $class->students->each(function ($student) use (&$confirmedStudents, &$unconfirmedStudents) {
                 $attendanceLog = $student->attendanceLogs->first();
 
                 if (!$attendanceLog) {
@@ -279,6 +320,7 @@ class QrAttendanceController extends Controller
                     'confirmed_by' => $attendanceLog->confirmed_by,
                     'confirmed_at' => $attendanceLog->confirmed_at,
                     'notes' => $attendanceLog->notes,
+                    'document_path' => $attendanceLog->document_path,
                     'confirmedBy' => $attendanceLog->confirmedBy,
                     'log_id' => $attendanceLog->id,
                 ];
@@ -298,22 +340,22 @@ class QrAttendanceController extends Controller
                 'unconfirmed_count' => $unconfirmedStudents->count(),
                 'total_count' => $confirmedStudents->count() + $unconfirmedStudents->count(),
             ];
-        })->filter(function($classData) {
+        })->filter(function ($classData) {
             // Include classes with any attendance data (confirmed or unconfirmed)
             return $classData['total_count'] > 0;
         });
 
         // Calculate totals
-        $totalPresent = $attendanceByClass->sum(function($classData) {
+        $totalPresent = $attendanceByClass->sum(function ($classData) {
             return $classData['confirmed_students']->where('status', 'hadir')->count() +
-                   $classData['unconfirmed_students']->where('status', 'hadir')->count();
+                $classData['unconfirmed_students']->where('status', 'hadir')->count();
         });
 
-        $totalConfirmed = $attendanceByClass->sum(function($classData) {
+        $totalConfirmed = $attendanceByClass->sum(function ($classData) {
             return $classData['confirmed_count'];
         });
 
-        $totalUnconfirmed = $attendanceByClass->sum(function($classData) {
+        $totalUnconfirmed = $attendanceByClass->sum(function ($classData) {
             return $classData['unconfirmed_count'];
         });
 
@@ -331,10 +373,10 @@ class QrAttendanceController extends Controller
             'totalUnconfirmed',
             'filterClasses',
             'date',
-            'search'
+            'classId'
         ));
     }
-    
+
     /**
      * Export attendance logs to CSV
      */
@@ -342,7 +384,7 @@ class QrAttendanceController extends Controller
     {
         try {
             Log::info('Export logs request started', $request->all());
-            
+
             $filters = [
                 'date' => $request->get('date', today()->format('Y-m-d')),
                 'status' => $request->get('status'),
@@ -350,7 +392,7 @@ class QrAttendanceController extends Controller
             ];
 
             $query = AttendanceLog::with(['student.class'])
-                                 ->orderBy('scan_time', 'desc');
+                ->orderBy('scan_time', 'desc');
 
             if ($filters['date']) {
                 $query->whereDate('attendance_date', $filters['date']);
@@ -361,7 +403,7 @@ class QrAttendanceController extends Controller
             }
 
             if ($filters['class']) {
-                $query->whereHas('student', function($q) use ($filters) {
+                $query->whereHas('student', function ($q) use ($filters) {
                     $q->where('class_id', $filters['class']);
                 });
             }
@@ -399,16 +441,16 @@ class QrAttendanceController extends Controller
             ];
 
             $query = AttendanceLog::with(['student.class', 'confirmedBy'])
-                                 ->whereNotNull('confirmed_by')
-                                 ->orderBy('attendance_date', 'desc')
-                                 ->orderBy('scan_time', 'desc');
+                ->whereNotNull('confirmed_by')
+                ->orderBy('attendance_date', 'desc')
+                ->orderBy('scan_time', 'desc');
 
             if ($filters['date']) {
                 $query->whereDate('attendance_date', $filters['date']);
             }
 
             if ($filters['search']) {
-                $query->whereHas('student.class', function($q) use ($filters) {
+                $query->whereHas('student.class', function ($q) use ($filters) {
                     $q->where('name', 'like', "%{$filters['search']}%");
                 });
             }
@@ -443,12 +485,12 @@ class QrAttendanceController extends Controller
             'Expires' => '0'
         ];
 
-        $callback = function() use ($logs, $includeConfirmer) {
+        $callback = function () use ($logs, $includeConfirmer) {
             $file = fopen('php://output', 'w');
-            
+
             // Add BOM for UTF-8
-            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
-            
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
             // Header
             $headerRow = ['No', 'Tanggal', 'NIS', 'Nama', 'Kelas', 'Status', 'Waktu Scan', 'Catatan'];
             if ($includeConfirmer) {
@@ -456,7 +498,7 @@ class QrAttendanceController extends Controller
                 $headerRow[] = 'Waktu Konfirmasi';
             }
             fputcsv($file, $headerRow);
-            
+
             // Data
             foreach ($logs as $index => $log) {
                 $row = [
@@ -469,15 +511,15 @@ class QrAttendanceController extends Controller
                     $log->scan_time ? Carbon::parse($log->scan_time)->format('H:i') : '-',
                     $log->notes ?? '-'
                 ];
-                
+
                 if ($includeConfirmer) {
                     $row[] = $log->confirmedBy->name ?? '-';
                     $row[] = $log->confirmed_at ? Carbon::parse($log->confirmed_at)->format('d/m/Y H:i') : '-';
                 }
-                
+
                 fputcsv($file, $row);
             }
-            
+
             fclose($file);
         };
 
@@ -491,42 +533,42 @@ class QrAttendanceController extends Controller
     {
         $month = $request->get('month', date('m'));
         $year = $request->get('year', date('Y'));
-        
+
         $startDate = Carbon::createFromDate($year, $month, 1)->startOfMonth();
         $endDate = Carbon::createFromDate($year, $month, 1)->endOfMonth();
-        
+
         // Monthly statistics
         $monthlyStats = AttendanceLog::whereBetween('attendance_date', [$startDate, $endDate])
-                                   ->select('status', DB::raw('count(*) as count'))
-                                   ->groupBy('status')
-                                   ->pluck('count', 'status')
-                                   ->toArray();
+            ->select('status', DB::raw('count(*) as count'))
+            ->groupBy('status')
+            ->pluck('count', 'status')
+            ->toArray();
 
         // Daily statistics
         $dailyStats = AttendanceLog::whereBetween('attendance_date', [$startDate, $endDate])
-                                 ->select(
-                                     DB::raw('DATE(attendance_date) as date'),
-                                     'status',
-                                     DB::raw('count(*) as count')
-                                 )
-                                 ->groupBy('date', 'status')
-                                 ->get()
-                                 ->groupBy('date');
+            ->select(
+                DB::raw('DATE(attendance_date) as date'),
+                'status',
+                DB::raw('count(*) as count')
+            )
+            ->groupBy('date', 'status')
+            ->get()
+            ->groupBy('date');
 
         // Class statistics
         $classStats = AttendanceLog::whereBetween('attendance_date', [$startDate, $endDate])
-                                 ->join('students', 'attendance_logs.student_id', '=', 'students.id')
-                                 ->join('classes', 'students.class_id', '=', 'classes.id')
-                                 ->select('classes.name as class_name', 'attendance_logs.status', DB::raw('count(*) as count'))
-                                 ->groupBy('classes.name', 'attendance_logs.status')
-                                 ->get()
-                                 ->groupBy('class_name');
+            ->join('students', 'attendance_logs.student_id', '=', 'students.id')
+            ->join('classes', 'students.class_id', '=', 'classes.id')
+            ->select('classes.name as class_name', 'attendance_logs.status', DB::raw('count(*) as count'))
+            ->groupBy('classes.name', 'attendance_logs.status')
+            ->get()
+            ->groupBy('class_name');
 
         return view('admin.qr-attendance.statistics', compact(
-            'monthlyStats', 
-            'dailyStats', 
-            'classStats', 
-            'month', 
+            'monthlyStats',
+            'dailyStats',
+            'classStats',
+            'month',
             'year'
         ));
     }
@@ -538,14 +580,14 @@ class QrAttendanceController extends Controller
     {
         try {
             $qrAttendance = $student->qrAttendance;
-            
+
             if (!$qrAttendance) {
                 return response()->json([
                     'success' => false,
                     'message' => 'QR Code belum dibuat untuk siswa ini.',
                 ], 404);
             }
-            
+
             return response()->json([
                 'success' => true,
                 'qr_image_url' => $qrAttendance->qr_image_url,
@@ -669,8 +711,8 @@ class QrAttendanceController extends Controller
             DB::beginTransaction();
 
             $logs = AttendanceLog::whereIn('id', $logIds)
-                                ->whereNull('confirmed_by')
-                                ->get();
+                ->whereNull('confirmed_by')
+                ->get();
 
             if ($logs->isEmpty()) {
                 return response()->json([
@@ -789,7 +831,7 @@ class QrAttendanceController extends Controller
                     'confirmed_by' => auth()->user()->name,
                     'confirmed_at' => now()->format('Y-m-d H:i:s'),
                     'notes' => $notes,
-                    'logs' => $logs->map(function($log) {
+                    'logs' => $logs->map(function ($log) {
                         return [
                             'id' => $log->id,
                             'student' => $log->student->name ?? null,

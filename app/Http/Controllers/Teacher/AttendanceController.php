@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
@@ -9,8 +8,6 @@ use App\Models\QrAttendance;
 use App\Models\Classes;
 use App\Models\SecurityViolation;
 use App\Models\AttendanceSubmission;
-
-
 use App\Models\User;
 use App\Exports\AttendanceExport;
 use App\Services\QrCodeService;
@@ -22,6 +19,40 @@ use Carbon\Carbon;
 
 class AttendanceController extends Controller
 {
+    /**
+     * Upload surat izin/sakit dan simpan ke kolom document_path pada attendance_logs
+     */
+    public function uploadSurat(Request $request)
+    {
+        $request->validate([
+            'student_id' => 'required|exists:students,id',
+            'date' => 'required|date',
+            'surat' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+        ]);
+
+        $studentId = $request->input('student_id');
+        $date = $request->input('date');
+
+        // Cari log absensi siswa pada tanggal tsb
+        $attendanceLog = \App\Models\AttendanceLog::where('student_id', $studentId)
+            ->whereDate('attendance_date', $date)
+            ->first();
+
+        if (!$attendanceLog) {
+            return back()->with('error', 'Data absensi tidak ditemukan.');
+        }
+
+        // Simpan file surat ke storage/app/public/surat-izin-sakit/
+        $file = $request->file('surat');
+        $filename = 'surat_' . $studentId . '_' . $date . '_' . time() . '.' . $file->getClientOriginalExtension();
+        $path = $file->storeAs('public/surat-izin-sakit', $filename);
+
+        // Simpan path ke kolom document_path
+        $attendanceLog->document_path = $path;
+        $attendanceLog->save();
+
+        return back()->with('success', 'Surat berhasil diupload.');
+    }
     protected $qrCodeService;
 
     public function __construct(QrCodeService $qrCodeService)
@@ -38,9 +69,9 @@ class AttendanceController extends Controller
 
         // Get available classes from classes table
         $classes = Classes::where('is_active', true)
-                         ->pluck('name')
-                         ->sort()
-                         ->values();
+            ->pluck('name')
+            ->sort()
+            ->values();
 
         // Set default class if not provided
         if (!$selectedClass && $classes->isNotEmpty()) {
@@ -49,35 +80,35 @@ class AttendanceController extends Controller
 
         // Get students by class with their attendance data for the selected date
         $students = Student::active()
-                          ->whereHas('class', function($q) use ($selectedClass) {
-                              $q->where('name', $selectedClass);
-                          })
-                          ->with([
-                              'class',
-                              'attendanceLogs' => function($query) use ($selectedDate) {
-                                  $query->whereDate('attendance_date', $selectedDate);
-                              }
-                          ])
-                          ->orderBy('name')
-                          ->get();
+            ->whereHas('class', function ($q) use ($selectedClass) {
+                $q->where('name', $selectedClass);
+            })
+            ->with([
+                'class',
+                'attendanceLogs' => function ($query) use ($selectedDate) {
+                    $query->whereDate('attendance_date', $selectedDate);
+                }
+            ])
+            ->orderBy('name')
+            ->get();
 
         // Handle export requests
         if ($request->has('export')) {
             return $this->exportAttendance($request);
         }
-        
+
         // Get attendance data for selected date and class from attendance_logs table
         $attendanceData = $this->getAttendanceByDate($selectedDate, $selectedClass);
-        
+
         // Calculate statistics based on actual attendance logs
         $statistics = $this->calculateStatistics($attendanceData, $students->count());
-        
+
         return view('teacher.attendance.index', compact(
-            'students', 
-            'attendanceData', 
-            'statistics', 
-            'selectedDate', 
-            'selectedClass', 
+            'students',
+            'attendanceData',
+            'statistics',
+            'selectedDate',
+            'selectedClass',
             'classes'
         ));
     }
@@ -103,7 +134,7 @@ class AttendanceController extends Controller
         $status = $statusMapping[$request->status] ?? $request->status;
 
         $student = Student::findOrFail($request->student_id);
-        
+
         // Parse time if provided
         $scanTime = null;
         if ($request->scan_time) {
@@ -111,12 +142,13 @@ class AttendanceController extends Controller
         } else {
             $scanTime = now();
         }
-        
+
         // Create or update attendance log
         $attendanceLog = AttendanceLog::updateOrCreate([
             'student_id' => $request->student_id,
             'attendance_date' => $request->date,
         ], [
+            'teacher_id' => auth()->user()->teacher->id ?? null,
             'status' => $status,
             'notes' => $request->notes,
             'scan_time' => $scanTime,
@@ -164,18 +196,19 @@ class AttendanceController extends Controller
             foreach ($request->student_ids as $studentId) {
                 try {
                     $student = Student::findOrFail($studentId);
-                    
+
                     AttendanceLog::updateOrCreate([
                         'student_id' => $studentId,
                         'attendance_date' => $request->date,
                     ], [
+                        'teacher_id' => auth()->user()->teacher->id ?? null,
                         'status' => $status,
                         'scan_time' => now(),
                         'location' => 'Bulk Entry by Teacher',
                         'qr_code' => $student->qrAttendance->qr_code ?? null,
                         'notes' => 'Bulk attendance marking'
                     ]);
-                    
+
                     $successCount++;
                 } catch (\Exception $e) {
                     $errors[] = "Error for student ID {$studentId}: " . $e->getMessage();
@@ -199,17 +232,24 @@ class AttendanceController extends Controller
 
         // Get students in the class
         $studentIds = Student::active()
-                            ->whereHas('class', function($q) use ($class) {
-                                $q->where('name', $class);
-                            })
-                            ->pluck('id');
+            ->whereHas('class', function ($q) use ($class) {
+                $q->where('name', $class);
+            })
+            ->pluck('id');
 
-        // Get attendance logs for the date and students
-        $attendanceLogs = AttendanceLog::whereIn('student_id', $studentIds)
-                                     ->whereDate('attendance_date', $date)
-                                     ->with('student')
-                                     ->get()
-                                     ->keyBy('student_id');
+        $teacherId = auth()->user()->teacher->id ?? null;
+
+        // Get attendance logs for the date and students, filtered by teacher
+        $query = AttendanceLog::whereIn('student_id', $studentIds)
+            ->whereDate('attendance_date', $date)
+            ->with('student');
+
+        // Filter by teacher who scanned
+        if ($teacherId) {
+            $query->where('teacher_id', $teacherId);
+        }
+
+        $attendanceLogs = $query->get()->keyBy('student_id');
 
         return $attendanceLogs;
     }
@@ -273,20 +313,28 @@ class AttendanceController extends Controller
             return response()->json(['error' => 'Student ID is required'], 400);
         }
 
-        $history = AttendanceLog::where('student_id', $studentId)
-                               ->whereBetween('attendance_date', [$startDate, $endDate])
-                               ->orderBy('attendance_date', 'desc')
-                               ->get()
-                               ->map(function ($log) {
-                                   return [
-                                       'date' => $log->attendance_date->format('Y-m-d'),
-                                       'status' => $log->status,
-                                       'status_text' => $log->status_text,
-                                       'scan_time' => $log->scan_time ? $log->scan_time->format('H:i') : null,
-                                       'notes' => $log->notes,
-                                       'location' => $log->location
-                                   ];
-                               });
+        $teacherId = auth()->user()->teacher->id ?? null;
+
+        $query = AttendanceLog::where('student_id', $studentId)
+            ->whereBetween('attendance_date', [$startDate, $endDate]);
+
+        // Filter by teacher who scanned
+        if ($teacherId) {
+            $query->where('teacher_id', $teacherId);
+        }
+
+        $history = $query->orderBy('attendance_date', 'desc')
+            ->get()
+            ->map(function ($log) {
+                return [
+                    'date' => $log->attendance_date->format('Y-m-d'),
+                    'status' => $log->status,
+                    'status_text' => $log->status_text,
+                    'scan_time' => $log->scan_time ? $log->scan_time->format('H:i') : null,
+                    'notes' => $log->notes,
+                    'location' => $log->location
+                ];
+            });
 
         return response()->json($history);
     }
@@ -301,24 +349,32 @@ class AttendanceController extends Controller
             return response()->json(['error' => 'Class is required'], 400);
         }
 
-        // Get attendance data
-        $attendanceData = AttendanceLog::with(['student'])
-                                      ->whereDate('attendance_date', $date)
-                                      ->whereHas('student.class', function($query) use ($class) {
-                                          $query->where('name', $class);
-                                      })
-                                      ->orderBy('attendance_date')
-                                      ->get();
+        $teacherId = auth()->user()->teacher->id ?? null;
+
+        // Get attendance data, filtered by teacher
+        $query = AttendanceLog::with(['student'])
+            ->whereDate('attendance_date', $date)
+            ->whereHas('student.class', function ($query) use ($class) {
+                $query->where('name', $class);
+            })
+            ->orderBy('attendance_date');
+
+        // Filter by teacher who scanned
+        if ($teacherId) {
+            $query->where('teacher_id', $teacherId);
+        }
+
+        $attendanceData = $query->get();
 
         // If no attendance data, get students and create empty records
         if ($attendanceData->isEmpty()) {
             $students = Student::active()
-                             ->whereHas('class', function($q) use ($class) {
-                                 $q->where('name', $class);
-                             })
-                             ->with('class')
-                             ->get();
-            $attendanceData = $students->map(function($student) use ($date) {
+                ->whereHas('class', function ($q) use ($class) {
+                    $q->where('name', $class);
+                })
+                ->with('class')
+                ->get();
+            $attendanceData = $students->map(function ($student) use ($date) {
                 return (object) [
                     'student' => $student,
                     'attendance_date' => Carbon::parse($date),
@@ -358,20 +414,29 @@ class AttendanceController extends Controller
         $startDate = $monthYear->copy()->startOfMonth();
         $endDate = $monthYear->copy()->endOfMonth();
 
+        $teacherId = auth()->user()->teacher->id ?? null;
+
         // Get students in the class
         $students = Student::active()
-                          ->whereHas('class', function($q) use ($class) {
-                              $q->where('name', $class);
-                          })
-                          ->with(['class', 'attendanceLogs' => function ($query) use ($startDate, $endDate) {
-                              $query->whereBetween('attendance_date', [$startDate, $endDate]);
-                          }])
-                          ->orderBy('name')
-                          ->get();
+            ->whereHas('class', function ($q) use ($class) {
+                $q->where('name', $class);
+            })
+            ->with([
+                'class',
+                'attendanceLogs' => function ($query) use ($startDate, $endDate, $teacherId) {
+                    $query->whereBetween('attendance_date', [$startDate, $endDate]);
+                    // Filter by teacher who scanned
+                    if ($teacherId) {
+                        $query->where('teacher_id', $teacherId);
+                    }
+                }
+            ])
+            ->orderBy('name')
+            ->get();
 
         $monthlyData = $students->map(function ($student) use ($startDate, $endDate) {
             $logs = $student->attendanceLogs;
-            
+
             $totalDays = $this->getSchoolDaysInPeriod($startDate, $endDate);
             $hadirCount = $logs->whereIn('status', ['hadir', 'terlambat'])->count();
             $terlambatCount = $logs->where('status', 'terlambat')->count();
@@ -381,7 +446,7 @@ class AttendanceController extends Controller
             $attendedDays = $logs->count();
             $notMarkedDays = $totalDays - $attendedDays;
 
-            return (object)[
+            return (object) [
                 'student' => $student,
                 'total_days' => $totalDays,
                 'attended_days' => $attendedDays,
@@ -391,6 +456,9 @@ class AttendanceController extends Controller
                 'izin_days' => $izinCount,
                 'sakit_days' => $sakitCount,
                 'alpha_days' => $alphaCount,
+                'absent_days' => $alphaCount, // For view compatibility
+                'sick_days' => $sakitCount, // For view compatibility
+                'permission_days' => $izinCount, // For view compatibility
                 'not_marked_days' => $notMarkedDays,
                 'attendance_percentage' => $totalDays > 0 ? round(($hadirCount / $totalDays) * 100, 1) : 0
             ];
@@ -427,26 +495,34 @@ class AttendanceController extends Controller
 
         // Get students in class
         $students = Student::active()
-                          ->whereHas('class', function($q) use ($class) {
-                              $q->where('name', $class);
-                          })
-                          ->with('class')
-                          ->get();
+            ->whereHas('class', function ($q) use ($class) {
+                $q->where('name', $class);
+            })
+            ->with('class')
+            ->get();
         $totalStudents = $students->count();
 
         if ($totalStudents === 0) {
             return response()->json(['error' => 'No students found in this class'], 404);
         }
 
-        // Get attendance logs for the period
-        $attendanceLogs = AttendanceLog::whereIn('student_id', $students->pluck('id'))
-                                     ->whereBetween('attendance_date', [$startDate, $endDate])
-                                     ->get();
+        $teacherId = auth()->user()->teacher->id ?? null;
+
+        // Get attendance logs for the period, filtered by teacher
+        $query = AttendanceLog::whereIn('student_id', $students->pluck('id'))
+            ->whereBetween('attendance_date', [$startDate, $endDate]);
+
+        // Filter by teacher who scanned
+        if ($teacherId) {
+            $query->where('teacher_id', $teacherId);
+        }
+
+        $attendanceLogs = $query->get();
 
         // Calculate statistics
         $totalDays = $this->getSchoolDaysInPeriod($startDate, $endDate);
         $totalPossibleAttendance = $totalStudents * $totalDays;
-        
+
         $presentCount = $attendanceLogs->whereIn('status', ['hadir', 'terlambat'])->count();
         $classAverage = $totalPossibleAttendance > 0 ? round(($presentCount / $totalPossibleAttendance) * 100, 1) : 0;
 
@@ -543,9 +619,17 @@ class AttendanceController extends Controller
                 $endDate = Carbon::now();
         }
 
-        $logs = AttendanceLog::where('student_id', $studentId)
-                           ->whereBetween('attendance_date', [$startDate, $endDate])
-                           ->get();
+        $teacherId = auth()->user()->teacher->id ?? null;
+
+        $query = AttendanceLog::where('student_id', $studentId)
+            ->whereBetween('attendance_date', [$startDate, $endDate]);
+
+        // Filter by teacher who scanned
+        if ($teacherId) {
+            $query->where('teacher_id', $teacherId);
+        }
+
+        $logs = $query->get();
 
         $totalDays = $this->getSchoolDaysInPeriod($startDate, $endDate);
         $attendedDays = $logs->count();
@@ -590,12 +674,13 @@ class AttendanceController extends Controller
         ]);
 
         $student = Student::findOrFail($request->student_id);
-        
+
         // Find or create attendance log
         $attendanceLog = AttendanceLog::updateOrCreate([
             'student_id' => $request->student_id,
             'attendance_date' => $request->date,
         ], [
+            'teacher_id' => auth()->user()->teacher->id ?? null,
             'notes' => $request->notes,
             'location' => 'Manual Entry by Teacher',
             'qr_code' => $student->qrAttendance->qr_code ?? null,
@@ -624,18 +709,19 @@ class AttendanceController extends Controller
         ]);
 
         $student = Student::findOrFail($request->student_id);
-        
+
         // Parse time if provided
         $scanTime = null;
         if ($request->time) {
             $scanTime = Carbon::parse($request->date . ' ' . $request->time);
         }
-        
+
         // Find or create attendance log
         $attendanceLog = AttendanceLog::updateOrCreate([
             'student_id' => $request->student_id,
             'attendance_date' => $request->date,
         ], [
+            'teacher_id' => auth()->user()->teacher->id ?? null,
             'scan_time' => $scanTime,
             'location' => 'Manual Entry by Teacher',
             'qr_code' => $student->qrAttendance->qr_code ?? null,
@@ -660,17 +746,20 @@ class AttendanceController extends Controller
         try {
             // Get available classes from Classes model
             $classes = Classes::where('is_active', true)
-                             ->pluck('name')
-                             ->sort()
-                             ->values();
+                ->pluck('name')
+                ->sort()
+                ->values();
 
             // Get today's attendance statistics
             $todayStats = $this->getTodayAttendanceStats();
-            
+
             // Get recent scans for today
             $recentScans = $this->getRecentScansToday();
 
-            return view('teacher.attendance.qr-scanner', compact('classes', 'todayStats', 'recentScans'));
+            // Get current teacher ID for localStorage key
+            $teacherId = auth()->user()->teacher->id ?? auth()->id();
+
+            return view('teacher.attendance.qr-scanner', compact('classes', 'todayStats', 'recentScans', 'teacherId'));
 
         } catch (\Exception $e) {
             \Log::error('Error loading QR scanner page:', [
@@ -692,6 +781,8 @@ class AttendanceController extends Controller
         }
     }
 
+
+
     /**
      * Process QR code scan by teacher
      */
@@ -700,6 +791,8 @@ class AttendanceController extends Controller
         \Log::info('Teacher QR Scan Request:', [
             'qr_code' => $request->qr_code,
             'location' => $request->location,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
             'teacher_id' => auth()->id(),
             'timestamp' => now()
         ]);
@@ -707,18 +800,20 @@ class AttendanceController extends Controller
         $request->validate([
             'qr_code' => 'required|string',
             'location' => 'nullable|string|max:255',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
         ]);
 
         try {
             // Validate QR code
             $qrAttendance = $this->qrCodeService->validateQrCode($request->qr_code);
-            
+
             \Log::info('Teacher QR Validation Result:', [
                 'qr_attendance_found' => $qrAttendance ? true : false,
                 'qr_attendance_id' => $qrAttendance ? $qrAttendance->id : null,
                 'student_id' => $qrAttendance ? $qrAttendance->student_id : null
             ]);
-            
+
             if (!$qrAttendance) {
                 return response()->json([
                     'success' => false,
@@ -731,26 +826,26 @@ class AttendanceController extends Controller
             }
 
             $student = $qrAttendance->student;
-            
+
             if (!$student) {
                 \Log::error('Student not found for QR attendance', [
                     'qr_attendance_id' => $qrAttendance->id,
                     'student_id' => $qrAttendance->student_id
                 ]);
-                
+
                 return response()->json([
                     'success' => false,
                     'message' => 'Data siswa untuk QR Code ini tidak ditemukan.',
                 ], 400);
             }
-            
+
             $scanTime = now();
             $attendanceDate = $scanTime->toDateString();
 
             // Check if already scanned today
             $existingAttendance = AttendanceLog::where('student_id', $student->id)
-                                             ->whereDate('attendance_date', $attendanceDate)
-                                             ->first();
+                ->whereDate('attendance_date', $attendanceDate)
+                ->first();
 
             \Log::info('Teacher Scan - Existing Attendance Check:', [
                 'student_id' => $student->id,
@@ -759,16 +854,17 @@ class AttendanceController extends Controller
             ]);
 
             if ($existingAttendance) {
+                $scanTimeFormatted = $existingAttendance->scan_time ? $existingAttendance->scan_time->format('H:i:s') : 'N/A';
+
                 return response()->json([
                     'success' => false,
-                    'message' => 'Siswa ' . $student->name . ' sudah melakukan absensi hari ini pada ' . 
-                               $existingAttendance->scan_time->format('H:i:s'),
+                    'message' => 'Absensi sudah dilakukan hari ini',
                     'existing_attendance' => [
                         'student_name' => $student->name,
                         'nis' => $student->nis,
                         'class' => $student->class ? $student->class->name : 'Kelas tidak ditemukan',
                         'status' => $existingAttendance->status_text,
-                        'scan_time' => $existingAttendance->scan_time->format('H:i:s'),
+                        'scan_time' => $scanTimeFormatted,
                         'badge_color' => $existingAttendance->status_badge,
                     ]
                 ], 400);
@@ -776,7 +872,7 @@ class AttendanceController extends Controller
 
             // Determine status based on scan time
             $status = AttendanceLog::determineStatus($scanTime);
-            
+
             \Log::info('Teacher Scan - Attendance Status Determined:', [
                 'scan_time' => $scanTime,
                 'status' => $status
@@ -785,23 +881,40 @@ class AttendanceController extends Controller
             // Create attendance log
             $attendanceLog = AttendanceLog::create([
                 'student_id' => $student->id,
+                'teacher_id' => auth()->user()->teacher->id ?? null,
                 'qr_code' => $request->qr_code,
                 'status' => $status,
                 'scan_time' => $scanTime,
                 'attendance_date' => $attendanceDate,
                 'location' => $request->location ?? 'Scanned by Teacher',
+                'latitude' => $request->latitude,
+                'longitude' => $request->longitude,
                 'notes' => 'Scanned by teacher: ' . auth()->user()->name
             ]);
-            
+
             \Log::info('Teacher Scan - Attendance Log Created:', [
                 'attendance_log_id' => $attendanceLog->id,
                 'student_id' => $student->id,
                 'status' => $status,
                 'teacher_id' => auth()->id()
             ]);
-            
+
+            // Check confirmation status
+            $confirmationStatus = 'Belum Dikirim';
+            if ($student->class_id) {
+                $submission = \DB::table('attendance_submissions')
+                    ->where('teacher_id', auth()->id())
+                    ->where('class_id', $student->class_id)
+                    ->where('submission_date', $attendanceDate)
+                    ->first();
+
+                if ($submission) {
+                    $confirmationStatus = $submission->status === 'confirmed' ? 'Sudah Dikonfirmasi' : 'Menunggu Konfirmasi';
+                }
+            }
+
             // Convert status badge to CSS classes
-            $badgeColor = match($status) {
+            $badgeColor = match ($status) {
                 'hadir' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
                 'terlambat' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
                 'izin' => 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
@@ -818,6 +931,7 @@ class AttendanceController extends Controller
                     'nis' => $student->nis,
                     'class' => $student->class ? $student->class->name : 'Kelas tidak ditemukan',
                     'status' => $attendanceLog->status_text,
+                    'confirmation_status' => $confirmationStatus,
                     'scan_time' => $attendanceLog->scan_time->format('H:i:s'),
                     'attendance_date' => $attendanceLog->attendance_date->format('d/m/Y'),
                     'badge_color' => $badgeColor,
@@ -837,7 +951,7 @@ class AttendanceController extends Controller
                 'qr_code' => $request->qr_code,
                 'teacher_id' => auth()->id()
             ]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage(),
@@ -857,12 +971,19 @@ class AttendanceController extends Controller
     {
         try {
             $today = Carbon::today();
-            
-            $stats = AttendanceLog::whereDate('attendance_date', $today)
-                                 ->selectRaw('status, count(*) as count')
-                                 ->groupBy('status')
-                                 ->pluck('count', 'status')
-                                 ->toArray();
+            $teacherId = auth()->user()->teacher->id ?? null;
+
+            $query = AttendanceLog::whereDate('attendance_date', $today);
+
+            // Filter by teacher who scanned
+            if ($teacherId) {
+                $query->where('teacher_id', $teacherId);
+            }
+
+            $stats = $query->selectRaw('status, count(*) as count')
+                ->groupBy('status')
+                ->pluck('count', 'status')
+                ->toArray();
 
             $totalScanned = array_sum($stats);
             $presentCount = ($stats['hadir'] ?? 0) + ($stats['terlambat'] ?? 0);
@@ -891,49 +1012,23 @@ class AttendanceController extends Controller
             ];
         }
     }
-    
+
     /**
      * Get recent scans for today
      */
     private function getRecentScansToday()
     {
-        try {
-            $today = Carbon::today();
-            
-            $recentScans = AttendanceLog::with(['student.user', 'student.class'])
-                                      ->whereDate('attendance_date', $today)
-                                      ->orderBy('created_at', 'desc')
-                                      ->limit(10)
-                                      ->get()
-                                      ->map(function ($log) {
-                                          // Convert status badge to CSS classes
-                                          $badgeColor = match($log->status) {
-                                              'hadir' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-                                              'terlambat' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-                                              'izin' => 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-                                              'sakit' => 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
-                                              'alpha' => 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-                                              default => 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
-                                          };
-                                          
-                                          return [
-                                              'student_name' => $log->student->user->name ?? 'Unknown',
-                                              'nis' => $log->student->nis ?? 'N/A',
-                                              'class' => $log->student->class->name ?? 'Kelas tidak ditemukan',
-                                              'status' => $log->status_text,
-                                              'scan_time' => $log->scan_time ? $log->scan_time->format('H:i') : 'N/A',
-                                              'attendance_date' => $log->attendance_date->format('d/m/Y'),
-                                              'badge_color' => $badgeColor,
-                                              'scanned_by' => 'Guru'
-                                          ];
-                                      });
-            
-            return $recentScans;
-        } catch (\Exception $e) {
-            \Log::warning('Failed to get recent scans: ' . $e->getMessage());
+        $teacher = auth()->user()->teacher;
+
+        if (!$teacher) {
             return collect();
         }
+
+        // Use the AttendanceLog model method to get student attendance scans
+        return AttendanceLog::getRecentScansToday($teacher->id);
     }
+
+
 
     /**
      * Submit attendance to guru piket for confirmation
@@ -963,61 +1058,61 @@ class AttendanceController extends Controller
                     'message' => 'Konfigurasi sistem tidak lengkap. Hubungi administrator.'
                 ], 500);
             }
-            
+
             DB::beginTransaction();
 
             // Get class information
             \Log::info('Looking for class:', ['class_name' => $request->class_name]);
-            
+
             $class = Classes::where('name', $request->class_name)->first();
-            
+
             \Log::info('Class lookup result:', [
                 'class_found' => $class ? true : false,
                 'class_id' => $class ? $class->id : null,
                 'class_name' => $class ? $class->name : null
             ]);
-            
+
             if (!$class) {
                 \Log::warning('Class not found:', [
                     'requested_class' => $request->class_name,
                     'available_classes' => Classes::pluck('name')->toArray()
                 ]);
-                
+
                 return response()->json([
                     'success' => false,
                     'message' => 'Kelas "' . $request->class_name . '" tidak ditemukan. Kelas yang tersedia: ' . Classes::pluck('name')->implode(', ')
                 ], 400);
             }
-            
+
             // Get students in the class
             \Log::info('Getting students for class:', ['class_id' => $class->id]);
-            
+
             $students = Student::active()
-                              ->where('class_id', $class->id)
-                              ->get();
-            
+                ->where('class_id', $class->id)
+                ->get();
+
             $totalStudents = $students->count();
-            
+
             \Log::info('Students found:', [
                 'total_students' => $totalStudents,
                 'student_ids' => $students->pluck('id')->toArray()
             ]);
-            
+
             // Get attendance data for the date and class
             $attendanceData = AttendanceLog::whereIn('student_id', $students->pluck('id'))
-                                         ->whereDate('attendance_date', $request->date)
-                                         ->with('student')
-                                         ->get();
-            
+                ->whereDate('attendance_date', $request->date)
+                ->with('student')
+                ->get();
+
             // Calculate statistics
             $presentCount = $attendanceData->whereIn('status', ['hadir', 'terlambat'])->count();
             $lateCount = $attendanceData->where('status', 'terlambat')->count();
             $absentCount = $totalStudents - $attendanceData->count();
-            
+
             // Prepare detailed attendance data
             $detailedData = $students->map(function ($student) use ($attendanceData) {
                 $attendance = $attendanceData->where('student_id', $student->id)->first();
-                
+
                 return [
                     'student_id' => $student->id,
                     'student_name' => $student->name,
@@ -1027,43 +1122,43 @@ class AttendanceController extends Controller
                     'notes' => $attendance ? $attendance->notes : null
                 ];
             });
-            
+
             // Find available guru piket (for now, get first guru piket)
             \Log::info('Looking for guru piket users...');
-            
-            $guruPiket = User::whereHas('roles', function($query) {
+
+            $guruPiket = User::whereHas('roles', function ($query) {
                 $query->where('name', 'guru_piket');
             })->first();
-            
+
             \Log::info('Guru piket lookup result:', [
                 'guru_piket_found' => $guruPiket ? true : false,
                 'guru_piket_id' => $guruPiket ? $guruPiket->id : null,
                 'guru_piket_name' => $guruPiket ? $guruPiket->name : null
             ]);
-            
+
             if (!$guruPiket) {
                 \Log::warning('No guru piket found');
-                
+
                 return response()->json([
                     'success' => false,
                     'message' => 'Tidak ada guru piket yang tersedia untuk menerima submission'
                 ], 400);
             }
-            
+
             // Check if submission already exists for this date, class, and teacher
             $existingSubmission = AttendanceSubmission::where('teacher_id', auth()->id())
-                                                    ->where('class_id', $class->id)
-                                                    ->where('submission_date', $request->date)
-                                                    ->where('subject', $request->subject)
-                                                    ->first();
-            
+                ->where('class_id', $class->id)
+                ->where('submission_date', $request->date)
+                ->where('subject', $request->subject)
+                ->first();
+
             if ($existingSubmission) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Absensi untuk kelas ini pada tanggal tersebut sudah pernah dikirim'
                 ], 400);
             }
-            
+
             // Create attendance submission
             $submissionData = [
                 'teacher_id' => auth()->id(),
@@ -1081,18 +1176,18 @@ class AttendanceController extends Controller
                 'status' => AttendanceSubmission::STATUS_PENDING,
                 'submitted_at' => now()
             ];
-            
+
             \Log::info('Creating attendance submission:', $submissionData);
-            
+
             $submission = AttendanceSubmission::create($submissionData);
-            
+
             \Log::info('Attendance submission created:', [
                 'submission_id' => $submission->id,
                 'submission_status' => $submission->status
             ]);
-            
+
             DB::commit();
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Absensi berhasil dikirim ke guru piket untuk konfirmasi',
@@ -1108,23 +1203,23 @@ class AttendanceController extends Controller
                     'status' => $submission->status_text
                 ]
             ]);
-            
+
         } catch (\Exception $e) {
             DB::rollback();
-            
+
             \Log::error('Error submitting attendance to guru piket:', [
                 'error' => $e->getMessage(),
                 'teacher_id' => auth()->id(),
                 'request_data' => $request->all()
             ]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat mengirim absensi: ' . $e->getMessage()
             ], 500);
         }
     }
-    
+
     /**
      * Get teacher's attendance submissions
      */
@@ -1132,21 +1227,21 @@ class AttendanceController extends Controller
     {
         $status = $request->get('status');
         $date = $request->get('date');
-        
+
         $query = AttendanceSubmission::where('teacher_id', auth()->id())
-                                   ->with(['class', 'guruPiket', 'confirmer'])
-                                   ->orderBy('created_at', 'desc');
-        
+            ->with(['class', 'guruPiket', 'confirmer'])
+            ->orderBy('created_at', 'desc');
+
         if ($status) {
             $query->where('status', $status);
         }
-        
+
         if ($date) {
             $query->whereDate('submission_date', $date);
         }
-        
+
         $submissions = $query->paginate(10);
-        
+
         return response()->json([
             'success' => true,
             'submissions' => $submissions->items(),
@@ -1158,19 +1253,21 @@ class AttendanceController extends Controller
             ]
         ]);
     }
-    
+
     /**
      * Get submission detail
      */
     public function getSubmissionDetail($id)
     {
         $submission = AttendanceSubmission::where('teacher_id', auth()->id())
-                                        ->with(['class', 'guruPiket', 'confirmer'])
-                                        ->findOrFail($id);
-        
+            ->with(['class', 'guruPiket', 'confirmer'])
+            ->findOrFail($id);
+
         return response()->json([
             'success' => true,
             'submission' => $submission
         ]);
     }
+
+
 }

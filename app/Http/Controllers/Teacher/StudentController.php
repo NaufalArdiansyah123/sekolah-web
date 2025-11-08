@@ -28,22 +28,22 @@ class StudentController extends Controller
         if ($request->has('export')) {
             return $this->handleExport($request);
         }
-        
+
         // Get students from database
         $query = Student::with(['user', 'class'])->active();
 
         // Apply filters
         if (request('search')) {
             $search = request('search');
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('nis', 'like', '%' . $search . '%')
-                  ->orWhere('email', 'like', '%' . $search . '%');
+                    ->orWhere('nis', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%');
             });
         }
 
         if (request('class')) {
-            $query->whereHas('class', function($q) {
+            $query->whereHas('class', function ($q) {
                 $q->where('name', request('class'));
             });
         }
@@ -59,7 +59,7 @@ class StudentController extends Controller
         // Apply sorting
         $sortBy = request('sort', 'name');
         $sortDirection = request('direction', 'asc');
-        
+
         switch ($sortBy) {
             case 'name':
                 $query->orderBy('name', $sortDirection);
@@ -69,8 +69,8 @@ class StudentController extends Controller
                 break;
             case 'class':
                 $query->join('classes', 'students.class_id', '=', 'classes.id')
-                      ->orderBy('classes.name', $sortDirection)
-                      ->select('students.*');
+                    ->orderBy('classes.name', $sortDirection)
+                    ->select('students.*');
                 break;
             case 'enrollment_date':
                 $query->orderBy('enrollment_date', $sortDirection);
@@ -106,15 +106,15 @@ class StudentController extends Controller
     public function show($id)
     {
         // Get student from database
-        $student = Student::with(['user', 'extracurricularRegistrations.extracurricular', 'attendanceLogs'])
-                          ->findOrFail($id);
+        $student = Student::with(['user', 'extracurricularRegistrations.extracurricular', 'attendanceLogs', 'activePklRegistration.tempatPkl'])
+            ->findOrFail($id);
 
         // Get academic data from database
         $grades = Grade::where('student_id', $student->user_id ?? $student->id)
-                      ->with(['assignment', 'quiz'])
-                      ->latest()
-                      ->take(10)
-                      ->get();
+            ->with(['assignment', 'quiz'])
+            ->latest()
+            ->take(10)
+            ->get();
 
         $academicData = [
             'current_semester' => 'Ganjil 2024/2025',
@@ -124,7 +124,7 @@ class StudentController extends Controller
             'total_students_in_class' => Student::where('class_id', $student->class_id)->active()->count(),
             'attendance_percentage' => $this->getAttendancePercentage($student),
             'total_absences' => $student->attendanceLogs()->where('status', 'absent')->count(),
-            'recent_grades' => $grades->map(function($grade) {
+            'recent_grades' => $grades->map(function ($grade) {
                 return [
                     'subject' => $grade->subject,
                     'score' => $grade->score,
@@ -143,7 +143,7 @@ class StudentController extends Controller
     {
         $classes = Classes::where('is_active', true)->get();
         $religions = ['Islam', 'Kristen', 'Katolik', 'Hindu', 'Buddha', 'Konghucu'];
-        
+
         return view('teacher.students.create', compact('classes', 'religions'));
     }
 
@@ -166,8 +166,18 @@ class StudentController extends Controller
         ]);
 
         $data = $request->only([
-            'nis', 'name', 'class_id', 'gender', 'birth_date', 'birth_place',
-            'address', 'phone', 'email', 'parent_name', 'parent_phone', 'religion'
+            'nis',
+            'name',
+            'class_id',
+            'gender',
+            'birth_date',
+            'birth_place',
+            'address',
+            'phone',
+            'email',
+            'parent_name',
+            'parent_phone',
+            'religion'
         ]);
 
         // Handle file upload
@@ -219,8 +229,18 @@ class StudentController extends Controller
         ]);
 
         $data = $request->only([
-            'nis', 'name', 'class_id', 'gender', 'birth_date', 'birth_place',
-            'address', 'phone', 'email', 'parent_name', 'parent_phone', 'religion'
+            'nis',
+            'name',
+            'class_id',
+            'gender',
+            'birth_date',
+            'birth_place',
+            'address',
+            'phone',
+            'email',
+            'parent_name',
+            'parent_phone',
+            'religion'
         ]);
 
         // Handle file upload if new photo provided
@@ -263,7 +283,7 @@ class StudentController extends Controller
     {
         return $this->handleExport($request);
     }
-    
+
     /**
      * Handle export functionality
      */
@@ -276,37 +296,37 @@ class StudentController extends Controller
             'gender' => $request->get('gender'),
             'status' => $request->get('status')
         ];
-        
+
         // Build query with same filters as index
         $query = Student::with(['user', 'class'])->active();
-        
+
         if ($filters['search']) {
             $search = $filters['search'];
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('nis', 'like', '%' . $search . '%')
-                  ->orWhere('email', 'like', '%' . $search . '%');
+                    ->orWhere('nis', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%');
             });
         }
-        
+
         if ($filters['class']) {
-            $query->whereHas('class', function($q) use ($filters) {
+            $query->whereHas('class', function ($q) use ($filters) {
                 $q->where('name', $filters['class']);
             });
         }
-        
+
         if ($filters['gender']) {
             $query->where('gender', $filters['gender']);
         }
-        
+
         if ($filters['status']) {
             $query->where('status', $filters['status']);
         }
-        
+
         // Apply sorting
         $sortBy = $request->get('sort', 'name');
         $sortDirection = $request->get('direction', 'asc');
-        
+
         switch ($sortBy) {
             case 'name':
                 $query->orderBy('name', $sortDirection);
@@ -316,8 +336,8 @@ class StudentController extends Controller
                 break;
             case 'class':
                 $query->join('classes', 'students.class_id', '=', 'classes.id')
-                      ->orderBy('classes.name', $sortDirection)
-                      ->select('students.*');
+                    ->orderBy('classes.name', $sortDirection)
+                    ->select('students.*');
                 break;
             case 'created_at':
                 $query->orderBy('created_at', $sortDirection);
@@ -325,9 +345,9 @@ class StudentController extends Controller
             default:
                 $query->orderBy('name', 'asc');
         }
-        
+
         $students = $query->with(['user', 'class'])->get();
-        
+
         // Generate filename
         $filename = 'data-siswa';
         if ($filters['class']) {
@@ -337,7 +357,7 @@ class StudentController extends Controller
             $filename .= '-status-' . $filters['status'];
         }
         $filename .= '-' . date('Y-m-d') . '.xlsx';
-        
+
         return Excel::download(new StudentsExport($students, $filters), $filename);
     }
 
@@ -347,14 +367,14 @@ class StudentController extends Controller
     private function getStudentRankInClass($student)
     {
         $classmates = Student::where('class_id', $student->class_id)
-                            ->active()
-                            ->with(['user'])
-                            ->get();
+            ->active()
+            ->with(['user'])
+            ->get();
 
         $rankings = [];
         foreach ($classmates as $classmate) {
             $avgScore = Grade::where('student_id', $classmate->user_id ?? $classmate->id)
-                           ->avg('score') ?? 0;
+                ->avg('score') ?? 0;
             $rankings[] = [
                 'student_id' => $classmate->id,
                 'avg_score' => $avgScore
@@ -362,7 +382,7 @@ class StudentController extends Controller
         }
 
         // Sort by average score descending
-        usort($rankings, function($a, $b) {
+        usort($rankings, function ($a, $b) {
             return $b['avg_score'] <=> $a['avg_score'];
         });
 
@@ -382,11 +402,12 @@ class StudentController extends Controller
     private function getAttendancePercentage($student)
     {
         $totalDays = $student->attendanceLogs()->count();
-        if ($totalDays == 0) return 0;
+        if ($totalDays == 0)
+            return 0;
 
         $presentDays = $student->attendanceLogs()
-                              ->whereIn('status', ['present', 'late'])
-                              ->count();
+            ->whereIn('status', ['present', 'late'])
+            ->count();
 
         return round(($presentDays / $totalDays) * 100, 1);
     }

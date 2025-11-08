@@ -1,5 +1,5 @@
 <?php
-// resources/views/layouts/student/sidebar.blade.php - Student Sidebar
+// resources/views/layouts/student/sidebar.blade.php - Student Sidebar (COMPLETE)
 ?>
 <style>
     /* Enhanced Sidebar Styles for Student */
@@ -490,16 +490,12 @@
         <!-- Dashboard -->
         <a href="{{ route('student.dashboard') }}" 
            class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('student.dashboard') ? 'active' : '' }}"
-           @click="isMobile && (sidebarOpen = false)">
+           @click="sidebarOpen = false">
             <svg class="student-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
             </svg>
             <span>Dashboard</span>
         </a>
-
-
-
-
 
         <!-- Section Divider -->
         <div class="student-nav-section-divider"></div>
@@ -510,7 +506,7 @@
         <!-- QR Code Saya -->
         <a href="{{ route('student.attendance.index') }}" 
            class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('student.attendance.index') || request()->routeIs('student.attendance.qr-display') ? 'active' : '' }}"
-           @click="isMobile && (sidebarOpen = false)">
+           @click="sidebarOpen = false">
             <svg class="student-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h2M4 4h5m0 0v5m0 0h5m0 0v5m0 0H9m0 0v5" />
             </svg>
@@ -542,7 +538,7 @@
         <!-- Riwayat Absensi -->
         <a href="{{ route('student.attendance.history') }}" 
            class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('student.attendance.history') ? 'active' : '' }}"
-           @click="isMobile && (sidebarOpen = false)">
+           @click="sidebarOpen = false">
             <svg class="student-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -562,9 +558,9 @@
         </a>
 
         <!-- Nilai Akademik -->
-        <a href="{{ route('student.grades.index') }}" 
+        <a href="{{ route('student.grades.index') }}"
            class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('student.grades.index') || request()->routeIs('student.grades.show') || request()->routeIs('student.grades.subject') ? 'active' : '' }}"
-           @click="isMobile && (sidebarOpen = false)">
+           @click="sidebarOpen = false">
             <svg class="student-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
@@ -574,51 +570,282 @@
         <!-- Section Divider -->
         <div class="student-nav-section-divider"></div>
         <div class="student-nav-section-title">
-            <span>Account Settings</span>
+            <span>Praktik Kerja Lapangan</span>
         </div>
 
-        <!-- Profil Siswa -->
-        <a href="{{ route('student.profile') }}" 
-           class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('student.profile') ? 'active' : '' }}"
-           @click="isMobile && (sidebarOpen = false)">
+        <!-- Tempat PKL -->
+        @if(auth()->user()->student && auth()->user()->student->class && auth()->user()->student->class->level == '11')
+            <a href="{{ route('student.tempat-pkl.index') }}"
+               class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('student.tempat-pkl.*') ? 'active' : '' }}"
+               @click="sidebarOpen = false">
+                <svg class="student-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+                <span>Tempat PKL</span>
+            </a>
+
+            <!-- PKL QR Scanner -->
+            <a href="{{ route('student.qr-scanner.index') }}"
+               class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('student.qr-scanner.index') ? 'active' : '' }}"
+               @click="sidebarOpen = false">
+                <svg class="student-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h2M4 4h5m0 0v5m0 0h5m0 0v5m0 0H9m0 0v5" />
+                </svg>
+                <span>Absen Masuk</span>
+            </a>
+
+            <!-- PKL QR Scanner Pulang -->
+            <a href="{{ route('student.qr-scanner.pulang') }}"
+               class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('student.qr-scanner.pulang') ? 'active' : '' }}"
+               @click="sidebarOpen = false">
+                <svg class="student-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h2M4 4h5m0 0v5m0 0h5m0 0v5m0 0H9m0 0v5" />
+                </svg>
+                <span>Absen Pulang</span>
+            </a>
+         
+
+            <!-- Riwayat PKL -->
+            <a href="{{ route('student.qr-scanner.history') }}"
+               class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('student.qr-scanner.history') ? 'active' : '' }}"
+               @click="sidebarOpen = false">
+                <svg class="student-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 20 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+                <span>Riwayat PKL</span>
+                @php
+                    $pklRegistration = auth()->user()->pklRegistrations()
+                        ->where('status', 'approved')
+                        ->first();
+                    $pklMonthlyCount = $pklRegistration ? \DB::table('pkl_attendance_logs')
+                        ->where('pkl_registration_id', $pklRegistration->id)
+                        ->whereMonth('scan_date', date('m'))
+                        ->whereYear('scan_date', date('Y'))
+                        ->count() : 0;
+                @endphp
+                @if($pklMonthlyCount > 0)
+                    <span class="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                        {{ $pklMonthlyCount }}
+                    </span>
+                @endif
+            </a>
+
+            <!-- Log Aktivitas PKL -->
+            <a href="{{ route('student.qr-scanner.log-activity') }}"
+               class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('student.qr-scanner.log-activity') ? 'active' : '' }}"
+               @click="sidebarOpen = false">
+                <svg class="student-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span>Log Aktivitas</span>
+            </a>
+        @endif
+
+        <!-- Section Divider -->
+        <div class="student-nav-section-divider"></div>
+        <div class="student-nav-section-title">
+            <span>Settings</span>
+        </div>
+
+        <!-- Profile -->
+        <a href="{{ route('student.profile') }}"
+           class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('student.profile.edit') ? 'active' : '' }}"
+           @click="sidebarOpen = false">
             <svg class="student-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
             <span>Profil Saya</span>
-            @php
-                $user = auth()->user();
-                $profileCompletion = 0;
-                if ($user->name) $profileCompletion += 25;
-                if ($user->email) $profileCompletion += 25;
-                if ($user->student && $user->student->phone) $profileCompletion += 25;
-                if ($user->avatar) $profileCompletion += 25;
-            @endphp
-            @if($profileCompletion < 100)
-                <span class="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200">
-                    {{ $profileCompletion }}%
-                </span>
-            @else
-                <span class="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                    ✓
-                </span>
-            @endif
         </a>
 
-
+        <!-- Logout -->
+        <form method="POST" action="{{ route('logout') }}" class="mt-2">
+            @csrf
+            <button type="submit" 
+                    class="student-sidebar-nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg w-full text-left"
+                    @click="sidebarOpen = false">
+                <svg class="student-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                <span>Keluar</span>
+            </button>
+        </form>
     </div>
 
-    <!-- Enhanced User Section -->
+    <!-- Enhanced User Profile Section -->
     <div class="student-user-section">
-        <a href="{{ route('student.profile') }}" class="student-user-card block text-decoration-none">
-            <img class="student-user-avatar" 
-                 src="{{ auth()->user()->avatar_url }}" 
-                 alt="{{ auth()->user()->name }}"
-                 onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&color=10B981&background=D1FAE5&size=44'">
+        <a href="{{ route('student.profile') }}" class="student-user-card">
+            <img src="{{ auth()->user()->avatar_url ?? 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&background=10b981&color=fff' }}" 
+                 alt="{{ auth()->user()->name }}" 
+                 class="student-user-avatar">
             <div class="student-user-info">
                 <div class="student-user-name">{{ auth()->user()->name }}</div>
-                <div class="student-user-role">Siswa</div>
+                <div class="student-user-role">
+                    @if(auth()->user()->student && auth()->user()->student->class)
+                        {{ auth()->user()->student->class->name }}
+                    @else
+                        Siswa
+                    @endif
+                </div>
             </div>
             <div class="student-user-status"></div>
         </a>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Rename to avoid conflicts - use more specific name
+    const studentSidebarElement = document.querySelector('.student-sidebar-nav');
+    const studentNavItems = document.querySelectorAll('.student-sidebar-nav-item');
+    
+    // Auto-close sidebar on mobile when clicking nav items
+    studentNavItems.forEach(item => {
+        item.addEventListener('click', function() {
+            if (window.innerWidth <= 768) {
+                // Trigger Alpine.js sidebarOpen = false
+                const event = new CustomEvent('close-sidebar');
+                window.dispatchEvent(event);
+            }
+        });
+    });
+
+    // Smooth scroll for better UX
+    const studentNavSection = document.querySelector('.student-nav-section');
+    if (studentNavSection) {
+        studentNavSection.style.scrollBehavior = 'smooth';
+    }
+
+    // Add active state persistence
+    const currentPath = window.location.pathname;
+    studentNavItems.forEach(item => {
+        if (item.getAttribute('href') === currentPath) {
+            item.classList.add('active');
+        }
+    });
+
+    // Add scroll shadow effect
+    const navSection = document.querySelector('.student-nav-section');
+    if (navSection) {
+        navSection.addEventListener('scroll', function() {
+            const userSection = document.querySelector('.student-user-section');
+            if (userSection) {
+                if (this.scrollTop > 20) {
+                    userSection.style.boxShadow = '0 -4px 20px rgba(0, 0, 0, 0.1)';
+                } else {
+                    userSection.style.boxShadow = 'none';
+                }
+            }
+        });
+    }
+
+    // Enhanced mobile close button
+    const closeBtn = document.querySelector('.student-mobile-close-btn');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            // Trigger Alpine.js
+            window.dispatchEvent(new CustomEvent('close-sidebar'));
+        });
+    }
+
+    // Add touch swipe to close on mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    if (studentSidebarElement && window.innerWidth <= 768) {
+        studentSidebarElement.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        }, false);
+
+        studentSidebarElement.addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, false);
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) {
+                // Swipe left - close sidebar
+                window.dispatchEvent(new CustomEvent('close-sidebar'));
+            }
+        }
+    }
+
+    // Prevent body scroll when sidebar is open on mobile
+    if (studentSidebarElement && window.innerWidth <= 768) {
+        studentSidebarElement.addEventListener('touchmove', function(e) {
+            e.stopPropagation();
+        }, { passive: true });
+    }
+
+    // Add badge animations
+    const badges = document.querySelectorAll('.student-sidebar-nav-item span[class*="rounded-full"]');
+    badges.forEach(badge => {
+        badge.style.animation = 'fadeInScale 0.3s ease-out';
+    });
+
+    // Add CSS animation for badges
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Animate nav items on load
+    studentNavItems.forEach((item, index) => {
+        item.style.animation = `slideInLeft 0.3s ease-out ${index * 0.05}s`;
+        item.style.animationFillMode = 'both';
+    });
+
+    // Add loading state for nav items
+    studentNavItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            if (!this.classList.contains('active')) {
+                const icon = this.querySelector('.student-nav-icon');
+                if (icon) {
+                    icon.style.animation = 'spin 0.5s ease-in-out';
+                    setTimeout(() => {
+                        icon.style.animation = '';
+                    }, 500);
+                }
+            }
+        });
+    });
+
+    // Add spin animation
+    const spinStyle = document.createElement('style');
+    spinStyle.textContent = `
+        @keyframes spin {
+            from { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+            to { transform: rotate(360deg) scale(1); }
+        }
+    `;
+    document.head.appendChild(spinStyle);
+});
+
+// Listen for Alpine.js close sidebar event
+window.addEventListener('close-sidebar', function() {
+    console.log('Sidebar close event triggered');
+});
+</script>

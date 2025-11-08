@@ -29,10 +29,10 @@ class QrScannerController extends Controller
 
         // Get recent scans (last 10)
         $recentScans = TeacherAttendanceLog::with('teacher')
-                                         ->today()
-                                         ->orderBy('scan_time', 'desc')
-                                         ->limit(10)
-                                         ->get();
+            ->today()
+            ->orderBy('scan_time', 'desc')
+            ->limit(10)
+            ->get();
 
         return view('guru-piket.qr-scanner.index', compact('stats', 'recentScans'));
     }
@@ -53,10 +53,10 @@ class QrScannerController extends Controller
 
         // Get recent scans (last 10)
         $recentScans = TeacherAttendanceLog::with('teacher')
-                                         ->today()
-                                         ->orderBy('scan_time', 'desc')
-                                         ->limit(10)
-                                         ->get();
+            ->today()
+            ->orderBy('scan_time', 'desc')
+            ->limit(10)
+            ->get();
 
         return view('guru-piket.qr-scanner.check-out', compact('stats', 'recentScans'));
     }
@@ -71,28 +71,75 @@ class QrScannerController extends Controller
             'location' => 'nullable|string',
         ]);
 
+        // Log the scanned QR code for debugging
+        \Log::info('QR Code scanned by Guru Piket: ' . $request->qr_code);
+
         try {
             DB::beginTransaction();
 
-            // Find QR code in teacher attendance system
-            $qrAttendance = QrTeacherAttendance::where('qr_code', $request->qr_code)
-                                             ->where('is_active', true)
-                                             ->first();
+            $teacherId = null;
 
-            if (!$qrAttendance) {
+            // Check if QR code is JSON format (new format)
+            try {
+                $parsedData = json_decode($request->qr_code, true);
+                if (is_array($parsedData) && isset($parsedData['type']) && $parsedData['type'] === 'teacher' && isset($parsedData['id'])) {
+                    $teacherId = $parsedData['id'];
+                    \Log::info('Parsed JSON QR code for check-in', ['teacher_id' => $teacherId, 'data' => $parsedData]);
+                }
+            } catch (\Exception $e) {
+                // Not JSON, continue with old format validation
+            }
+
+            // If not JSON, validate old QR_TEACHER_ format
+            if (!$teacherId) {
+                if (!str_starts_with($request->qr_code, 'QR_TEACHER_')) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Format QR Code tidak valid. QR Code harus berupa JSON dengan type "teacher" atau dimulai dengan "QR_TEACHER_".',
+                        'type' => 'error'
+                    ], 400);
+                }
+
+                // Find QR code in teacher attendance system
+                $qrAttendance = QrTeacherAttendance::where('qr_code', $request->qr_code)
+                    ->where('is_active', true)
+                    ->first();
+
+                if (!$qrAttendance) {
+                    // Check if QR code exists but is inactive
+                    $inactiveQr = QrTeacherAttendance::where('qr_code', $request->qr_code)->first();
+                    if ($inactiveQr) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'QR Code tidak aktif. Silakan hubungi administrator.',
+                            'type' => 'error'
+                        ], 403);
+                    }
+
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'QR Code tidak terdaftar dalam sistem. Pastikan QR Code guru sudah dibuat.',
+                        'type' => 'error'
+                    ], 404);
+                }
+
+                $teacherId = $qrAttendance->teacher_id;
+            }
+
+            $teacher = Teacher::find($teacherId);
+
+            if (!$teacher) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'QR Code tidak valid atau tidak ditemukan untuk guru.',
+                    'message' => 'Guru tidak ditemukan.',
                     'type' => 'error'
                 ], 404);
             }
 
-            $teacher = $qrAttendance->teacher;
-
             // Check if teacher already scanned today
             $existingLog = TeacherAttendanceLog::where('teacher_id', $teacher->id)
-                                             ->whereDate('attendance_date', today())
-                                             ->first();
+                ->whereDate('attendance_date', today())
+                ->first();
 
             if ($existingLog) {
                 return response()->json([
@@ -148,7 +195,7 @@ class QrScannerController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat memproses absensi: ' . $e->getMessage(),
@@ -163,13 +210,13 @@ class QrScannerController extends Controller
     public function todayAttendance()
     {
         $attendances = TeacherAttendanceLog::with('teacher')
-                                         ->today()
-                                         ->orderBy('scan_time', 'desc')
-                                         ->get();
+            ->today()
+            ->orderBy('scan_time', 'desc')
+            ->get();
 
         return response()->json([
             'success' => true,
-            'attendances' => $attendances->map(function($log) {
+            'attendances' => $attendances->map(function ($log) {
                 return [
                     'id' => $log->id,
                     'teacher_name' => $log->teacher->name,
@@ -203,8 +250,8 @@ class QrScannerController extends Controller
 
             // Check if teacher already has attendance today
             $existingLog = TeacherAttendanceLog::where('teacher_id', $teacher->id)
-                                             ->whereDate('attendance_date', today())
-                                             ->first();
+                ->whereDate('attendance_date', today())
+                ->first();
 
             if ($existingLog) {
                 return response()->json([
@@ -244,7 +291,7 @@ class QrScannerController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat mencatat absensi manual: ' . $e->getMessage(),
@@ -263,33 +310,33 @@ class QrScannerController extends Controller
         if ($mode === 'manual') {
             // For manual entry, show all active teachers
             $teachers = Teacher::active()
-                              ->orderBy('name')
-                              ->get(['id', 'name', 'nip', 'position']);
+                ->orderBy('name')
+                ->get(['id', 'name', 'nip', 'position']);
         } elseif ($mode === 'check-in') {
             // Get teachers who haven't checked in today
             $teachersWithAttendance = TeacherAttendanceLog::whereDate('attendance_date', today())
-                                                         ->pluck('teacher_id')
-                                                         ->toArray();
+                ->pluck('teacher_id')
+                ->toArray();
 
             $teachers = Teacher::active()
-                              ->whereNotIn('id', $teachersWithAttendance)
-                              ->orderBy('name')
-                              ->get(['id', 'name', 'nip', 'position']);
-    } else {
-        // Get teachers who have checked in today but haven't checked out
-        $teachersWithCheckOut = TeacherAttendanceLog::whereDate('attendance_date', today())
-                                                    ->whereNotNull('check_out_time')
-                                                    ->pluck('teacher_id')
-                                                    ->toArray();
+                ->whereNotIn('id', $teachersWithAttendance)
+                ->orderBy('name')
+                ->get(['id', 'name', 'nip', 'position']);
+        } else {
+            // Get teachers who have checked in today but haven't checked out
+            $teachersWithCheckOut = TeacherAttendanceLog::whereDate('attendance_date', today())
+                ->whereNotNull('check_out_time')
+                ->pluck('teacher_id')
+                ->toArray();
 
-        $teachers = Teacher::active()
-                          ->whereNotIn('id', $teachersWithCheckOut)
-                          ->whereHas('teacherAttendanceLogs', function($query) {
-                              $query->whereDate('attendance_date', today());
-                          })
-                          ->orderBy('name')
-                          ->get(['id', 'name', 'nip', 'position']);
-    }
+            $teachers = Teacher::active()
+                ->whereNotIn('id', $teachersWithCheckOut)
+                ->whereHas('teacherAttendanceLogs', function ($query) {
+                    $query->whereDate('attendance_date', today());
+                })
+                ->orderBy('name')
+                ->get(['id', 'name', 'nip', 'position']);
+        }
 
         return response()->json([
             'success' => true,
@@ -306,29 +353,76 @@ class QrScannerController extends Controller
             'qr_code' => 'required|string',
         ]);
 
+        // Log the scanned QR code for debugging
+        \Log::info('QR Code scanned for check-out by Guru Piket: ' . $request->qr_code);
+
         try {
             DB::beginTransaction();
 
-            // Find QR code in teacher attendance system
-            $qrAttendance = QrTeacherAttendance::where('qr_code', $request->qr_code)
-                                             ->where('is_active', true)
-                                             ->first();
+            $teacherId = null;
 
-            if (!$qrAttendance) {
+            // Check if QR code is JSON format (new format)
+            try {
+                $parsedData = json_decode($request->qr_code, true);
+                if (is_array($parsedData) && isset($parsedData['type']) && $parsedData['type'] === 'teacher' && isset($parsedData['id'])) {
+                    $teacherId = $parsedData['id'];
+                    \Log::info('Parsed JSON QR code for check-out', ['teacher_id' => $teacherId, 'data' => $parsedData]);
+                }
+            } catch (\Exception $e) {
+                // Not JSON, continue with old format validation
+            }
+
+            // If not JSON, validate old QR_TEACHER_ format
+            if (!$teacherId) {
+                if (!str_starts_with($request->qr_code, 'QR_TEACHER_')) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Format QR Code tidak valid. QR Code harus berupa JSON dengan type "teacher" atau dimulai dengan "QR_TEACHER_".',
+                        'type' => 'error'
+                    ], 400);
+                }
+
+                // Find QR code in teacher attendance system
+                $qrAttendance = QrTeacherAttendance::where('qr_code', $request->qr_code)
+                    ->where('is_active', true)
+                    ->first();
+
+                if (!$qrAttendance) {
+                    // Check if QR code exists but is inactive
+                    $inactiveQr = QrTeacherAttendance::where('qr_code', $request->qr_code)->first();
+                    if ($inactiveQr) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'QR Code tidak aktif. Silakan hubungi administrator.',
+                            'type' => 'error'
+                        ], 403);
+                    }
+
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'QR Code tidak terdaftar dalam sistem. Pastikan QR Code guru sudah dibuat.',
+                        'type' => 'error'
+                    ], 404);
+                }
+
+                $teacherId = $qrAttendance->teacher_id;
+            }
+
+            $teacher = Teacher::find($teacherId);
+
+            if (!$teacher) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'QR Code tidak valid atau tidak ditemukan untuk guru.',
+                    'message' => 'Guru tidak ditemukan.',
                     'type' => 'error'
                 ], 404);
             }
 
-            $teacher = $qrAttendance->teacher;
-
             // Check if teacher has checked in today but not checked out
             $existingLog = TeacherAttendanceLog::where('teacher_id', $teacher->id)
-                                             ->whereDate('attendance_date', today())
-                                             ->whereNull('check_out_time')
-                                             ->first();
+                ->whereDate('attendance_date', today())
+                ->whereNull('check_out_time')
+                ->first();
 
             if (!$existingLog) {
                 return response()->json([
@@ -392,9 +486,9 @@ class QrScannerController extends Controller
 
             // Check if teacher has checked in today but not checked out
             $existingLog = TeacherAttendanceLog::where('teacher_id', $teacher->id)
-                                             ->whereDate('attendance_date', today())
-                                             ->whereNull('check_out_time')
-                                             ->first();
+                ->whereDate('attendance_date', today())
+                ->whereNull('check_out_time')
+                ->first();
 
             if (!$existingLog) {
                 return response()->json([

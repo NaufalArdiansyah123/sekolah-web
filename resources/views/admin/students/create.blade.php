@@ -5,9 +5,9 @@
 @push('styles')
 <style>
     :root {
-        --primary-color: #6366f1;
-        --primary-dark: #4f46e5;
-        --secondary-color: #8b5cf6;
+        --primary-color: #6b7280;
+        --primary-dark: #4b5563;
+        --secondary-color: #9ca3af;
         --success-color: #10b981;
         --warning-color: #f59e0b;
         --danger-color: #ef4444;
@@ -47,37 +47,26 @@
     }
 
     .page-container {
-        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        background: var(--white);
         min-height: 100vh;
         padding: 2rem 0;
     }
 
     .form-container {
         background: var(--white);
-        border-radius: 24px;
-        box-shadow: var(--shadow-xl);
+        border-radius: 16px;
+        box-shadow: var(--shadow-lg);
         overflow: hidden;
         margin: 0 auto;
         max-width: 1200px;
     }
 
     .form-header {
-        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-        color: white;
+        background: var(--gray-50);
+        color: var(--gray-800);
         padding: 2rem;
         position: relative;
         overflow: hidden;
-    }
-
-    .form-header::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 200px;
-        height: 200px;
-        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-        border-radius: 50%;
     }
 
     .form-title {
@@ -86,14 +75,16 @@
         margin-bottom: 0.5rem;
         position: relative;
         z-index: 2;
+        color: var(--gray-800);
     }
 
     .form-subtitle {
         font-size: 1.1rem;
-        opacity: 0.9;
+        opacity: 0.8;
         margin-bottom: 0;
         position: relative;
         z-index: 2;
+        color: var(--gray-600);
     }
 
     .header-actions {
@@ -105,8 +96,8 @@
     }
 
     .btn-header {
-        background: rgba(255, 255, 255, 0.2);
-        border: 2px solid rgba(255, 255, 255, 0.3);
+        background: var(--primary-color);
+        border: 2px solid var(--primary-color);
         color: white;
         padding: 0.75rem 1.5rem;
         border-radius: 12px;
@@ -119,8 +110,8 @@
     }
 
     .btn-header:hover {
-        background: rgba(255, 255, 255, 0.3);
-        border-color: rgba(255, 255, 255, 0.5);
+        background: var(--primary-dark);
+        border-color: var(--primary-dark);
         color: white;
         transform: translateY(-2px);
     }
@@ -142,7 +133,7 @@
 
     .form-section:hover {
         transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
+        box-shadow: var(--shadow-md);
     }
 
     .section-title {
@@ -158,7 +149,7 @@
     .section-icon {
         width: 40px;
         height: 40px;
-        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        background: var(--primary-color);
         color: white;
         border-radius: 12px;
         display: flex;
@@ -197,7 +188,7 @@
 
     .form-control:focus, .form-select:focus {
         border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.1);
         outline: none;
     }
 
@@ -344,16 +335,16 @@
     }
 
     .btn-primary-form {
-        background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        background: var(--primary-color);
         color: white;
         box-shadow: var(--shadow);
     }
 
     .btn-primary-form:hover {
-        background: linear-gradient(135deg, var(--primary-dark), var(--secondary-color));
+        background: var(--primary-dark);
         color: white;
         transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
+        box-shadow: var(--shadow-md);
     }
 
     .btn-secondary-form {
@@ -412,19 +403,19 @@
     }
 
     .floating-btn-primary {
-        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        background: var(--primary-color);
     }
 
     .floating-btn-success {
-        background: linear-gradient(135deg, var(--success-color), #059669);
+        background: var(--success-color);
     }
 
     .floating-btn-secondary {
-        background: linear-gradient(135deg, var(--gray-500), var(--gray-600));
+        background: var(--gray-500);
     }
 
     .floating-btn-danger {
-        background: linear-gradient(135deg, var(--danger-color), #dc2626);
+        background: var(--danger-color);
     }
 
     .alert-custom {

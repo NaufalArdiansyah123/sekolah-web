@@ -4,13 +4,14 @@
     .sidebar-nav * {
         box-sizing: border-box;
     }
+
     /* Modern Teacher Sidebar Styles */
     .sidebar-nav {
         width: 16rem;
         height: 100vh;
         background: linear-gradient(180deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%);
         border-right: 1px solid rgba(229, 231, 235, 0.3);
-        box-shadow: 
+        box-shadow:
             0 4px 6px -1px rgba(0, 0, 0, 0.05),
             0 2px 4px -1px rgba(0, 0, 0, 0.03);
         position: fixed;
@@ -22,15 +23,15 @@
         flex-direction: column;
         overflow: hidden;
     }
-    
+
     .dark .sidebar-nav {
         background: linear-gradient(180deg, #1f2937 0%, #111827 50%, #0f172a 100%);
         border-right-color: rgba(55, 65, 81, 0.3);
-        box-shadow: 
+        box-shadow:
             0 4px 6px -1px rgba(0, 0, 0, 0.3),
             0 2px 4px -1px rgba(0, 0, 0, 0.2);
     }
-    
+
     /* Glassmorphism overlay */
     .sidebar-nav::before {
         content: '';
@@ -39,21 +40,21 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: 
+        background:
             radial-gradient(circle at 20% 20%, rgba(5, 150, 105, 0.03) 0%, transparent 50%),
             radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.03) 0%, transparent 50%),
             radial-gradient(circle at 40% 60%, rgba(52, 211, 153, 0.02) 0%, transparent 50%);
         pointer-events: none;
         z-index: 1;
     }
-    
+
     .dark .sidebar-nav::before {
-        background: 
+        background:
             radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
             radial-gradient(circle at 80% 80%, rgba(52, 211, 153, 0.06) 0%, transparent 50%),
             radial-gradient(circle at 40% 60%, rgba(34, 197, 94, 0.04) 0%, transparent 50%);
     }
-    
+
     .sidebar-content {
         position: relative;
         z-index: 2;
@@ -61,7 +62,7 @@
         display: flex;
         flex-direction: column;
     }
-    
+
     /* Enhanced Logo Section */
     .sidebar-logo {
         padding: 2rem 1.5rem 1.5rem;
@@ -70,12 +71,12 @@
         backdrop-filter: blur(10px);
         position: relative;
     }
-    
+
     .dark .sidebar-logo {
         background: rgba(0, 0, 0, 0.2);
         border-bottom-color: rgba(55, 65, 81, 0.2);
     }
-    
+
     .logo-container {
         display: flex;
         align-items: center;
@@ -88,7 +89,7 @@
         overflow: hidden;
         cursor: pointer;
     }
-    
+
     .logo-container::before {
         content: '';
         position: absolute;
@@ -101,23 +102,28 @@
         transition: all 0.6s ease;
         animation: rotate 20s linear infinite;
     }
-    
+
     @keyframes rotate {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
     }
-    
+
     .logo-container:hover::before {
         opacity: 1;
     }
-    
+
     .logo-container:hover {
         transform: translateY(-3px);
         box-shadow: 0 12px 30px rgba(5, 150, 105, 0.2);
         background: rgba(5, 150, 105, 0.05);
         border-color: rgba(5, 150, 105, 0.3);
     }
-    
+
     .logo-icon {
         width: 48px;
         height: 48px;
@@ -132,7 +138,7 @@
         position: relative;
         overflow: hidden;
     }
-    
+
     .logo-icon::before {
         content: '';
         position: absolute;
@@ -144,21 +150,21 @@
         transform: rotate(-45deg);
         transition: all 0.6s ease;
     }
-    
+
     .logo-container:hover .logo-icon {
         transform: scale(1.1) rotate(5deg);
         box-shadow: 0 12px 30px rgba(5, 150, 105, 0.4);
     }
-    
+
     .logo-container:hover .logo-icon::before {
         transform: rotate(45deg);
     }
-    
+
     .logo-text-container {
         flex: 1;
         min-width: 0;
     }
-    
+
     .logo-text {
         font-weight: 800;
         font-size: 1.25rem;
@@ -170,14 +176,14 @@
         margin-bottom: 0.25rem;
         line-height: 1.2;
     }
-    
+
     .dark .logo-text {
         background: linear-gradient(135deg, #ffffff, #10b981, #34d399);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
     }
-    
+
     .logo-subtitle {
         font-size: 0.75rem;
         color: #6b7280;
@@ -186,11 +192,11 @@
         letter-spacing: 0.05em;
         opacity: 0.8;
     }
-    
+
     .dark .logo-subtitle {
         color: #9ca3af;
     }
-    
+
     /* Mobile Close Button */
     .mobile-close-btn {
         position: absolute;
@@ -209,24 +215,24 @@
         transition: all 0.3s ease;
         z-index: 10;
     }
-    
+
     .mobile-close-btn:hover {
         background: rgba(239, 68, 68, 0.15);
         border-color: rgba(239, 68, 68, 0.3);
         transform: scale(1.05);
         box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
     }
-    
+
     @media (max-width: 768px) {
         .mobile-close-btn {
             display: flex;
         }
-        
+
         .sidebar-logo {
             padding-right: 4rem;
         }
     }
-    
+
     /* Enhanced Navigation Section */
     .nav-section {
         flex: 1;
@@ -235,24 +241,24 @@
         scrollbar-width: thin;
         scrollbar-color: rgba(5, 150, 105, 0.2) transparent;
     }
-    
+
     .nav-section::-webkit-scrollbar {
         width: 6px;
     }
-    
+
     .nav-section::-webkit-scrollbar-track {
         background: transparent;
     }
-    
+
     .nav-section::-webkit-scrollbar-thumb {
         background: rgba(5, 150, 105, 0.2);
         border-radius: 3px;
     }
-    
+
     .nav-section::-webkit-scrollbar-thumb:hover {
         background: rgba(5, 150, 105, 0.3);
     }
-    
+
     /* Section Titles */
     .nav-section-title {
         color: #6b7280;
@@ -266,11 +272,11 @@
         align-items: center;
         gap: 0.5rem;
     }
-    
+
     .dark .nav-section-title {
         color: #9ca3af;
     }
-    
+
     .nav-section-title::before {
         content: '';
         width: 6px;
@@ -279,7 +285,7 @@
         border-radius: 50%;
         box-shadow: 0 0 8px rgba(5, 150, 105, 0.4);
     }
-    
+
     .nav-section-title::after {
         content: '';
         flex: 1;
@@ -287,7 +293,7 @@
         background: linear-gradient(90deg, rgba(5, 150, 105, 0.2), transparent);
         margin-left: 0.5rem;
     }
-    
+
     /* Enhanced Navigation Items */
     .sidebar-nav-item {
         display: flex;
@@ -305,11 +311,11 @@
         overflow: hidden;
         border: 1px solid transparent;
     }
-    
+
     .dark .sidebar-nav-item {
         color: #9ca3af;
     }
-    
+
     .sidebar-nav-item::before {
         content: '';
         position: absolute;
@@ -320,11 +326,11 @@
         background: linear-gradient(90deg, transparent, rgba(5, 150, 105, 0.1), transparent);
         transition: left 0.6s ease;
     }
-    
+
     .sidebar-nav-item:hover::before {
         left: 100%;
     }
-    
+
     .sidebar-nav-item:hover {
         color: #059669;
         background: linear-gradient(135deg, rgba(5, 150, 105, 0.08), rgba(16, 185, 129, 0.05));
@@ -333,12 +339,12 @@
         box-shadow: 0 4px 15px rgba(5, 150, 105, 0.15);
         border-color: rgba(5, 150, 105, 0.2);
     }
-    
+
     .dark .sidebar-nav-item:hover {
         color: #10b981;
         background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(52, 211, 153, 0.08));
     }
-    
+
     .sidebar-nav-item.active {
         color: #059669;
         background: linear-gradient(135deg, rgba(5, 150, 105, 0.15), rgba(16, 185, 129, 0.1));
@@ -348,14 +354,14 @@
         box-shadow: 0 6px 20px rgba(5, 150, 105, 0.2);
         transform: translateX(4px);
     }
-    
+
     .dark .sidebar-nav-item.active {
         color: #10b981;
         border-left-color: #10b981;
         background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(52, 211, 153, 0.12));
         box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
     }
-    
+
     .nav-icon {
         width: 20px;
         height: 20px;
@@ -367,22 +373,22 @@
         stroke-linecap: round;
         stroke-linejoin: round;
     }
-    
+
     .sidebar-nav-item:hover .nav-icon {
         transform: scale(1.1);
         filter: drop-shadow(0 2px 4px rgba(5, 150, 105, 0.3));
     }
-    
+
     .sidebar-nav-item.active .nav-icon {
         transform: scale(1.05);
         filter: drop-shadow(0 2px 6px rgba(5, 150, 105, 0.4));
     }
-    
+
     /* Enhanced Dropdown Styles */
     .nav-dropdown {
         margin-bottom: 0.5rem;
     }
-    
+
     .nav-dropdown-btn {
         width: 100%;
         display: flex;
@@ -401,11 +407,11 @@
         overflow: hidden;
         text-align: left;
     }
-    
+
     .dark .nav-dropdown-btn {
         color: #9ca3af;
     }
-    
+
     .nav-dropdown-btn::before {
         content: '';
         position: absolute;
@@ -416,11 +422,11 @@
         background: linear-gradient(90deg, transparent, rgba(5, 150, 105, 0.1), transparent);
         transition: left 0.6s ease;
     }
-    
+
     .nav-dropdown-btn:hover::before {
         left: 100%;
     }
-    
+
     .nav-dropdown-btn:hover {
         color: #059669;
         background: linear-gradient(135deg, rgba(5, 150, 105, 0.08), rgba(16, 185, 129, 0.05));
@@ -428,12 +434,12 @@
         box-shadow: 0 4px 15px rgba(5, 150, 105, 0.15);
         border-color: rgba(5, 150, 105, 0.2);
     }
-    
+
     .dark .nav-dropdown-btn:hover {
         color: #10b981;
         background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(52, 211, 153, 0.08));
     }
-    
+
     .nav-dropdown-btn.active {
         color: #059669;
         background: linear-gradient(135deg, rgba(5, 150, 105, 0.12), rgba(16, 185, 129, 0.08));
@@ -441,12 +447,12 @@
         font-weight: 700;
         box-shadow: 0 4px 15px rgba(5, 150, 105, 0.15);
     }
-    
+
     .dark .nav-dropdown-btn.active {
         color: #10b981;
         background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(52, 211, 153, 0.1));
     }
-    
+
     .dropdown-icon {
         width: 16px;
         height: 16px;
@@ -458,11 +464,11 @@
         stroke-linecap: round;
         stroke-linejoin: round;
     }
-    
+
     .nav-dropdown-btn.active .dropdown-icon {
         transform: rotate(90deg);
     }
-    
+
     .nav-dropdown-content {
         margin-left: 2.5rem;
         margin-top: 0.5rem;
@@ -473,11 +479,11 @@
         overflow: hidden;
         transition: all 0.4s ease;
     }
-    
+
     .nav-dropdown-content.show {
         max-height: 500px;
     }
-    
+
     .nav-dropdown-content::before {
         content: '';
         position: absolute;
@@ -489,11 +495,11 @@
         opacity: 0;
         transition: opacity 0.4s ease;
     }
-    
+
     .nav-dropdown.open .nav-dropdown-content::before {
         opacity: 1;
     }
-    
+
     .nav-dropdown-item {
         display: flex;
         align-items: center;
@@ -509,11 +515,11 @@
         position: relative;
         overflow: hidden;
     }
-    
+
     .dark .nav-dropdown-item {
         color: #9ca3af;
     }
-    
+
     .nav-dropdown-item::before {
         content: '';
         position: absolute;
@@ -524,11 +530,11 @@
         background: linear-gradient(90deg, transparent, rgba(5, 150, 105, 0.08), transparent);
         transition: left 0.5s ease;
     }
-    
+
     .nav-dropdown-item:hover::before {
         left: 100%;
     }
-    
+
     .nav-dropdown-item:hover {
         color: #059669;
         background: rgba(5, 150, 105, 0.08);
@@ -536,12 +542,12 @@
         text-decoration: none;
         box-shadow: 0 2px 8px rgba(5, 150, 105, 0.1);
     }
-    
+
     .dark .nav-dropdown-item:hover {
         color: #10b981;
         background: rgba(16, 185, 129, 0.1);
     }
-    
+
     .nav-dropdown-item.active {
         color: #059669;
         background: rgba(5, 150, 105, 0.12);
@@ -550,13 +556,13 @@
         font-weight: 700;
         box-shadow: 0 2px 10px rgba(5, 150, 105, 0.15);
     }
-    
+
     .dark .nav-dropdown-item.active {
         color: #10b981;
         border-left-color: #10b981;
         background: rgba(16, 185, 129, 0.15);
     }
-    
+
     /* Enhanced User Section */
     .user-section {
         padding: 1.5rem;
@@ -564,12 +570,12 @@
         background: rgba(255, 255, 255, 0.8);
         backdrop-filter: blur(10px);
     }
-    
+
     .dark .user-section {
         background: rgba(0, 0, 0, 0.2);
         border-top-color: rgba(55, 65, 81, 0.2);
     }
-    
+
     .user-card {
         display: flex;
         align-items: center;
@@ -583,7 +589,7 @@
         position: relative;
         overflow: hidden;
     }
-    
+
     .user-card::before {
         content: '';
         position: absolute;
@@ -595,18 +601,18 @@
         opacity: 0;
         transition: opacity 0.4s ease;
     }
-    
+
     .user-card:hover::before {
         opacity: 1;
     }
-    
+
     .user-card:hover {
         transform: translateY(-3px);
         box-shadow: 0 12px 30px rgba(5, 150, 105, 0.2);
         background: rgba(5, 150, 105, 0.05);
         border-color: rgba(5, 150, 105, 0.3);
     }
-    
+
     .user-avatar {
         width: 48px;
         height: 48px;
@@ -616,18 +622,18 @@
         transition: all 0.4s ease;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
-    
+
     .user-card:hover .user-avatar {
         border-color: rgba(5, 150, 105, 0.4);
         transform: scale(1.05);
         box-shadow: 0 8px 20px rgba(5, 150, 105, 0.3);
     }
-    
+
     .user-info {
         flex: 1;
         min-width: 0;
     }
-    
+
     .user-name {
         font-weight: 700;
         font-size: 0.875rem;
@@ -637,11 +643,11 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
-    
+
     .dark .user-name {
         color: #ffffff;
     }
-    
+
     .user-role {
         font-size: 0.75rem;
         color: #6b7280;
@@ -649,11 +655,11 @@
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }
-    
+
     .dark .user-role {
         color: #9ca3af;
     }
-    
+
     .user-status {
         width: 10px;
         height: 10px;
@@ -663,22 +669,25 @@
         animation: pulse 2s infinite;
         box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
     }
-    
+
     .dark .user-status {
         border-color: #1f2937;
     }
-    
+
     @keyframes pulse {
-        0%, 100% { 
-            opacity: 1; 
-            transform: scale(1); 
+
+        0%,
+        100% {
+            opacity: 1;
+            transform: scale(1);
         }
-        50% { 
-            opacity: 0.8; 
-            transform: scale(1.1); 
+
+        50% {
+            opacity: 0.8;
+            transform: scale(1.1);
         }
     }
-    
+
     /* Responsive Design */
     @media (max-width: 768px) {
         .sidebar-nav {
@@ -686,31 +695,31 @@
             transform: translateX(-100%);
             transition: transform 0.3s ease;
         }
-        
+
         .sidebar-nav.show {
             transform: translateX(0);
         }
     }
-    
+
     /* Scrollbar Styling */
     .nav-section {
         scrollbar-width: thin;
         scrollbar-color: rgba(5, 150, 105, 0.3) transparent;
     }
-    
+
     .nav-section::-webkit-scrollbar {
         width: 6px;
     }
-    
+
     .nav-section::-webkit-scrollbar-track {
         background: transparent;
     }
-    
+
     .nav-section::-webkit-scrollbar-thumb {
         background: linear-gradient(180deg, rgba(5, 150, 105, 0.3), rgba(16, 185, 129, 0.3));
         border-radius: 3px;
     }
-    
+
     .nav-section::-webkit-scrollbar-thumb:hover {
         background: linear-gradient(180deg, rgba(5, 150, 105, 0.5), rgba(16, 185, 129, 0.5));
     }
@@ -722,7 +731,8 @@
         <div class="logo-container">
             <div class="logo-icon">
                 <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
             </div>
             <div class="logo-text-container">
@@ -730,11 +740,11 @@
                 <div class="logo-subtitle">SMA Negeri 1</div>
             </div>
         </div>
-        
+
         <!-- Mobile Close Button -->
         <button onclick="toggleSidebar()" class="mobile-close-btn">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
         </button>
     </div>
@@ -742,10 +752,11 @@
     <!-- Enhanced Navigation -->
     <div class="nav-section">
         <!-- Dashboard -->
-        <a href="{{ route('teacher.dashboard') }}" 
-           class="sidebar-nav-item {{ request()->routeIs('teacher.dashboard') ? 'active' : '' }}">
+        <a href="{{ route('teacher.dashboard') }}"
+            class="sidebar-nav-item {{ request()->routeIs('teacher.dashboard') ? 'active' : '' }}">
             <svg class="nav-icon" viewBox="0 0 24 24">
-                <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                <path
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
             </svg>
             <span>Dashboard</span>
         </a>
@@ -757,41 +768,43 @@
 
         <!-- Posts & Content Dropdown -->
         <div class="nav-dropdown">
-            <button onclick="toggleDropdown('posts')" 
-                    class="nav-dropdown-btn {{ request()->routeIs('teacher.posts.*') ? 'active' : '' }}"
-                    id="posts-btn">
+            <button onclick="toggleDropdown('posts')"
+                class="nav-dropdown-btn {{ request()->routeIs('teacher.posts.*') ? 'active' : '' }}" id="posts-btn">
                 <svg class="nav-icon" viewBox="0 0 24 24">
-                    <path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+                    <path
+                        d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                 </svg>
                 <span>Posts & Content</span>
                 <svg class="dropdown-icon" viewBox="0 0 24 24">
-                    <path d="M9 5l7 7-7 7"/>
+                    <path d="M9 5l7 7-7 7" />
                 </svg>
             </button>
-            
-            <div id="posts-content" class="nav-dropdown-content {{ request()->routeIs('teacher.posts.*') ? 'show' : '' }}">
-                <a href="{{ route('teacher.posts.announcement') }}" 
-                   class="nav-dropdown-item {{ request()->routeIs('teacher.posts.announcement*') ? 'active' : '' }}">
+
+            <div id="posts-content"
+                class="nav-dropdown-content {{ request()->routeIs('teacher.posts.*') ? 'show' : '' }}">
+                <a href="{{ route('teacher.posts.announcement') }}"
+                    class="nav-dropdown-item {{ request()->routeIs('teacher.posts.announcement*') ? 'active' : '' }}">
                     📢 Pengumuman
                 </a>
-                <a href="{{ route('teacher.posts.blog.index') }}" 
-                   class="nav-dropdown-item {{ request()->routeIs('teacher.posts.blog*') ? 'active' : '' }}">
+                <a href="{{ route('teacher.posts.blog.index') }}"
+                    class="nav-dropdown-item {{ request()->routeIs('teacher.posts.blog*') ? 'active' : '' }}">
                     📰 Berita & Blog
                 </a>
             </div>
         </div>
 
         <!-- Learning Management Dropdown -->
-       
+
 
         <!-- Quizzes & Tests -->
-       
+
 
         <!-- Grades -->
-        <a href="{{ route('teacher.grades.index') }}" 
-           class="sidebar-nav-item {{ request()->routeIs('teacher.grades.*') ? 'active' : '' }}">
+        <a href="{{ route('teacher.grades.index') }}"
+            class="sidebar-nav-item {{ request()->routeIs('teacher.grades.*') ? 'active' : '' }}">
             <svg class="nav-icon" viewBox="0 0 24 24">
-                <path d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                <path
+                    d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
             </svg>
             <span>Nilai & Rapor</span>
         </a>
@@ -802,10 +815,11 @@
         </div>
 
         <!-- Students -->
-        <a href="{{ route('teacher.students.index') }}" 
-           class="sidebar-nav-item {{ request()->routeIs('teacher.students.*') ? 'active' : '' }}">
+        <a href="{{ route('teacher.students.index') }}"
+            class="sidebar-nav-item {{ request()->routeIs('teacher.students.*') ? 'active' : '' }}">
             <svg class="nav-icon" viewBox="0 0 24 24">
-                <path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
+                <path
+                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
             </svg>
             <span>Data Siswa</span>
         </a>
@@ -816,44 +830,46 @@
         </div>
 
         <!-- QR Scanner Absensi -->
-        <a href="{{ route('teacher.attendance.qr-scanner') }}" 
-           class="sidebar-nav-item {{ request()->routeIs('teacher.attendance.qr-scanner') ? 'active' : '' }}">
+        <a href="{{ route('teacher.attendance.qr-scanner') }}"
+            class="sidebar-nav-item {{ request()->routeIs('teacher.attendance.qr-scanner') ? 'active' : '' }}">
             <svg class="nav-icon" viewBox="0 0 24 24">
-                <path d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h2M4 4h5m0 0v5m0 0h5m0 0v5m0 0H9m0 0v5" />
+                <path
+                    d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h2M4 4h5m0 0v5m0 0h5m0 0v5m0 0H9m0 0v5" />
             </svg>
-            <span>QR Scanner Absensi</span>
+            <span>QR Scanner Masuk</span>
         </a>
+
+
         <!-- QR Saya -->
-        <a href="{{ route('teacher.qr.my') }}" 
-           class="sidebar-nav-item {{ request()->routeIs('teacher.qr.my') ? 'active' : '' }}">
+        <a href="{{ route('teacher.qr.my') }}"
+            class="sidebar-nav-item {{ request()->routeIs('teacher.qr.my') ? 'active' : '' }}">
             <svg class="nav-icon" viewBox="0 0 24 24">
-                <path d="M3 3h8v8H3V3zm2 2v4h4V5H5zm10-2h6v6h-6V3zm2 2v2h2V5h-2zM3 13h6v8H3v-8zm2 2v4h2v-4H5zm10 0h6v6h-6v-6zm2 2v2h2v-2h-2z" />
+                <path
+                    d="M3 3h8v8H3V3zm2 2v4h4V5H5zm10-2h6v6h-6V3zm2 2v2h2V5h-2zM3 13h6v8H3v-8zm2 2v4h2v-4H5zm10 0h6v6h-6v-6zm2 2v2h2v-2h-2z" />
             </svg>
             <span>QR Saya</span>
         </a>
 
         <!-- Attendance -->
-        <a href="{{ route('teacher.attendance.index') }}" 
-           class="sidebar-nav-item {{ request()->routeIs('teacher.attendance.index') || request()->routeIs('teacher.attendance.monthly-report') || request()->routeIs('teacher.attendance.export') ? 'active' : '' }}">
+        <a href="{{ route('teacher.attendance.index') }}"
+            class="sidebar-nav-item {{ request()->routeIs('teacher.attendance.index') || request()->routeIs('teacher.attendance.monthly-report') || request()->routeIs('teacher.attendance.export') ? 'active' : '' }}">
             <svg class="nav-icon" viewBox="0 0 24 24">
-                <path d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                <path
+                    d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
             </svg>
             <span>Kelola Absensi</span>
         </a>
 
-        
-        
+
+
     </div>
 
     <!-- Enhanced User Section -->
     <div class="user-section">
         <div class="user-card">
-            <img class="user-avatar" 
-                 src="{{ auth()->user()->avatar_url }}" 
-                 alt="{{ auth()->user()->name }}"
-                 data-sidebar-avatar
-                 data-user-avatar
-                 onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&color=7F9CF5&background=EBF4FF&size=44'">
+            <img class="user-avatar" src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}"
+                data-sidebar-avatar data-user-avatar
+                onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&color=7F9CF5&background=EBF4FF&size=44'">
             <div class="user-info">
                 <div class="user-name">{{ auth()->user()->name }}</div>
                 <div class="user-role">Guru</div>
@@ -870,7 +886,7 @@
         const content = document.getElementById(dropdownName + '-content');
         const btn = document.getElementById(dropdownName + '-btn');
         const dropdown = btn.closest('.nav-dropdown');
-        
+
         if (content.classList.contains('show')) {
             // Close current dropdown
             content.classList.remove('show');
@@ -887,14 +903,14 @@
             document.querySelectorAll('.nav-dropdown').forEach(el => {
                 el.classList.remove('open');
             });
-            
+
             // Open current dropdown
             content.classList.add('show');
             btn.classList.add('active');
             dropdown.classList.add('open');
         }
     }
-    
+
     // Close mobile sidebar
     function closeMobileSidebar() {
         if (window.innerWidth < 768) {
@@ -904,11 +920,11 @@
             window.sidebarOpen = false;
         }
     }
-    
+
     // Enhanced sidebar toggle for mobile
     function toggleSidebar() {
         const sidebar = document.getElementById('teacher-sidebar');
-        
+
         if (window.innerWidth < 768) {
             sidebar.classList.toggle('show');
             sidebar.classList.toggle('hidden');
@@ -923,9 +939,9 @@
             }
         }
     }
-    
+
     // Initialize dropdowns and responsive behavior
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         // Auto-open dropdowns if current route matches
         const activeDropdowns = document.querySelectorAll('.nav-dropdown-btn.active');
         activeDropdowns.forEach(btn => {
@@ -937,7 +953,7 @@
                 dropdown.classList.add('open');
             }
         });
-        
+
         // Handle responsive behavior
         function handleResize() {
             const sidebar = document.getElementById('teacher-sidebar');
@@ -950,27 +966,27 @@
                 sidebar.classList.remove('show');
             }
         }
-        
+
         // Initial setup
         handleResize();
-        
+
         // Listen for resize events
         window.addEventListener('resize', handleResize);
-        
+
         // Close sidebar when clicking nav items on mobile
         const navItems = document.querySelectorAll('.sidebar-nav-item, .nav-dropdown-item');
         navItems.forEach(item => {
             item.addEventListener('click', closeMobileSidebar);
         });
-        
+
         // Enhanced scroll behavior
         const navSection = document.querySelector('.nav-section');
         if (navSection) {
-            navSection.addEventListener('scroll', function() {
+            navSection.addEventListener('scroll', function () {
                 const scrollTop = this.scrollTop;
                 const scrollHeight = this.scrollHeight - this.clientHeight;
                 const scrollPercent = scrollTop / scrollHeight;
-                
+
                 // Add subtle shadow effect based on scroll position
                 if (scrollTop > 10) {
                     this.style.boxShadow = 'inset 0 10px 10px -10px rgba(0,0,0,0.1)';
@@ -980,7 +996,7 @@
             });
         }
     });
-    
+
     // Make functions globally available
     window.toggleDropdown = toggleDropdown;
     window.closeMobileSidebar = closeMobileSidebar;

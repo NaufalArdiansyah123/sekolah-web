@@ -87,6 +87,14 @@ class User extends Authenticatable
         return $this->hasOne(Student::class);
     }
 
+    /**
+     * Get PKL registrations for this user
+     */
+    public function pklRegistrations()
+    {
+        return $this->hasMany(PklRegistration::class, 'student_id');
+    }
+
     public function teachers()
     {
         return $this->hasMany(Teacher::class);
@@ -116,11 +124,11 @@ class User extends Authenticatable
     {
         $names = explode(' ', $this->name);
         $initials = '';
-        
+
         foreach ($names as $name) {
             $initials .= substr($name, 0, 1);
         }
-        
+
         return strtoupper(substr($initials, 0, 2));
     }
 
@@ -185,7 +193,7 @@ class User extends Authenticatable
         if ($this->avatar) {
             return Storage::url($this->avatar);
         }
-        
+
         return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&color=7F9CF5&background=EBF4FF&size=120';
     }
 
@@ -197,7 +205,7 @@ class User extends Authenticatable
         if ($this->avatar) {
             return Storage::url($this->avatar);
         }
-        
+
         return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&color=7F9CF5&background=EBF4FF&size=40';
     }
 }

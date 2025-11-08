@@ -42,8 +42,8 @@ class TeacherScheduleController extends Controller
         }
 
         $schedules = $query->orderBy('day_of_week')
-                          ->orderBy('start_time')
-                          ->paginate(15);
+            ->orderBy('start_time')
+            ->paginate(15);
 
         $teachers = Teacher::active()->orderBy('name')->get();
         $classes = Classes::active()->orderBy('name')->get();
@@ -51,7 +51,11 @@ class TeacherScheduleController extends Controller
         $academicYears = AcademicYear::orderBy('name', 'desc')->get();
 
         return view('admin.teacher-schedules.index', compact(
-            'schedules', 'teachers', 'classes', 'subjects', 'academicYears'
+            'schedules',
+            'teachers',
+            'classes',
+            'subjects',
+            'academicYears'
         ));
     }
 
@@ -66,7 +70,10 @@ class TeacherScheduleController extends Controller
         $currentAcademicYear = AcademicYear::where('is_active', true)->first();
 
         return view('admin.teacher-schedules.create', compact(
-            'teachers', 'classes', 'subjects', 'currentAcademicYear'
+            'teachers',
+            'classes',
+            'subjects',
+            'currentAcademicYear'
         ));
     }
 
@@ -85,43 +92,71 @@ class TeacherScheduleController extends Controller
             'end_time' => 'required|date_format:H:i|after:start_time',
             'room' => 'nullable|string|max:50',
             'notes' => 'nullable|string|max:255',
+            'force_save' => 'nullable|boolean',
         ]);
 
         try {
             DB::beginTransaction();
 
             // Check for conflicts
-            $conflicts = TeacherSchedule::where('teacher_id', $request->teacher_id)
+            $conflictingSchedules = TeacherSchedule::where('teacher_id', $request->teacher_id)
                 ->where('day_of_week', $request->day_of_week)
                 ->where('academic_year_id', $request->academic_year_id)
                 ->where('is_active', true)
                 ->where(function ($query) use ($request) {
                     $query->where(function ($q) use ($request) {
                         $q->where('start_time', '<', $request->end_time)
-                          ->where('end_time', '>', $request->start_time);
+                            ->where('end_time', '>', $request->start_time);
                     });
                 })
-                ->exists();
+                ->with(['class', 'subject'])
+                ->get();
 
-            if ($conflicts) {
-                return back()->withInput()->withErrors([
-                    'conflict' => 'Jadwal bertabrakan dengan jadwal lain untuk guru yang sama pada hari yang sama.'
+            // If conflicts exist and not force save, return conflict data
+            if ($conflictingSchedules->isNotEmpty() && !$request->has('force_save')) {
+                // Return conflict data for modal
+                return response()->json([
+                    'success' => false,
+                    'conflicts' => $conflictingSchedules->map(function ($schedule) {
+                        return [
+                            'id' => $schedule->id,
+                            'subject' => $schedule->subject->name,
+                            'class' => $schedule->class->name,
+                            'time_range' => $schedule->time_range,
+                            'room' => $schedule->room ?? '-',
+                        ];
+                    }),
+                    'message' => 'Jadwal bertabrakan dengan jadwal lain untuk guru yang sama.'
                 ]);
             }
 
-            TeacherSchedule::create($request->all());
+            TeacherSchedule::create($request->only([
+                'teacher_id',
+                'class_id',
+                'subject_id',
+                'academic_year_id',
+                'day_of_week',
+                'start_time',
+                'end_time',
+                'room',
+                'notes'
+            ]));
 
             DB::commit();
 
-            return redirect()->route('admin.teacher-schedules.index')
-                           ->with('success', 'Jadwal guru berhasil ditambahkan.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Jadwal guru berhasil ditambahkan.',
+                'redirect' => route('admin.teacher-schedules.index')
+            ]);
 
         } catch (\Exception $e) {
             DB::rollback();
             Log::error('Error creating teacher schedule: ' . $e->getMessage());
 
-            return back()->withInput()->withErrors([
-                'error' => 'Terjadi kesalahan saat menyimpan jadwal.'
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan jadwal.'
             ]);
         }
     }
@@ -147,7 +182,11 @@ class TeacherScheduleController extends Controller
         $academicYears = AcademicYear::orderBy('name', 'desc')->get();
 
         return view('admin.teacher-schedules.edit', compact(
-            'teacherSchedule', 'teachers', 'classes', 'subjects', 'academicYears'
+            'teacherSchedule',
+            'teachers',
+            'classes',
+            'subjects',
+            'academicYears'
         ));
     }
 
@@ -181,7 +220,7 @@ class TeacherScheduleController extends Controller
                 ->where(function ($query) use ($request) {
                     $query->where(function ($q) use ($request) {
                         $q->where('start_time', '<', $request->end_time)
-                          ->where('end_time', '>', $request->start_time);
+                            ->where('end_time', '>', $request->start_time);
                     });
                 })
                 ->exists();
@@ -197,7 +236,7 @@ class TeacherScheduleController extends Controller
             DB::commit();
 
             return redirect()->route('admin.teacher-schedules.index')
-                           ->with('success', 'Jadwal guru berhasil diperbarui.');
+                ->with('success', 'Jadwal guru berhasil diperbarui.');
 
         } catch (\Exception $e) {
             DB::rollback();
@@ -218,7 +257,7 @@ class TeacherScheduleController extends Controller
             $teacherSchedule->delete();
 
             return redirect()->route('admin.teacher-schedules.index')
-                           ->with('success', 'Jadwal guru berhasil dihapus.');
+                ->with('success', 'Jadwal guru berhasil dihapus.');
 
         } catch (\Exception $e) {
             Log::error('Error deleting teacher schedule: ' . $e->getMessage());

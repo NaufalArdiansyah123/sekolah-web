@@ -45,16 +45,17 @@
         <!-- Sidebar -->
         @include('layouts.teacher.sidebar')
 
+        <!-- Top Navigation -->
+        @include('layouts.teacher.navbar', [
+            'pageTitle' => $pageTitle ?? $title ?? 'Teacher Dashboard',
+            'breadcrumb' => $breadcrumb ?? 'Dashboard'
+        ])
+
         <!-- Main Content Wrapper -->
         <div class="main-content-wrapper">
-            <!-- Top Navigation -->
-            @include('layouts.teacher.navbar', [
-                'pageTitle' => $pageTitle ?? $title ?? 'Teacher Dashboard',
-                'breadcrumb' => $breadcrumb ?? 'Dashboard'
-            ])
 
             <!-- Page Content -->
-            <main class="main-content" style="padding-top: 4.5rem;">
+            <main class="main-content" style="padding-top: 5rem;">
                 <div class="content-container">
                     <!-- Flash Messages -->
                     @if(session('success'))

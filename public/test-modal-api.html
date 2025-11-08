@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test Modal API</title>
+    </head>
+    <body>
+        <h1>Test Modal API Endpoints</h1>
+
+        <button onclick="testShowEndpoint()">Test Show Endpoint</button>
+        <button onclick="testDetailEndpoint()">Test Detail Endpoint</button>
+
+        <div
+            id="result"
+            style="
+                margin-top: 20px;
+                padding: 10px;
+                border: 1px solid #ccc;
+                background: #f0f0f0;
+            "
+        ></div>
+
+        <script>
+            function testShowEndpoint() {
+                const logId = 1; // Using first log ID
+                fetch(`/guru-piket/attendance/submissions-pkl/${logId}`, {
+                    method: "GET",
+                    headers: {
+                        Accept: "application/json",
+                    },
+                })
+                    .then((response) => {
+                        console.log(
+                            "Show endpoint response status:",
+                            response.status
+                        );
+                        return response.json();
+                    })
+                    .then((data) => {
+                        document.getElementById("result").innerHTML = `
+            <h2>Show Endpoint Response:</h2>
+            <pre>${JSON.stringify(data, null, 2)}</pre>
+        `;
+                    })
+                    .catch((error) => {
+                        document.getElementById("result").innerHTML = `
+            <h2>Show Endpoint Error:</h2>
+            <pre>${error.message}</pre>
+        `;
+                    });
+            }
+
+            function testDetailEndpoint() {
+                const logId = 1; // Using first log ID
+                fetch(
+                    `/guru-piket/attendance/submissions-pkl/${logId}/detail`,
+                    {
+                        method: "GET",
+                        headers: {
+                            Accept: "application/json",
+                        },
+                    }
+                )
+                    .then((response) => {
+                        console.log(
+                            "Detail endpoint response status:",
+                            response.status
+                        );
+                        return response.json();
+                    })
+                    .then((data) => {
+                        document.getElementById("result").innerHTML = `
+            <h2>Detail Endpoint Response:</h2>
+            <pre>${JSON.stringify(data, null, 2)}</pre>
+        `;
+                    })
+                    .catch((error) => {
+                        document.getElementById("result").innerHTML = `
+            <h2>Detail Endpoint Error:</h2>
+            <pre>${error.message}</pre>
+        `;
+                    });
+            }
+        </script>
+    </body>
+</html>

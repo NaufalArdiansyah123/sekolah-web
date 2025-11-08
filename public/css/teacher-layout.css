@@ -33,8 +33,12 @@
 
 /* Global Styles */
 body.teacher-body {
-    font-family: 'Inter', sans-serif !important;
-    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%) !important;
+    font-family: "Inter", sans-serif !important;
+    background: linear-gradient(
+        135deg,
+        var(--bg-secondary) 0%,
+        var(--bg-tertiary) 100%
+    ) !important;
     color: var(--text-primary) !important;
     margin: 0 !important;
     padding: 0 !important;
@@ -71,6 +75,32 @@ body.teacher-body {
     background: rgba(0, 0, 0, 0.7);
 }
 
+/* Top Navigation */
+.teacher-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 40;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(229, 231, 235, 0.3);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.dark .teacher-navbar {
+    background: rgba(31, 41, 55, 0.9);
+    border-bottom-color: rgba(55, 65, 81, 0.3);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+@media (min-width: 769px) {
+    .teacher-navbar {
+        left: 16rem;
+    }
+}
+
 /* Main Content Wrapper */
 .main-content-wrapper {
     flex: 1;
@@ -91,7 +121,12 @@ body.teacher-body {
 /* Main Content Area */
 .main-content {
     flex: 1;
-    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 50%, var(--bg-primary) 100%);
+    background: linear-gradient(
+        135deg,
+        var(--bg-secondary) 0%,
+        var(--bg-tertiary) 50%,
+        var(--bg-primary) 100%
+    );
     position: relative;
     overflow-x: hidden;
     overflow-y: auto;
@@ -100,23 +135,37 @@ body.teacher-body {
 
 /* Content background pattern */
 .main-content::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: 
-        radial-gradient(circle at 25% 25%, rgba(5, 150, 105, 0.02) 0%, transparent 50%),
-        radial-gradient(circle at 75% 75%, rgba(16, 185, 129, 0.02) 0%, transparent 50%);
+    background: radial-gradient(
+            circle at 25% 25%,
+            rgba(5, 150, 105, 0.02) 0%,
+            transparent 50%
+        ),
+        radial-gradient(
+            circle at 75% 75%,
+            rgba(16, 185, 129, 0.02) 0%,
+            transparent 50%
+        );
     pointer-events: none;
     z-index: 1;
 }
 
 .dark .main-content::before {
-    background: 
-        radial-gradient(circle at 25% 25%, rgba(16, 185, 129, 0.05) 0%, transparent 50%),
-        radial-gradient(circle at 75% 75%, rgba(52, 211, 153, 0.03) 0%, transparent 50%);
+    background: radial-gradient(
+            circle at 25% 25%,
+            rgba(16, 185, 129, 0.05) 0%,
+            transparent 50%
+        ),
+        radial-gradient(
+            circle at 75% 75%,
+            rgba(52, 211, 153, 0.03) 0%,
+            transparent 50%
+        );
 }
 
 /* Content Container */
@@ -147,8 +196,7 @@ body.teacher-body {
     backdrop-filter: blur(10px);
     border: 1px solid rgba(229, 231, 235, 0.3) !important;
     border-radius: 20px !important;
-    box-shadow: 
-        0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05),
         0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
     transition: all 0.3s ease;
     position: relative;
@@ -156,13 +204,18 @@ body.teacher-body {
 }
 
 .content-card::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+    background: linear-gradient(
+        90deg,
+        var(--primary-color),
+        var(--secondary-color),
+        var(--accent-color)
+    );
     opacity: 0;
     transition: opacity 0.3s ease;
 }
@@ -173,8 +226,7 @@ body.teacher-body {
 
 .content-card:hover {
     transform: translateY(-2px);
-    box-shadow: 
-        0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
         0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
     border-color: rgba(5, 150, 105, 0.2) !important;
 }
@@ -182,21 +234,23 @@ body.teacher-body {
 .dark .content-card {
     background: rgba(31, 41, 55, 0.9) !important;
     border-color: rgba(55, 65, 81, 0.3) !important;
-    box-shadow: 
-        0 4px 6px -1px rgba(0, 0, 0, 0.3),
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3),
         0 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
 }
 
 .dark .content-card:hover {
     border-color: rgba(16, 185, 129, 0.3) !important;
-    box-shadow: 
-        0 10px 15px -3px rgba(0, 0, 0, 0.4),
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4),
         0 4px 6px -2px rgba(0, 0, 0, 0.3) !important;
 }
 
 /* Enhanced Buttons */
 .btn-primary {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
+    background: linear-gradient(
+        135deg,
+        var(--primary-color),
+        var(--secondary-color)
+    ) !important;
     border: none !important;
     color: white !important;
     padding: 0.75rem 1.5rem;
@@ -214,13 +268,18 @@ body.teacher-body {
 }
 
 .btn-primary::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
     transition: left 0.5s ease;
 }
 
@@ -229,7 +288,11 @@ body.teacher-body {
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, var(--primary-dark), var(--primary-color)) !important;
+    background: linear-gradient(
+        135deg,
+        var(--primary-dark),
+        var(--primary-color)
+    ) !important;
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(5, 150, 105, 0.3) !important;
     color: white !important;
@@ -255,13 +318,18 @@ body.teacher-body {
 }
 
 .btn-secondary::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(5, 150, 105, 0.1), transparent);
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(5, 150, 105, 0.1),
+        transparent
+    );
     transition: left 0.5s ease;
 }
 
@@ -278,7 +346,9 @@ body.teacher-body {
 }
 
 /* Enhanced Form Elements */
-.form-input, .form-select, .form-textarea {
+.form-input,
+.form-select,
+.form-textarea {
     background: var(--bg-primary) !important;
     border: 2px solid var(--border-color) !important;
     border-radius: 12px !important;
@@ -290,7 +360,9 @@ body.teacher-body {
     font-weight: 500;
 }
 
-.form-input:focus, .form-select:focus, .form-textarea:focus {
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
     outline: none !important;
     border-color: var(--primary-color) !important;
     box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1) !important;
@@ -363,7 +435,7 @@ body.teacher-body {
 }
 
 .alert::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -452,8 +524,7 @@ body.teacher-body {
     backdrop-filter: blur(20px);
     border: 1px solid rgba(229, 231, 235, 0.3) !important;
     border-radius: 16px !important;
-    box-shadow: 
-        0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
         0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
     padding: 1.25rem;
     display: flex;
@@ -466,7 +537,7 @@ body.teacher-body {
 }
 
 .toast::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -481,8 +552,7 @@ body.teacher-body {
 .dark .toast {
     background: rgba(31, 41, 55, 0.95) !important;
     border-color: rgba(55, 65, 81, 0.3) !important;
-    box-shadow: 
-        0 20px 25px -5px rgba(0, 0, 0, 0.4),
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4),
         0 10px 10px -5px rgba(0, 0, 0, 0.2) !important;
 }
 
@@ -554,18 +624,30 @@ body.teacher-body {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+    background: linear-gradient(
+        180deg,
+        var(--primary-color),
+        var(--secondary-color)
+    );
     border-radius: 4px;
     transition: background 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, var(--primary-dark), var(--primary-color));
+    background: linear-gradient(
+        180deg,
+        var(--primary-dark),
+        var(--primary-color)
+    );
 }
 
 /* Page Header Styles */
 .page-header {
-    background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary)) !important;
+    background: linear-gradient(
+        135deg,
+        var(--bg-primary),
+        var(--bg-secondary)
+    ) !important;
     border: 1px solid var(--border-color) !important;
     border-radius: 20px !important;
     padding: 2rem;
@@ -576,13 +658,18 @@ body.teacher-body {
 }
 
 .page-header::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+    background: linear-gradient(
+        90deg,
+        var(--primary-color),
+        var(--secondary-color),
+        var(--accent-color)
+    );
 }
 
 .page-title {
@@ -590,7 +677,11 @@ body.teacher-body {
     font-weight: 800;
     color: var(--text-primary) !important;
     margin-bottom: 0.5rem;
-    background: linear-gradient(135deg, var(--text-primary), var(--primary-color));
+    background: linear-gradient(
+        135deg,
+        var(--text-primary),
+        var(--primary-color)
+    );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -604,65 +695,132 @@ body.teacher-body {
 }
 
 /* Utility Classes */
-.hidden { display: none !important; }
-.flex { display: flex; }
-.flex-1 { flex: 1; }
-.items-center { align-items: center; }
-.justify-between { justify-content: space-between; }
-.justify-center { justify-content: center; }
-.gap-2 { gap: 0.5rem; }
-.gap-4 { gap: 1rem; }
-.gap-6 { gap: 1.5rem; }
-.mb-2 { margin-bottom: 0.5rem; }
-.mb-4 { margin-bottom: 1rem; }
-.mb-6 { margin-bottom: 1.5rem; }
-.mb-8 { margin-bottom: 2rem; }
-.mt-4 { margin-top: 1rem; }
-.mt-6 { margin-top: 1.5rem; }
-.p-4 { padding: 1rem; }
-.p-6 { padding: 1.5rem; }
-.px-4 { padding-left: 1rem; padding-right: 1rem; }
-.py-4 { padding-top: 1rem; padding-bottom: 1rem; }
-.rounded { border-radius: 0.375rem; }
-.rounded-lg { border-radius: 0.5rem; }
-.rounded-xl { border-radius: 0.75rem; }
-.shadow { box-shadow: 0 1px 3px var(--shadow-color); }
-.shadow-lg { box-shadow: 0 10px 15px -3px var(--shadow-color); }
-.text-center { text-align: center; }
-.text-right { text-align: right; }
-.font-medium { font-weight: 500; }
-.font-semibold { font-weight: 600; }
-.font-bold { font-weight: 700; }
-.text-sm { font-size: 0.875rem; }
-.text-lg { font-size: 1.125rem; }
-.text-xl { font-size: 1.25rem; }
+.hidden {
+    display: none !important;
+}
+.flex {
+    display: flex;
+}
+.flex-1 {
+    flex: 1;
+}
+.items-center {
+    align-items: center;
+}
+.justify-between {
+    justify-content: space-between;
+}
+.justify-center {
+    justify-content: center;
+}
+.gap-2 {
+    gap: 0.5rem;
+}
+.gap-4 {
+    gap: 1rem;
+}
+.gap-6 {
+    gap: 1.5rem;
+}
+.mb-2 {
+    margin-bottom: 0.5rem;
+}
+.mb-4 {
+    margin-bottom: 1rem;
+}
+.mb-6 {
+    margin-bottom: 1.5rem;
+}
+.mb-8 {
+    margin-bottom: 2rem;
+}
+.mt-4 {
+    margin-top: 1rem;
+}
+.mt-6 {
+    margin-top: 1.5rem;
+}
+.p-4 {
+    padding: 1rem;
+}
+.p-6 {
+    padding: 1.5rem;
+}
+.px-4 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+.py-4 {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+.rounded {
+    border-radius: 0.375rem;
+}
+.rounded-lg {
+    border-radius: 0.5rem;
+}
+.rounded-xl {
+    border-radius: 0.75rem;
+}
+.shadow {
+    box-shadow: 0 1px 3px var(--shadow-color);
+}
+.shadow-lg {
+    box-shadow: 0 10px 15px -3px var(--shadow-color);
+}
+.text-center {
+    text-align: center;
+}
+.text-right {
+    text-align: right;
+}
+.font-medium {
+    font-weight: 500;
+}
+.font-semibold {
+    font-weight: 600;
+}
+.font-bold {
+    font-weight: 700;
+}
+.text-sm {
+    font-size: 0.875rem;
+}
+.text-lg {
+    font-size: 1.125rem;
+}
+.text-xl {
+    font-size: 1.25rem;
+}
 
 /* Responsive Design */
 @media (max-width: 768px) {
     .main-content-wrapper {
         margin-left: 0 !important;
     }
-    
+
     .content-container {
         padding: 1.5rem 1rem;
     }
-    
+
     .toast-container {
         left: 1rem;
         right: 1rem;
         max-width: none;
     }
-    
+
     .page-header {
         padding: 1.5rem;
         margin-bottom: 1.5rem;
     }
-    
+
     .page-title {
         font-size: 1.5rem;
     }
-    
-    .btn-primary, .btn-secondary {
+
+    .btn-primary,
+    .btn-secondary {
         padding: 0.625rem 1.25rem;
         font-size: 0.8rem;
     }
@@ -672,12 +830,12 @@ body.teacher-body {
     .content-container {
         padding: 1rem 0.75rem;
     }
-    
+
     .page-header {
         padding: 1rem;
         border-radius: 16px !important;
     }
-    
+
     .page-title {
         font-size: 1.25rem;
     }
@@ -691,7 +849,7 @@ body.teacher-body {
 }
 
 .loading::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 50%;
     left: 50%;
@@ -705,7 +863,9 @@ body.teacher-body {
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Focus States */
@@ -720,8 +880,14 @@ body.teacher-body {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .slide-up {
@@ -729,6 +895,12 @@ body.teacher-body {
 }
 
 @keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

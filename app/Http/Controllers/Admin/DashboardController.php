@@ -27,7 +27,7 @@ class DashboardController extends Controller
             // Get recent notifications with error handling
             $notifications = collect();
             $unreadCount = 0;
-            
+
             try {
                 if (class_exists('App\Models\AdminNotification') && \Schema::hasTable('admin_notifications')) {
                     $notifications = NotificationService::getRecentNotifications(5);
@@ -46,7 +46,7 @@ class DashboardController extends Controller
             ]);
         } catch (\Exception $e) {
             \Log::error('Dashboard error: ' . $e->getMessage());
-            
+
             // Fallback data if everything fails
             return view('admin.dashboard', [
                 'pageTitle' => 'Dashboard Admin',
@@ -64,7 +64,7 @@ class DashboardController extends Controller
             ]);
         }
     }
-    
+
     /**
      * Safely count records with error handling
      */
@@ -72,11 +72,11 @@ class DashboardController extends Controller
     {
         try {
             $query = $model::query();
-            
+
             foreach ($conditions as $field => $value) {
                 $query->where($field, $value);
             }
-            
+
             return $query->count();
         } catch (\Exception $e) {
             \Log::warning("Failed to count {$model}: " . $e->getMessage());
@@ -96,7 +96,7 @@ class DashboardController extends Controller
 
     public function settings()
     {
-        return view('admin.settings', [
+        return view('admin.settings.index', [
             'pageTitle' => 'Settings',
             'breadcrumb' => [
                 ['title' => 'Settings']

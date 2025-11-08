@@ -284,6 +284,104 @@
                 justify-content: center;
             }
         }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 0;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #e9ecef;
+            border-radius: 0 0 8px 8px;
+            text-align: right;
+        }
+
+        .modal-title {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: #000;
+        }
+
+        .btn-modal {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+        .btn-primary-modal {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-primary-modal:hover {
+            background-color: #0056b3;
+        }
+
+        .modal-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .modal-success .modal-icon {
+            color: #28a745;
+        }
+
+        .modal-error .modal-icon {
+            color: #dc3545;
+        }
+
+        .modal-warning .modal-icon {
+            color: #ffc107;
+        }
+
+        .modal-info .modal-icon {
+            color: #17a2b8;
+        }
     </style>
 @endpush
 
@@ -376,10 +474,37 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal for notifications -->
+    <div id="notification-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-title">Notifikasi</h5>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <div class="modal-icon" id="modal-icon">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <p id="modal-message">Pesan notifikasi</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-primary-modal" id="modal-ok-btn">OK</button>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+    // Fallback for older browsers
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        console.warn('Camera access not supported in this browser');
+    }
+</script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // DOM Elements
@@ -404,14 +529,83 @@
         let isScanning = false;
         let currentMode = 'check-out'; // Fixed to check-out mode
         function showToast(message, type = 'info') {
-            // Simple alert for now - can be enhanced later
-            alert(message);
+            const modal = document.getElementById('notification-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalIcon = document.getElementById('modal-icon');
+            const modalMessage = document.getElementById('modal-message');
+            const modalOkBtn = document.getElementById('modal-ok-btn');
+
+            // Set modal content based on type
+            modalTitle.textContent = 'Notifikasi';
+            modalMessage.textContent = message;
+
+            // Reset modal classes
+            modal.className = 'modal';
+
+            // Set icon and color based on type
+            let iconClass = 'fas fa-info-circle';
+            switch (type) {
+                case 'success':
+                    modal.classList.add('modal-success');
+                    iconClass = 'fas fa-check-circle';
+                    break;
+                case 'error':
+                    modal.classList.add('modal-error');
+                    iconClass = 'fas fa-exclamation-triangle';
+                    break;
+                case 'warning':
+                    modal.classList.add('modal-warning');
+                    iconClass = 'fas fa-exclamation-circle';
+                    break;
+                case 'info':
+                default:
+                    modal.classList.add('modal-info');
+                    iconClass = 'fas fa-info-circle';
+                    break;
+            }
+
+            modalIcon.innerHTML = `<i class="${iconClass}"></i>`;
+
+            // Show modal
+            modal.style.display = 'block';
+
+            // Focus on OK button
+            modalOkBtn.focus();
+
+            // Close modal when clicking OK or close button
+            const closeModal = () => {
+                modal.style.display = 'none';
+            };
+
+            modalOkBtn.onclick = closeModal;
+            document.querySelector('.modal-close').onclick = closeModal;
+
+            // Close modal when clicking outside
+            window.onclick = function (event) {
+                if (event.target === modal) {
+                    closeModal();
+                }
+            };
+
+            // Close modal on Escape key
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape' && modal.style.display === 'block') {
+                    closeModal();
+                }
+            });
         }
 
         // Load available cameras
         async function loadCameras() {
             try {
                 cameraSelect.innerHTML = '<option value="">Memuat kamera...</option>';
+
+                // Check if camera access is supported
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    cameraSelect.innerHTML = '<option value="">Kamera tidak didukung browser ini</option>';
+                    showToast('Browser ini tidak mendukung akses kamera');
+                    return;
+                }
 
                 const devices = await Html5Qrcode.getCameras();
 
@@ -441,7 +635,7 @@
             } catch (error) {
                 console.error('Error loading cameras:', error);
                 cameraSelect.innerHTML = '<option value="">Error memuat kamera</option>';
-                showToast('Gagal memuat kamera');
+                showToast('Gagal memuat kamera: ' + error.message);
             }
         }
 
@@ -454,6 +648,16 @@
 
             if (!currentCameraId) {
                 showToast('Pilih kamera terlebih dahulu');
+                return;
+            }
+
+            // Check camera permissions
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                stream.getTracks().forEach(track => track.stop()); // Stop the test stream
+            } catch (error) {
+                console.error('Camera permission denied:', error);
+                showToast('Akses kamera ditolak. Pastikan memberikan izin kamera.');
                 return;
             }
 
@@ -481,7 +685,7 @@
             } catch (error) {
                 console.error('Error starting scanner:', error);
                 isScanning = false;
-                showToast('Gagal memulai scanner');
+                showToast('Gagal memulai scanner: ' + error.message);
             }
         }
 
@@ -507,6 +711,11 @@
         function onScanSuccess(decodedText, decodedResult) {
             const now = Date.now();
 
+            // Debug: Log what was scanned
+            console.log('QR Code scanned:', decodedText);
+            console.log('QR Code length:', decodedText.length);
+            console.log('Starts with QR_TEACHER_:', decodedText.startsWith('QR_TEACHER_'));
+
             // Prevent duplicate scans within 3 seconds
             if (decodedText === lastText && now - lastTime < 3000) {
                 return;
@@ -515,7 +724,34 @@
             lastText = decodedText;
             lastTime = now;
 
-            scanResult.textContent = `QR Code: ${decodedText}`;
+            // Validate QR code format before sending to server
+            // Check if it's JSON format (new format) or old QR_TEACHER_ format
+            let isValidFormat = false;
+            let qrCodeToSend = decodedText;
+
+            try {
+                const parsedData = JSON.parse(decodedText);
+                if (parsedData.type === 'teacher' && parsedData.id && parsedData.name) {
+                    isValidFormat = true;
+                    // Convert to expected format for backend
+                    qrCodeToSend = `QR_TEACHER_${parsedData.id}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+                }
+            } catch (e) {
+                // Not JSON, check if it's old format
+                if (decodedText.startsWith('QR_TEACHER_')) {
+                    isValidFormat = true;
+                }
+            }
+
+            if (!isValidFormat) {
+                scanResult.textContent = `Format QR Code tidak valid. Ditemukan: "${decodedText}". QR Code harus berupa JSON dengan type "teacher" atau dimulai dengan "QR_TEACHER_".`;
+                scanResult.className = 'status-message status-error';
+                showToast(`Format QR Code tidak valid. Ditemukan: "${decodedText}". Pastikan menggunakan QR Code guru yang benar.`);
+                console.error('Invalid QR format detected:', decodedText);
+                return;
+            }
+
+            scanResult.textContent = `QR Code terdeteksi: ${decodedText}`;
             scanResult.className = 'status-message';
 
             // Send scan data to server
@@ -527,6 +763,11 @@
             cameraSelect.innerHTML = '<option value="">Klik Mulai Scan untuk memuat kamera</option>';
             loadTodayAttendance();
             loadTeachers();
+
+            // Check if browser supports camera
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                showToast('Browser ini tidak mendukung akses kamera. Gunakan browser modern seperti Chrome, Firefox, atau Edge.');
+            }
         }
 
         // Handle scan errors

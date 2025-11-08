@@ -1,5 +1,5 @@
 <?php
-// resources/views/layouts/student/navbar.blade.php - Student Navigation Bar
+// resources/views/layouts/student/navbar.blade.php - Student Navigation Bar (FIXED)
 ?>
 <style>
 /* Ensure dark mode toggle is always visible */
@@ -55,6 +55,19 @@
         transform: rotate(0deg) scale(1);
     }
 }
+
+/* Hamburger menu animation */
+.hamburger-btn {
+    transition: all 0.3s ease;
+}
+
+.hamburger-btn:hover {
+    background-color: rgba(16, 185, 129, 0.1);
+}
+
+.hamburger-btn:active {
+    transform: scale(0.95);
+}
 </style>
 
 <header class="w-full">
@@ -62,9 +75,10 @@
         <div class="flex-1 flex justify-between px-4 sm:px-6">
             <!-- Left Side -->
             <div class="flex items-center space-x-4">
-                <!-- Mobile menu button -->
+                <!-- Mobile menu button - FIXED -->
                 <button @click="sidebarOpen = true" 
-                        class="border-r border-gray-200 dark:border-gray-700 px-4 text-gray-500 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-emerald-500 md:hidden">
+                        class="hamburger-btn border-r border-gray-200 dark:border-gray-700 px-4 text-gray-500 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-emerald-500 md:hidden"
+                        aria-label="Open sidebar">
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
                     </svg>
@@ -324,13 +338,6 @@ function toggleDarkModeGlobal() {
         }, 150);
     }
     
-    // Update tooltip text
-    function updateTooltip() {
-        if (toggleButton) {
-            toggleButton.title = isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode';
-        }
-    }
-    
     if (isDark) {
         // Switch to light mode
         html.classList.remove('dark');
@@ -348,7 +355,6 @@ function toggleDarkModeGlobal() {
                     sunIcon.style.transform = 'rotate(-90deg) scale(0.8)';
                     sunIcon.classList.add('icon-fade-in');
                     
-                    // Trigger reflow and animate
                     sunIcon.offsetHeight;
                     sunIcon.style.opacity = '1';
                     sunIcon.style.transform = 'rotate(0deg) scale(1)';
@@ -360,7 +366,6 @@ function toggleDarkModeGlobal() {
             }, 150);
         }
         
-        // Update tooltip for light mode
         setTimeout(() => {
             if (toggleButton) {
                 toggleButton.title = 'Switch to Dark Mode';
@@ -383,7 +388,6 @@ function toggleDarkModeGlobal() {
                     moonIcon.style.transform = 'rotate(90deg) scale(0.8)';
                     moonIcon.classList.add('icon-fade-in');
                     
-                    // Trigger reflow and animate
                     moonIcon.offsetHeight;
                     moonIcon.style.opacity = '1';
                     moonIcon.style.transform = 'rotate(0deg) scale(1)';
@@ -395,7 +399,6 @@ function toggleDarkModeGlobal() {
             }, 150);
         }
         
-        // Update tooltip for dark mode
         setTimeout(() => {
             if (toggleButton) {
                 toggleButton.title = 'Switch to Light Mode';
@@ -417,7 +420,6 @@ function initializeDarkModeIcons() {
     const toggleButton = document.getElementById('dark-mode-toggle');
     
     if (isDark) {
-        // Dark mode - show moon icon
         if (sunIcon) {
             sunIcon.style.display = 'none';
             sunIcon.style.opacity = '0';
@@ -431,7 +433,6 @@ function initializeDarkModeIcons() {
             toggleButton.title = 'Switch to Light Mode';
         }
     } else {
-        // Light mode - show sun icon
         if (sunIcon) {
             sunIcon.style.display = 'block';
             sunIcon.style.opacity = '1';
@@ -449,18 +450,4 @@ function initializeDarkModeIcons() {
 
 // Initialize icons when DOM is loaded
 document.addEventListener('DOMContentLoaded', initializeDarkModeIcons);
-
-document.addEventListener('alpine:init', () => {
-    // Simple dropdown handling for student navbar
-    document.addEventListener('click', function(e) {
-        // Close all dropdowns when clicking outside
-        if (!e.target.closest('[x-data]')) {
-            // Reset all dropdown states
-            Alpine.store('dropdowns', {
-                userOpen: false,
-                quickMenuOpen: false
-            });
-        }
-    });
-});
 </script>

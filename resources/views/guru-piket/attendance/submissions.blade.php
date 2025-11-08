@@ -1,1462 +1,1299 @@
 @extends('layouts.guru-piket')
 
-@section('title', 'Kelola Submission Absensi')
+@section('title', 'Kelola Absensi Siswa')
 
 <!-- Add CSRF token for AJAX requests -->
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 @push('styles')
-<style>
-    /* Modern Minimalist Design System */
-    :root {
-        --primary: #3b82f6;
-        --primary-light: #dbeafe;
-        --success: #10b981;
-        --warning: #f59e0b;
-        --danger: #ef4444;
-        --gray-50: #f8fafc;
-        --gray-100: #f1f5f9;
-        --gray-200: #e2e8f0;
-        --gray-300: #cbd5e1;
-        --gray-400: #94a3b8;
-        --gray-500: #64748b;
-        --gray-600: #475569;
-        --gray-700: #334155;
-        --gray-800: #1e293b;
-        --gray-900: #0f172a;
-        --radius: 8px;
-        --radius-lg: 12px;
-        --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    }
-
-    /* Base Layout */
-    .container-modern {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0;
-    }
-
-    /* Modern Cards */
-    .card {
-        background: white;
-        border-radius: var(--radius-lg);
-        border: 1px solid var(--gray-200);
-        box-shadow: var(--shadow);
-        transition: box-shadow 0.2s ease;
-    }
-
-    .card:hover {
-        box-shadow: var(--shadow-md);
-    }
-
-    .dark .card {
-        background: var(--gray-800);
-        border-color: var(--gray-700);
-    }
-
-    /* Header Section */
-    .header-section {
-        background: linear-gradient(135deg, var(--primary) 0%, #6366f1 100%);
-        border-radius: var(--radius-lg);
-        padding: 2rem;
-        color: white;
-        margin-bottom: 2rem;
-    }
-
-    .header-title {
-        font-size: 1.875rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-        line-height: 1.2;
-    }
-
-    .header-subtitle {
-        opacity: 0.9;
-        font-size: 1rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        gap: 1.5rem;
-        margin-top: 1.5rem;
-    }
-
-    .stat-item {
-        text-align: center;
-        padding: 1rem;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: var(--radius);
-        backdrop-filter: blur(10px);
-    }
-
-    .stat-number {
-        font-size: 1.5rem;
-        font-weight: 700;
-        display: block;
-    }
-
-    .stat-label {
-        font-size: 0.875rem;
-        opacity: 0.9;
-        margin-top: 0.25rem;
-    }
-
-    /* Filter Section */
-    .filter-section {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-        align-items: center;
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .filter-buttons {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-
-    .filter-btn {
-        padding: 0.5rem 1rem;
-        border-radius: var(--radius);
-        border: 1px solid var(--gray-300);
-        background: white;
-        color: var(--gray-600);
-        font-size: 0.875rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.15s ease;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .filter-btn:hover {
-        border-color: var(--primary);
-        color: var(--primary);
-    }
-
-    .filter-btn.active {
-        background: var(--primary);
-        border-color: var(--primary);
-        color: white;
-    }
-
-    .dark .filter-btn {
-        background: var(--gray-700);
-        border-color: var(--gray-600);
-        color: var(--gray-300);
-    }
-
-    .filter-controls {
-        margin-left: auto;
-        display: flex;
-        gap: 0.75rem;
-        align-items: center;
-    }
-
-    @media (max-width: 768px) {
-        .filter-controls {
-            margin-left: 0;
-            width: 100%;
-            justify-content: stretch;
+    <style>
+        /* Modern Minimalist Design System */
+        :root {
+            --primary: #3b82f6;
+            --primary-light: #dbeafe;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --radius: 8px;
+            --radius-lg: 12px;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
-    }
 
-    /* Submission Items */
-    .submissions-container {
-        padding: 1.5rem;
-    }
+        /* Base Layout */
+        .container-modern {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0;
+        }
 
-    .submission-item {
-        background: white;
-        border: 1px solid var(--gray-200);
-        border-radius: var(--radius);
-        padding: 1rem;
-        margin-bottom: 0.75rem;
-        cursor: pointer;
-        transition: all 0.15s ease;
-        position: relative;
-    }
+        /* Modern Cards */
+        .card {
+            background: white;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow);
+            transition: box-shadow 0.2s ease;
+        }
 
-    .submission-item:hover {
-        border-color: var(--gray-300);
-        box-shadow: var(--shadow);
-    }
+        .card:hover {
+            box-shadow: var(--shadow-md);
+        }
 
-    .dark .submission-item {
-        background: var(--gray-800);
-        border-color: var(--gray-700);
-    }
+        /* Header Section */
+        .header-section {
+            background: linear-gradient(135deg, var(--primary) 0%, #6366f1 100%);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            color: white;
+            margin-bottom: 2rem;
+        }
 
-    .dark .submission-item:hover {
-        border-color: var(--gray-600);
-    }
+        .header-title {
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
 
-    /* Status Indicators */
-    .submission-item.pending {
-        border-left: 3px solid var(--warning);
-    }
+        .header-subtitle {
+            opacity: 0.9;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
 
-    .submission-item.confirmed {
-        border-left: 3px solid var(--success);
-    }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
 
-    .submission-item.rejected {
-        border-left: 3px solid var(--danger);
-    }
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius);
+            backdrop-filter: blur(10px);
+        }
 
-    .status-badge {
-        padding: 0.25rem 0.75rem;
-        border-radius: 9999px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.025em;
-    }
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: block;
+        }
 
-    .status-pending {
-        background: #fef3c7;
-        color: #92400e;
-    }
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-top: 0.25rem;
+        }
 
-    .status-confirmed {
-        background: #d1fae5;
-        color: #065f46;
-    }
+        /* Filter Section */
+        .filter-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
 
-    .status-rejected {
-        background: #fee2e2;
-        color: #991b1b;
-    }
+        .filter-controls {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+            flex: 1;
+        }
 
-    /* Additional status badges for students */
-    .bg-blue-100 {
-        background: #dbeafe;
-        color: #1e40af;
-    }
+        .filter-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            background: white;
+            color: var(--gray-700);
+            min-width: 200px;
+        }
 
-    .bg-purple-100 {
-        background: #e9d5ff;
-        color: #7c3aed;
-    }
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
 
-    .bg-gray-100 {
-        background: #f3f4f6;
-        color: #374151;
-    }
+        @media (max-width: 768px) {
+            .filter-controls {
+                width: 100%;
+            }
 
-    /* Responsive Grid */
-    .submission-content {
-        display: grid;
-        grid-template-columns: auto 1fr auto;
-        gap: 1rem;
-        align-items: center;
-    }
+            .filter-select {
+                flex: 1;
+                min-width: 0;
+            }
+        }
 
-    @media (max-width: 640px) {
-        .submission-content {
-            grid-template-columns: 1fr;
+        /* Class Section */
+        .class-section {
+            margin-bottom: 2rem;
+        }
+
+        .class-header {
+            background: var(--gray-50);
+            border-radius: var(--radius);
+            padding: 1rem 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .class-header:hover {
+            background: var(--gray-100);
+        }
+
+        .class-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            display: flex;
+            align-items: center;
             gap: 0.75rem;
         }
-        
-        .submission-meta {
-            order: -1;
+
+        .class-stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.875rem;
         }
-    }
 
-    .teacher-avatar {
-        width: 3rem;
-        height: 3rem;
-        background: linear-gradient(135deg, var(--primary) 0%, #6366f1 100%);
-        border-radius: var(--radius);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: 700;
-        font-size: 1.125rem;
-    }
+        .class-stat {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-weight: 500;
+        }
 
-    .submission-info h3 {
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--gray-900);
-        margin-bottom: 0.25rem;
-    }
+        .stat-present {
+            background: #d1fae5;
+            color: #065f46;
+        }
 
-    .dark .submission-info h3 {
-        color: white;
-    }
+        .stat-late {
+            background: #fef3c7;
+            color: #92400e;
+        }
 
-    .submission-details {
-        font-size: 0.875rem;
-        color: var(--gray-600);
-        margin-bottom: 0.5rem;
-    }
+        .stat-absent {
+            background: #fee2e2;
+            color: #991b1b;
+        }
 
-    .dark .submission-details {
-        color: var(--gray-400);
-    }
+        /* Student Table */
+        .students-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
 
-    .submission-meta-items {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-        font-size: 0.75rem;
-        color: var(--gray-500);
-    }
-
-    .dark .submission-meta-items {
-        color: var(--gray-400);
-    }
-
-    .submission-stats {
-        text-align: right;
-    }
-
-    @media (max-width: 640px) {
-        .submission-stats {
+        .students-table th {
+            background: var(--gray-50);
+            padding: 0.75rem 1rem;
             text-align: left;
+            font-weight: 600;
+            color: var(--gray-900);
+            border-bottom: 1px solid var(--gray-200);
+            font-size: 0.875rem;
         }
-    }
 
-    .attendance-percentage {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: var(--gray-900);
-    }
-
-    .dark .attendance-percentage {
-        color: white;
-    }
-
-    .attendance-label {
-        font-size: 0.75rem;
-        color: var(--gray-500);
-        margin-top: 0.25rem;
-    }
-
-    .dark .attendance-label {
-        color: var(--gray-400);
-    }
-
-    /* Modal Styles - Improved positioning */
-    .modal-overlay {
-        background: rgba(0, 0, 0, 0.5);
-        /* Remove backdrop-filter to prevent blur */
-    }
-
-    .modal-container {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        min-height: 100vh !important;
-        padding: 2rem 1rem !important;
-        padding-top: 80px !important;
-        padding-bottom: 2rem !important;
-    }
-
-    .modal-content {
-        background: white;
-        border-radius: var(--radius-lg);
-        box-shadow: var(--shadow-lg);
-        max-height: calc(100vh - 120px) !important;
-        overflow-y: auto;
-        width: 100%;
-        max-width: 56rem !important;
-        margin: 0 auto !important;
-        position: relative !important;
-        /* Ensure no blur effects */
-        backdrop-filter: none;
-        filter: none;
-        -webkit-backdrop-filter: none;
-        -webkit-filter: none;
-    }
-
-    .dark .modal-content {
-        background: var(--gray-800);
-        /* Ensure no blur effects in dark mode */
-        backdrop-filter: none;
-        filter: none;
-        -webkit-backdrop-filter: none;
-        -webkit-filter: none;
-    }
-
-    @media (min-width: 1024px) {
-        .modal-content {
-            max-width: 64rem !important;
+        .students-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--gray-200);
+            font-size: 0.875rem;
+            color: var(--gray-700);
         }
-        
-        .modal-container {
-            padding-top: 100px !important;
+
+        .students-table tr:hover {
+            background: var(--gray-50);
         }
-    }
 
-    /* Action Buttons */
-    .btn {
-        padding: 0.5rem 1rem;
-        border-radius: var(--radius);
-        font-weight: 500;
-        font-size: 0.875rem;
-        border: none;
-        cursor: pointer;
-        transition: all 0.15s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        text-decoration: none;
-    }
-
-    .btn-primary {
-        background: var(--primary);
-        color: white;
-    }
-
-    .btn-primary:hover {
-        background: #2563eb;
-    }
-
-    .btn-success {
-        background: var(--success);
-        color: white;
-    }
-
-    .btn-success:hover {
-        background: #059669;
-    }
-
-    .btn-danger {
-        background: var(--danger);
-        color: white;
-    }
-
-    .btn-danger:hover {
-        background: #dc2626;
-    }
-
-    .btn-secondary {
-        background: var(--gray-500);
-        color: white;
-    }
-
-    .btn-secondary:hover {
-        background: var(--gray-600);
-    }
-
-    /* Empty State */
-    .empty-state {
-        text-align: center;
-        padding: 4rem 2rem;
-    }
-
-    .empty-icon {
-        width: 4rem;
-        height: 4rem;
-        background: var(--gray-100);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1.5rem;
-        color: var(--gray-400);
-        font-size: 1.5rem;
-    }
-
-    .dark .empty-icon {
-        background: var(--gray-700);
-        color: var(--gray-500);
-    }
-
-    .empty-title {
-        font-size: 1.125rem;
-        font-weight: 600;
-        color: var(--gray-900);
-        margin-bottom: 0.5rem;
-    }
-
-    .dark .empty-title {
-        color: white;
-    }
-
-    .empty-description {
-        color: var(--gray-600);
-        margin-bottom: 1.5rem;
-    }
-
-    .dark .empty-description {
-        color: var(--gray-400);
-    }
-
-    /* Utilities */
-    .fade-in {
-        animation: fadeIn 0.3s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
+        .students-table .student-avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, #6366f1 100%);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
         }
-        to {
-            opacity: 1;
-            transform: translateY(0);
+
+        .students-table .student-name {
+            font-weight: 600;
+            color: var(--gray-900);
         }
-    }
 
-    /* Debug buttons - minimal style */
-    .debug-controls {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-    }
+        .students-table .student-nis {
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
 
-    .debug-btn {
-        padding: 0.375rem 0.75rem;
-        background: rgba(255, 255, 255, 0.2);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        border-radius: var(--radius);
-        color: white;
-        font-size: 0.75rem;
-        cursor: pointer;
-        transition: all 0.15s ease;
-    }
+        /* Status Badge */
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            display: inline-block;
+        }
 
-    .debug-btn:hover {
-        background: rgba(255, 255, 255, 0.3);
-    }
+        .status-hadir {
+            background: #d1fae5;
+            color: #065f46;
+        }
 
-    @media (max-width: 768px) {
-        .debug-controls {
+        .status-terlambat {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-izin {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-sakit {
+            background: #e9d5ff;
+            color: #7c3aed;
+        }
+
+        .status-alpha {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-none {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        /* Action Buttons */
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            font-weight: 500;
+            font-size: 0.875rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.8125rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-secondary {
+            background: var(--gray-500);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-600);
+        }
+
+        /* Edit Form */
+        .edit-form {
+            background: var(--gray-50);
+            padding: 1rem;
+            border-top: 2px solid var(--primary);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            transition: border-color 0.15s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--gray-500);
+        }
+
+        .empty-icon {
+            width: 4rem;
+            height: 4rem;
+            background: var(--gray-100);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        /* Modal Notification Styles */
+        .notification-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .notification-modal.show {
+            display: flex;
+        }
+
+        .notification-content {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.3s ease;
+            position: relative;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .notification-icon {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+        }
+
+        .notification-icon.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .notification-icon.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .notification-icon.warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .notification-icon.info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .notification-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .notification-message {
+            font-size: 0.9375rem;
+            color: var(--gray-600);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+        }
+
+        .notification-btn {
+            padding: 0.625rem 1.5rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 0.875rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .notification-btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .notification-btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .notification-btn-secondary {
+            background: var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        .notification-btn-secondary:hover {
+            background: var(--gray-300);
+        }
+
+        .notification-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            line-height: 1;
+            transition: color 0.15s ease;
+        }
+
+        .notification-close:hover {
+            color: var(--gray-600);
+        }
+
+        /* Checkbox styling */
+        .student-checkbox {
+            width: 1.25rem;
+            height: 1.25rem;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .bulk-actions {
+            background: var(--primary-light);
+            border: 1px solid var(--primary);
+            border-radius: var(--radius);
+            padding: 1rem;
+            margin-bottom: 1rem;
             display: none;
         }
-    }
-    
-    /* Remove any blur effects from all modal elements */
-    #submissionModal,
-    #submissionModal *,
-    .modal-overlay,
-    .modal-content {
-        backdrop-filter: none !important;
-        filter: none !important;
-        -webkit-backdrop-filter: none !important;
-        -webkit-filter: none !important;
-    }
-    
-    /* Ensure modal content is crisp and clear */
-    .modal-content {
-        transform: none;
-        will-change: auto;
-        backface-visibility: visible;
-    }
-    
-    /* Fix any potential blur from transforms */
-    .modal-content,
-    .modal-content * {
-        transform: translateZ(0);
-        -webkit-transform: translateZ(0);
-    }
 
-    /* Edit form styles */
-    .edit-form {
-        background: var(--gray-50);
-        border-top: 1px solid var(--gray-200);
-        padding: 1rem;
-        border-radius: 0 0 var(--radius) var(--radius);
-    }
-
-    .form-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-        margin-bottom: 1rem;
-    }
-
-    @media (max-width: 640px) {
-        .form-grid {
-            grid-template-columns: 1fr;
+        .bulk-actions.show {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
         }
-    }
 
-    .form-group {
-        display: flex;
-        flex-direction: column;
-    }
+        @media (max-width: 640px) {
+            .students-table {
+                font-size: 0.8125rem;
+            }
 
-    .form-label {
-        display: block;
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: var(--gray-700);
-        margin-bottom: 0.5rem;
-    }
+            .students-table td,
+            .students-table th {
+                padding: 0.5rem;
+            }
 
-    .form-input {
-        width: 100%;
-        padding: 0.5rem;
-        border: 1px solid var(--gray-300);
-        border-radius: var(--radius);
-        font-size: 0.875rem;
-        transition: border-color 0.15s ease;
-    }
-
-    .form-input:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    }
-
-    .file-upload-area {
-        border: 2px dashed var(--gray-300);
-        border-radius: var(--radius);
-        padding: 1rem;
-        text-align: center;
-        background: white;
-        transition: border-color 0.15s ease;
-    }
-
-    .file-upload-area:hover {
-        border-color: var(--primary);
-    }
-
-    .file-preview {
-        margin-bottom: 0.5rem;
-    }
-
-    .file-preview img {
-        max-width: 200px;
-        max-height: 150px;
-        border-radius: var(--radius);
-        margin-bottom: 0.5rem;
-        box-shadow: var(--shadow);
-    }
-</style>
+            .class-stats {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
 @endpush
 
 @section('content')
-<div class="container-modern">
-    <!-- Error Alert -->
-    @if(isset($error))
-    <div class="card" style="border-color: var(--danger); background: #fef2f2; margin-bottom: 1.5rem;">
-        <div style="padding: 1rem; display: flex; align-items: center; gap: 0.75rem;">
-            <i class="fas fa-exclamation-triangle" style="color: var(--danger); font-size: 1.25rem;"></i>
-            <div>
-                <h3 style="font-weight: 600; color: #991b1b; margin-bottom: 0.25rem;">Terjadi Kesalahan</h3>
-                <p style="color: #b91c1c; margin: 0;">{{ $error }}</p>
-            </div>
-        </div>
-    </div>
-    @endif
+    <div class="container-modern">
+        <!-- Header Section -->
+        <div class="header-section">
+            <h1 class="header-title">
+                <i class="fas fa-user-check"></i>
+                Kelola Absensi Siswa
+            </h1>
+            <p class="header-subtitle">
+                Monitor dan kelola kehadiran siswa per kelas
+            </p>
 
-    <!-- Header Section -->
-    <div class="header-section">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
-            <div style="flex: 1; min-width: 300px;">
-                <h1 class="header-title">
-                    <i class="fas fa-clipboard-check" style="margin-right: 0.75rem;"></i>
-                    Kelola Submission Absensi
-                </h1>
-                <p class="header-subtitle">
-                    Review, edit, dan konfirmasi submission absensi dari guru
-                </p>
-                
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <span class="stat-number">{{ $statistics['pending'] ?? 0 }}</span>
-                        <span class="stat-label">Menunggu</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number">{{ $statistics['confirmed_today'] ?? 0 }}</span>
-                        <span class="stat-label">Dikonfirmasi</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number">{{ $statistics['total_today'] ?? 0 }}</span>
-                        <span class="stat-label">Total Hari Ini</span>
-                    </div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number">{{ $statistics['total_students'] ?? 0 }}</span>
+                    <span class="stat-label">Total Siswa</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">{{ $statistics['present_today'] ?? 0 }}</span>
+                    <span class="stat-label">Hadir</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">{{ $statistics['late_today'] ?? 0 }}</span>
+                    <span class="stat-label">Terlambat</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">{{ $statistics['absent_today'] ?? 0 }}</span>
+                    <span class="stat-label">Tidak Hadir</span>
                 </div>
             </div>
-            
-            <div class="debug-controls">
-                <button onclick="testRoute()" class="debug-btn">
-                    <i class="fas fa-bug"></i> Test
+        </div>
+
+        <!-- Filter Section -->
+        <div class="card filter-section">
+            <div class="filter-controls">
+                <select id="filterClass" class="filter-select" onchange="applyFilters()">
+                    <option value="all" {{ !$selectedClass || $selectedClass === 'all' ? 'selected' : '' }}>Semua Kelas
+                    </option>
+                    @foreach($classes as $class)
+                        <option value="{{ $class->id }}" {{ $selectedClass == $class->id ? 'selected' : '' }}>
+                            {{ $class->name }}
+                        </option>
+                    @endforeach
+                </select>
+
+                <input type="date" id="filterDate" class="filter-select" value="{{ $date }}" onchange="applyFilters()"
+                    style="min-width: 160px;">
+
+                <button onclick="applyFilters()" class="btn btn-primary">
+                    <i class="fas fa-filter"></i>Filter
                 </button>
-                <button onclick="debugRoutes()" class="debug-btn">
-                    <i class="fas fa-list"></i> Routes
-                </button>
-                <button onclick="removeBlurEffects()" class="debug-btn">
-                    <i class="fas fa-eye"></i> Fix Blur
-                </button>
-                <button onclick="refreshSubmissions()" class="debug-btn">
-                    <i class="fas fa-sync-alt"></i> Refresh
+
+                <button onclick="exportData()" class="btn btn-success">
+                    <i class="fas fa-file-excel"></i>Export
                 </button>
             </div>
         </div>
-    </div>
 
-    <!-- Filter Section -->
-    <div class="card filter-section">
-        <div class="filter-buttons">
-            <button onclick="filterSubmissions('all')" class="filter-btn active" data-filter="all">
-                <i class="fas fa-list"></i>Semua
+        <!-- Bulk Actions Bar -->
+        <div id="bulkActionsBar" class="bulk-actions">
+            <span style="font-weight: 600; color: var(--primary);">
+                <span id="selectedCount">0</span> siswa dipilih
+            </span>
+            <select id="bulkStatus" class="filter-select" style="min-width: 150px;">
+                <option value="">Pilih Status</option>
+                <option value="hadir">Hadir</option>
+                <option value="terlambat">Terlambat</option>
+                <option value="izin">Izin</option>
+                <option value="sakit">Sakit</option>
+                <option value="alpha">Alpha</option>
+            </select>
+            <button onclick="bulkUpdateAttendance()" class="btn btn-primary">
+                <i class="fas fa-check"></i>Update
             </button>
-            <button onclick="filterSubmissions('pending')" class="filter-btn" data-filter="pending">
-                <i class="fas fa-clock"></i>Menunggu
-            </button>
-            <button onclick="filterSubmissions('confirmed')" class="filter-btn" data-filter="confirmed">
-                <i class="fas fa-check-circle"></i>Dikonfirmasi
-            </button>
-            <button onclick="filterSubmissions('rejected')" class="filter-btn" data-filter="rejected">
-                <i class="fas fa-times-circle"></i>Ditolak
-            </button>
-        </div>
-        
-        <div class="filter-controls">
-            <input type="date" id="filterDate" 
-                   style="padding: 0.5rem; border: 1px solid var(--gray-300); border-radius: var(--radius); font-size: 0.875rem;" 
-                   value="{{ date('Y-m-d') }}">
-            <button onclick="applyDateFilter()" class="btn btn-primary">
-                <i class="fas fa-filter"></i>Filter
+            <button onclick="clearSelection()" class="btn btn-secondary">
+                <i class="fas fa-times"></i>Batal
             </button>
         </div>
-    </div>
 
-    <!-- Submissions List -->
-    <div class="card">
-        <div style="padding: 1.5rem; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center;">
-            <h2 style="font-size: 1.125rem; font-weight: 600; color: var(--gray-900); margin: 0;">
-                Daftar Submission
-            </h2>
-            <div style="font-size: 0.875rem; color: var(--gray-600);">
-                <span id="submission-count">{{ isset($submissions) ? $submissions->count() : 0 }}</span> submission ditemukan
-            </div>
-        </div>
-        
-        <div class="submissions-container">
-            <div id="submissionsList">
-                @if(isset($submissions) && $submissions->count() > 0)
-                    @foreach($submissions as $submission)
-                    <div class="submission-item {{ strtolower($submission->status) }} fade-in" 
-                         onclick="viewSubmissionDetail({{ $submission->id }})"
-                         style="animation-delay: {{ $loop->index * 50 }}ms;">
-                        <div class="submission-content">
-                            <div class="teacher-avatar">
-                                {{ substr($submission->teacher->name ?? 'G', 0, 1) }}
-                            </div>
-                            
-                            <div class="submission-info">
-                                <h3>{{ $submission->teacher->name ?? 'Guru' }}</h3>
-                                <div class="submission-details">
-                                    {{ $submission->class->name ?? 'Kelas' }} • {{ $submission->subject }}
-                                </div>
-                                <div class="submission-meta-items">
-                                    <span>
-                                        <i class="fas fa-clock"></i>
-                                        {{ $submission->session_time }}
-                                    </span>
-                                    <span>
-                                        <i class="fas fa-calendar"></i>
-                                        {{ \Carbon\Carbon::parse($submission->submission_date)->format('d M Y') }}
-                                    </span>
-                                    <span>
-                                        <i class="fas fa-users"></i>
-                                        {{ $submission->present_count }}/{{ $submission->total_students }} hadir
-                                    </span>
-                                </div>
-                            </div>
-                            
-                            <div class="submission-stats">
-                                <span class="status-badge status-{{ strtolower($submission->status) }}">
-                                    {{ $submission->status_text }}
-                                </span>
-                                <div style="margin-top: 0.5rem; font-size: 0.75rem; color: var(--gray-500);">
-                                    {{ $submission->submitted_at->diffForHumans() }}
-                                </div>
-                                <div style="margin-top: 0.5rem;">
-                                    <div class="attendance-percentage">
-                                        {{ $submission->attendance_percentage }}%
-                                    </div>
-                                    <div class="attendance-label">Kehadiran</div>
-                                </div>
-                            </div>
+        <!-- Students by Class -->
+        @if(isset($studentsByClass) && $studentsByClass->count() > 0)
+            @foreach($studentsByClass as $className => $students)
+                <div class="card class-section fade-in">
+                    <div class="class-header" onclick="toggleClass('{{ Str::slug($className) }}')">
+                        <div class="class-title">
+                            <i class="fas fa-users"></i>
+                            {{ $className }}
+                            <span style="font-weight: 400; color: var(--gray-600);">({{ $students->count() }} siswa)</span>
+                        </div>
+                        <div class="class-stats">
+                            <span class="class-stat stat-present">
+                                <i class="fas fa-check"></i>
+                                {{ $students->filter(fn($s) => $s->attendanceLogs->first()?->status === 'hadir')->count() }}
+                            </span>
+                            <span class="class-stat stat-late">
+                                <i class="fas fa-clock"></i>
+                                {{ $students->filter(fn($s) => $s->attendanceLogs->first()?->status === 'terlambat')->count() }}
+                            </span>
+                            <span class="class-stat stat-absent">
+                                <i class="fas fa-times"></i>
+                                {{ $students->filter(fn($s) => !$s->attendanceLogs->first() || in_array($s->attendanceLogs->first()?->status, ['alpha', 'sakit']))->count() }}
+                            </span>
+                            <i class="fas fa-chevron-down" id="icon-{{ Str::slug($className) }}"
+                                style="transition: transform 0.3s;"></i>
                         </div>
                     </div>
-                    @endforeach
-                @else
+
+                    <div id="class-{{ Str::slug($className) }}" class="class-content">
+                        <div style="overflow-x: auto;">
+                            <table class="students-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50px;">
+                                            <input type="checkbox" class="student-checkbox class-checkbox"
+                                                onchange="toggleClassSelection('{{ Str::slug($className) }}', this.checked)">
+                                        </th>
+                                        <th style="width: 60px;">No</th>
+                                        <th style="width: 80px;">Avatar</th>
+                                        <th>Nama Siswa</th>
+                                        <th style="width: 120px;">Status</th>
+                                        <th style="width: 100px;">Waktu</th>
+                                        <th style="width: 120px;">Catatan</th>
+                                        <th style="width: 120px;">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($students as $index => $student)
+                                        @php
+                                            $attendance = $student->attendanceLogs->first();
+                                            $status = $attendance ? $attendance->status : 'none';
+                                            $scanTime = $attendance && $attendance->scan_time ? $attendance->scan_time->format('H:i') : '-';
+                                        @endphp
+                                        <tr id="student-row-{{ $student->id }}">
+                                            <td style="text-align: center;">
+                                                <input type="checkbox" class="student-checkbox student-select"
+                                                    value="{{ $student->id }}" onchange="updateSelectedCount()">
+                                            </td>
+                                            <td style="text-align: center; font-weight: 600;">{{ $index + 1 }}</td>
+                                            <td>
+                                                <div class="student-avatar">
+                                                    {{ substr($student->name, 0, 1) }}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="student-name">{{ $student->name }}</div>
+                                                <div class="student-nis">NIS: {{ $student->nis }}</div>
+                                                @if($attendance && $attendance->notes)
+                                                    <div
+                                                        style="font-size: 0.75rem; color: var(--gray-600); font-style: italic; margin-top: 0.25rem;">
+                                                        {{ $attendance->notes }}
+                                                    </div>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <span class="status-badge status-{{ $status }}">
+                                                    {{ $status === 'none' ? 'Belum Absen' : ucfirst($status) }}
+                                                </span>
+                                            </td>
+                                            <td>{{ $scanTime }}</td>
+                                            <td>
+                                                @if($attendance && $attendance->notes)
+                                                    <div style="font-size: 0.875rem; color: var(--gray-700); max-width: 120px; overflow: hidden; text-overflow: ellipsis;"
+                                                        title="{{ $attendance->notes }}">
+                                                        {{ Str::limit($attendance->notes, 20) }}
+                                                    </div>
+                                                @else
+                                                    <span style="color: var(--gray-400); font-size: 0.875rem;">-</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <button onclick="toggleEditStudent({{ $student->id }})" class="btn btn-primary btn-sm">
+                                                    <i class="fas fa-edit"></i>Edit
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr id="edit-form-{{ $student->id }}" class="edit-form" style="display: none;">
+                                            <td colspan="8">
+                                                <form onsubmit="saveStudentAttendance(event, {{ $student->id }})">
+                                                    <div class="form-grid">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Status Kehadiran</label>
+                                                            <select id="status-{{ $student->id }}" class="form-input" required>
+                                                                <option value="hadir" {{ $status === 'hadir' ? 'selected' : '' }}>Hadir
+                                                                </option>
+                                                                <option value="terlambat" {{ $status === 'terlambat' ? 'selected' : '' }}>
+                                                                    Terlambat</option>
+                                                                <option value="sakit" {{ $status === 'sakit' ? 'selected' : '' }}>Sakit
+                                                                </option>
+                                                                <option value="izin" {{ $status === 'izin' ? 'selected' : '' }}>Izin
+                                                                </option>
+                                                                <option value="alpha" {{ $status === 'alpha' ? 'selected' : '' }}>Alpha
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="form-label">Waktu</label>
+                                                            <input type="time" id="time-{{ $student->id }}"
+                                                                value="{{ $attendance && $attendance->scan_time ? $attendance->scan_time->format('H:i') : '' }}"
+                                                                class="form-input">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group" style="margin-bottom: 1rem;">
+                                                        <label class="form-label">Catatan</label>
+                                                        <textarea id="notes-{{ $student->id }}" placeholder="Tambahkan catatan..."
+                                                            class="form-input"
+                                                            style="resize: vertical; min-height: 60px;">{{ $attendance?->notes ?? '' }}</textarea>
+                                                    </div>
+
+                                                    <div class="form-group document-upload" id="document-upload-{{ $student->id }}"
+                                                        style="margin-bottom: 1rem; display: none;">
+                                                        <label class="form-label">Upload Surat <span
+                                                                style="color: var(--danger);">*</span></label>
+                                                        <input type="file" id="document-{{ $student->id }}" class="form-input"
+                                                            accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" onchange="validateFile(this)">
+                                                        <small style="color: var(--gray-600); font-size: 0.75rem;">
+                                                            Format: PDF, JPG, PNG, DOC, DOCX. Maksimal 5MB.
+                                                        </small>
+                                                        @if($attendance && $attendance->document_path)
+                                                            <div style="margin-top: 0.5rem;">
+                                                                <small style="color: var(--gray-600);">
+                                                                    File saat ini:
+                                                                    <a href="{{ route('guru-piket.attendance.document.view', $attendance->id) }}"
+                                                                        target="_blank" style="color: var(--primary); margin-left: 0.5rem;">
+                                                                        <i class="fas fa-eye"></i> Lihat
+                                                                    </a>
+                                                                    |
+                                                                    <a href="{{ route('guru-piket.attendance.document.download', $attendance->id) }}"
+                                                                        style="color: var(--success); margin-left: 0.5rem;">
+                                                                        <i class="fas fa-download"></i> Download
+                                                                    </a>
+                                                                </small>
+                                                            </div>
+                                                        @endif
+                                                    </div>
+
+                                                    <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                                                        <button type="button" onclick="cancelEditStudent({{ $student->id }})"
+                                                            class="btn btn-secondary btn-sm">
+                                                            <i class="fas fa-times"></i>Batal
+                                                        </button>
+                                                        <button type="submit" class="btn btn-success btn-sm">
+                                                            <i class="fas fa-save"></i>Simpan
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        @else
+            <div class="card">
                 <div class="empty-state">
                     <div class="empty-icon">
-                        <i class="fas fa-inbox"></i>
+                        <i class="fas fa-users"></i>
                     </div>
-                    <h3 class="empty-title">Belum Ada Submission</h3>
-                    <p class="empty-description">Submission absensi dari guru akan muncul di sini</p>
-                    <button onclick="refreshSubmissions(this)" class="btn btn-primary">
-                        <i class="fas fa-sync-alt"></i>Refresh
-                    </button>
+                    <h3 style="font-weight: 600; margin-bottom: 0.5rem;">Tidak Ada Data Siswa</h3>
+                    <p style="color: var(--gray-600);">Pilih kelas atau tanggal lain untuk melihat data siswa</p>
                 </div>
-                @endif
             </div>
-        </div>
+        @endif
     </div>
-</div>
 
-<!-- Submission Detail Modal -->
-<div id="submissionModal" class="fixed inset-0 z-50 hidden" style="backdrop-filter: none; filter: none;">
-    <div class="modal-overlay fixed inset-0" onclick="closeSubmissionModal()" style="backdrop-filter: none;"></div>
-    <div class="modal-container" style="backdrop-filter: none; filter: none;">
-        <div class="modal-content" style="backdrop-filter: none; filter: none;">
-            <div style="padding: 1.5rem; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center;">
-                <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--gray-900); margin: 0;">
-                    <i class="fas fa-clipboard-check" style="color: var(--primary); margin-right: 0.5rem;"></i>
-                    Detail Submission Absensi
-                </h2>
-                <button onclick="closeSubmissionModal()" 
-                        style="padding: 0.5rem; color: var(--gray-400); background: none; border: none; border-radius: var(--radius); cursor: pointer; transition: all 0.15s ease;"
-                        onmouseover="this.style.background='var(--gray-100)'"
-                        onmouseout="this.style.background='none'">
-                    <i class="fas fa-times" style="font-size: 1.125rem;"></i>
+    <!-- Notification Modal -->
+    <div id="notificationModal" class="notification-modal">
+        <div class="notification-content">
+            <button class="notification-close" onclick="closeNotification()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div id="notificationIcon" class="notification-icon success">
+                <i class="fas fa-check"></i>
+            </div>
+            <h3 id="notificationTitle" class="notification-title">Berhasil!</h3>
+            <p id="notificationMessage" class="notification-message">Data telah berhasil diperbarui</p>
+            <div class="notification-actions">
+                <button id="notificationBtn" class="notification-btn notification-btn-primary"
+                    onclick="closeNotification()">
+                    OK
                 </button>
             </div>
-            
-            <div id="submissionDetailContent" style="padding: 1.5rem; backdrop-filter: none; filter: none;">
-                <!-- Content will be loaded here -->
-            </div>
         </div>
     </div>
-</div>
 @endsection
 
 @push('scripts')
-<script>
-let currentFilter = 'all';
-let currentSubmissionData = null;
+    <script>
+        // Notification functions
+        function showNotification(type, title, message, onConfirm = null) {
+            const modal = document.getElementById('notificationModal');
+            const icon = document.getElementById('notificationIcon');
+            const titleEl = document.getElementById('notificationTitle');
+            const messageEl = document.getElementById('notificationMessage');
+            const btn = document.getElementById('notificationBtn');
 
-// Test route function
-function testRoute() {
-    const testUrl = '/guru-piket/attendance/submissions/test-route';
-    console.log('🧪 Testing route accessibility:', testUrl);
-    
-    return fetch(testUrl, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            // Set icon based on type
+            const icons = {
+                success: 'fa-check',
+                error: 'fa-times',
+                warning: 'fa-exclamation-triangle',
+                info: 'fa-info'
+            };
+
+            // Clear previous classes
+            icon.className = 'notification-icon';
+            icon.classList.add(type);
+
+            // Update icon
+            const iconElement = icon.querySelector('i');
+            iconElement.className = `fas ${icons[type] || 'fa-info'}`;
+
+            // Update content
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+
+            // Set button action
+            if (onConfirm) {
+                btn.onclick = function () {
+                    closeNotification();
+                    onConfirm();
+                };
+            } else {
+                btn.onclick = closeNotification;
+            }
+
+            // Show modal
+            modal.classList.add('show');
         }
-    })
-    .then(response => {
-        console.log('🧪 Test route response status:', response.status);
-        if (response.ok) {
-            return response.json();
+
+        function closeNotification() {
+            const modal = document.getElementById('notificationModal');
+            modal.classList.remove('show');
         }
-        throw new Error(`Test route failed: ${response.status}`);
-    })
-    .then(data => {
-        console.log('✅ Test route success:', data);
-        return data;
-    })
-    .catch(error => {
-        console.error('💥 Test route error:', error);
-        throw error;
-    });
-}
 
-// Debug route information
-function debugRouteInfo() {
-    console.log('🔍 Route Debug Info:');
-    console.log('- Current URL:', window.location.href);
-    console.log('- Base URL:', window.location.origin);
-    console.log('- Path:', window.location.pathname);
-    console.log('- CSRF Token:', document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 'NOT FOUND');
-    
-    try {
-        const routeBase = '{{ url("/guru-piket/attendance/submissions") }}';
-        console.log('- Laravel URL helper:', routeBase);
-    } catch (error) {
-        console.warn('- Laravel URL helper failed:', error);
-    }
-    
-    debugRoutes();
-}
+        function showConfirmDialog(title, message, onConfirm, onCancel = null) {
+            const modal = document.getElementById('notificationModal');
+            const icon = document.getElementById('notificationIcon');
+            const titleEl = document.getElementById('notificationTitle');
+            const messageEl = document.getElementById('notificationMessage');
+            const actionsDiv = document.querySelector('.notification-actions');
 
-// Debug all routes
-function debugRoutes() {
-    const debugUrl = '/guru-piket/attendance/submissions/debug-routes';
-    console.log('🔍 Fetching route list from:', debugUrl);
-    
-    fetch(debugUrl, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            // Set icon as warning
+            icon.className = 'notification-icon warning';
+            icon.querySelector('i').className = 'fas fa-question-circle';
+
+            // Update content
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+
+            // Update buttons for confirmation
+            actionsDiv.innerHTML = `
+                                                    <button class="notification-btn notification-btn-secondary" onclick="closeConfirmDialog(false)">
+                                                        Batal
+                                                    </button>
+                                                    <button class="notification-btn notification-btn-primary" onclick="closeConfirmDialog(true)">
+                                                        Ya, Lanjutkan
+                                                    </button>
+                                                `;
+
+            // Store callbacks
+            window._confirmCallback = onConfirm;
+            window._cancelCallback = onCancel;
+
+            modal.classList.add('show');
         }
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('📋 Registered Routes:', data);
-        if (data.success && data.routes) {
-            console.table(data.routes);
+
+        function closeConfirmDialog(confirmed) {
+            closeNotification();
+
+            // Reset to single button
+            const actionsDiv = document.querySelector('.notification-actions');
+            actionsDiv.innerHTML = `
+                                                    <button id="notificationBtn" class="notification-btn notification-btn-primary" onclick="closeNotification()">
+                                                        OK
+                                                    </button>
+                                                `;
+
+            if (confirmed && window._confirmCallback) {
+                window._confirmCallback();
+            } else if (!confirmed && window._cancelCallback) {
+                window._cancelCallback();
+            }
+
+            // Clear callbacks
+            delete window._confirmCallback;
+            delete window._cancelCallback;
         }
-    })
-    .catch(error => {
-        console.error('💥 Error fetching routes:', error);
-    });
-}
 
-// Filter submissions
-function filterSubmissions(status) {
-    currentFilter = status;
-    
-    // Update filter buttons
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    document.querySelector(`[data-filter="${status}"]`).classList.add('active');
-    
-    // Filter submission items
-    const items = document.querySelectorAll('.submission-item');
-    let visibleCount = 0;
-    
-    items.forEach(item => {
-        if (status === 'all' || item.classList.contains(status)) {
-            item.style.display = 'block';
-            visibleCount++;
-        } else {
-            item.style.display = 'none';
-        }
-    });
-    
-    // Update count
-    document.getElementById('submission-count').textContent = visibleCount;
-}
-
-// Apply date filter
-function applyDateFilter() {
-    const date = document.getElementById('filterDate').value;
-    if (!date) return;
-    
-    window.location.href = `{{ route('guru-piket.attendance.submissions') }}?date=${date}&status=${currentFilter}`;
-}
-
-// Refresh submissions
-function refreshSubmissions(triggerEl) {
-    const refreshBtn = triggerEl || (typeof event !== 'undefined' && event.target ? event.target.closest('button') : null);
-    const originalContent = refreshBtn ? refreshBtn.innerHTML : null;
-    if (refreshBtn) {
-        refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat...';
-        refreshBtn.disabled = true;
-    }
-    setTimeout(() => {
-        location.reload();
-    }, 300);
-}
-
-// View submission detail
-function viewSubmissionDetail(submissionId) {
-    console.log('🔍 Loading submission detail for ID:', submissionId);
-    
-    showSubmissionModal({
-        id: submissionId,
-        loading: true
-    });
-    
-    fetchSubmissionDetail(submissionId);
-}
-
-// Fetch submission detail function
-function fetchSubmissionDetail(submissionId) {
-    const baseUrl = '{{ url("/guru-piket/attendance/submissions") }}';
-    const url = `${baseUrl}/${submissionId}/detail`;
-    
-    console.log('📡 Final URL:', url);
-    
-    fetch(url, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            showSubmissionModal(data.submission);
-        } else {
-            alert('❌ Gagal memuat detail submission: ' + (data.message || 'Unknown error'));
-            closeSubmissionModal();
-        }
-    })
-    .catch(error => {
-        console.error('💥 Error loading submission detail:', error);
-        alert('⚠️ Terjadi kesalahan saat memuat detail: ' + error.message);
-        closeSubmissionModal();
-    });
-}
-
-// Show submission modal
-function showSubmissionModal(submission) {
-    const modal = document.getElementById('submissionModal');
-    const content = document.getElementById('submissionDetailContent');
-    
-    // Remove any blur effects that might be applied
-    modal.style.backdropFilter = 'none';
-    modal.style.filter = 'none';
-    modal.style.webkitBackdropFilter = 'none';
-    modal.style.webkitFilter = 'none';
-    
-    if (submission.loading) {
-        content.innerHTML = `
-            <div style="text-align: center; padding: 3rem; backdrop-filter: none; filter: none;">
-                <div style="width: 3rem; height: 3rem; border: 3px solid var(--gray-200); border-top: 3px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem;"></div>
-                <p style="color: var(--gray-600);">Memuat detail submission...</p>
-            </div>
-        `;
-    } else {
-        currentSubmissionData = JSON.parse(JSON.stringify(submission));
-        content.innerHTML = createSubmissionDetailHtml(submission);
-    }
-    
-    modal.classList.remove('hidden');
-    
-    // Ensure modal content is crisp after showing
-    setTimeout(() => {
-        removeBlurEffects();
-    }, 10);
-    
-    // Also remove blur effects immediately
-    removeBlurEffects();
-}
-
-// Close submission modal
-function closeSubmissionModal() {
-    document.getElementById('submissionModal').classList.add('hidden');
-    currentSubmissionData = null;
-}
-
-// Remove blur effects from all elements
-function removeBlurEffects() {
-    const modal = document.getElementById('submissionModal');
-    if (!modal) return;
-    
-    // Get all elements in modal
-    const allElements = modal.querySelectorAll('*');
-    
-    // Remove blur from modal itself
-    modal.style.backdropFilter = 'none';
-    modal.style.filter = 'none';
-    modal.style.webkitBackdropFilter = 'none';
-    modal.style.webkitFilter = 'none';
-    
-    // Remove blur from all child elements
-    allElements.forEach(element => {
-        element.style.backdropFilter = 'none';
-        element.style.filter = 'none';
-        element.style.webkitBackdropFilter = 'none';
-        element.style.webkitFilter = 'none';
-    });
-    
-    console.log('✅ Removed blur effects from', allElements.length + 1, 'elements');
-}
-
-// Get status badge for student
-function getStatusBadge(status) {
-    const badges = {
-        'hadir': { class: 'status-confirmed', text: 'Hadir' },
-        'terlambat': { class: 'status-pending', text: 'Terlambat' },
-        'izin': { class: 'bg-blue-100', text: 'Izin' },
-        'sakit': { class: 'bg-purple-100', text: 'Sakit' },
-        'alpha': { class: 'status-rejected', text: 'Alpha' }
-    };
-    
-    return badges[status] || { class: 'bg-gray-100', text: status };
-}
-
-// Student edit functions
-function toggleEditStudent(studentId) {
-    const editForm = document.getElementById(`edit-form-${studentId}`);
-    if (editForm.style.display === 'none' || editForm.style.display === '') {
-        editForm.style.display = 'block';
-    } else {
-        editForm.style.display = 'none';
-    }
-}
-
-function cancelEditStudent(studentId) {
-    const editForm = document.getElementById(`edit-form-${studentId}`);
-    editForm.style.display = 'none';
-}
-
-function handleStatusChange(studentId) {
-    const statusSelect = document.getElementById(`status-${studentId}`);
-    const fileUpload = document.getElementById(`file-upload-${studentId}`);
-    const status = statusSelect.value;
-    
-    if (status === 'sakit' || status === 'izin') {
-        fileUpload.style.display = 'block';
-        const label = fileUpload.querySelector('label');
-        label.innerHTML = `<i class="fas fa-paperclip"></i> Lampiran Surat ${status === 'sakit' ? 'Sakit' : 'Izin'}`;
-    } else {
-        fileUpload.style.display = 'none';
-    }
-}
-
-function handleFileUpload(studentId) {
-    const fileInput = document.getElementById(`file-${studentId}`);
-    const preview = document.getElementById(`file-preview-${studentId}`);
-    const file = fileInput.files[0];
-    
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            preview.innerHTML = `
-                <img src="${e.target.result}" alt="Preview" style="max-width: 200px; max-height: 150px; border-radius: var(--radius); margin-bottom: 0.5rem;">
-                <div style="font-size: 0.75rem; color: var(--gray-600);">${file.name}</div>
-            `;
-        };
-        reader.readAsDataURL(file);
-    }
-}
-
-function saveStudentEdit(studentId, btnEl) {
-    const status = document.getElementById(`status-${studentId}`).value;
-    const time = document.getElementById(`time-${studentId}`).value;
-    const notes = document.getElementById(`notes-${studentId}`).value;
-    const fileInput = document.getElementById(`file-${studentId}`);
-    
-    // Prepare form data
-    const formData = new FormData();
-    formData.append('student_id', studentId);
-    formData.append('status', status);
-    formData.append('time', time);
-    formData.append('notes', notes);
-    
-    if (fileInput.files[0]) {
-        formData.append('attachment', fileInput.files[0]);
-    }
-    
-    // Show loading
-    const saveBtn = btnEl || (typeof event !== 'undefined' ? event.target : null);
-    const originalContent = saveBtn ? saveBtn.innerHTML : null;
-    if (saveBtn) {
-        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
-        saveBtn.disabled = true;
-    }
-    
-    // Send update request
-    const baseUrl = '{{ url("/guru-piket/attendance/submissions") }}';
-    const updateUrl = `${baseUrl}/${currentSubmissionData.id}/update-student`;
-    
-    fetch(updateUrl, {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: formData
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            alert('✅ Data siswa berhasil diperbarui!');
-            // Refresh the modal content
-            fetchSubmissionDetail(currentSubmissionData.id);
-        } else {
-            alert('❌ Gagal memperbarui data: ' + (data.message || 'Unknown error'));
-        }
-    })
-    .catch(error => {
-        console.error('💥 Error updating student:', error);
-        alert('⚠️ Terjadi kesalahan saat memperbarui data: ' + error.message);
-    })
-    .finally(() => {
-        if (saveBtn) {
-            saveBtn.innerHTML = originalContent;
-            saveBtn.disabled = false;
-        }
-    });
-}
-
-// Create submission detail HTML with student list and edit functionality
-function createSubmissionDetailHtml(submission) {
-    const attendanceData = submission.attendance_data || [];
-    const statusClass = submission.status.toLowerCase();
-    const canEdit = submission.status === 'pending';
-    
-    // Generate student list HTML with edit functionality
-    let studentsHtml = '';
-    if (attendanceData.length > 0) {
-        attendanceData.forEach((student, index) => {
-            const statusBadge = getStatusBadge(student.status);
-            const studentId = student.student_id || student.id || index;
-            
-            studentsHtml += `
-                <div id="student-${studentId}" style="background: white; border: 1px solid var(--gray-200); border-radius: var(--radius); margin-bottom: 0.75rem; overflow: hidden;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem;">
-                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <div style="width: 2.5rem; height: 2.5rem; background: linear-gradient(135deg, var(--primary) 0%, #6366f1 100%); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.875rem;">
-                                ${student.student_name ? student.student_name.charAt(0).toUpperCase() : 'S'}
-                            </div>
-                            <div>
-                                <div style="font-weight: 600; color: var(--gray-900); font-size: 0.875rem;">${student.student_name || 'Nama tidak tersedia'}</div>
-                                <div style="font-size: 0.75rem; color: var(--gray-600);">NIS: ${student.nis || student.student_id || '-'}</div>
-                            </div>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <span class="status-badge ${statusBadge.class}" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">${statusBadge.text}</span>
-                            ${student.scan_time ? `<span style="font-size: 0.75rem; color: var(--gray-500);">${student.scan_time}</span>` : ''}
-                            ${canEdit ? `
-                                <button onclick="toggleEditStudent('${studentId}')" style="padding: 0.25rem 0.5rem; background: var(--primary); color: white; border: none; border-radius: var(--radius); font-size: 0.75rem; cursor: pointer; transition: all 0.15s ease;" onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='var(--primary)'">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                            ` : ''}
-                        </div>
-                    </div>
-                    
-                    ${canEdit ? `
-                        <div id="edit-form-${studentId}" class="edit-form" style="display: none;">
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label class="form-label">Status Kehadiran</label>
-                                    <select id="status-${studentId}" onchange="handleStatusChange('${studentId}')" class="form-input">
-                                        <option value="hadir" ${student.status === 'hadir' ? 'selected' : ''}>Hadir</option>
-                                        <option value="terlambat" ${student.status === 'terlambat' ? 'selected' : ''}>Terlambat</option>
-                                        <option value="sakit" ${student.status === 'sakit' ? 'selected' : ''}>Sakit</option>
-                                        <option value="izin" ${student.status === 'izin' ? 'selected' : ''}>Izin</option>
-                                        <option value="alpha" ${student.status === 'alpha' ? 'selected' : ''}>Alpha</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Waktu</label>
-                                    <input type="time" id="time-${studentId}" value="${student.scan_time || ''}" class="form-input">
-                                </div>
-                            </div>
-                            
-                            <div class="form-group" style="margin-bottom: 1rem;">
-                                <label class="form-label">Catatan</label>
-                                <textarea id="notes-${studentId}" placeholder="Tambahkan catatan..." class="form-input" style="resize: vertical; min-height: 60px;">${student.notes || ''}</textarea>
-                            </div>
-                            
-                            <div id="file-upload-${studentId}" style="display: ${student.status === 'sakit' || student.status === 'izin' ? 'block' : 'none'}; margin-bottom: 1rem;">
-                                <label class="form-label">
-                                    <i class="fas fa-paperclip"></i> Lampiran Surat ${student.status === 'sakit' ? 'Sakit' : 'Izin'}
-                                </label>
-                                <div class="file-upload-area">
-                                    <input type="file" id="file-${studentId}" accept="image/*" onchange="handleFileUpload('${studentId}')" style="display: none;">
-                                    <div id="file-preview-${studentId}" class="file-preview">
-                                        ${student.attachment ? `
-                                            <img src="${student.attachment}" alt="Surat">
-                                            <div style="font-size: 0.75rem; color: var(--gray-600);">File sudah dilampirkan</div>
-                                        ` : `
-                                            <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: var(--gray-400); margin-bottom: 0.5rem;"></i>
-                                            <div style="font-size: 0.875rem; color: var(--gray-600);">Klik untuk upload foto surat</div>
-                                        `}
-                                    </div>
-                                    <button type="button" onclick="document.getElementById('file-${studentId}').click()" class="btn btn-primary" style="font-size: 0.875rem;">
-                                        <i class="fas fa-upload"></i> Pilih File
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
-                                <button onclick="cancelEditStudent('${studentId}')" class="btn btn-secondary" style="font-size: 0.875rem;">
-                                    <i class="fas fa-times"></i> Batal
-                                </button>
-                                <button onclick="saveStudentEdit('${studentId}', this)" class="btn btn-success" style="font-size: 0.875rem;">
-                                    <i class="fas fa-save"></i> Simpan
-                                </button>
-                            </div>
-                        </div>
-                    ` : ''}
-                    
-                    ${student.notes ? `<div style="padding: 0.75rem; padding-top: 0; font-size: 0.75rem; color: var(--gray-600); font-style: italic;">${student.notes}</div>` : ''}
-                </div>
-            `;
+        // Close on overlay click
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById('notificationModal');
+            modal.addEventListener('click', function (e) {
+                if (e.target === modal) {
+                    closeNotification();
+                }
+            });
         });
-    } else {
-        studentsHtml = `
-            <div style="text-align: center; padding: 2rem; color: var(--gray-500);">
-                <i class="fas fa-users" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
-                <p>Tidak ada data siswa</p>
-            </div>
-        `;
-    }
-    
-    return `
-        <div style="space-y: 1.5rem;">
-            <!-- Submission Info -->
-            <div style="background: var(--gray-50); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem;">
-                <h3 style="font-weight: 600; margin-bottom: 1rem; color: var(--gray-900);">Informasi Submission</h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-                    <div>
-                        <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.25rem;">Guru</div>
-                        <div style="font-weight: 600; color: var(--gray-900);">${submission.teacher.name}</div>
-                    </div>
-                    <div>
-                        <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.25rem;">Kelas</div>
-                        <div style="font-weight: 600; color: var(--gray-900);">${submission.class ? submission.class.name : 'Kelas tidak ditemukan'}</div>
-                    </div>
-                    <div>
-                        <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.25rem;">Mata Pelajaran</div>
-                        <div style="font-weight: 600; color: var(--gray-900);">${submission.subject}</div>
-                    </div>
-                    <div>
-                        <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.25rem;">Waktu</div>
-                        <div style="font-weight: 600; color: var(--gray-900);">${submission.session_time}</div>
-                    </div>
-                    <div>
-                        <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.25rem;">Tanggal</div>
-                        <div style="font-weight: 600; color: var(--gray-900);">${new Date(submission.submission_date).toLocaleDateString('id-ID')}</div>
-                    </div>
-                    <div>
-                        <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.25rem;">Status</div>
-                        <span class="status-badge status-${statusClass}">${submission.status_text}</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Statistics -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
-                <div style="text-align: center; padding: 1rem; background: white; border-radius: var(--radius); border: 1px solid var(--gray-200);">
-                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--gray-900);">${submission.total_students}</div>
-                    <div style="font-size: 0.875rem; color: var(--gray-600);">Total Siswa</div>
-                </div>
-                <div style="text-align: center; padding: 1rem; background: white; border-radius: var(--radius); border: 1px solid var(--gray-200);">
-                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--success);">${submission.present_count}</div>
-                    <div style="font-size: 0.875rem; color: var(--gray-600);">Hadir</div>
-                </div>
-                <div style="text-align: center; padding: 1rem; background: white; border-radius: var(--radius); border: 1px solid var(--gray-200);">
-                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--warning);">${submission.late_count}</div>
-                    <div style="font-size: 0.875rem; color: var(--gray-600);">Terlambat</div>
-                </div>
-                <div style="text-align: center; padding: 1rem; background: white; border-radius: var(--radius); border: 1px solid var(--gray-200);">
-                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--danger);">${submission.absent_count}</div>
-                    <div style="font-size: 0.875rem; color: var(--gray-600);">Tidak Hadir</div>
-                </div>
-            </div>
-            
-            <!-- Student List -->
-            <div style="margin-bottom: 1.5rem;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <h3 style="font-weight: 600; color: var(--gray-900); margin: 0;">Daftar Kehadiran Siswa</h3>
-                    <div style="background: var(--gray-100); color: var(--gray-600); padding: 0.375rem 0.75rem; border-radius: var(--radius); font-size: 0.75rem; font-weight: 500;">
-                        <i class="fas fa-users" style="margin-right: 0.25rem;"></i>${attendanceData.length} Siswa
-                        ${canEdit ? ' • <i class="fas fa-edit" style="margin-left: 0.5rem; margin-right: 0.25rem;"></i>Dapat diedit' : ''}
-                    </div>
-                </div>
-                <div style="max-height: 400px; overflow-y: auto; border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 1rem; background: var(--gray-50);">
-                    ${studentsHtml}
-                </div>
-            </div>
-            
-            <!-- Notes -->
-            ${submission.notes ? `
-                <div style="background: #fef3c7; border: 1px solid #fbbf24; border-radius: var(--radius); padding: 1rem; margin-bottom: 1.5rem;">
-                    <h4 style="font-weight: 600; color: #92400e; margin-bottom: 0.5rem; font-size: 0.875rem;">
-                        <i class="fas fa-sticky-note" style="margin-right: 0.5rem;"></i>Catatan Guru
-                    </h4>
-                    <p style="color: #92400e; margin: 0; font-size: 0.875rem;">${submission.notes}</p>
-                </div>
-            ` : ''}
-            
-            <!-- Action Buttons -->
-            ${submission.status === 'pending' ? `
-                <div style="display: flex; gap: 0.75rem; justify-content: flex-end; padding-top: 1rem; border-top: 1px solid var(--gray-200);">
-                    <button onclick="confirmSubmission(${submission.id}, 'confirm')" class="btn btn-success">
-                        <i class="fas fa-check" style="margin-right: 0.5rem;"></i>Konfirmasi
-                    </button>
-                    <button onclick="confirmSubmission(${submission.id}, 'reject')" class="btn btn-danger">
-                        <i class="fas fa-times" style="margin-right: 0.5rem;"></i>Tolak
-                    </button>
-                </div>
-            ` : ''}
-        </div>
-    `;
-}
 
-// Confirm submission
-function confirmSubmission(submissionId, action) {
-    const isConfirm = action === 'confirm';
-    const title = isConfirm ? '✅ Konfirmasi Submission' : '❌ Tolak Submission';
-    const message = isConfirm ? 
-        'Dengan mengkonfirmasi, submission akan diselesaikan dan tidak dapat diedit lagi.' :
-        'Submission akan dikembalikan ke guru untuk diperbaiki.';
-    
-    if (!confirm(`${title}\n\n${message}\n\nLanjutkan?`)) {
-        return;
-    }
-    
-    const notes = prompt(isConfirm ? 
-        '📝 Catatan konfirmasi (opsional):' : 
-        '📝 Alasan penolakan (wajib):'
-    );
-    
-    if (!isConfirm && !notes) {
-        alert('❌ Alasan penolakan harus diisi');
-        return;
-    }
-    
-    const baseUrl = '{{ url("/guru-piket/attendance/submissions") }}';
-    const confirmUrl = `${baseUrl}/${submissionId}/confirm`;
-    
-    fetch(confirmUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify({
-            action: action,
-            notes: notes
-        })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        // Toggle class visibility
+        function toggleClass(classSlug) {
+            const content = document.getElementById(`class-${classSlug}`);
+            const icon = document.getElementById(`icon-${classSlug}`);
+
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                content.style.display = 'none';
+                icon.style.transform = 'rotate(-90deg)';
+            }
         }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            const actionText = isConfirm ? 'dikonfirmasi' : 'ditolak';
-            alert(`✅ Submission berhasil ${actionText}!`);
-            closeSubmissionModal();
-            // reload list safely without relying on event.target
-            refreshSubmissions(null);
-        } else {
-            alert('❌ Gagal memproses: ' + (data.message || 'Unknown error'));
+
+        // Apply filters
+        function applyFilters() {
+            const classId = document.getElementById('filterClass').value;
+            const date = document.getElementById('filterDate').value;
+
+            const baseUrl = '{{ url("/guru-piket/attendance/submissions") }}';
+            window.location.href = `${baseUrl}?class=${classId}&date=${date}`;
         }
-    })
-    .catch(error => {
-        console.error('💥 Error confirming submission:', error);
-        alert('⚠️ Terjadi kesalahan saat memproses: ' + error.message);
-    });
-}
 
-// Add spin animation for loading
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-`;
-document.head.appendChild(style);
+        // Export data
+        function exportData() {
+            const classId = document.getElementById('filterClass').value;
+            const date = document.getElementById('filterDate').value;
 
-// Initialize page
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Modern submissions page loaded with student edit functionality');
-});
-</script>
+            const baseUrl = '{{ url("/guru-piket/attendance") }}';
+            window.location.href = `${baseUrl}/export?class=${classId}&date=${date}`;
+        }
+
+        // Toggle edit student
+        function toggleEditStudent(studentId) {
+            const editForm = document.getElementById(`edit-form-${studentId}`);
+            const isVisible = editForm.style.display !== 'none';
+            editForm.style.display = isVisible ? 'none' : 'table-row';
+
+            // Show/hide document upload based on status
+            if (!isVisible) {
+                const statusSelect = document.getElementById(`status-${studentId}`);
+                toggleDocumentUpload(studentId, statusSelect.value);
+                statusSelect.addEventListener('change', function () {
+                    toggleDocumentUpload(studentId, this.value);
+                });
+            }
+        }
+
+        // Cancel edit student
+        function cancelEditStudent(studentId) {
+            document.getElementById(`edit-form-${studentId}`).style.display = 'none';
+            // Remove event listener
+            const statusSelect = document.getElementById(`status-${studentId}`);
+            if (statusSelect) {
+                statusSelect.removeEventListener('change', toggleDocumentUpload);
+            }
+        }
+
+        // Toggle document upload visibility
+        function toggleDocumentUpload(studentId, status) {
+            const documentUpload = document.getElementById(`document-upload-${studentId}`);
+            if (documentUpload) {
+                if (status === 'sakit' || status === 'izin') {
+                    documentUpload.style.display = 'block';
+                } else {
+                    documentUpload.style.display = 'none';
+                }
+            }
+        }
+
+        // Validate file upload
+        function validateFile(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            // Check file size (5MB max)
+            const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+            if (file.size > maxSize) {
+                alert('File terlalu besar! Maksimal 5MB.');
+                input.value = '';
+                return;
+            }
+
+            // Check file type
+            const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('Format file tidak didukung! Gunakan PDF, JPG, PNG, DOC, atau DOCX.');
+                input.value = '';
+                return;
+            }
+        }
+
+        // Save student attendance
+        function saveStudentAttendance(event, studentId) {
+            event.preventDefault();
+
+            const status = document.getElementById(`status-${studentId}`).value;
+            const time = document.getElementById(`time-${studentId}`).value;
+            const notes = document.getElementById(`notes-${studentId}`).value;
+            const date = document.getElementById('filterDate').value;
+            const documentInput = document.getElementById(`document-${studentId}`);
+            const documentFile = documentInput ? documentInput.files[0] : null;
+
+            // Validate inputs
+            if (!status || !date) {
+                showNotification('warning', 'Data Tidak Lengkap', 'Status dan tanggal harus diisi!');
+                return;
+            }
+
+            // Validate document for sakit/izin status
+            if ((status === 'sakit' || status === 'izin') && !documentFile) {
+                showNotification('warning', 'Dokumen Diperlukan', 'Untuk status sakit atau izin, upload surat wajib dilakukan!');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('student_id', studentId);
+            formData.append('status', status);
+            formData.append('time', time);
+            formData.append('date', date);
+            formData.append('notes', notes);
+            if (documentFile) {
+                formData.append('document', documentFile);
+            }
+
+            // Show loading indicator
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+            submitBtn.disabled = true;
+
+            // Use Laravel route helper for correct URL
+            const updateUrl = '{{ route("guru-piket.attendance.submissions.update-student") }}';
+
+            console.log('🔍 Sending POST request to:', updateUrl);
+
+            fetch(updateUrl, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            })
+                .then(async response => {
+                    console.log('📡 Response status:', response.status);
+
+                    const responseText = await response.text();
+
+                    if (response.status === 404) {
+                        throw new Error('Route tidak ditemukan!');
+                    }
+
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        console.error('Non-JSON response:', responseText);
+                        throw new Error('Server tidak mengembalikan JSON response');
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    return JSON.parse(responseText);
+                })
+                .then(data => {
+                    console.log('✅ Success:', data);
+
+                    if (data.success) {
+                        alert('✅ Data berhasil diperbarui!');
+                        location.reload();
+                    } else {
+                        alert('❌ Gagal: ' + (data.message || 'Unknown error'));
+                        submitBtn.innerHTML = originalBtnText;
+                        submitBtn.disabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('💥 Error:', error);
+                    alert('⚠️ Terjadi kesalahan: ' + error.message);
+                    submitBtn.innerHTML = originalBtnText;
+                    submitBtn.disabled = false;
+                });
+        }
+
+        // Toggle class selection
+        function toggleClassSelection(classSlug, checked) {
+            const classContent = document.getElementById(`class-${classSlug}`);
+            const checkboxes = classContent.querySelectorAll('.student-select');
+            checkboxes.forEach(cb => cb.checked = checked);
+            updateSelectedCount();
+        }
+
+        // Update selected count
+        function updateSelectedCount() {
+            const selected = document.querySelectorAll('.student-select:checked');
+            const count = selected.length;
+
+            document.getElementById('selectedCount').textContent = count;
+
+            if (count > 0) {
+                document.getElementById('bulkActionsBar').classList.add('show');
+            } else {
+                document.getElementById('bulkActionsBar').classList.remove('show');
+            }
+        }
+
+        // Clear selection
+        function clearSelection() {
+            document.querySelectorAll('.student-select').forEach(cb => cb.checked = false);
+            document.querySelectorAll('.class-checkbox').forEach(cb => cb.checked = false);
+            updateSelectedCount();
+        }
+
+        // Bulk update attendance
+        function bulkUpdateAttendance() {
+            const selectedStudents = Array.from(document.querySelectorAll('.student-select:checked'))
+                .map(cb => cb.value);
+
+            const status = document.getElementById('bulkStatus').value;
+            const date = document.getElementById('filterDate').value;
+
+            if (!status) {
+                alert('⚠️ Pilih status terlebih dahulu');
+                return;
+            }
+
+            if (!confirm(`Update status ${selectedStudents.length} siswa menjadi "${status}"?`)) {
+                return;
+            }
+
+            // Use Laravel route helper for correct URL
+            const bulkUrl = '{{ route("guru-piket.attendance.bulk-update") }}';
+
+            console.log('🔍 Bulk update URL:', bulkUrl);
+
+            fetch(bulkUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    student_ids: selectedStudents,
+                    status: status,
+                    date: date
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(`✅ Berhasil update ${data.updated_count} siswa!`);
+                        location.reload();
+                    } else {
+                        alert('❌ Gagal update: ' + (data.message || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('⚠️ Terjadi kesalahan: ' + error.message);
+                });
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('Attendance management page loaded');
+
+            // Update class checkboxes based on student selections
+            document.querySelectorAll('.student-select').forEach(checkbox => {
+                checkbox.addEventListener('change', function () {
+                    updateClassCheckbox(this);
+                });
+            });
+        });
+
+        // Update class checkbox state
+        function updateClassCheckbox(studentCheckbox) {
+            const row = studentCheckbox.closest('tr');
+            const tbody = row.closest('tbody');
+            const table = tbody.closest('table');
+            const classContent = table.closest('.class-content');
+            const classHeader = classContent.previousElementSibling;
+            const classCheckbox = classHeader.querySelector('.class-checkbox');
+
+            if (classCheckbox) {
+                const allCheckboxes = tbody.querySelectorAll('.student-select');
+                const checkedCheckboxes = tbody.querySelectorAll('.student-select:checked');
+
+                if (checkedCheckboxes.length === 0) {
+                    classCheckbox.checked = false;
+                    classCheckbox.indeterminate = false;
+                } else if (checkedCheckboxes.length === allCheckboxes.length) {
+                    classCheckbox.checked = true;
+                    classCheckbox.indeterminate = false;
+                } else {
+                    classCheckbox.checked = false;
+                    classCheckbox.indeterminate = true;
+                }
+            }
+
+            updateSelectedCount();
+        }
+    </script>
 @endpush

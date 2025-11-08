@@ -19,11 +19,15 @@ class AttendanceExport implements FromCollection, WithHeadings, WithMapping, Wit
 {
     protected $attendanceData;
     protected $filters;
+    protected $date;
+    protected $classId;
 
     public function __construct($attendanceData, $filters = [])
     {
         $this->attendanceData = $attendanceData;
         $this->filters = $filters;
+        $this->date = $filters['date'] ?? null;
+        $this->classId = $filters['class'] ?? null;
     }
 
     /**
@@ -70,7 +74,7 @@ class AttendanceExport implements FromCollection, WithHeadings, WithMapping, Wit
             $no,
             $attendance->student->name ?? 'N/A',
             $attendance->student->nis ?? 'N/A',
-            $attendance->student->class ?? 'N/A',
+            $attendance->student->class->name ?? 'N/A',
             $attendance->attendance_date->format('d/m/Y'),
             $this->getStatusLabel($attendance->status),
             $attendance->scan_time ? $attendance->scan_time->format('H:i:s') : '-',
@@ -89,7 +93,7 @@ class AttendanceExport implements FromCollection, WithHeadings, WithMapping, Wit
     public function styles(Worksheet $sheet)
     {
         $lastRow = $this->attendanceData->count() + 1;
-        
+
         return [
             // Header row styling
             1 => [
@@ -113,7 +117,7 @@ class AttendanceExport implements FromCollection, WithHeadings, WithMapping, Wit
                     ]
                 ]
             ],
-            
+
             // Data rows styling
             "A2:L{$lastRow}" => [
                 'borders' => [
@@ -126,7 +130,7 @@ class AttendanceExport implements FromCollection, WithHeadings, WithMapping, Wit
                     'vertical' => Alignment::VERTICAL_CENTER
                 ]
             ],
-            
+
             // Center align specific columns
             "A2:A{$lastRow}" => ['alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]], // No
             "C2:C{$lastRow}" => ['alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]], // NIS
@@ -166,15 +170,18 @@ class AttendanceExport implements FromCollection, WithHeadings, WithMapping, Wit
     public function title(): string
     {
         $title = 'Data Kehadiran';
-        
-        if (!empty($this->filters['date'])) {
-            $title .= ' - ' . date('d/m/Y', strtotime($this->filters['date']));
+
+        if ($this->date) {
+            $title .= ' - ' . date('d/m/Y', strtotime($this->date));
         }
-        
-        if (!empty($this->filters['class'])) {
-            $title .= ' - Kelas ' . $this->filters['class'];
+
+        if ($this->classId && $this->classId !== 'all') {
+            $class = \App\Models\Classes::find($this->classId);
+            if ($class) {
+                $title .= ' - Kelas ' . $class->name;
+            }
         }
-        
+
         return $title;
     }
 
@@ -199,8 +206,9 @@ class AttendanceExport implements FromCollection, WithHeadings, WithMapping, Wit
      */
     private function checkIfLate($scanTime)
     {
-        if (!$scanTime) return false;
-        
+        if (!$scanTime)
+            return false;
+
         $lateThreshold = '07:30:00'; // 7:30 AM
         return $scanTime->format('H:i:s') > $lateThreshold;
     }

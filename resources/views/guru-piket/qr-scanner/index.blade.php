@@ -306,6 +306,104 @@
                 justify-content: center;
             }
         }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 0;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #e9ecef;
+            border-radius: 0 0 8px 8px;
+            text-align: right;
+        }
+
+        .modal-title {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: #000;
+        }
+
+        .btn-modal {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+        .btn-primary-modal {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-primary-modal:hover {
+            background-color: #0056b3;
+        }
+
+        .modal-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .modal-success .modal-icon {
+            color: #28a745;
+        }
+
+        .modal-error .modal-icon {
+            color: #dc3545;
+        }
+
+        .modal-warning .modal-icon {
+            color: #ffc107;
+        }
+
+        .modal-info .modal-icon {
+            color: #17a2b8;
+        }
     </style>
 @endpush
 
@@ -322,11 +420,6 @@
                         <i class="fas fa-sign-in-alt"></i>
                         Absensi Masuk
                     </button>
-                    <a href="{{ route('guru-piket.qr-scanner.check-out') }}" class="mode-btn check-out"
-                        style="text-decoration: none; color: inherit; display: inline-block;">
-                        <i class="fas fa-sign-out-alt"></i>
-                        Absensi Pulang
-                    </a>
                 </div>
 
                 <div class="camera-container">
@@ -416,10 +509,37 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal for notifications -->
+    <div id="notification-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-title">Notifikasi</h5>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <div class="modal-icon" id="modal-icon">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <p id="modal-message">Pesan notifikasi</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-primary-modal" id="modal-ok-btn">OK</button>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+    // Fallback for older browsers
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        console.warn('Camera access not supported in this browser');
+    }
+</script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // DOM Elements
@@ -436,10 +556,13 @@
 
         // Mode toggle elements
         const modeCheckIn = document.getElementById('mode-check-in');
-        // const modeCheckOut = document.getElementById('mode-check-out'); // Removed since it's now a link
 
+        // Additional elements for mode switching
+        const instructionText = document.getElementById('instruction-text');
         const manualTitle = document.getElementById('manual-title');
         const manualSubmitText = document.getElementById('manual-submit-text');
+
+
 
         // State variables
         let html5QrCode = null;
@@ -450,9 +573,72 @@
         let lastText = '';
         let isScanning = false;
         let currentMode = 'check-in'; // 'check-in' or 'check-out'
-        function showToast(message, type = 'info') {
-            // Simple alert for now - can be enhanced later
-            alert(message);
+
+        // Modal notification system
+        function showModal(message, type = 'info', title = 'Notifikasi') {
+            const modal = document.getElementById('notification-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalIcon = document.getElementById('modal-icon');
+            const modalMessage = document.getElementById('modal-message');
+            const modalContent = modal.querySelector('.modal-content');
+
+            // Set title
+            modalTitle.textContent = title;
+
+            // Set message
+            modalMessage.textContent = message;
+
+            // Set icon and modal class based on type
+            modalContent.className = 'modal-content'; // Reset classes
+            modalContent.classList.add(`modal-${type}`);
+
+            let iconClass = 'fas fa-info-circle';
+            switch (type) {
+                case 'success':
+                    iconClass = 'fas fa-check-circle';
+                    break;
+                case 'error':
+                    iconClass = 'fas fa-exclamation-triangle';
+                    break;
+                case 'warning':
+                    iconClass = 'fas fa-exclamation-circle';
+                    break;
+            }
+
+            modalIcon.innerHTML = `<i class="${iconClass}"></i>`;
+
+            // Show modal
+            modal.style.display = 'block';
+        }
+
+        // Close modal functions
+        function closeModal() {
+            const modal = document.getElementById('notification-modal');
+            modal.style.display = 'none';
+        }
+
+        // Initialize modal event listeners
+        function initializeModal() {
+            const modalCloseBtn = document.querySelector('.modal-close');
+            const modalOkBtn = document.getElementById('modal-ok-btn');
+            const modal = document.getElementById('notification-modal');
+
+            if (modalCloseBtn) {
+                modalCloseBtn.addEventListener('click', closeModal);
+            }
+
+            if (modalOkBtn) {
+                modalOkBtn.addEventListener('click', closeModal);
+            }
+
+            // Close modal when clicking outside
+            if (modal) {
+                modal.addEventListener('click', function (event) {
+                    if (event.target === modal) {
+                        closeModal();
+                    }
+                });
+            }
         }
 
         // Load available cameras
@@ -460,11 +646,18 @@
             try {
                 cameraSelect.innerHTML = '<option value="">Memuat kamera...</option>';
 
+                // Check if camera access is supported
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    cameraSelect.innerHTML = '<option value="">Kamera tidak didukung browser ini</option>';
+                    showModal('Browser ini tidak mendukung akses kamera. Gunakan browser modern seperti Chrome, Firefox, atau Edge.', 'warning', 'Browser Tidak Didukung');
+                    return;
+                }
+
                 const devices = await Html5Qrcode.getCameras();
 
                 if (devices.length === 0) {
                     cameraSelect.innerHTML = '<option value="">Tidak ada kamera ditemukan</option>';
-                    showToast('Tidak ada kamera yang tersedia');
+                    showModal('Tidak ada kamera yang tersedia. Pastikan kamera terhubung dan memberikan izin akses.', 'warning', 'Kamera Tidak Ditemukan');
                     return;
                 }
 
@@ -488,7 +681,7 @@
             } catch (error) {
                 console.error('Error loading cameras:', error);
                 cameraSelect.innerHTML = '<option value="">Error memuat kamera</option>';
-                showToast('Gagal memuat kamera');
+                showToast('Gagal memuat kamera: ' + error.message);
             }
         }
 
@@ -501,6 +694,16 @@
 
             if (!currentCameraId) {
                 showToast('Pilih kamera terlebih dahulu');
+                return;
+            }
+
+            // Check camera permissions
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                stream.getTracks().forEach(track => track.stop()); // Stop the test stream
+            } catch (error) {
+                console.error('Camera permission denied:', error);
+                showModal('Akses kamera ditolak. Pastikan memberikan izin kamera di browser Anda.', 'error', 'Izin Kamera Ditolak');
                 return;
             }
 
@@ -528,7 +731,7 @@
             } catch (error) {
                 console.error('Error starting scanner:', error);
                 isScanning = false;
-                showToast('Gagal memulai scanner');
+                showModal('Gagal memulai scanner: ' + error.message, 'error', 'Error Scanner');
             }
         }
 
@@ -554,6 +757,11 @@
         function onScanSuccess(decodedText, decodedResult) {
             const now = Date.now();
 
+            // Debug: Log what was scanned
+            console.log('QR Code scanned:', decodedText);
+            console.log('QR Code length:', decodedText.length);
+            console.log('Starts with QR_TEACHER_:', decodedText.startsWith('QR_TEACHER_'));
+
             // Prevent duplicate scans within 3 seconds
             if (decodedText === lastText && now - lastTime < 3000) {
                 return;
@@ -562,7 +770,34 @@
             lastText = decodedText;
             lastTime = now;
 
-            scanResult.textContent = `QR Code: ${decodedText}`;
+            // Validate QR code format before sending to server
+            // Check if it's JSON format (new format) or old QR_TEACHER_ format
+            let isValidFormat = false;
+            let qrCodeToSend = decodedText;
+
+            try {
+                const parsedData = JSON.parse(decodedText);
+                if (parsedData.type === 'teacher' && parsedData.id && parsedData.name) {
+                    isValidFormat = true;
+                    // Convert to expected format for backend
+                    qrCodeToSend = `QR_TEACHER_${parsedData.id}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+                }
+            } catch (e) {
+                // Not JSON, check if it's old format
+                if (decodedText.startsWith('QR_TEACHER_')) {
+                    isValidFormat = true;
+                }
+            }
+
+            if (!isValidFormat) {
+                scanResult.textContent = `Format QR Code tidak valid. Ditemukan: "${decodedText}". QR Code harus berupa JSON dengan type "teacher" atau dimulai dengan "QR_TEACHER_".`;
+                scanResult.className = 'status-message status-error';
+                showModal(`Format QR Code tidak valid. Pastikan menggunakan QR Code guru yang benar.`, 'error', 'Format QR Code Tidak Valid');
+                console.error('Invalid QR format detected:', decodedText);
+                return;
+            }
+
+            scanResult.textContent = `QR Code terdeteksi: ${decodedText}`;
             scanResult.className = 'status-message';
 
             // Send scan data to server
@@ -576,6 +811,11 @@
             loadTeachers();
             // Set initial mode display - show status dropdown for check-in mode
             switchMode('check-in');
+
+            // Check if browser supports camera
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                showModal('Browser ini tidak mendukung akses kamera. Gunakan browser modern seperti Chrome, Firefox, atau Edge.', 'warning', 'Browser Tidak Didukung');
+            }
         }
 
         // Handle scan errors
@@ -606,7 +846,7 @@
                 if (data.success) {
                     scanResult.textContent = `Berhasil absensi ${modeText}: ${data.teacher.name}`;
                     scanResult.className = 'status-message status-success';
-                    showToast(`Absensi ${modeText} berhasil`);
+                    showModal(`Absensi ${modeText} berhasil untuk ${data.teacher.name}`, 'success', 'Berhasil');
 
                     // Refresh attendance list
                     loadTodayAttendance();
@@ -614,14 +854,14 @@
                 } else {
                     scanResult.textContent = `Gagal: ${data.message}`;
                     scanResult.className = 'status-message status-error';
-                    showToast(`Absensi ${modeText} gagal: ` + data.message);
+                    showModal(`Absensi ${modeText} gagal: ${data.message}`, 'error', 'Gagal');
                 }
 
             } catch (error) {
                 console.error('Error processing scan:', error);
                 scanResult.textContent = 'Error: ' + error.message;
                 scanResult.className = 'status-message status-error';
-                showToast('Terjadi kesalahan');
+                showModal('Terjadi kesalahan saat memproses absensi', 'error', 'Error');
             }
         }
 
@@ -706,7 +946,7 @@
             const status = currentMode === 'check-in' ? document.getElementById('manual-status').value : null;
 
             if (!teacherId) {
-                showToast('Pilih guru terlebih dahulu');
+                showModal('Pilih guru terlebih dahulu', 'warning', 'Pilih Guru');
                 return;
             }
 
@@ -736,7 +976,7 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    showToast(`Absensi manual ${modeText} berhasil`);
+                    showModal(`Absensi manual ${modeText} berhasil untuk ${data.teacher.name}`, 'success', 'Berhasil');
 
                     // Reset form
                     manualTeacher.value = '';
@@ -752,12 +992,12 @@
                     loadTeachers();
 
                 } else {
-                    showToast(`Absensi manual ${modeText} gagal: ` + data.message);
+                    showModal(`Absensi manual ${modeText} gagal: ${data.message}`, 'error', 'Gagal');
                 }
 
             } catch (error) {
                 console.error('Error submitting manual entry:', error);
-                showToast('Terjadi kesalahan');
+                showModal('Terjadi kesalahan saat menyimpan absensi manual', 'error', 'Error');
             }
         }
 
@@ -767,7 +1007,6 @@
 
             // Update button states
             modeCheckIn.classList.toggle('active', mode === 'check-in');
-            // modeCheckOut.classList.toggle('active', mode === 'check-out'); // Removed since it's now a link
 
             // Update instruction text
             if (mode === 'check-in') {
@@ -776,9 +1015,6 @@
                 manualSubmitText.textContent = 'Simpan Absensi Masuk';
                 // Show status dropdown for check-in
                 document.getElementById('status-group').style.display = 'block';
-            } else {
-                // Hide status dropdown for check-out mode
-                document.getElementById('status-group').style.display = 'none';
             }
 
             // Reset scan result
@@ -798,7 +1034,6 @@
 
         // Mode toggle listeners
         modeCheckIn.addEventListener('click', () => switchMode('check-in'));
-        // modeCheckOut.addEventListener('click', () => switchMode('check-out')); // Removed since it's now a link
 
         // Manual entry
         btnManualLoad.addEventListener('click', loadTeachers);
@@ -806,5 +1041,6 @@
 
         // Initialize
         initializePage();
+        initializeModal();
     });
 </script>
